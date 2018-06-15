@@ -1,4 +1,4 @@
-# cryptocurrency-quant（加密货币量化收割）
+# cryptocurrency-quant（数字货币量化收割）
 
 1. 各个交易所数据行情抓取
 2. 各个交易所价格比较
