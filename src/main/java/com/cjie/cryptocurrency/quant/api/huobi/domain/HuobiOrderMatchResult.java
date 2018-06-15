@@ -1,8 +1,9 @@
 package com.cjie.cryptocurrency.quant.api.huobi.domain;
 
 import com.google.gson.annotations.SerializedName;
+import lombok.Data;
 
-
+@Data
 public class HuobiOrderMatchResult {
 
     @SerializedName("created-at")
@@ -38,86 +39,4 @@ public class HuobiOrderMatchResult {
     @SerializedName("type")
     private String type;
 
-    public long getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(long createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public String getFilledAmount() {
-        return filledAmount;
-    }
-
-    public void setFilledAmount(String filledAmount) {
-        this.filledAmount = filledAmount;
-    }
-
-    public String getFilledFees() {
-        return filledFees;
-    }
-
-    public void setFilledFees(String filledFees) {
-        this.filledFees = filledFees;
-    }
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public long getMatchId() {
-        return matchId;
-    }
-
-    public void setMatchId(long matchId) {
-        this.matchId = matchId;
-    }
-
-    public long getOrderId() {
-        return orderId;
-    }
-
-    public void setOrderId(long orderId) {
-        this.orderId = orderId;
-    }
-
-    public String getPrice() {
-        return price;
-    }
-
-    public void setPrice(String price) {
-        this.price = price;
-    }
-
-    public String getSource() {
-        return source;
-    }
-
-    public void setSource(String source) {
-        this.source = source;
-    }
-
-    public String getSymbol() {
-        return symbol;
-    }
-
-    public void setSymbol(String symbol) {
-        this.symbol = symbol;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public HuobiOrderMatchResult() {
-    }
 }

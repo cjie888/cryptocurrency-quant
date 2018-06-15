@@ -1,40 +1,22 @@
 package com.cjie.cryptocurrency.quant.api.huobi.domain;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @JsonDeserialize(using = HuobiOrderBookEntryDeserializer.class)
+@Data
+@AllArgsConstructor
 public class HuobiOrderBookEntry {
 
     private double price;
 
     private double qty;
 
-    public double getPrice() {
-        return price;
-    }
 
-    public void setPrice(double price) {
-        this.price = price;
-    }
-
-    public double getQty() {
-        return qty;
-    }
-
-    public void setQty(double qty) {
-        this.qty = qty;
-    }
-
-    public HuobiOrderBookEntry() {
-    }
-
-    public HuobiOrderBookEntry(double price, double qty) {
-        this.price = price;
-        this.qty = qty;
-    }
 
     public static HuobiOrderBookEntry parseOne(List<Double> list){
         return new HuobiOrderBookEntry(list.get(0),list.get(1));

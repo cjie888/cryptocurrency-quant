@@ -1,8 +1,10 @@
 package com.cjie.cryptocurrency.quant.api.huobi.domain;
 
+import lombok.Data;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
+@Data
 public class HuobiKLineData {
 
     private long id;
@@ -21,72 +23,6 @@ public class HuobiKLineData {
 
     private double vol;
 
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public double getAmount() {
-        return amount;
-    }
-
-    public void setAmount(double amount) {
-        this.amount = amount;
-    }
-
-    public int getCount() {
-        return count;
-    }
-
-    public void setCount(int count) {
-        this.count = count;
-    }
-
-    public double getOpen() {
-        return open;
-    }
-
-    public void setOpen(double open) {
-        this.open = open;
-    }
-
-    public double getClose() {
-        return close;
-    }
-
-    public void setClose(double close) {
-        this.close = close;
-    }
-
-    public double getLow() {
-        return low;
-    }
-
-    public void setLow(double low) {
-        this.low = low;
-    }
-
-    public double getHigh() {
-        return high;
-    }
-
-    public void setHigh(double high) {
-        this.high = high;
-    }
-
-    public double getVol() {
-        return vol;
-    }
-
-    public void setVol(double vol) {
-        this.vol = vol;
-    }
-
-    public HuobiKLineData() {
-    }
 
     @Override
     public String toString() {

@@ -1,8 +1,10 @@
 package com.cjie.cryptocurrency.quant.api.huobi.domain;
 
+import lombok.Data;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
+@Data
 public class HuobiMarketDetail {
 
     private double amount;
@@ -22,81 +24,6 @@ public class HuobiMarketDetail {
     private double vol;
 
     private long version;
-
-    public double getAmount() {
-        return amount;
-    }
-
-    public void setAmount(double amount) {
-        this.amount = amount;
-    }
-
-    public double getOpen() {
-        return open;
-    }
-
-    public void setOpen(double open) {
-        this.open = open;
-    }
-
-    public double getClose() {
-        return close;
-    }
-
-    public void setClose(double close) {
-        this.close = close;
-    }
-
-    public double getHigh() {
-        return high;
-    }
-
-    public void setHigh(double high) {
-        this.high = high;
-    }
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public long getCount() {
-        return count;
-    }
-
-    public void setCount(long count) {
-        this.count = count;
-    }
-
-    public double getLow() {
-        return low;
-    }
-
-    public void setLow(double low) {
-        this.low = low;
-    }
-
-    public double getVol() {
-        return vol;
-    }
-
-    public void setVol(double vol) {
-        this.vol = vol;
-    }
-
-    public long getVersion() {
-        return version;
-    }
-
-    public void setVersion(long version) {
-        this.version = version;
-    }
-
-    public HuobiMarketDetail() {
-    }
 
     @Override
     public String toString() {

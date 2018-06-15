@@ -1,23 +1,15 @@
 package com.cjie.cryptocurrency.quant.api.huobi.domain.resp;
 
 import com.google.gson.annotations.SerializedName;
+import lombok.Data;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Data
 public class HuobiCurrencysResp extends HuobiResp {
 
     @SerializedName("data")
     private List<String> symbols = new ArrayList<>();
 
-    public List<String> getSymbols() {
-        return symbols;
-    }
-
-    public void setSymbols(List<String> symbols) {
-        this.symbols = symbols;
-    }
-
-    public HuobiCurrencysResp() {
-    }
 }
