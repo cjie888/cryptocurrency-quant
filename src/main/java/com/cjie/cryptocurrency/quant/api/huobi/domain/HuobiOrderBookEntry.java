@@ -1,13 +1,11 @@
 package com.cjie.cryptocurrency.quant.api.huobi.domain;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-@JsonDeserialize(using = HuobiOrderBookEntryDeserializer.class)
 @Data
 @AllArgsConstructor
 public class HuobiOrderBookEntry {

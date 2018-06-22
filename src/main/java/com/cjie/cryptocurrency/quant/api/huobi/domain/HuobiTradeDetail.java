@@ -1,12 +1,10 @@
 package com.cjie.cryptocurrency.quant.api.huobi.domain;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.Data;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
 @Data
-@JsonDeserialize(using = HuobiTradeDetailDeserializer.class)
 public class HuobiTradeDetail {
 
     private double amount;

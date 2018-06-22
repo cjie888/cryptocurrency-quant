@@ -1,5 +1,6 @@
 package com.cjie.cryptocurrency.quant.api.huobi.impl.ws;
 
+import com.alibaba.fastjson.JSON;
 import com.cjie.cryptocurrency.quant.api.huobi.constant.HuobiConst;
 import com.cjie.cryptocurrency.quant.api.huobi.domain.resp.HuobiWSResp;
 import com.cjie.cryptocurrency.quant.api.huobi.domain.ws.HuobiWSError;
@@ -7,7 +8,6 @@ import com.cjie.cryptocurrency.quant.api.huobi.domain.ws.HuobiWSSub;
 import com.cjie.cryptocurrency.quant.api.huobi.impl.HuobiApiWSClientImpl;
 import com.cjie.cryptocurrency.quant.api.huobi.misc.HuobiWSEventHandler;
 import com.cjie.cryptocurrency.quant.api.huobi.util.HuobiUtil;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import okhttp3.*;
 import okio.ByteString;
 import org.apache.commons.lang3.StringUtils;
@@ -16,8 +16,6 @@ import java.io.Closeable;
 import java.io.IOException;
 
 public abstract class AbsHuobiApiWSClient<T extends HuobiWSResp> extends WebSocketListener implements Closeable {
-
-    private ObjectMapper objectMapper = new ObjectMapper();
 
     protected final HuobiApiWSClientImpl client;
 
@@ -80,7 +78,7 @@ public abstract class AbsHuobiApiWSClient<T extends HuobiWSResp> extends WebSock
         }
         // System.out.println(json);
         try {
-            T resp =  objectMapper.readValue(json, clazz);
+            T resp =  JSON.parseObject(json, clazz);
             if (resp.status != null && !resp.status.equals(HuobiWSResp.STATUES_OK)) {
                 HuobiWSError err = new HuobiWSError(resp.errCode, resp.errMsg);
                 if (handler != null) {
@@ -89,7 +87,7 @@ public abstract class AbsHuobiApiWSClient<T extends HuobiWSResp> extends WebSock
             } else {
                 this.doHandler(resp);
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 

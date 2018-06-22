@@ -1,6 +1,5 @@
 package com.cjie.cryptocurrency.quant.api.huobi.domain.resp;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.gson.annotations.SerializedName;
 
 public class HuobiWSResp {
@@ -18,11 +17,9 @@ public class HuobiWSResp {
     public String subbed;
 
     @SerializedName("err-code")
-    @JsonProperty("err-code")
     public String errCode;
 
 
     @SerializedName("err-msg")
-    @JsonProperty("err-msg")
     public String errMsg;
 }
