@@ -6,7 +6,7 @@
     <springProperty scope="context" name="logging.level.exchange" source="logging.level.exchange"/>
     <springProperty scope="context" name="logging.level.mybatis" source="logging.level.mybatis"/>
     <springProperty scope="context" name="logging.level.commons" source="logging.level.commons"/>
-    <springProperty scope="context" name="okcoin.app.env.name" source="okcoin.app.env.name"/>
+    <springProperty scope="context" name="app.env.name" source="app.env.name"/>
     <!--Output full logs to file-->
     <appender name="FILE_ALL" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>${logging.path}/info.log</file>
@@ -81,9 +81,8 @@
         <appender-ref ref="FILE_TIME"/>
     </logger>
 
-    <logger name="com.okcoin.ex" level="INFO"/>
+    <logger name="com.cjie.cryptocurrency" level="INFO"/>
     <logger name="org.mybatis" level="INFO"/>
-    <logger name="com.okcoin.wallet" level="ERROR"/>
 
     <root level="${logging.level.default}">
         <appender-ref ref="ASYNC_FILE_ALL"/>
