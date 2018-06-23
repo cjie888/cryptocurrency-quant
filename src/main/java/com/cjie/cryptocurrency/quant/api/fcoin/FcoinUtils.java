@@ -58,7 +58,7 @@ public class FcoinUtils {
 
         initMultiple = Double.valueOf(properties.getProperty("initMultiple", "3"));
         maxNum = Double.valueOf(properties.getProperty("maxNum", "1000"));
-        minUsdt = Double.valueOf(properties.getProperty("minUsdt", "50"));
+        minUsdt = Double.valueOf(properties.getProperty("minUsdt", "10"));
 
         initInterval = Integer.valueOf(properties.getProperty("initInterval", "10"));
         pricePrecision = Integer.valueOf(properties.getProperty("pricePrecision", "6"));
