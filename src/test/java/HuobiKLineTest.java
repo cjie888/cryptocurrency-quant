@@ -18,13 +18,13 @@ public class HuobiKLineTest {
     public void test() throws HuobiApiException {
         HuobiApiClientFactory factory = HuobiApiClientFactory.newInstance();
         HuobiApiRestClient client = factory.newRestClient();
-        List<HuobiKLineData> list = client.kline("btcusdt","1min",10);
+        List<HuobiKLineData> list = client.kline("btcusdt","1min",1);
         Assert.assertFalse(list.isEmpty());
         for (HuobiKLineData data: list){
             System.out.println("btc---" + data);
         }
 
-        List<HuobiKLineData> list2 = client.kline("ethusdt","1min",10);
+        List<HuobiKLineData> list2 = client.kline("ethusdt","1min",1);
         Assert.assertFalse(list2.isEmpty());
         for (HuobiKLineData data: list2){
             System.out.println("eth---" + data);

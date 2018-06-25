@@ -3,13 +3,17 @@ package com.cjie.cryptocurrency.quant.api.fcoin;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.cjie.cryptocurrency.quant.mapper.CurrencyPriceMapper;
+import com.cjie.cryptocurrency.quant.model.CurrencyPrice;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.support.PropertiesLoaderUtils;
 import org.springframework.http.*;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.retry.support.RetryTemplate;
+import org.springframework.stereotype.Component;
 import org.springframework.util.MultiValueMap;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
@@ -24,6 +28,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Component
 public class FcoinUtils {
 
     private static final RetryTemplate retryTemplate = FcoinRetry.getRetryTemplate();
@@ -43,6 +48,9 @@ public class FcoinUtils {
     private static final double minLimitPriceOrderNum;
 
     private static final int initInterval;//初始化间隔
+
+    @Autowired
+    private CurrencyPriceMapper currencyPriceMapper;
 
     static {
         Properties properties = null;
@@ -208,7 +216,7 @@ public class FcoinUtils {
         );
     }
 
-    public static Map<String, Double> getPriceInfo(String symbol) throws Exception {
+    public static Map<String, Double> getPriceInfo(String symbol, String baseCurrency, String quotaCurrency) throws Exception {
         String url = "https://api.fcoin.com/v2/market/ticker/" + symbol;
         Long timeStamp = System.currentTimeMillis();
         MultiValueMap<String, String> headers = new HttpHeaders();
@@ -227,6 +235,13 @@ public class FcoinUtils {
         double marketPrice = Double.valueOf(jsonArray.get(0).toString());
 
         result.put("marketPrice", marketPrice);
+        CurrencyPrice currencyPrice  = CurrencyPrice.builder()
+                .tickTime(new Date())
+                .price(new BigDecimal(marketPrice))
+                .baseCurrency(baseCurrency)
+                .quotaCurrency(quotaCurrency)
+                .site("fcoin")
+                .build();
         double hight_24H = Double.valueOf(jsonArray.get(7).toString());
         double low_24H = Double.valueOf(jsonArray.get(8).toString());
 
@@ -454,7 +469,7 @@ public class FcoinUtils {
                 break;
             }
 
-            Map<String, Double> priceInfo = getPriceInfo(symbol);
+            Map<String, Double> priceInfo = getPriceInfo(symbol, ftName, usdtName);
             Double marketPrice = priceInfo.get("marketPrice");
             //usdt小于51并且ft的价值小于51
             if ((usdt < (minUsdt + 1) && ft < ((minUsdt + 1) / marketPrice))
@@ -524,10 +539,6 @@ public class FcoinUtils {
      */
     public void ftusdt1(String symbol, String ftName, String usdtName, double increment) throws Exception {
 
-        int frozenCount = 0;
-
-        while (true) {
-
             //查询余额
             String balance = null;
             try {
@@ -536,7 +547,7 @@ public class FcoinUtils {
                 ;
             } catch (Exception e) {
                 logger.error("==========fcoinUtils.getBalance重试后还是异常============", e);
-                continue;
+                return;
             }
 
             Map<String, Balance> balances = buildBalance(balance);
@@ -548,36 +559,23 @@ public class FcoinUtils {
 
             //判断是否有冻结的，如果冻结太多冻结就休眠，进行下次挖矿
             if (ftBalance.getFrozen() > 0.099 * ft || usdtBalance.getFrozen() > 0.099 * usdt) {
-                frozenCount++;
-                if (frozenCount % 500 == 0) {
-                    try {
-                        cancelOrders(getNotTradeOrders(symbol, "0", "100"));
-                    } catch (Exception e) {
-                        logger.error("cancel error",e);
-                    }
-                }
-                logger.info("froze count:{}" , frozenCount);
-                Thread.sleep(3000);
-                continue;
+                return;
             }
-            frozenCount=0;
 
             logger.info("===============balance: usdt:{},ft:{}========================", usdt, ft);
 
             if ("ftusdt".equals(symbol) && !isTrade()) {//整点十分钟之内不能交易
-                //cancelOrders(getNotTradeSellOrders(symbol, "0", "100"));
-                Thread.sleep(5000);
-                continue;
+                return;
             }
 
-            Map<String, Double> priceInfo = getPriceInfo(symbol);
+            Map<String, Double> priceInfo = getPriceInfo(symbol, ftName, usdtName);
             Double marketPrice = priceInfo.get("marketPrice");
             //usdt小于51并且ft的价值小于51
             if ((usdt < (minUsdt + 1) && ft < ((minUsdt + 1) / marketPrice))
                     || (usdt < (minUsdt + 1) && Math.abs(ft * marketPrice - usdt) < minUsdt / 5)
                     || (ft < ((minUsdt + 1) / marketPrice) && Math.abs(ft * marketPrice - usdt) < minUsdt / 5)) {
                 logger.info("跳出循环，ustd:{}, marketPrice:{}", usdt, marketPrice);
-                break;
+                return;
             }
 
             //ft:usdt=1:0.6
@@ -587,7 +585,7 @@ public class FcoinUtils {
             if (!(ftBalance.getFrozen() > 0 || usdtBalance.getFrozen() > 0)) {
                 if (isHaveInitBuyAndSell(ft, usdt, marketPrice, initUsdt, symbol, "limit")) {
                     logger.info("================有进行初始化均衡操作=================");
-                    continue;
+                    return;
                 }
             }
 
@@ -597,7 +595,7 @@ public class FcoinUtils {
             BigDecimal ftAmount = getNum(price * 0.99 / marketPrice);//预留点来扣手续费
             if (ftAmount.doubleValue() - minLimitPriceOrderNum < 0) {
                 logger.info("小于最小限价数量");
-                break;
+                return;
             }
 
             logger.info("=============================交易对开始=========================");
@@ -614,8 +612,6 @@ public class FcoinUtils {
             }
             logger.info("=============================交易对结束=========================");
 
-            Thread.sleep(1000 * new Random().nextInt(5));
-        }
     }
 
     /**
@@ -662,7 +658,7 @@ public class FcoinUtils {
                 break;
             }*/
 
-            Map<String, Double> priceInfo = getPriceInfo(symbol);
+            Map<String, Double> priceInfo = getPriceInfo(symbol, ftName, usdtName);
             Double marketPrice = priceInfo.get("marketPrice");
             //usdt小于51并且ft的价值小于51
             if ((usdt < (minUsdt + 1) && ft < ((minUsdt + 1) / marketPrice))

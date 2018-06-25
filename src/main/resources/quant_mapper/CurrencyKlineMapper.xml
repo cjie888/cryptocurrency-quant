@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cjie.cryptocurrency.quant.mapper.CurrencyKlineMapper">
+  <resultMap id="BaseResultMap" type="com.cjie.cryptocurrency.quant.model.CurrencyKline">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="kline_time" jdbcType="TIMESTAMP" property="klineTime" />
+    <result column="base_currency" jdbcType="VARCHAR" property="baseCurrency" />
+    <result column="quota_currency" jdbcType="VARCHAR" property="quotaCurrency" />
+    <result column="amount" jdbcType="DECIMAL" property="amount" />
+    <result column="count" jdbcType="INTEGER" property="count" />
+    <result column="open" jdbcType="DECIMAL" property="open" />
+    <result column="close" jdbcType="DECIMAL" property="close" />
+    <result column="low" jdbcType="DECIMAL" property="low" />
+    <result column="high" jdbcType="DECIMAL" property="high" />
+    <result column="vol" jdbcType="DECIMAL" property="vol" />
+    <result column="site" jdbcType="VARCHAR" property="site" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, kline_time, base_currency, quota_currency, amount, count, open, close, low, high, 
+    vol, site
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from currency_kline
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from currency_kline
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.cjie.cryptocurrency.quant.model.CurrencyKline">
+    insert into currency_kline (id, kline_time, base_currency, 
+      quota_currency, amount, count, 
+      open, close, low, high, 
+      vol, site)
+    values (#{id,jdbcType=BIGINT}, #{klineTime,jdbcType=TIMESTAMP}, #{baseCurrency,jdbcType=VARCHAR}, 
+      #{quotaCurrency,jdbcType=VARCHAR}, #{amount,jdbcType=DECIMAL}, #{count,jdbcType=INTEGER}, 
+      #{open,jdbcType=DECIMAL}, #{close,jdbcType=DECIMAL}, #{low,jdbcType=DECIMAL}, #{high,jdbcType=DECIMAL}, 
+      #{vol,jdbcType=DECIMAL}, #{site,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.cjie.cryptocurrency.quant.model.CurrencyKline">
+    insert into currency_kline
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="klineTime != null">
+        kline_time,
+      </if>
+      <if test="baseCurrency != null">
+        base_currency,
+      </if>
+      <if test="quotaCurrency != null">
+        quota_currency,
+      </if>
+      <if test="amount != null">
+        amount,
+      </if>
+      <if test="count != null">
+        count,
+      </if>
+      <if test="open != null">
+        open,
+      </if>
+      <if test="close != null">
+        close,
+      </if>
+      <if test="low != null">
+        low,
+      </if>
+      <if test="high != null">
+        high,
+      </if>
+      <if test="vol != null">
+        vol,
+      </if>
+      <if test="site != null">
+        site,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="klineTime != null">
+        #{klineTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="baseCurrency != null">
+        #{baseCurrency,jdbcType=VARCHAR},
+      </if>
+      <if test="quotaCurrency != null">
+        #{quotaCurrency,jdbcType=VARCHAR},
+      </if>
+      <if test="amount != null">
+        #{amount,jdbcType=DECIMAL},
+      </if>
+      <if test="count != null">
+        #{count,jdbcType=INTEGER},
+      </if>
+      <if test="open != null">
+        #{open,jdbcType=DECIMAL},
+      </if>
+      <if test="close != null">
+        #{close,jdbcType=DECIMAL},
+      </if>
+      <if test="low != null">
+        #{low,jdbcType=DECIMAL},
+      </if>
+      <if test="high != null">
+        #{high,jdbcType=DECIMAL},
+      </if>
+      <if test="vol != null">
+        #{vol,jdbcType=DECIMAL},
+      </if>
+      <if test="site != null">
+        #{site,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.cjie.cryptocurrency.quant.model.CurrencyKline">
+    update currency_kline
+    <set>
+      <if test="klineTime != null">
+        kline_time = #{klineTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="baseCurrency != null">
+        base_currency = #{baseCurrency,jdbcType=VARCHAR},
+      </if>
+      <if test="quotaCurrency != null">
+        quota_currency = #{quotaCurrency,jdbcType=VARCHAR},
+      </if>
+      <if test="amount != null">
+        amount = #{amount,jdbcType=DECIMAL},
+      </if>
+      <if test="count != null">
+        count = #{count,jdbcType=INTEGER},
+      </if>
+      <if test="open != null">
+        open = #{open,jdbcType=DECIMAL},
+      </if>
+      <if test="close != null">
+        close = #{close,jdbcType=DECIMAL},
+      </if>
+      <if test="low != null">
+        low = #{low,jdbcType=DECIMAL},
+      </if>
+      <if test="high != null">
+        high = #{high,jdbcType=DECIMAL},
+      </if>
+      <if test="vol != null">
+        vol = #{vol,jdbcType=DECIMAL},
+      </if>
+      <if test="site != null">
+        site = #{site,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.cjie.cryptocurrency.quant.model.CurrencyKline">
+    update currency_kline
+    set kline_time = #{klineTime,jdbcType=TIMESTAMP},
+      base_currency = #{baseCurrency,jdbcType=VARCHAR},
+      quota_currency = #{quotaCurrency,jdbcType=VARCHAR},
+      amount = #{amount,jdbcType=DECIMAL},
+      count = #{count,jdbcType=INTEGER},
+      open = #{open,jdbcType=DECIMAL},
+      close = #{close,jdbcType=DECIMAL},
+      low = #{low,jdbcType=DECIMAL},
+      high = #{high,jdbcType=DECIMAL},
+      vol = #{vol,jdbcType=DECIMAL},
+      site = #{site,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>
