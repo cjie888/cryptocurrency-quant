@@ -216,7 +216,7 @@ public class FcoinUtils {
         );
     }
 
-    public static Map<String, Double> getPriceInfo(String symbol, String baseCurrency, String quotaCurrency) throws Exception {
+    public Map<String, Double> getPriceInfo(String symbol, String baseCurrency, String quotaCurrency) throws Exception {
         String url = "https://api.fcoin.com/v2/market/ticker/" + symbol;
         Long timeStamp = System.currentTimeMillis();
         MultiValueMap<String, String> headers = new HttpHeaders();
@@ -242,6 +242,8 @@ public class FcoinUtils {
                 .quotaCurrency(quotaCurrency)
                 .site("fcoin")
                 .build();
+        currencyPriceMapper.insert(currencyPrice);
+
         double hight_24H = Double.valueOf(jsonArray.get(7).toString());
         double low_24H = Double.valueOf(jsonArray.get(8).toString());
 
@@ -554,11 +556,11 @@ public class FcoinUtils {
             Balance ftBalance = balances.get(ftName);
             Balance usdtBalance = balances.get(usdtName);
 
-            double ft = ftBalance.getBalance() - 30;
+            double ft = ftBalance.getBalance();
             double usdt = usdtBalance.getBalance();
 
             //判断是否有冻结的，如果冻结太多冻结就休眠，进行下次挖矿
-            if (ftBalance.getFrozen() > 0.099 * ft || usdtBalance.getFrozen() > 0.099 * usdt) {
+            if (ftBalance.getFrozen() > 0.099 * ft && usdtBalance.getFrozen() > 0.099 * usdt) {
                 return;
             }
 
@@ -582,15 +584,15 @@ public class FcoinUtils {
             double initUsdt = maxNum * initMultiple * marketPrice;
 
             //初始化
-            if (!(ftBalance.getFrozen() > 0 || usdtBalance.getFrozen() > 0)) {
-                if (isHaveInitBuyAndSell(ft, usdt, marketPrice, initUsdt, symbol, "limit")) {
+            if (!(ftBalance.getFrozen() > 0 && usdtBalance.getFrozen() > 0)) {
+                if (isHaveInitBuyAndSell(ftBalance.getAvailable(), usdtBalance.getAvailable(), marketPrice, initUsdt, symbol, "limit")) {
                     logger.info("================有进行初始化均衡操作=================");
                     return;
                 }
             }
 
             //买单 卖单
-            double price = Math.min((ftBalance.getAvailable()-30) * marketPrice, usdtBalance.getAvailable());
+            double price = Math.min((ftBalance.getAvailable()) * marketPrice, usdtBalance.getAvailable());
 
             BigDecimal ftAmount = getNum(price * 0.99 / marketPrice);//预留点来扣手续费
             if (ftAmount.doubleValue() - minLimitPriceOrderNum < 0) {
