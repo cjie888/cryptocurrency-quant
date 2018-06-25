@@ -366,7 +366,7 @@ public class FcoinUtils {
         return map;
     }
 
-    private boolean isHaveInitBuyAndSell(double ft, double usdt, double marketPrice, double initUsdt, String symbol, String type) throws Exception {
+    private boolean isHaveInitBuyAndSell(double ft, double usdt, double marketPrice, double initUsdt, String symbol, String type, double increment) throws Exception {
         //初始化小的
         double ftValue = ft * marketPrice;
         double num = Math.min((Math.abs(usdt - ftValue) / 2), initUsdt);
@@ -378,7 +378,7 @@ public class FcoinUtils {
         if (ftValue < usdt && Math.abs(ftValue - usdt) > 0.1 * (ftValue + usdt)) {
             //买ft
             try {
-                buy(symbol, type, b, getMarketPrice(marketPrice));//此处不需要重试，让上次去判断余额后重新平衡
+                buy(symbol, type, b, getMarketPrice(marketPrice * (1-increment)));//此处不需要重试，让上次去判断余额后重新平衡
             } catch (Exception e) {
                 logger.error("初始化买有异常发生", e);
                 throw new Exception(e);
@@ -387,7 +387,7 @@ public class FcoinUtils {
         } else if (usdt < ftValue && Math.abs(ftValue - usdt) > 0.1 * (ftValue + usdt)) {
             //卖ft
             try {
-                sell(symbol, type, b, getMarketPrice(marketPrice));//此处不需要重试，让上次去判断余额后重新平衡
+                sell(symbol, type, b, getMarketPrice(marketPrice*(1+increment)));//此处不需要重试，让上次去判断余额后重新平衡
             } catch (Exception e) {
                 logger.error("初始化卖有异常发生", e);
                 throw new Exception(e);
@@ -489,7 +489,7 @@ public class FcoinUtils {
                     && !(ftBalance.getFrozen() > 0 || usdtBalance.getFrozen() > 0)) {
                 //需要去初始化了
                 try {
-                    if (isHaveInitBuyAndSell(ft, usdt, marketPrice, initUsdt, symbol, "limit")) {
+                    if (isHaveInitBuyAndSell(ft, usdt, marketPrice, initUsdt, symbol, "limit", 0.0)) {
                         //进行了两个币种的均衡，去进行余额查询，并判断是否成交完
                         logger.info("================有进行初始化均衡操作=================");
                         tradeCount++;
@@ -585,7 +585,7 @@ public class FcoinUtils {
 
             //初始化
             if (!(ftBalance.getFrozen() > 0 && usdtBalance.getFrozen() > 0)) {
-                if (isHaveInitBuyAndSell(ftBalance.getAvailable(), usdtBalance.getAvailable(), marketPrice, initUsdt, symbol, "limit")) {
+                if (isHaveInitBuyAndSell(ftBalance.getAvailable(), usdtBalance.getAvailable(), marketPrice, initUsdt, symbol, "limit", increment)) {
                     logger.info("================有进行初始化均衡操作=================");
                     return;
                 }
@@ -682,7 +682,7 @@ public class FcoinUtils {
 
             //初始化
             if (!(ftBalance.getFrozen() > 0 || usdtBalance.getFrozen() > 0)) {
-                if (isHaveInitBuyAndSell(ft, usdt, marketPrice, initUsdt, symbol, "limit")) {
+                if (isHaveInitBuyAndSell(ft, usdt, marketPrice, initUsdt, symbol, "limit", 0.0)) {
                     logger.info("================有进行初始化均衡操作=================");
                     continue;
                 }
