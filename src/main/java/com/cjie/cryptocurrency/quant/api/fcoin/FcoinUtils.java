@@ -71,7 +71,7 @@ public class FcoinUtils {
         initInterval = Integer.valueOf(properties.getProperty("initInterval", "10"));
         pricePrecision = Integer.valueOf(properties.getProperty("pricePrecision", "6"));
         numPrecision = Integer.valueOf(properties.getProperty("numPrecision", "6"));
-        minLimitPriceOrderNum = Double.valueOf(properties.getProperty("minLimitPriceOrderNum", "5"));
+        minLimitPriceOrderNum = Double.valueOf(properties.getProperty("minLimitPriceOrderNum", "3.1"));
     }
 
     public static BigDecimal getBigDecimal(double value, int scale) {
@@ -751,7 +751,11 @@ public class FcoinUtils {
         if (allAsset/2 - ftBalance.getBalance() * marketPrice  > allAsset * increment) {
             BigDecimal amount = new BigDecimal(allAsset/2-ftBalance.getBalance()* marketPrice).setScale(numPrecision, BigDecimal.ROUND_FLOOR);
             //买入
-            buy(symbol, "limit",  amount, getMarketPrice(marketPrice));//此处不需要重试，让上次去判断余额后重新平衡
+            if (amount.doubleValue() - minLimitPriceOrderNum < 0) {
+                logger.info("小于最小限价数量");
+            } else {
+                buy(symbol, "limit",  amount, getMarketPrice(marketPrice));//此处不需要重试，让上次去判断余额后重新平衡
+            }
             logger.info("ftbalance:{}, usdtbalance:{}", ftBalance.getBalance() + amount.doubleValue(),
                     usdtBalance.getBalance() + amount.doubleValue() * getMarketPrice(marketPrice).doubleValue());
             logger.info("buy {}, price:{}", amount, marketPrice);
@@ -761,7 +765,12 @@ public class FcoinUtils {
         if (ftBalance.getBalance() * marketPrice - allAsset/2 > allAsset * increment) {
             //卖出
             BigDecimal amount = new BigDecimal(ftBalance.getBalance()* marketPrice-allAsset/2).setScale(numPrecision, BigDecimal.ROUND_FLOOR);
-            sell(symbol, "limit",  amount, getMarketPrice(marketPrice));//此处不需要重试，让上次去判断余额后重新平衡
+            if (amount.doubleValue() - minLimitPriceOrderNum < 0) {
+                logger.info("小于最小限价数量");
+            } else {
+                sell(symbol, "limit", amount, getMarketPrice(marketPrice));//此处不需要重试，让上次去判断余额后重新平衡
+
+            }
             logger.info("ftbalance:{}, usdtbalance:{}", ftBalance.getBalance() - amount.doubleValue(),
                     usdtBalance.getBalance() + amount.doubleValue() * getMarketPrice(marketPrice).doubleValue());
             logger.info("sell {}, price:{}", amount, marketPrice);
