@@ -29,7 +29,7 @@ public class FCoinTask {
             throw new JobExecutionException("ftustd 方法体执行异常");
         }
     }
-    @Scheduled(cron = "1 30 * * * ?")
+    @Scheduled(cron = "1 */5 * * * ?")
     public void mineCurrency3() throws JobExecutionException {
         try {
             //fcoinUtils.ftusdt1("ftusdt", "ft", "usdt",0);
