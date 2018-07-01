@@ -70,7 +70,7 @@ public class FcoinUtils {
 
         initInterval = Integer.valueOf(properties.getProperty("initInterval", "10"));
         pricePrecision = Integer.valueOf(properties.getProperty("pricePrecision", "6"));
-        numPrecision = Integer.valueOf(properties.getProperty("numPrecision", "2"));
+        numPrecision = Integer.valueOf(properties.getProperty("numPrecision", "6"));
         minLimitPriceOrderNum = Double.valueOf(properties.getProperty("minLimitPriceOrderNum", "5"));
     }
 
@@ -714,10 +714,69 @@ public class FcoinUtils {
         }
     }
 
-    public static void main(String[] args) throws Exception {
+    /**
+     * 动态调整策略
+     *
+     * @param symbol    交易对
+     * @param ftName    交易币的名称
+     * @param usdtName  市场币名称
+     * @param increment 收益率的一半
+     * @throws Exception
+     */
+    public void  ftusdt3(String symbol, String ftName, String usdtName, double increment) throws Exception {
+        //查询余额
+        String balance = null;
+        try {
+            balance = //retryTemplate.execute(retryContext ->
+                    getBalance()
+            ;
+        } catch (Exception e) {
+            logger.error("==========fcoinUtils.getBalance重试后还是异常============", e);
+            return;
+        }
+
+        Map<String, Balance> balances = buildBalance(balance);
+        Balance ftBalance = balances.get(ftName);
+        Balance usdtBalance = balances.get(usdtName);
+
+        Map<String, Double> priceInfo = getPriceInfo(symbol, ftName, usdtName);
+        Double marketPrice = priceInfo.get("marketPrice");
+
+
+        double allAsset= ftBalance.getBalance() * marketPrice + usdtBalance.getBalance();
+        logger.info("ftbalance:{}, usdtbalance:{}, allAsset:{}, asset/2:{}, ftbalance-usdt:{}", ftBalance.getBalance(), usdtBalance.getBalance(),
+                allAsset, allAsset/2, ftBalance.getBalance() * marketPrice );
+
+
+        if (allAsset/2 - ftBalance.getBalance() * marketPrice  > allAsset * increment) {
+            BigDecimal amount = new BigDecimal(allAsset/2-ftBalance.getBalance()* marketPrice).setScale(numPrecision, BigDecimal.ROUND_FLOOR);
+            //买入
+            //buy(symbol, "limit",  amount, getMarketPrice(marketPrice));//此处不需要重试，让上次去判断余额后重新平衡
+            logger.info("ftbalance:{}, usdtbalance:{}", ftBalance.getBalance() + amount.doubleValue(),
+                    usdtBalance.getBalance() + amount.doubleValue() * getMarketPrice(marketPrice).doubleValue());
+            logger.info("buy {}, price:{}", amount, marketPrice);
+        }
+
+
+        if (ftBalance.getBalance() * marketPrice - allAsset/2 > allAsset * increment) {
+            //卖出
+            BigDecimal amount = new BigDecimal(ftBalance.getBalance()* marketPrice-allAsset/2).setScale(numPrecision, BigDecimal.ROUND_FLOOR);
+            //sell(symbol, "limit",  amount, getMarketPrice(marketPrice));//此处不需要重试，让上次去判断余额后重新平衡
+            logger.info("ftbalance:{}, usdtbalance:{}", ftBalance.getBalance() - amount.doubleValue(),
+                    usdtBalance.getBalance() + amount.doubleValue() * getMarketPrice(marketPrice).doubleValue());
+            logger.info("sell {}, price:{}", amount, marketPrice);
+
+
+        }
+
+    }
+
+        public static void main(String[] args) throws Exception {
         //getSymbols();
         //getBalance();
         //getPriceInfo("ftusdt");
-        new FcoinUtils().ftusdt1("ftusdt", "ft", "usdt", 0.005);
+        new FcoinUtils().ftusdt3("ftusdt", "ft", "usdt", 0.01);
+
+        //new FcoinUtils().getNotTradeOrders("ftusdt", "0", "100");
     }
 }
