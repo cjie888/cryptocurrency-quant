@@ -70,8 +70,8 @@ public class FcoinUtils {
 
         initInterval = Integer.valueOf(properties.getProperty("initInterval", "10"));
         pricePrecision = Integer.valueOf(properties.getProperty("pricePrecision", "6"));
-        numPrecision = Integer.valueOf(properties.getProperty("numPrecision", "6"));
-        minLimitPriceOrderNum = Double.valueOf(properties.getProperty("minLimitPriceOrderNum", "3.1"));
+        numPrecision = Integer.valueOf(properties.getProperty("numPrecision", "2"));
+        minLimitPriceOrderNum = Double.valueOf(properties.getProperty("minLimitPriceOrderNum", "3.01"));
     }
 
     public static BigDecimal getBigDecimal(double value, int scale) {
@@ -785,6 +785,7 @@ public class FcoinUtils {
         //getBalance();
         //getPriceInfo("ftusdt");
         new FcoinUtils().ftusdt3("ftusdt", "ft", "usdt", 0.01);
+        //FcoinUtils.sell("ftusdt", "limit", new BigDecimal("3.35"), new BigDecimal("0.404247"));//此处不需要重试，让上次去判断余额后重新平衡
 
         //new FcoinUtils().getNotTradeOrders("ftusdt", "0", "100");
     }
