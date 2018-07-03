@@ -33,26 +33,27 @@ public class KLineTask {
                 String baseCurrency = symbol.getBaseCurrency();
                 String quotaCurrency = symbol.getQuoteCurrency();
                 List<HuobiKLineData> list = client.kline(baseCurrency + quotaCurrency, "1min", 1);
-                for (HuobiKLineData data : list) {
-                    CurrencyKline kline = CurrencyKline.builder().klineTime(new Date(data.getId() * 1000))
-                            .amount(new BigDecimal(data.getAmount()))
-                            .count(data.getCount())
-                            .baseCurrency(baseCurrency)
-                            .quotaCurrency(quotaCurrency)
-                            .open(new BigDecimal(data.getOpen()))
-                            .close(new BigDecimal(data.getOpen()))
-                            .high(new BigDecimal(data.getOpen()))
-                            .low(new BigDecimal(data.getOpen()))
-                            .vol(new BigDecimal(data.getVol()))
-                            .site("huobi")
-                            .build();
-                    try {
-                        currencyKlineMapper.insert(kline);
-                    } catch (Exception e) {
-                        log.error("kline error,{}-{}--",baseCurrency,quotaCurrency,e);
-                    }
+                try {
+                    for (HuobiKLineData data : list) {
+                        CurrencyKline kline = CurrencyKline.builder().klineTime(new Date(data.getId() * 1000))
+                                .amount(new BigDecimal(data.getAmount()))
+                                .count(data.getCount())
+                                .baseCurrency(baseCurrency)
+                                .quotaCurrency(quotaCurrency)
+                                .open(new BigDecimal(data.getOpen()))
+                                .close(new BigDecimal(data.getOpen()))
+                                .high(new BigDecimal(data.getOpen()))
+                                .low(new BigDecimal(data.getOpen()))
+                                .vol(new BigDecimal(data.getVol()))
+                                .site("huobi")
+                                .build();
+                        log.info("{}-{}--,{}", baseCurrency, quotaCurrency, data);
 
-                    log.info("{}-{}--,{}",baseCurrency,quotaCurrency, data);
+
+                        currencyKlineMapper.insert(kline);
+                    }
+                } catch (Exception e) {
+                    log.error("kline error,{}-{}--",baseCurrency,quotaCurrency,e);
                 }
             }
 
