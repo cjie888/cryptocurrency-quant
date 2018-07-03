@@ -32,8 +32,8 @@ public class KLineTask {
             for (HuobiSymbol symbol : symbols) {
                 String baseCurrency = symbol.getBaseCurrency();
                 String quotaCurrency = symbol.getQuoteCurrency();
-                List<HuobiKLineData> list = client.kline(baseCurrency + quotaCurrency, "1min", 1);
                 try {
+                    List<HuobiKLineData> list = client.kline(baseCurrency + quotaCurrency, "1min", 1);
                     for (HuobiKLineData data : list) {
                         CurrencyKline kline = CurrencyKline.builder().klineTime(new Date(data.getId() * 1000))
                                 .amount(new BigDecimal(data.getAmount()))
