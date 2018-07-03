@@ -751,7 +751,7 @@ public class FcoinUtils {
         if (allAsset/2 - ftBalance.getBalance() * marketPrice  > allAsset * increment) {
             BigDecimal amount = new BigDecimal(allAsset/2-ftBalance.getBalance()* marketPrice).setScale(numPrecision, BigDecimal.ROUND_FLOOR);
             //买入
-            if (amount.doubleValue() - minLimitPriceOrderNum < 0) {
+            if (amount.doubleValue() - marketPrice * minLimitPriceOrderNum < 0) {
                 logger.info("小于最小限价数量");
             } else {
                 buy(symbol, "limit",  amount, getMarketPrice(marketPrice));//此处不需要重试，让上次去判断余额后重新平衡
@@ -765,7 +765,7 @@ public class FcoinUtils {
         if (ftBalance.getBalance() * marketPrice - allAsset/2 > allAsset * increment) {
             //卖出
             BigDecimal amount = new BigDecimal(ftBalance.getBalance()* marketPrice-allAsset/2).setScale(numPrecision, BigDecimal.ROUND_FLOOR);
-            if (amount.doubleValue() - minLimitPriceOrderNum < 0) {
+            if (amount.doubleValue() - marketPrice * minLimitPriceOrderNum < 0) {
                 logger.info("小于最小限价数量");
             } else {
                 sell(symbol, "limit", amount, getMarketPrice(marketPrice));//此处不需要重试，让上次去判断余额后重新平衡
