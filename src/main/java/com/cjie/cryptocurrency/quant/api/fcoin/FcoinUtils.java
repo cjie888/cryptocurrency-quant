@@ -3,7 +3,9 @@ package com.cjie.cryptocurrency.quant.api.fcoin;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.cjie.cryptocurrency.quant.mapper.CurrencyOrderMapper;
 import com.cjie.cryptocurrency.quant.mapper.CurrencyPriceMapper;
+import com.cjie.cryptocurrency.quant.model.CurrencyOrder;
 import com.cjie.cryptocurrency.quant.model.CurrencyPrice;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,6 +53,9 @@ public class FcoinUtils {
 
     @Autowired
     private CurrencyPriceMapper currencyPriceMapper;
+
+    @Autowired
+    private CurrencyOrderMapper currencyOrderMapper;
 
     static {
         Properties properties = null;
@@ -112,13 +117,13 @@ public class FcoinUtils {
         return response.getBody();
     }
 
-    public static void buy(String symbol, String type, BigDecimal amount, BigDecimal marketPrice) throws Exception {
+    public void buy(String symbol, String type, BigDecimal amount, BigDecimal marketPrice) throws Exception {
         BigDecimal maxNumDeci = getNum(maxNum);
         while (amount.doubleValue() > 0) {
             if (amount.compareTo(maxNumDeci) > 0) {
-                subBuy(maxNumDeci.toString(), marketPrice.toString(), symbol, type);
+                subBuy(maxNumDeci.toString(), marketPrice.toString(), symbol, type, marketPrice.toPlainString());
             } else {
-                subBuy(amount.toString(), marketPrice.toString(), symbol, type);
+                subBuy(amount.toString(), marketPrice.toString(), symbol, type, marketPrice.toPlainString());
                 break;
             }
             amount = amount.subtract(maxNumDeci);
@@ -128,13 +133,13 @@ public class FcoinUtils {
 
     }
 
-    public static void sell(String symbol, String type, BigDecimal amount, BigDecimal marketPrice) throws Exception {
+    public void sell(String symbol, String type, BigDecimal amount, BigDecimal marketPrice) throws Exception {
         BigDecimal maxNumDeci = getNum(maxNum);
         while (amount.doubleValue() > 0) {
             if (amount.compareTo(maxNumDeci) > 0) {
-                subSell(maxNumDeci.toString(), marketPrice.toString(), symbol, type);
+                subSell(maxNumDeci.toString(), marketPrice.toString(), symbol, type, marketPrice.toPlainString());
             } else {
-                subSell(amount.toString(), marketPrice.toString(), symbol, type);
+                subSell(amount.toString(), marketPrice.toString(), symbol, type, marketPrice.toPlainString());
                 break;
             }
             amount = amount.subtract(maxNumDeci);
@@ -143,15 +148,15 @@ public class FcoinUtils {
         }
     }
 
-    public static void buyNotLimit(String symbol, String type, BigDecimal amount, BigDecimal marketPrice) throws Exception {
-        subBuy(amount.toString(), marketPrice.toString(), symbol, type);
+    public void buyNotLimit(String symbol, String type, BigDecimal amount, BigDecimal marketPrice) throws Exception {
+        subBuy(amount.toString(), marketPrice.toString(), symbol, type, marketPrice.toPlainString());
     }
 
-    public static void sellNotLimit(String symbol, String type, BigDecimal amount, BigDecimal marketPrice) throws Exception {
-        subSell(amount.toString(), marketPrice.toString(), symbol, type);
+    public void sellNotLimit(String symbol, String type, BigDecimal amount, BigDecimal marketPrice) throws Exception {
+        subSell(amount.toString(), marketPrice.toString(), symbol, type, marketPrice.toPlainString());
     }
 
-    private static boolean createOrder(String amount, String price, String side, String symbol, String type) throws Exception {
+    private boolean createOrder(String amount, String price, String side, String symbol, String type, String marketPrice) throws Exception {
         String url = "https://api.fcoin.com/v2/orders";
         Long timeStamp = System.currentTimeMillis();
         HttpHeaders headers = new HttpHeaders();
@@ -197,6 +202,17 @@ public class FcoinUtils {
         }
         if (!StringUtils.isEmpty(response.getBody())) {
             String data = JSON.parseObject(response.getBody()).getString("data");
+            CurrencyOrder currencyOrder = CurrencyOrder.builder()
+                    .orderId(data)
+                    .amount(new BigDecimal(amount))
+                    .orderPrice(new BigDecimal(price))
+                    .createTime(new Date())
+                    .markePrice(new BigDecimal(marketPrice))
+                    .type("buy".equals(side) ? 1 : 2)
+                    .site("fcoin")
+                    .baseCurrency("ft")
+                    .quotaCurrency("usdt").build();
+            currencyOrderMapper.insert(currencyOrder);
             if (StringUtils.isEmpty(data)) {
                 throw new Exception("订单创建失败：" + type);
             }
@@ -204,15 +220,15 @@ public class FcoinUtils {
         return true;
     }
 
-    public static void subSell(String amount, String price, String symbol, String type) throws Exception {
+    public void subSell(String amount, String price, String symbol, String type, String marketPrice) throws Exception {
         tradeRetryTemplate.execute(retryContext ->
-                createOrder(amount, price, "sell", symbol, type)
+                createOrder(amount, price, "sell", symbol, type, marketPrice)
         );
     }
 
-    public static void subBuy(String amount, String price, String symbol, String type) throws Exception {
+    public void subBuy(String amount, String price, String symbol, String type, String marketPrice) throws Exception {
         tradeRetryTemplate.execute(retryContext ->
-                createOrder(amount, price, "buy", symbol, type)
+                createOrder(amount, price, "buy", symbol, type, marketPrice)
         );
     }
 
@@ -242,7 +258,7 @@ public class FcoinUtils {
                 .quotaCurrency(quotaCurrency)
                 .site("fcoin")
                 .build();
-        //currencyPriceMapper.insert(currencyPrice);
+        currencyPriceMapper.insert(currencyPrice);
 
         double hight_24H = Double.valueOf(jsonArray.get(7).toString());
         double low_24H = Double.valueOf(jsonArray.get(8).toString());
@@ -754,7 +770,7 @@ public class FcoinUtils {
             if (amount.doubleValue() - marketPrice * minLimitPriceOrderNum < 0) {
                 logger.info("小于最小限价数量");
             } else {
-                        buy(symbol, "limit",  amount.divide(new BigDecimal(marketPrice), numPrecision, BigDecimal.ROUND_DOWN), getMarketPrice(marketPrice));//此处不需要重试，让上次去判断余额后重新平衡
+                buy(symbol, "limit",  amount.divide(new BigDecimal(marketPrice), numPrecision, BigDecimal.ROUND_DOWN), getMarketPrice(marketPrice));//此处不需要重试，让上次去判断余额后重新平衡
             }
             logger.info("ftbalance:{}, usdtbalance:{}", ftBalance.getBalance() + amount.doubleValue(),
                     usdtBalance.getBalance() + amount.doubleValue() * getMarketPrice(marketPrice).doubleValue());

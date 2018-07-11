@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cjie.cryptocurrency.quant.mapper.CurrencyOrderMapper">
+  <resultMap id="BaseResultMap" type="com.cjie.cryptocurrency.quant.model.CurrencyOrder">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="order_id" jdbcType="VARCHAR" property="orderId" />
+    <result column="base_currency" jdbcType="VARCHAR" property="baseCurrency" />
+    <result column="quota_currency" jdbcType="VARCHAR" property="quotaCurrency" />
+    <result column="order_price" jdbcType="DECIMAL" property="orderPrice" />
+    <result column="marke_price" jdbcType="DECIMAL" property="markePrice" />
+    <result column="amount" jdbcType="DECIMAL" property="amount" />
+    <result column="site" jdbcType="VARCHAR" property="site" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="type" jdbcType="TINYINT" property="type" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, order_id, base_currency, quota_currency, order_price, marke_price, amount, site, 
+    create_time, type
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from currency_order
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from currency_order
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.cjie.cryptocurrency.quant.model.CurrencyOrder">
+    insert into currency_order (id, order_id, base_currency, 
+      quota_currency, order_price, marke_price, 
+      amount, site, create_time, 
+      type)
+    values (#{id,jdbcType=INTEGER}, #{orderId,jdbcType=VARCHAR}, #{baseCurrency,jdbcType=VARCHAR}, 
+      #{quotaCurrency,jdbcType=VARCHAR}, #{orderPrice,jdbcType=DECIMAL}, #{markePrice,jdbcType=DECIMAL}, 
+      #{amount,jdbcType=DECIMAL}, #{site,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{type,jdbcType=TINYINT})
+  </insert>
+  <insert id="insertSelective" parameterType="com.cjie.cryptocurrency.quant.model.CurrencyOrder">
+    insert into currency_order
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="orderId != null">
+        order_id,
+      </if>
+      <if test="baseCurrency != null">
+        base_currency,
+      </if>
+      <if test="quotaCurrency != null">
+        quota_currency,
+      </if>
+      <if test="orderPrice != null">
+        order_price,
+      </if>
+      <if test="markePrice != null">
+        marke_price,
+      </if>
+      <if test="amount != null">
+        amount,
+      </if>
+      <if test="site != null">
+        site,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="type != null">
+        type,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="orderId != null">
+        #{orderId,jdbcType=VARCHAR},
+      </if>
+      <if test="baseCurrency != null">
+        #{baseCurrency,jdbcType=VARCHAR},
+      </if>
+      <if test="quotaCurrency != null">
+        #{quotaCurrency,jdbcType=VARCHAR},
+      </if>
+      <if test="orderPrice != null">
+        #{orderPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="markePrice != null">
+        #{markePrice,jdbcType=DECIMAL},
+      </if>
+      <if test="amount != null">
+        #{amount,jdbcType=DECIMAL},
+      </if>
+      <if test="site != null">
+        #{site,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="type != null">
+        #{type,jdbcType=TINYINT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.cjie.cryptocurrency.quant.model.CurrencyOrder">
+    update currency_order
+    <set>
+      <if test="orderId != null">
+        order_id = #{orderId,jdbcType=VARCHAR},
+      </if>
+      <if test="baseCurrency != null">
+        base_currency = #{baseCurrency,jdbcType=VARCHAR},
+      </if>
+      <if test="quotaCurrency != null">
+        quota_currency = #{quotaCurrency,jdbcType=VARCHAR},
+      </if>
+      <if test="orderPrice != null">
+        order_price = #{orderPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="markePrice != null">
+        marke_price = #{markePrice,jdbcType=DECIMAL},
+      </if>
+      <if test="amount != null">
+        amount = #{amount,jdbcType=DECIMAL},
+      </if>
+      <if test="site != null">
+        site = #{site,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="type != null">
+        type = #{type,jdbcType=TINYINT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.cjie.cryptocurrency.quant.model.CurrencyOrder">
+    update currency_order
+    set order_id = #{orderId,jdbcType=VARCHAR},
+      base_currency = #{baseCurrency,jdbcType=VARCHAR},
+      quota_currency = #{quotaCurrency,jdbcType=VARCHAR},
+      order_price = #{orderPrice,jdbcType=DECIMAL},
+      marke_price = #{markePrice,jdbcType=DECIMAL},
+      amount = #{amount,jdbcType=DECIMAL},
+      site = #{site,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      type = #{type,jdbcType=TINYINT}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>
