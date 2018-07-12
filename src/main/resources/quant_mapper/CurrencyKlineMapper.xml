@@ -25,6 +25,16 @@
     from currency_kline
     where id = #{id,jdbcType=BIGINT}
   </select>
+  <select id="getCurrencyLine" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from currency_kline
+    where kline_time = #{klineTime,jdbcType=BIGINT}
+    and base_currency = #{baseCurrency,jdbcType=VARCHAR}
+    and quota_currency = #{quotaCurrency,jdbcType=VARCHAR}
+    and site = #{site,jdbcType=VARCHAR}
+
+  </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
     delete from currency_kline
     where id = #{id,jdbcType=BIGINT}
