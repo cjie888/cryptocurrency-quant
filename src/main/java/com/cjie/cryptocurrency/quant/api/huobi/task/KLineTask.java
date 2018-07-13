@@ -25,6 +25,65 @@ public class KLineTask {
 
     @Scheduled(cron = "5 * * * * ?")
     public void kline() throws Exception {
+        log.info("get huobi 1min kline begin");
+        getKline("1min", "");
+        log.info("get huobi 1min kline end");
+    }
+
+    @Scheduled(cron = "4 */5 * * * ?")
+    public void kline5m() throws Exception {
+        log.info("get huobi 5min kline begin");
+        getKline("5min", "_5m");
+        log.info("get huobi 5min kline end");
+
+    }
+    @Scheduled(cron = "6 */9 * * * ?")
+    public void kline15m() throws Exception {
+        log.info("get huobi 15min kline begin");
+        getKline("15min", "_15m");
+        log.info("get huobi 15min kline end");
+
+    }
+
+    @Scheduled(cron = "6 */21 * * * ?")
+    public void kline30m() throws Exception {
+        log.info("get huobi 30min kline begin");
+        getKline("30min", "_30m");
+        log.info("get huobi 30min kline end");
+
+    }
+
+    @Scheduled(cron = "8 */42 * * * ?")
+    public void kline60m() throws Exception {
+        log.info("get huobi 60min kline begin");
+        getKline("60min", "_60m");
+        log.info("get huobi 65min kline end");
+
+    }
+    @Scheduled(cron = "8 7 */9 * * ?")
+    public void kline1month() throws Exception {
+        log.info("get huobi 1month kline begin");
+        getKline("1mon", "_1m");
+        log.info("get huobi 1mon kline end");
+
+    }
+
+    @Scheduled(cron = "8 13 */2 * * ?")
+    public void kline1day() throws Exception {
+        log.info("get huobi 1month kline begin");
+        getKline("1day", "_1d");
+        log.info("get huobi 1mon kline end");
+
+    }
+
+    @Scheduled(cron = "8 17 */6 * * ?")
+    public void kline1week() throws Exception {
+        log.info("get huobi 1week kline begin");
+        getKline("1week", "_1w");
+        log.info("get huobi 1week kline end");
+
+    }
+    private void getKline(String type, String suffix) {
         try {
             HuobiApiClientFactory factory = HuobiApiClientFactory.newInstance();
             HuobiApiRestClient client = factory.newRestClient();
@@ -33,10 +92,10 @@ public class KLineTask {
                 String baseCurrency = symbol.getBaseCurrency();
                 String quotaCurrency = symbol.getQuoteCurrency();
                 try {
-                    List<HuobiKLineData> list = client.kline(baseCurrency + quotaCurrency, "1min", 10);
+                    List<HuobiKLineData> list = client.kline(baseCurrency + quotaCurrency, type, 10);
                     for (HuobiKLineData data : list) {
                         if (currencyKlineMapper.getCurrencyLine(new Date(data.getId() * 1000),
-                                baseCurrency, quotaCurrency, "huobi") != null) {
+                                baseCurrency, quotaCurrency, "huobi", suffix) != null) {
                             continue;
                         }
                         CurrencyKline kline = CurrencyKline.builder().klineTime(new Date(data.getId() * 1000))
@@ -50,6 +109,7 @@ public class KLineTask {
                                 .low(new BigDecimal(data.getOpen()))
                                 .vol(new BigDecimal(data.getVol()))
                                 .site("huobi")
+                                .suffix(suffix)
                                 .build();
                         log.info("{}-{}--,{}", baseCurrency, quotaCurrency, data);
 

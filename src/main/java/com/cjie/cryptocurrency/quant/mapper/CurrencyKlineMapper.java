@@ -6,13 +6,13 @@ import org.apache.ibatis.annotations.Param;
 import java.util.Date;
 
 public interface CurrencyKlineMapper {
-    int deleteByPrimaryKey(Long id);
+    int deleteByPrimaryKey(@Param("id") Long idc);
 
     int insert(CurrencyKline record);
 
     int insertSelective(CurrencyKline record);
 
-    CurrencyKline selectByPrimaryKey(Long id);
+    CurrencyKline selectByPrimaryKey(@Param("id") Long id, @Param("suffix") String suffix);
 
     int updateByPrimaryKeySelective(CurrencyKline record);
 
@@ -20,5 +20,7 @@ public interface CurrencyKlineMapper {
 
     CurrencyKline getCurrencyLine(@Param("klineTime") Date klineTime,
                                   @Param("baseCurrency") String baseCurrency,
-                                  @Param("quotaCurrency") String quotaCurrency,@Param("site") String site);
+                                  @Param("quotaCurrency") String quotaCurrency,
+                                  @Param("site") String site,
+                                  @Param("suffix") String suffix);
 }

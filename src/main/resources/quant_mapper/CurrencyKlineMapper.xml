@@ -22,13 +22,13 @@
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
-    from currency_kline
+    from currency_kline${suffix}
     where id = #{id,jdbcType=BIGINT}
   </select>
   <select id="getCurrencyLine" resultMap="BaseResultMap">
     select
     <include refid="Base_Column_List" />
-    from currency_kline
+    from currency_kline${suffix}
     where kline_time = #{klineTime,jdbcType=BIGINT}
     and base_currency = #{baseCurrency,jdbcType=VARCHAR}
     and quota_currency = #{quotaCurrency,jdbcType=VARCHAR}
@@ -36,11 +36,11 @@
 
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
-    delete from currency_kline
+    delete from currency_kline${suffix}
     where id = #{id,jdbcType=BIGINT}
   </delete>
   <insert id="insert" parameterType="com.cjie.cryptocurrency.quant.model.CurrencyKline">
-    insert into currency_kline (id, kline_time, base_currency, 
+    insert into currency_kline${suffix} (id, kline_time, base_currency,
       quota_currency, amount, count, 
       open, close, low, high, 
       vol, site)
@@ -50,7 +50,7 @@
       #{vol,jdbcType=DECIMAL}, #{site,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.cjie.cryptocurrency.quant.model.CurrencyKline">
-    insert into currency_kline
+    insert into currency_kline${suffix}
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">
         id,
@@ -129,7 +129,7 @@
     </trim>
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="com.cjie.cryptocurrency.quant.model.CurrencyKline">
-    update currency_kline
+    update currency_kline${suffix}
     <set>
       <if test="klineTime != null">
         kline_time = #{klineTime,jdbcType=TIMESTAMP},
@@ -168,7 +168,7 @@
     where id = #{id,jdbcType=BIGINT}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.cjie.cryptocurrency.quant.model.CurrencyKline">
-    update currency_kline
+    update currency_kline${suffix}
     set kline_time = #{klineTime,jdbcType=TIMESTAMP},
       base_currency = #{baseCurrency,jdbcType=VARCHAR},
       quota_currency = #{quotaCurrency,jdbcType=VARCHAR},

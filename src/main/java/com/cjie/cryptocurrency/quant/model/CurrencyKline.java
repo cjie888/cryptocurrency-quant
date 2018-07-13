@@ -34,4 +34,6 @@ public class CurrencyKline {
 
     private String site;
 
+    private String suffix = "";
+
 }
