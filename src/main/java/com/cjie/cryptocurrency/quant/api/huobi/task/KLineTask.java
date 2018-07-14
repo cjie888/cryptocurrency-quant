@@ -4,8 +4,9 @@ package com.cjie.cryptocurrency.quant.api.huobi.task;
 import com.cjie.cryptocurrency.quant.api.huobi.HuobiApiClientFactory;
 import com.cjie.cryptocurrency.quant.api.huobi.HuobiApiRestClient;
 import com.cjie.cryptocurrency.quant.api.huobi.domain.HuobiKLineData;
-import com.cjie.cryptocurrency.quant.api.huobi.domain.HuobiSymbol;
 import com.cjie.cryptocurrency.quant.mapper.CurrencyKlineMapper;
+import com.cjie.cryptocurrency.quant.mapper.CurrencyPairMapper;
+import com.cjie.cryptocurrency.quant.model.CurrencyPair;
 import com.cjie.cryptocurrency.quant.model.CurrencyKline;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,9 @@ public class KLineTask {
 
     @Autowired
     private CurrencyKlineMapper currencyKlineMapper;
+
+    @Autowired
+    private CurrencyPairMapper currencyPairMapper;
 
     @Scheduled(cron = "5 * * * * ?")
     public void kline() throws Exception {
@@ -57,7 +61,7 @@ public class KLineTask {
     public void kline60m() throws Exception {
         log.info("get huobi 60min kline begin");
         getKline("60min", "_60m");
-        log.info("get huobi 65min kline end");
+        log.info("get huobi 60min kline end");
 
     }
     @Scheduled(cron = "8 7 */9 * * ?")
@@ -70,9 +74,9 @@ public class KLineTask {
 
     @Scheduled(cron = "8 13 */2 * * ?")
     public void kline1day() throws Exception {
-        log.info("get huobi 1month kline begin");
+        log.info("get huobi 1day kline begin");
         getKline("1day", "_1d");
-        log.info("get huobi 1mon kline end");
+        log.info("get huobi 1day kline end");
 
     }
 
@@ -83,14 +87,21 @@ public class KLineTask {
         log.info("get huobi 1week kline end");
 
     }
+    @Scheduled(cron = "8 22 4 */5 * ?")
+    public void kline1eya() throws Exception {
+        log.info("get huobi 1yeay kline begin");
+        getKline("1year", "_1y");
+        log.info("get huobi 1year kline end");
+
+    }
     private void getKline(String type, String suffix) {
         try {
             HuobiApiClientFactory factory = HuobiApiClientFactory.newInstance();
             HuobiApiRestClient client = factory.newRestClient();
-            List<HuobiSymbol> symbols  = client.symbols();
-            for (HuobiSymbol symbol : symbols) {
+            List<CurrencyPair> currencies = currencyPairMapper.getAllCurrency("huobi");
+            for (CurrencyPair symbol : currencies) {
                 String baseCurrency = symbol.getBaseCurrency();
-                String quotaCurrency = symbol.getQuoteCurrency();
+                String quotaCurrency = symbol.getQuotaCurrency();
                 try {
                     List<HuobiKLineData> list = client.kline(baseCurrency + quotaCurrency, type, 10);
                     for (HuobiKLineData data : list) {
@@ -111,13 +122,13 @@ public class KLineTask {
                                 .site("huobi")
                                 .suffix(suffix)
                                 .build();
-                        log.info("{}-{}--,{}", baseCurrency, quotaCurrency, data);
+                        log.info("{}-{}-{}--,{}", type, baseCurrency, quotaCurrency, data);
 
 
                         currencyKlineMapper.insert(kline);
                     }
                 } catch (Exception e) {
-                    log.error("kline error,{}-{}--",baseCurrency,quotaCurrency,e);
+                    log.error("kline error,{}-{}-{}--",type,baseCurrency,quotaCurrency,e);
                 }
             }
 

@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cjie.cryptocurrency.quant.mapper.CurrencyPairMapper">
+  <resultMap id="BaseResultMap" type="com.cjie.cryptocurrency.quant.model.CurrencyPair">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="base_currency" jdbcType="VARCHAR" property="baseCurrency" />
+    <result column="quota_currency" jdbcType="VARCHAR" property="quotaCurrency" />
+    <result column="site" jdbcType="VARCHAR" property="site" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, create_time, base_currency, quota_currency, site
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from currency_pair
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <select id="getAllCurrency" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from currency_pair
+    where site = #{site,jdbcType=VARCHAR}
+  </select>
+  <select id="getCurrencyPair" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from currency_pair
+    where base_currency = #{baseCurrency,jdbcType=VARCHAR}
+    and quota_currency = #{quotaCurrency,jdbcType=VARCHAR}
+    and site = #{site,jdbcType=VARCHAR}
+
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from currency_pair
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.cjie.cryptocurrency.quant.model.CurrencyPair">
+    insert into currency_pair (id, create_time, base_currency,
+      quota_currency, site)
+    values (#{id,jdbcType=BIGINT}, #{createTime,jdbcType=TIMESTAMP}, #{baseCurrency,jdbcType=VARCHAR},
+      #{quotaCurrency,jdbcType=VARCHAR}, #{site,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.cjie.cryptocurrency.quant.model.CurrencyPair">
+    insert into currency_pair
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="baseCurrency != null">
+        base_currency,
+      </if>
+      <if test="quotaCurrency != null">
+        quota_currency,
+      </if>
+      <if test="site != null">
+        site,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="baseCurrency != null">
+        #{baseCurrency,jdbcType=VARCHAR},
+      </if>
+      <if test="quotaCurrency != null">
+        #{quotaCurrency,jdbcType=VARCHAR},
+      </if>
+      <if test="site != null">
+        #{site,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.cjie.cryptocurrency.quant.model.CurrencyPair">
+    update currency_pair
+    <set>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="baseCurrency != null">
+        base_currency = #{baseCurrency,jdbcType=VARCHAR},
+      </if>
+      <if test="quotaCurrency != null">
+        quota_currency = #{quotaCurrency,jdbcType=VARCHAR},
+      </if>
+      <if test="site != null">
+        site = #{site,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.cjie.cryptocurrency.quant.model.CurrencyPair">
+    update currency_pair
+    set create_time = #{createTime,jdbcType=TIMESTAMP},
+      base_currency = #{baseCurrency,jdbcType=VARCHAR},
+      quota_currency = #{quotaCurrency,jdbcType=VARCHAR},
+      site = #{site,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>
