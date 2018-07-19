@@ -3,8 +3,10 @@ package com.cjie.cryptocurrency.quant.api.fcoin;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.cjie.cryptocurrency.quant.mapper.CurrencyBalanceLogMapper;
 import com.cjie.cryptocurrency.quant.mapper.CurrencyOrderMapper;
 import com.cjie.cryptocurrency.quant.mapper.CurrencyPriceMapper;
+import com.cjie.cryptocurrency.quant.model.CurrencyBalanceLog;
 import com.cjie.cryptocurrency.quant.model.CurrencyOrder;
 import com.cjie.cryptocurrency.quant.model.CurrencyPrice;
 import org.slf4j.Logger;
@@ -56,6 +58,9 @@ public class FcoinUtils {
 
     @Autowired
     private CurrencyOrderMapper currencyOrderMapper;
+
+    @Autowired
+    private CurrencyBalanceLogMapper currencyBalanceLogMapper;
 
     static {
         Properties properties = null;
@@ -763,14 +768,19 @@ public class FcoinUtils {
         logger.info("ftbalance:{}, usdtbalance:{}, allAsset:{}, asset/2:{}, ftbalance-usdt:{}", ftBalance.getBalance(), usdtBalance.getBalance(),
                 allAsset, allAsset/2, ftBalance.getBalance() * marketPrice );
 
-
+        BigDecimal usdtChange = null;
+        BigDecimal ftChange = null;
         if (allAsset/2 - ftBalance.getBalance() * marketPrice  > allAsset * increment) {
             BigDecimal amount = new BigDecimal(allAsset/2-ftBalance.getBalance()* marketPrice).setScale(numPrecision, BigDecimal.ROUND_FLOOR);
             //买入
             if (amount.doubleValue() - marketPrice * minLimitPriceOrderNum < 0) {
                 logger.info("小于最小限价数量");
             } else {
-                buy(symbol, "limit",  amount.divide(new BigDecimal(marketPrice), numPrecision, BigDecimal.ROUND_DOWN), getMarketPrice(marketPrice));//此处不需要重试，让上次去判断余额后重新平衡
+                BigDecimal ftamount = amount.divide(new BigDecimal(marketPrice),
+                        numPrecision, BigDecimal.ROUND_DOWN);
+                usdtChange = ftamount.multiply(getMarketPrice(marketPrice)).negate();
+                ftChange = ftamount;
+                buy(symbol, "limit", ftamount , getMarketPrice(marketPrice));//此处不需要重试，让上次去判断余额后重新平衡
             }
             logger.info("ftbalance:{}, usdtbalance:{}", ftBalance.getBalance() + amount.doubleValue(),
                     usdtBalance.getBalance() + amount.doubleValue() * getMarketPrice(marketPrice).doubleValue());
@@ -784,14 +794,33 @@ public class FcoinUtils {
             if (amount.doubleValue() - marketPrice * minLimitPriceOrderNum < 0) {
                 logger.info("小于最小限价数量");
             } else {
-                sell(symbol, "limit", amount.divide(new BigDecimal(marketPrice), numPrecision, BigDecimal.ROUND_DOWN), getMarketPrice(marketPrice));//此处不需要重试，让上次去判断余额后重新平衡
+                BigDecimal ftamount = amount.divide(new BigDecimal(marketPrice),
+                        numPrecision, BigDecimal.ROUND_DOWN);
+                usdtChange = ftamount.multiply(getMarketPrice(marketPrice));
+                ftChange = ftamount.negate();
+                sell(symbol, "limit", ftamount, getMarketPrice(marketPrice));//此处不需要重试，让上次去判断余额后重新平衡
 
             }
             logger.info("ftbalance:{}, usdtbalance:{}", ftBalance.getBalance() - amount.doubleValue(),
                     usdtBalance.getBalance() + amount.doubleValue() * getMarketPrice(marketPrice).doubleValue());
             logger.info("sell {}, price:{}", amount, marketPrice);
 
-
+        }
+        if (usdtChange != null && ftChange != null) {
+            CurrencyBalanceLog currencyBalanceLog = CurrencyBalanceLog.builder()
+                    .currency("usdt")
+                    .balance(usdtChange.add(BigDecimal.valueOf(usdtBalance.getBalance())).setScale(16))
+                    .site("fcoin")
+                    .createTime(new Date())
+                    .build();
+            currencyBalanceLogMapper.insert(currencyBalanceLog);
+            currencyBalanceLog = CurrencyBalanceLog.builder()
+                    .currency("ft")
+                    .balance(ftChange.add(BigDecimal.valueOf(ftBalance.getBalance())).setScale(16))
+                    .site("fcoin")
+                    .createTime(new Date())
+                    .build();
+            currencyBalanceLogMapper.insert(currencyBalanceLog);
         }
 
     }

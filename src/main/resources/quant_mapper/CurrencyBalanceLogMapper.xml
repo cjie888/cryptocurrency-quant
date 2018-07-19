@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cjie.cryptocurrency.quant.mapper.CurrencyBalanceLogMapper">
+  <resultMap id="BaseResultMap" type="com.cjie.cryptocurrency.quant.model.CurrencyBalanceLog">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="currency" jdbcType="VARCHAR" property="currency" />
+    <result column="balance" jdbcType="DECIMAL" property="balance" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="site" jdbcType="VARCHAR" property="site" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, currency, balance, create_time, site
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from currency_balance_log
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from currency_balance_log
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.cjie.cryptocurrency.quant.model.CurrencyBalanceLog">
+    insert into currency_balance_log (id, currency, balance, 
+      create_time, site)
+    values (#{id,jdbcType=BIGINT}, #{currency,jdbcType=VARCHAR}, #{balance,jdbcType=DECIMAL}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{site,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.cjie.cryptocurrency.quant.model.CurrencyBalanceLog">
+    insert into currency_balance_log
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="currency != null">
+        currency,
+      </if>
+      <if test="balance != null">
+        balance,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="site != null">
+        site,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="currency != null">
+        #{currency,jdbcType=VARCHAR},
+      </if>
+      <if test="balance != null">
+        #{balance,jdbcType=DECIMAL},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="site != null">
+        #{site,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.cjie.cryptocurrency.quant.model.CurrencyBalanceLog">
+    update currency_balance_log
+    <set>
+      <if test="currency != null">
+        currency = #{currency,jdbcType=VARCHAR},
+      </if>
+      <if test="balance != null">
+        balance = #{balance,jdbcType=DECIMAL},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="site != null">
+        site = #{site,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.cjie.cryptocurrency.quant.model.CurrencyBalanceLog">
+    update currency_balance_log
+    set currency = #{currency,jdbcType=VARCHAR},
+      balance = #{balance,jdbcType=DECIMAL},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      site = #{site,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

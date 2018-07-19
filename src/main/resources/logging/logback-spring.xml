@@ -82,7 +82,7 @@
     </logger>
 
     <logger name="com.cjie.cryptocurrency" level="INFO"/>
-    <logger name="org.mybatis" level="INFO"/>
+    <logger name="org.mybatis" level="DEBUG"/>
 
     <root level="${logging.level.default}">
         <appender-ref ref="ASYNC_FILE_ALL"/>
