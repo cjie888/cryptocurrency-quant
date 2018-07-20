@@ -23,4 +23,8 @@ public class CurrencyBalance {
 
     private String site;
 
+    private BigDecimal available;
+
+    private BigDecimal hold;
+
 }

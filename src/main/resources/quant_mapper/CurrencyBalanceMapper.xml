@@ -8,9 +8,11 @@
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="modify_time" jdbcType="TIMESTAMP" property="modifyTime" />
     <result column="site" jdbcType="VARCHAR" property="site" />
+    <result column="available" jdbcType="DECIMAL" property="available" />
+    <result column="hold" jdbcType="DECIMAL" property="hold" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, currency, balance, create_time, modify_time, site
+    id, currency, balance, create_time, modify_time, site, available, hold
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select 
@@ -18,17 +20,25 @@
     from currency_balance
     where id = #{id,jdbcType=BIGINT}
   </select>
+  <select id="getByCurrency" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from currency_balance
+    where currency = #{currency,jdbcType=VARCHAR}
+    and site = #{site,jdbcType=VARCHAR}
+
+  </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
     delete from currency_balance
     where id = #{id,jdbcType=BIGINT}
   </delete>
   <insert id="insert" parameterType="com.cjie.cryptocurrency.quant.model.CurrencyBalance">
     insert into currency_balance (id, currency, balance, 
-      create_time, modify_time, site
-      )
+      create_time, modify_time, site, 
+      available, hold)
     values (#{id,jdbcType=BIGINT}, #{currency,jdbcType=VARCHAR}, #{balance,jdbcType=DECIMAL}, 
-      #{createTime,jdbcType=TIMESTAMP}, #{modifyTime,jdbcType=TIMESTAMP}, #{site,jdbcType=VARCHAR}
-      )
+      #{createTime,jdbcType=TIMESTAMP}, #{modifyTime,jdbcType=TIMESTAMP}, #{site,jdbcType=VARCHAR}, 
+      #{available,jdbcType=DECIMAL}, #{hold,jdbcType=DECIMAL})
   </insert>
   <insert id="insertSelective" parameterType="com.cjie.cryptocurrency.quant.model.CurrencyBalance">
     insert into currency_balance
@@ -51,6 +61,12 @@
       <if test="site != null">
         site,
       </if>
+      <if test="available != null">
+        available,
+      </if>
+      <if test="hold != null">
+        hold,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="id != null">
@@ -70,6 +86,12 @@
       </if>
       <if test="site != null">
         #{site,jdbcType=VARCHAR},
+      </if>
+      <if test="available != null">
+        #{available,jdbcType=DECIMAL},
+      </if>
+      <if test="hold != null">
+        #{hold,jdbcType=DECIMAL},
       </if>
     </trim>
   </insert>
@@ -91,6 +113,12 @@
       <if test="site != null">
         site = #{site,jdbcType=VARCHAR},
       </if>
+      <if test="available != null">
+        available = #{available,jdbcType=DECIMAL},
+      </if>
+      <if test="hold != null">
+        hold = #{hold,jdbcType=DECIMAL},
+      </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
@@ -100,7 +128,10 @@
       balance = #{balance,jdbcType=DECIMAL},
       create_time = #{createTime,jdbcType=TIMESTAMP},
       modify_time = #{modifyTime,jdbcType=TIMESTAMP},
-      site = #{site,jdbcType=VARCHAR}
+      site = #{site,jdbcType=VARCHAR},
+      available = #{available,jdbcType=DECIMAL},
+      hold = #{hold,jdbcType=DECIMAL}
     where id = #{id,jdbcType=BIGINT}
   </update>
+  <cache />
 </mapper>
