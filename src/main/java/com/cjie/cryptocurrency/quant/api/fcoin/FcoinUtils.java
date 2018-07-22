@@ -745,6 +745,9 @@ public class FcoinUtils {
      * @throws Exception
      */
     public void  ftusdt3(String symbol, String ftName, String usdtName, double increment) throws Exception {
+
+        cancelOrders(getNotTradeOrders(symbol, "0", "100"));
+
         //查询余额
         String balance = null;
         try {

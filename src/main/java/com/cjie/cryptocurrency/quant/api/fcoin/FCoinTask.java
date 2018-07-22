@@ -42,7 +42,7 @@ public class FCoinTask {
     }
 
 
-    @Scheduled(cron = "*/3 * * * * ?")
+    @Scheduled(cron = "*/10 * * * * ?")
     public void mineCurrency3() throws JobExecutionException {
         try {
             //fcoinUtils.ftusdt1("ftusdt", "ft", "usdt",0);
