@@ -103,7 +103,7 @@ public class KLineTask {
                 String baseCurrency = symbol.getBaseCurrency();
                 String quotaCurrency = symbol.getQuotaCurrency();
                 try {
-                    List<HuobiKLineData> list = client.kline(baseCurrency + quotaCurrency, type, 10);
+                    List<HuobiKLineData> list = client.kline(baseCurrency + quotaCurrency, type, 5);
                     for (HuobiKLineData data : list) {
                         if (currencyKlineMapper.getCurrencyLine(new Date(data.getId() * 1000),
                                 baseCurrency, quotaCurrency, "huobi", suffix) != null) {
