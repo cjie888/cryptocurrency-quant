@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cjie.cryptocurrency.quant.mapper.APIKeyMapper">
+  <resultMap id="BaseResultMap" type="com.cjie.cryptocurrency.quant.model.APIKey">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="site" jdbcType="VARCHAR" property="site" />
+    <result column="api_key" jdbcType="VARCHAR" property="apiKey" />
+    <result column="api_secret" jdbcType="VARCHAR" property="apiSecret" />
+    <result column="api_passphrase" jdbcType="VARCHAR" property="apiPassphrase" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="domain" jdbcType="VARCHAR" property="domain" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, site, api_key, api_secret, api_passphrase, create_time, domain
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from api_key
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <select id="selectBySite" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from api_key
+    where site = #{site,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from api_key
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.cjie.cryptocurrency.quant.model.APIKey">
+    insert into api_key (id, site, api_key, 
+      api_secret, api_passphrase, create_time, 
+      domain)
+    values (#{id,jdbcType=BIGINT}, #{site,jdbcType=VARCHAR}, #{apiKey,jdbcType=VARCHAR}, 
+      #{apiSecret,jdbcType=VARCHAR}, #{apiPassphrase,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{domain,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.cjie.cryptocurrency.quant.model.APIKey">
+    insert into api_key
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="site != null">
+        site,
+      </if>
+      <if test="apiKey != null">
+        api_key,
+      </if>
+      <if test="apiSecret != null">
+        api_secret,
+      </if>
+      <if test="apiPassphrase != null">
+        api_passphrase,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="domain != null">
+        domain,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="site != null">
+        #{site,jdbcType=VARCHAR},
+      </if>
+      <if test="apiKey != null">
+        #{apiKey,jdbcType=VARCHAR},
+      </if>
+      <if test="apiSecret != null">
+        #{apiSecret,jdbcType=VARCHAR},
+      </if>
+      <if test="apiPassphrase != null">
+        #{apiPassphrase,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="domain != null">
+        #{domain,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.cjie.cryptocurrency.quant.model.APIKey">
+    update api_key
+    <set>
+      <if test="site != null">
+        site = #{site,jdbcType=VARCHAR},
+      </if>
+      <if test="apiKey != null">
+        api_key = #{apiKey,jdbcType=VARCHAR},
+      </if>
+      <if test="apiSecret != null">
+        api_secret = #{apiSecret,jdbcType=VARCHAR},
+      </if>
+      <if test="apiPassphrase != null">
+        api_passphrase = #{apiPassphrase,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="domain != null">
+        domain = #{domain,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.cjie.cryptocurrency.quant.model.APIKey">
+    update api_key
+    set site = #{site,jdbcType=VARCHAR},
+      api_key = #{apiKey,jdbcType=VARCHAR},
+      api_secret = #{apiSecret,jdbcType=VARCHAR},
+      api_passphrase = #{apiPassphrase,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      domain = #{domain,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

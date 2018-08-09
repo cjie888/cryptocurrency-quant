@@ -786,7 +786,7 @@ public class FcoinUtils {
                 buy(symbol, "limit", ftamount , getMarketPrice(marketPrice));//此处不需要重试，让上次去判断余额后重新平衡
             }
             logger.info("ftbalance:{}, usdtbalance:{}", ftBalance.getBalance() + amount.doubleValue(),
-                    usdtBalance.getBalance() + amount.doubleValue() * getMarketPrice(marketPrice).doubleValue());
+                    usdtBalance.getBalance() - amount.doubleValue() * getMarketPrice(marketPrice).doubleValue());
             logger.info("buy {}, price:{}", amount, marketPrice);
         }
 
