@@ -23,8 +23,8 @@ public class OkexCurrencyPairTask {
     @Autowired
     private CurrencyPairMapper currencyPairMapper;
 
-    //@Scheduled(cron = "7 23 */2 * * ?")
-    @Scheduled(cron = "1 * * * * ?")
+    @Scheduled(cron = "17 25 */2 * * ?")
+    //@Scheduled(cron = "1 * * * * ?")
     public void currencyPair() throws Exception {
         log.info("get okex currency pair begin");
         List<Product> products = spotProductAPIService.getProducts("okex");
