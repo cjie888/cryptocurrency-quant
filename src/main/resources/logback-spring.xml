@@ -1,21 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="logback.xsd">
+<configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="logging/logback.xsd">
     <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
-    <springProperty scope="context" name="logging.path" source="logging.path"/>
-    <springProperty scope="context" name="logging.level.default" source="logging.level.default"/>
-    <springProperty scope="context" name="logging.level.exchange" source="logging.level.exchange"/>
-    <springProperty scope="context" name="logging.level.mybatis" source="logging.level.mybatis"/>
-    <springProperty scope="context" name="logging.level.commons" source="logging.level.commons"/>
-    <springProperty scope="context" name="app.env.name" source="app.env.name"/>
+
     <!--Output full logs to file-->
     <appender name="FILE_ALL" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>${logging.path}/info.log</file>
+        <file>/var/log/mine/info.log</file>
         <encoder>
             <pattern>${CONSOLE_LOG_PATTERN}</pattern>
             <charset>UTF-8</charset>
         </encoder>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>${logging.path}/archive/history_info.%d{yyyy-MM-dd}.%i.zip</fileNamePattern>
+            <fileNamePattern>/var/log/archive/history_info.%d{yyyy-MM-dd}.%i.zip</fileNamePattern>
             <maxHistory>7</maxHistory>
             <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
                 <maxFileSize>500MB</maxFileSize>
@@ -25,7 +20,7 @@
 
     <!--Output WARN, ERROR logs to file-->
     <appender name="FILE_ERROR" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>${logging.path}/error.log</file>
+        <file>/var/log/mine/error.log</file>
         <encoder>
             <pattern>${CONSOLE_LOG_PATTERN}</pattern>
             <charset>UTF-8</charset>
@@ -34,7 +29,7 @@
             <level>WARN</level>
         </filter>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>${logging.path}/history_error.%d{yyyy-MM-dd}.%i.zip</fileNamePattern>
+            <fileNamePattern>/var/log/mine/history_error.%d{yyyy-MM-dd}.%i.zip</fileNamePattern>
             <maxHistory>7</maxHistory>
             <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
                 <maxFileSize>500MB</maxFileSize>
@@ -43,13 +38,13 @@
     </appender>
 
     <appender name="FILE_TIME" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>${logging.path}/time.log</file>
+        <file>/var/log/mine/time.log</file>
         <encoder>
             <pattern>${CONSOLE_LOG_PATTERN}</pattern>
             <charset>UTF-8</charset>
         </encoder>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>${logging.path}/history_time.%d{yyyy-MM-dd}.%i.zip</fileNamePattern>
+            <fileNamePattern>/var/log/mine/history_time.%d{yyyy-MM-dd}.%i.zip</fileNamePattern>
             <maxHistory>7</maxHistory>
             <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
                 <maxFileSize>500MB</maxFileSize>
@@ -81,10 +76,12 @@
         <appender-ref ref="FILE_TIME"/>
     </logger>
 
-    <logger name="com.cjie.cryptocurrency" level="INFO"/>
-    <logger name="org.mybatis" level="DEBUG"/>
+    <logger name="com.okcoin.ex" level="INFO"/>
+    <logger name="org.mybatis" level="ERROR"/>
+    <logger name="com.okcoin.util" level="ERROR"/>
+    <logger name="com.okcoin.wallet" level="ERROR"/>
 
-    <root level="${logging.level.default}">
+    <root level="INFO">
         <appender-ref ref="ASYNC_FILE_ALL"/>
         <appender-ref ref="ASYNC_FILE_ERROR"/>
         <appender-ref ref="STDOUT"/>
