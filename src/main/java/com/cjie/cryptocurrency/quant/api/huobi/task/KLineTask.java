@@ -103,10 +103,14 @@ public class KLineTask {
                 String baseCurrency = symbol.getBaseCurrency();
                 String quotaCurrency = symbol.getQuotaCurrency();
                 try {
+                    String currSuffix = suffix;
+                    if (type.equals("1min")) {
+                        currSuffix = currSuffix + "_" + quotaCurrency;
+                    }
                     List<HuobiKLineData> list = client.kline(baseCurrency + quotaCurrency, type, 5);
                     for (HuobiKLineData data : list) {
                         if (currencyKlineMapper.getCurrencyLine(new Date(data.getId() * 1000),
-                                baseCurrency, quotaCurrency, "huobi", suffix) != null) {
+                                baseCurrency, quotaCurrency, "huobi", currSuffix) != null) {
                             continue;
                         }
                         CurrencyKline kline = CurrencyKline.builder().klineTime(new Date(data.getId() * 1000))
@@ -120,7 +124,7 @@ public class KLineTask {
                                 .low(new BigDecimal(data.getOpen()))
                                 .vol(new BigDecimal(data.getVol()))
                                 .site("huobi")
-                                .suffix(suffix)
+                                .suffix(currSuffix)
                                 .build();
                         log.info("{}-{}-{}--,{}", type, baseCurrency, quotaCurrency, data);
 
