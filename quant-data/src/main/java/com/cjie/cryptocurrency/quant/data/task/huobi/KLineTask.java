@@ -19,12 +19,13 @@ import com.cjie.cryptocurrency.quant.mapper.CurrencyPairMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
-//@Component
+@Component
 @Slf4j
 public class KLineTask {
 
