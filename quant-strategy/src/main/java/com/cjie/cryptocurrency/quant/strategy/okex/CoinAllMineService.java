@@ -209,7 +209,7 @@ public class CoinAllMineService {
         }
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
         for (OrderInfo orderInfo : orderIds) {
-            if (System.currentTimeMillis() - dateFormat.parse(orderInfo.getCreated_at()).getTime() > 3600 * 1000) {
+            if (System.currentTimeMillis() - dateFormat.parse(orderInfo.getCreated_at()).getTime() > 300 * 1000) {
                 continue;
             }
             PlaceOrderParam placeOrderParam = new PlaceOrderParam();
