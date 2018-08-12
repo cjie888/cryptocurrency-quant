@@ -21,6 +21,8 @@ import org.springframework.web.client.RestTemplate;
 
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 @Component
@@ -204,7 +206,11 @@ public class CoinAllMineService {
         if (orderIds == null || orderIds.size() == 0) {
             return false;
         }
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
         for (OrderInfo orderInfo : orderIds) {
+            if (System.currentTimeMillis() - dateFormat.parse(orderInfo.getCreated_at()).getTime() > 3600 * 1000) {
+                continue;
+            }
             PlaceOrderParam placeOrderParam = new PlaceOrderParam();
             placeOrderParam.setProduct_id(orderInfo.getProduct_id());
             spotOrderAPIService.cancleOrderByOrderId("coinall",placeOrderParam, orderInfo.getOrder_id());
