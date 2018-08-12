@@ -40,7 +40,7 @@ public class CoinAllMineService {
 
     private static double initMultiple = 3;
 
-    private static double maxNum = 10;
+    private static double maxNum = 30;
 
     private static int numPrecision = 8;
 
