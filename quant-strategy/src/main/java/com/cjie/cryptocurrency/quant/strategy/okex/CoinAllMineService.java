@@ -38,7 +38,7 @@ public class CoinAllMineService {
 
     private static double initMultiple = 3;
 
-    private static double maxNum = 100;
+    private static double maxNum = 10;
 
     private static int numPrecision = 8;
 
@@ -111,12 +111,12 @@ public class CoinAllMineService {
         log.info("=============================交易对开始=========================");
 //
         try {
-            buyNotLimit(symbol, "limit", baseAmount, getMarketPrice(marketPrice * (1 - increment)));
+            buy(symbol, "limit", baseAmount, getMarketPrice(marketPrice * (1 - increment)));
         } catch (Exception e) {
             log.error("交易对买出错", e);
         }
         try {
-            sellNotLimit(symbol, "limit", baseAmount, getMarketPrice(marketPrice * (1 + increment)));
+            sell(symbol, "limit", baseAmount, getMarketPrice(marketPrice * (1 + increment)));
         } catch (Exception e) {
             log.error("交易对卖出错", e);
         }
@@ -265,7 +265,7 @@ public class CoinAllMineService {
             }
             amount = amount.subtract(maxNumDeci);
 
-            Thread.sleep(5000);
+            Thread.sleep(500);
         }
 
     }

@@ -14,12 +14,11 @@ public class CoinAllMineTask {
     @Autowired
     private CoinAllMineService mineService;
 
-    //@Scheduled(cron = "* */2 * * * ?")
+    @Scheduled(cron = "*/10 * * * * ?")
     public void mineCurrency1() throws JobExecutionException {
         log.info("start mining");
-        //log.info(JSON.toJSONString(spotAccountAPIService.getAccountByCurrency("btc")));
         try {
-            mineService.mine1("cac", "eth", 0.005);
+            mineService.mine1("cac", "usdt", 0.002);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -27,7 +26,7 @@ public class CoinAllMineTask {
 
 
     }
-    @Scheduled(cron = "*/20 * * * * ?")
+    //@Scheduled(cron = "*/20 * * * * ?")
     public void mineCurrency3() throws JobExecutionException {
         log.info("start mining");
         //log.info(JSON.toJSONString(spotAccountAPIService.getAccountByCurrency("btc")));
