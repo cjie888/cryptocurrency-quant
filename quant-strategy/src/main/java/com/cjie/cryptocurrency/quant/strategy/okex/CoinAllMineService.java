@@ -74,7 +74,7 @@ public class CoinAllMineService {
 
         //判断是否有冻结的，如果冻结太多冻结就休眠，进行下次挖矿
         if (baseHold > 0.099 * baseBalance
-                || quotaHold > 0.099 * quotaBalance) {
+                && quotaHold > 0.099 * quotaBalance) {
             return;
         }
 
@@ -96,14 +96,14 @@ public class CoinAllMineService {
 //
         //初始化
         if (!(baseHold > 0 || quotaHold > 0)) {
-            if (isHaveInitBuyAndSell(baseBalance - baseHold, quotaBalance - quotaHold, marketPrice, initUsdt, symbol, "limit", increment)) {
+            if (isHaveInitBuyAndSell(baseBalance, quotaBalance, marketPrice, initUsdt, symbol, "limit", increment)) {
                 log.info("================有进行初始化均衡操作=================");
                 return;
             }
         }
 //
         //买单 卖单
-        double price = Math.min((baseBalance - baseHold) * marketPrice, quotaBalance - quotaHold);
+        double price = Math.min(maxNum, Math.min((baseBalance - baseHold) * marketPrice, quotaBalance - quotaHold));
 
         BigDecimal baseAmount = getNum(price * 0.99 / marketPrice);//预留点来扣手续费
         if (baseAmount.doubleValue() - minLimitPriceOrderNum < 0) {
@@ -114,12 +114,12 @@ public class CoinAllMineService {
         log.info("=============================交易对开始=========================");
 //
         try {
-            buy(symbol, "limit", baseAmount, getMarketPrice(marketPrice * (1 - increment)));
+            buyNotLimit(symbol, "limit", baseAmount, getMarketPrice(marketPrice * (1 - increment)));
         } catch (Exception e) {
             log.error("交易对买出错", e);
         }
         try {
-            sell(symbol, "limit", baseAmount, getMarketPrice(marketPrice * (1 + increment)));
+            sellNotLimit(symbol, "limit", baseAmount, getMarketPrice(marketPrice * (1 + increment)));
         } catch (Exception e) {
             log.error("交易对卖出错", e);
         }
@@ -207,11 +207,11 @@ public class CoinAllMineService {
         if (orderIds == null || orderIds.size() == 0) {
             return false;
         }
-//        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
         for (OrderInfo orderInfo : orderIds) {
-//            if (System.currentTimeMillis() - 8 * 3600 * 1000 - dateFormat.parse(orderInfo.getCreated_at()).getTime() < 600 * 1000) {
-//                continue;
-//            }
+            if (System.currentTimeMillis() - 8 * 3600 * 1000 - dateFormat.parse(orderInfo.getCreated_at()).getTime() < 3600 * 1000) {
+                continue;
+            }
             PlaceOrderParam placeOrderParam = new PlaceOrderParam();
             placeOrderParam.setProduct_id(orderInfo.getProduct_id());
             spotOrderAPIService.cancleOrderByOrderId("coinall",placeOrderParam, orderInfo.getOrder_id());
