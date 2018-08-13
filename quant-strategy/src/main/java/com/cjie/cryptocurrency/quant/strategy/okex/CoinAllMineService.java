@@ -257,7 +257,7 @@ public class CoinAllMineService {
             return false;
         }
 
-        Thread.sleep(3000);
+        Thread.sleep(1000);
         return true;
     }
 
