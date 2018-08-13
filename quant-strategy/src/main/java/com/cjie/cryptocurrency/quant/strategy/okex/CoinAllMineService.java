@@ -73,8 +73,8 @@ public class CoinAllMineService {
 
 
         //判断是否有冻结的，如果冻结太多冻结就休眠，进行下次挖矿
-        if (baseHold > 0.099 * baseBalance
-                && quotaHold > 0.099 * quotaBalance) {
+        if (baseHold > 0.9 * baseBalance
+                && quotaHold > 0.9 * quotaBalance) {
             return;
         }
 
