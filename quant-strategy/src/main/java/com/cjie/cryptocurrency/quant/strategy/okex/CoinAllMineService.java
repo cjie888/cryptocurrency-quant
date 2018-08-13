@@ -103,7 +103,7 @@ public class CoinAllMineService {
         }
 //
         //买单 卖单
-        double price = Math.min(maxNum, Math.min((baseBalance - baseHold) * marketPrice, quotaBalance - quotaHold));
+        double price = Math.min(maxNum *  marketPrice, Math.min((baseBalance - baseHold) * marketPrice, quotaBalance - quotaHold));
 
         BigDecimal baseAmount = getNum(price * 0.99 / marketPrice);//预留点来扣手续费
         if (baseAmount.doubleValue() - minLimitPriceOrderNum < 0) {
