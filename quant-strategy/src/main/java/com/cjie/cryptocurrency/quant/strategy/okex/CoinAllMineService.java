@@ -25,6 +25,7 @@ import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Random;
 
 @Component
 @Slf4j
@@ -41,7 +42,7 @@ public class CoinAllMineService {
 
     private static double initMultiple = 3;
 
-    private static double maxNum = 30;
+    private static double maxNum = 50;
 
     private static int numPrecision = 8;
 
@@ -248,6 +249,9 @@ public class CoinAllMineService {
 
 
         log.info("=============================交易对开始=========================");
+
+        Random random = new Random();
+        int r = random.nextInt(1000);
 //
         try {
             //买单
@@ -257,7 +261,8 @@ public class CoinAllMineService {
             if (baseAmount.doubleValue() - minLimitPriceOrderNum < 0) {
                 log.info("小于最小限价数量");
             } else {
-                buyNotLimit(symbol, "limit", baseAmount, getMarketPrice(buyPrice));
+                buyNotLimit(symbol, "limit", baseAmount.subtract(new BigDecimal(r * 0.01)),
+                        getMarketPrice(buyPrice));
             }
         } catch (Exception e) {
             log.error("交易对买出错", e);
@@ -271,7 +276,8 @@ public class CoinAllMineService {
                 log.info("小于最小限价数量");
                 return;
             }
-            sellNotLimit(symbol, "limit", baseAmount, getMarketPrice(sellPrice));
+            sellNotLimit(symbol, "limit", baseAmount.subtract(new BigDecimal(r * 0.01)),
+                    getMarketPrice(sellPrice));
         } catch (Exception e) {
             log.error("交易对卖出错", e);
         }
