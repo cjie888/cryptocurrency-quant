@@ -96,7 +96,7 @@ public class CoinAllMineService {
 //
         //初始化
         if (!(baseHold > 0 || quotaHold > 0)) {
-            if (isHaveInitBuyAndSell(baseBalance, quotaBalance, marketPrice, initUsdt, symbol, "limit", 0)) {
+            if (isHaveInitBuyAndSell(baseBalance, quotaBalance, marketPrice, initUsdt, symbol, "limit",increment)) {
                 log.info("================有进行初始化均衡操作=================");
                 return;
             }
