@@ -3,6 +3,7 @@ package com.cjie.cryptocurrency.quant.strategy.okex;
 import com.alibaba.fastjson.JSON;
 import com.cjie.cryptocurrency.quant.api.okex.bean.spot.param.PlaceOrderParam;
 import com.cjie.cryptocurrency.quant.api.okex.bean.spot.result.Account;
+import com.cjie.cryptocurrency.quant.api.okex.bean.spot.result.Book;
 import com.cjie.cryptocurrency.quant.api.okex.bean.spot.result.OrderInfo;
 import com.cjie.cryptocurrency.quant.api.okex.bean.spot.result.Ticker;
 import com.cjie.cryptocurrency.quant.api.okex.service.spot.SpotAccountAPIService;
@@ -203,6 +204,80 @@ public class CoinAllMineService {
         }
 
     }
+
+    /**
+     * 根据深度买入卖出
+     *
+     * @param baseName    交易币名称
+     * @param quotaName  市场币名称
+     * @param increment 收益率一半
+     * @throws Exception
+     */
+    public void mine4(String baseName, String quotaName, double increment) throws Exception {
+        String symbol = baseName.toUpperCase() + "-" + quotaName.toUpperCase();
+
+        cancelOrders(getNotTradeOrders(symbol, "0", "100"));
+        //查询余额
+        Account baseAccount = getBalance(baseName);
+        double baseHold = new BigDecimal(baseAccount.getBalance()).doubleValue() - new BigDecimal(baseAccount.getAvailable()).doubleValue();
+        double baseBalance = new BigDecimal(baseAccount.getBalance()).doubleValue();
+
+
+        Account quotaAccount = getBalance(quotaName);
+        double quotaHold = new BigDecimal(quotaAccount.getBalance()).doubleValue() - new BigDecimal(quotaAccount.getAvailable()).doubleValue();
+        double quotaBalance = new BigDecimal(quotaAccount.getBalance()).doubleValue();
+
+
+        //判断是否有冻结的，如果冻结太多冻结就休眠，进行下次挖矿
+        if (baseHold > 0.99 * baseBalance
+                && quotaHold > 0.99 * quotaBalance) {
+            return;
+        }
+
+        log.info("===============balance: base:{},quota:{}========================", baseBalance, quotaBalance);
+
+        Book book = getBook(baseName, quotaName);
+        Double sellPrice = Double.parseDouble(book.getAsks().get(0)[0]) - 0.00001;
+        Double buyPrice = Double.parseDouble(book.getBids().get(0)[0]) + 0.00001;
+        if (sellPrice <= buyPrice) {
+            return;
+        }
+        //Double marketPrice = Double.parseDouble(ticker.getLast());
+        log.info("book last {} -{}:{}-{}", baseName, quotaName, sellPrice, buyPrice);
+
+
+
+        log.info("=============================交易对开始=========================");
+//
+        try {
+            //买单
+            double price = Math.min(maxNum *  buyPrice, quotaBalance - quotaHold);
+
+            BigDecimal baseAmount = getNum(price * 0.99 / buyPrice);//预留点来扣手续费
+            if (baseAmount.doubleValue() - minLimitPriceOrderNum < 0) {
+                log.info("小于最小限价数量");
+            } else {
+                buyNotLimit(symbol, "limit", baseAmount, getMarketPrice(buyPrice));
+            }
+        } catch (Exception e) {
+            log.error("交易对买出错", e);
+        }
+        try {
+            //买单
+            double price = Math.min(maxNum *  sellPrice, (baseBalance - baseHold) * sellPrice);
+
+            BigDecimal baseAmount = getNum(price * 0.99 / sellPrice);//预留点来扣手续费
+            if (baseAmount.doubleValue() - minLimitPriceOrderNum < 0) {
+                log.info("小于最小限价数量");
+                return;
+            }
+            sellNotLimit(symbol, "limit", baseAmount, getMarketPrice(sellPrice));
+        } catch (Exception e) {
+            log.error("交易对卖出错", e);
+        }
+        log.info("=============================交易对结束=========================");
+
+    }
     public boolean cancelOrders(List<OrderInfo> orderIds) throws Exception {
         if (orderIds == null || orderIds.size() == 0) {
             return false;
@@ -345,6 +420,12 @@ public class CoinAllMineService {
         return JSON.parseObject(body,Ticker.class);
 
         //return spotProductAPIService.getTickerByProductId(baseCurrency.toUpperCase() + "-" + quotaCurrency.toUpperCase());
+    }
+    public Book getBook(String baseCurrency, String quotaCurrency) {
+        String symbol = baseCurrency.toUpperCase() + "-" + quotaCurrency.toUpperCase();
+        Book book = spotProductAPIService.bookProductsByProductId("coinall", symbol, 10, null);
+        log.info("book+" + JSON.toJSONString(book));
+        return book;
     }
 
     public List<OrderInfo> getNotTradeOrders(String symbol, String after, String limit) throws Exception {
