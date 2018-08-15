@@ -239,7 +239,8 @@ public class CoinAllMineService {
 
         Book book = getBook(baseName, quotaName);
         Random random = new Random();
-        int inc = random.nextInt(5) + 1;
+        //int inc = random.nextInt(5) + 1;
+        int inc = 1;
         Double sellPrice = Double.parseDouble(book.getAsks().get(0)[0]) - 0.00001 * inc;
         Double buyPrice = Double.parseDouble(book.getBids().get(0)[0]) + 0.00001 * inc;
         if (sellPrice <= buyPrice) {
