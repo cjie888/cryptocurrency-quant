@@ -338,7 +338,7 @@ public class CoinAllMineService {
             return false;
         }
 
-        Thread.sleep(500);
+        Thread.sleep(100);
         return true;
     }
 
@@ -353,7 +353,7 @@ public class CoinAllMineService {
             }
             amount = amount.subtract(maxNumDeci);
 
-            Thread.sleep(500);
+            Thread.sleep(100);
         }
 
     }
@@ -369,7 +369,7 @@ public class CoinAllMineService {
             }
             amount = amount.subtract(maxNumDeci);
 
-            Thread.sleep(5000);
+            Thread.sleep(100);
         }
     }
 
