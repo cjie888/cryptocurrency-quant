@@ -238,8 +238,10 @@ public class CoinAllMineService {
         log.info("===============balance: base:{},quota:{}========================", baseBalance, quotaBalance);
 
         Book book = getBook(baseName, quotaName);
-        Double sellPrice = Double.parseDouble(book.getAsks().get(0)[0]) - 0.00001;
-        Double buyPrice = Double.parseDouble(book.getBids().get(0)[0]) + 0.00001;
+        Random random = new Random();
+        int inc = random.nextInt(5) + 1;
+        Double sellPrice = Double.parseDouble(book.getAsks().get(0)[0]) - 0.00001 * inc;
+        Double buyPrice = Double.parseDouble(book.getBids().get(0)[0]) + 0.00001 * inc;
         if (sellPrice <= buyPrice) {
             return;
         }
@@ -250,7 +252,6 @@ public class CoinAllMineService {
 
         log.info("=============================交易对开始=========================");
 
-        Random random = new Random();
         int r = random.nextInt(1000);
 //
         try {
