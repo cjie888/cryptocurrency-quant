@@ -62,7 +62,7 @@ public class CoinAllMineService {
     public void mine1(String baseName, String quotaName, double increment) throws Exception {
         String symbol = baseName.toUpperCase() + "-" + quotaName.toUpperCase();
 
-        cancelOrders(getNotTradeOrders(symbol, "0", "100"));
+        cancelOrders(getNotTradeOrders(symbol, "0", "100"), 60);
         //查询余额
         Account baseAccount = getBalance(baseName);
         double baseHold = new BigDecimal(baseAccount.getBalance()).doubleValue() - new BigDecimal(baseAccount.getAvailable()).doubleValue();
@@ -142,7 +142,7 @@ public class CoinAllMineService {
 
 
         String symbol = baseName.toUpperCase() + "-" + quotaName.toUpperCase();
-        cancelOrders(getNotTradeOrders(symbol, "0", "100"));
+        cancelOrders(getNotTradeOrders(symbol, "0", "100"), 0);
 
 
         //查询余额
@@ -217,7 +217,7 @@ public class CoinAllMineService {
     public void mine4(String baseName, String quotaName, double increment) throws Exception {
         String symbol = baseName.toUpperCase() + "-" + quotaName.toUpperCase();
 
-        cancelOrders(getNotTradeOrders(symbol, "0", "100"));
+        cancelOrders(getNotTradeOrders(symbol, "0", "100"), 15);
         //查询余额
         Account baseAccount = getBalance(baseName);
         double baseHold = new BigDecimal(baseAccount.getBalance()).doubleValue() - new BigDecimal(baseAccount.getAvailable()).doubleValue();
@@ -286,13 +286,13 @@ public class CoinAllMineService {
         log.info("=============================交易对结束=========================");
 
     }
-    public boolean cancelOrders(List<OrderInfo> orderIds) throws Exception {
+    public boolean cancelOrders(List<OrderInfo> orderIds, int minutes) throws Exception {
         if (orderIds == null || orderIds.size() == 0) {
             return false;
         }
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
         for (OrderInfo orderInfo : orderIds) {
-            if (System.currentTimeMillis() - 8 * 3600 * 1000 - dateFormat.parse(orderInfo.getCreated_at()).getTime() < 900 * 1000) {
+            if (System.currentTimeMillis() - 8 * 3600 * 1000 - dateFormat.parse(orderInfo.getCreated_at()).getTime() < minutes * 60 * 1000) {
                 continue;
             }
             PlaceOrderParam placeOrderParam = new PlaceOrderParam();
