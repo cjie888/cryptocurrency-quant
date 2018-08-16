@@ -23,9 +23,7 @@ import org.springframework.web.client.RestTemplate;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 @Component
 @Slf4j
@@ -43,6 +41,22 @@ public class CoinAllMineService {
     private static double initMultiple = 3;
 
     private static double maxNum = 50;
+
+    private static Map<String, Integer> maxNums = new HashMap<>();
+
+
+    private static Map<String, Double> minLimitPriceOrderNums = new HashMap<>();
+
+    static {
+        minLimitPriceOrderNums.put("eos", 0.1);
+        minLimitPriceOrderNums.put("ltc", 0.001);
+        minLimitPriceOrderNums.put("okb", 1.0);
+        minLimitPriceOrderNums.put("cac", 1.0);
+
+        maxNums.put("cac", 50);
+        maxNums.put("okb", 10);
+    }
+
 
     private static int numPrecision = 8;
 
@@ -94,7 +108,7 @@ public class CoinAllMineService {
 //        }
 
         //ft:usdt=1:0.6
-        double initUsdt = maxNum * initMultiple * marketPrice;
+        double initUsdt = maxNums.get(baseName.toLowerCase()) * initMultiple * marketPrice;
 //
         //初始化
         if (!(baseHold > 0 || quotaHold > 0)) {
@@ -105,7 +119,7 @@ public class CoinAllMineService {
         }
 //
         //买单 卖单
-        double price = Math.min(maxNum *  marketPrice, Math.min((baseBalance - baseHold) * marketPrice, quotaBalance - quotaHold));
+        double price = Math.min(maxNums.get(baseName.toLowerCase()) *  marketPrice, Math.min((baseBalance - baseHold) * marketPrice, quotaBalance - quotaHold));
 
         BigDecimal baseAmount = getNum(price * 0.99 / marketPrice);//预留点来扣手续费
         if (baseAmount.doubleValue() - minLimitPriceOrderNum < 0) {
@@ -257,7 +271,7 @@ public class CoinAllMineService {
 //
         try {
             //买单
-            double price = Math.min(maxNum *  buyPrice, quotaBalance - quotaHold);
+            double price = Math.min(maxNums.get(baseName.toLowerCase()) *  buyPrice, quotaBalance - quotaHold);
 
             BigDecimal baseAmount = getNum(price * 0.99 / buyPrice);//预留点来扣手续费
             if (baseAmount.doubleValue() - minLimitPriceOrderNum < 0) {
@@ -271,7 +285,7 @@ public class CoinAllMineService {
         }
         try {
             //买单
-            double price = Math.min(maxNum *  sellPrice, (baseBalance - baseHold) * sellPrice);
+            double price = Math.min(maxNums.get(baseName.toLowerCase()) *  sellPrice, (baseBalance - baseHold) * sellPrice);
 
             BigDecimal baseAmount = getNum(price * 0.99 / sellPrice);//预留点来扣手续费
             if (baseAmount.doubleValue() - minLimitPriceOrderNum < 0) {
