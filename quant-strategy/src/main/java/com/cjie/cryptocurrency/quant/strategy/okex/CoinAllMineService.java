@@ -62,7 +62,7 @@ public class CoinAllMineService {
 
     private static double minLimitPriceOrderNum = 1;
 
-    private static final int pricePrecision = 6;
+    private static final int pricePrecision = 8;
 
 
     /**
