@@ -231,7 +231,7 @@ public class CoinAllMineService {
     public void mine4(String baseName, String quotaName, double increment, double priceIncrement) throws Exception {
         String symbol = baseName.toUpperCase() + "-" + quotaName.toUpperCase();
 
-        cancelOrders(getNotTradeOrders(symbol, "0", "100"), 15);
+        cancelOrders(getNotTradeOrders(symbol, "0", "100"), 5);
         //查询余额
         Account baseAccount = getBalance(baseName);
         double baseHold = new BigDecimal(baseAccount.getBalance()).doubleValue() - new BigDecimal(baseAccount.getAvailable()).doubleValue();
