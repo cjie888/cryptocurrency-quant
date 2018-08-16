@@ -18,7 +18,7 @@ public class CoinAllMineTask {
     public void mineCurrency1() throws JobExecutionException {
         log.info("start mining");
         try {
-            mineService.mine1("okb", "btc", 0.002);
+            mineService.mine4("okb", "btc", 0.002, 0.00000001);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -31,7 +31,7 @@ public class CoinAllMineTask {
         log.info("start mining");
         //log.info(JSON.toJSONString(spotAccountAPIService.getAccountByCurrency("btc")));
         try {
-            mineService.mine4("cac", "usdt", 0.001);
+            mineService.mine4("cac", "usdt", 0.001, 0.00001);
             //mineService.mine3("cac", "eth", 0.005);
         } catch (Exception e) {
             log.error("error mining", e);

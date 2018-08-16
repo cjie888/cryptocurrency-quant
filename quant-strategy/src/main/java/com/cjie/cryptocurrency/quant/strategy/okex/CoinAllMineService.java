@@ -228,7 +228,7 @@ public class CoinAllMineService {
      * @param increment 收益率一半
      * @throws Exception
      */
-    public void mine4(String baseName, String quotaName, double increment) throws Exception {
+    public void mine4(String baseName, String quotaName, double increment, double priceIncrement) throws Exception {
         String symbol = baseName.toUpperCase() + "-" + quotaName.toUpperCase();
 
         cancelOrders(getNotTradeOrders(symbol, "0", "100"), 15);
@@ -255,8 +255,8 @@ public class CoinAllMineService {
         Random random = new Random();
         //int inc = random.nextInt(5) + 1;
         int inc = 1;
-        Double sellPrice = Double.parseDouble(book.getAsks().get(0)[0]) - 0.00001 * inc;
-        Double buyPrice = Double.parseDouble(book.getBids().get(0)[0]) + 0.00001 * inc;
+        Double sellPrice = Double.parseDouble(book.getAsks().get(0)[0]) - priceIncrement * inc;
+        Double buyPrice = Double.parseDouble(book.getBids().get(0)[0]) + priceIncrement * inc;
         if (sellPrice <= buyPrice) {
             return;
         }
