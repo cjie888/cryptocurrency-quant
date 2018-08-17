@@ -1,7 +1,5 @@
 #!/bin/bash
 
-cd cryptocurrency-quant/
-
 git pull
 
 /root/apache-maven-3.5.4/bin/mvn clean compile install -Dmaven.test.skip=true
