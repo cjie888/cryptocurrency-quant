@@ -449,7 +449,7 @@ public class CoinAllMineService {
     }
     public Account getBalance(String currency) throws Exception {
 
-        return spotAccountAPIService.getAccountByCurrency("coinall", currency);
+        return retryTemplate.execute(retryContext -> spotAccountAPIService.getAccountByCurrency("coinall", currency));
     }
 
     public Ticker getTicker(String baseCurrency, String quotaCurrency) {
