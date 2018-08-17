@@ -51,7 +51,7 @@ public class FCoinTask {
             //fcoinUtils.ftusdt2("ftusdt", "ft", "usdt",0.05);
             //fcoinUtils.ftusdt1("btcusdt","btc","usdt",0);
             //fcoinUtils.ftusdt2("ftusdt","ft","usdt",0.01);
-            fcoinUtils.ftusdt3("ftusdt", "ft", "usdt", 0.001);
+            fcoinUtils.ftusdt3("ftusdt", "ft", "usdt", 0.002);
 
             //fcoinUtils.ftusdt1("icxeth","icx","eth",0);
         }catch (Exception e){

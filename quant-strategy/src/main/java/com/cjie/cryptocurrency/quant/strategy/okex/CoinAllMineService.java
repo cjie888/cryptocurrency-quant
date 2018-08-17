@@ -173,6 +173,28 @@ public class CoinAllMineService {
         Ticker ticker = getTicker(baseName, quotaName);
         Double marketPrice = Double.parseDouble(ticker.getLast());
         log.info("ticker last {} -{}:{}", baseName, quotaName, marketPrice);
+        if ("cac".equals(baseName)) {
+            if (marketPrice > 0.4) {
+                baseRatio = 0.2;
+            } else if (marketPrice > 0.35) {
+                baseRatio = 0.3;
+            } else if (marketPrice > 0.3) {
+                baseRatio = 0.35;
+            }  else if (marketPrice > 0.25) {
+                baseRatio = 0.4;
+            }  else if (marketPrice > 0.2) {
+                baseRatio = 0.45;
+            }  else if (marketPrice > 0.15) {
+                baseRatio = 0.5;
+            }  else if (marketPrice > 0.12) {
+                baseRatio = 0.6;
+            }  else if (marketPrice > 0.1) {
+                baseRatio = 0.7;
+            } else {
+                baseRatio = 0.8;
+            }
+        }
+        log.info("base ratio:{}" + baseRatio );
 
 
         double allAsset= baseBalance * marketPrice + quotaBalance;
