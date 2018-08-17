@@ -194,7 +194,7 @@ public class CoinAllMineService {
                 baseRatio = 0.8;
             }
         }
-        log.info("base ratio:{}" + baseRatio );
+        log.info("base ratio:{}", baseRatio );
 
 
         double allAsset= baseBalance * marketPrice + quotaBalance;
