@@ -506,7 +506,7 @@ public class CoinAllMineService {
         if (!CollectionUtils.isEmpty(accounts)) {
             for (Account account : accounts) {
                 if (Double.parseDouble(account.getBalance()) > 0) {
-                    sb.append(account.getCurrency() + ":" + account.getBalance() + "\r\n</br></br>");
+                    sb.append(account.getCurrency() + ":" + account.getBalance() + "\r </br></br>");
                 }
             }
             weiXinMessageService.sendMessage("balance", sb.toString());
