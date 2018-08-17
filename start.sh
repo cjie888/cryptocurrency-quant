@@ -8,7 +8,7 @@ cd ..
 
 rm -rf quant-strategy-1.0.0-SNAPSHOT.jar
 
-mv /root/java/cryptocurrency-quant/quant-strategy/target/quant-strategy-1.0.0-SNAPSHOT.jar ./quant-strategy-1.0.0-SNAPSHOT.jar
+mv ./quant-strategy/target/quant-strategy-1.0.0-SNAPSHOT.jar ./quant-strategy-1.0.0-SNAPSHOT.jar
 
 
 PID=$(ps -e|grep java|grep quant-strategy |awk '{printf $1}')
