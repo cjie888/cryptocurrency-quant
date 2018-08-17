@@ -14,7 +14,7 @@ public class CoinAllMineTask {
     @Autowired
     private CoinAllMineService mineService;
 
-    @Scheduled(cron = "*/11 * * * * ?")
+    @Scheduled(cron = "*/5 * * * * ?")
     public void mineCurrency1() throws JobExecutionException {
         log.info("start mining");
         try {
