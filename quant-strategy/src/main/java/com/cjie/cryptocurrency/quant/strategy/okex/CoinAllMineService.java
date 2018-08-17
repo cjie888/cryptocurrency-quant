@@ -173,7 +173,7 @@ public class CoinAllMineService {
         Ticker ticker = getTicker(baseName, quotaName);
         Double marketPrice = Double.parseDouble(ticker.getLast());
         log.info("ticker last {} -{}:{}", baseName, quotaName, marketPrice);
-        if ("cac".equals(baseName)) {
+        if ("cac".equalsIgnoreCase(baseName)) {
             if (marketPrice > 0.4) {
                 baseRatio = 0.2;
             } else if (marketPrice > 0.35) {
