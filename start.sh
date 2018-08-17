@@ -8,10 +8,10 @@ cd ..
 
 rm -rf quant-strategy-1.0.0-SNAPSHOT.jar
 
-mv ./quant-strategy/target/quant-strategy-1.0.0-SNAPSHOT.jar ./quant-strategy-1.0.0-SNAPSHOT.jar
+mv cryptocurrency-quant/quant-strategy/target/quant-strategy-1.0.0-SNAPSHOT.jar ./quant-strategy-1.0.0-SNAPSHOT.jar
 
 
-PID=$(ps -e|grep java|grep quant-strategy |awk '{printf $1}')
+PID=$(ps -e|grep java|grep quant-strategy|awk '{printf $1}')
 
 if [ $? -eq 0 ]; then
     echo "process id:$PID"
