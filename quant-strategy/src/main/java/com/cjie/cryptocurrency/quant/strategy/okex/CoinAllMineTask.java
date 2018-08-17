@@ -40,7 +40,7 @@ public class CoinAllMineTask {
 
 
     }
-    @Scheduled(cron = "*/3 * * * * ?")
+    @Scheduled(cron = "*/6 * * * * ?")
     public void mineCurrency3() throws JobExecutionException {
         log.info("start mining");
         //log.info(JSON.toJSONString(spotAccountAPIService.getAccountByCurrency("btc")));
