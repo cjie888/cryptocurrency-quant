@@ -10,6 +10,7 @@ import com.cjie.cryptocurrency.quant.api.okex.bean.spot.result.Ticker;
 import com.cjie.cryptocurrency.quant.api.okex.service.spot.SpotAccountAPIService;
 import com.cjie.cryptocurrency.quant.api.okex.service.spot.SpotOrderAPIServive;
 import com.cjie.cryptocurrency.quant.api.okex.service.spot.SpotProductAPIService;
+import com.cjie.cryptocurrency.quant.service.WeiXinMessageService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
@@ -19,6 +20,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.retry.support.RetryTemplate;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
@@ -39,6 +41,9 @@ public class CoinAllMineService {
 
     @Autowired
     private SpotOrderAPIServive spotOrderAPIService;
+
+    @Autowired
+    private WeiXinMessageService weiXinMessageService;
 
     private static final RetryTemplate retryTemplate = FcoinRetry.getRetryTemplate();
 
@@ -495,4 +500,16 @@ public class CoinAllMineService {
         new CoinAllMineService().getTicker("okb", "usdt");
     }
 
+    public void collectBalance() {
+        List<Account> accounts = spotAccountAPIService.getAccounts("coinall");
+        StringBuilder sb = new StringBuilder();
+        if (!CollectionUtils.isEmpty(accounts)) {
+            for (Account account : accounts) {
+                if (Double.parseDouble(account.getBalance()) > 0) {
+                    sb.append(account.getCurrency() + ":" + account.getBalance() + "<br>");
+                }
+            }
+            weiXinMessageService.sendMessage("balance", sb.toString());
+        }
+    }
 }
