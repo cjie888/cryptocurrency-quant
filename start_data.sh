@@ -6,7 +6,7 @@ git pull
 
 cd ..
 
-rm -rf quant-strategy-1.0.0-SNAPSHOT.jar
+rm -rf quant-data-1.0.0-SNAPSHOT.jar
 
 mv cryptocurrency-quant/quant-data/target/quant-data-1.0.0-SNAPSHOT.jar ./quant-data-1.0.0-SNAPSHOT.jar
 
