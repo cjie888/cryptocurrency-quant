@@ -32,7 +32,7 @@ public class CoinAllMineTask {
     public void mineCurrency1() throws JobExecutionException {
         log.info("start mining");
         try {
-            mineService.mine3("okb", "btc", 0.002);
+            mineService.mine1("okb", "btc", 0.002);
         } catch (Exception e) {
             e.printStackTrace();
         }
