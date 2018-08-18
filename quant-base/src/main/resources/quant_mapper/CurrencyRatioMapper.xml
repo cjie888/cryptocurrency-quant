@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cjie.cryptocurrency.quant.mapper.CurrencyRatioMapper">
+  <resultMap id="BaseResultMap" type="com.cjie.cryptocurrency.quant.model.CurrencyRatio">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="base_currency" jdbcType="VARCHAR" property="baseCurrency" />
+    <result column="quota_currency" jdbcType="VARCHAR" property="quotaCurrency" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="ratio" jdbcType="DOUBLE" property="ratio" />
+    <result column="current_price" jdbcType="DECIMAL" property="currentPrice" />
+    <result column="site" jdbcType="VARCHAR" property="site" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, base_currency, quota_currency, create_time, ratio, current_price, site
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from currency_ratio
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <select id="getLatestRatio" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from currency_ratio
+    where site = #{site,jdbcType=VARCHAR} and base_currency = #{baseCurrency,jdbcType=VARCHAR}
+    and quota_currency = #{quotaCurrency,jdbcType=VARCHAR}
+    order by create_time desc limit 1
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from currency_ratio
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.cjie.cryptocurrency.quant.model.CurrencyRatio">
+    insert into currency_ratio (id, base_currency, quota_currency, 
+      create_time, ratio, current_price, site
+      )
+    values (#{id,jdbcType=BIGINT}, #{baseCurrency,jdbcType=VARCHAR}, #{quotaCurrency,jdbcType=VARCHAR}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{ratio,jdbcType=DOUBLE}, #{currentPrice,jdbcType=DECIMAL},
+      #{site,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.cjie.cryptocurrency.quant.model.CurrencyRatio">
+    insert into currency_ratio
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="baseCurrency != null">
+        base_currency,
+      </if>
+      <if test="quotaCurrency != null">
+        quota_currency,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="ratio != null">
+        ratio,
+      </if>
+      <if test="currentPrice != null">
+        current_price,
+      </if>
+      <if test="site != null">
+        site,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="baseCurrency != null">
+        #{baseCurrency,jdbcType=VARCHAR},
+      </if>
+      <if test="quotaCurrency != null">
+        #{quotaCurrency,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="ratio != null">
+        #{ratio,jdbcType=DOUBLE},
+      </if>
+      <if test="currentPrice != null">
+        #{currentPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="site != null">
+        #{site,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.cjie.cryptocurrency.quant.model.CurrencyRatio">
+    update currency_ratio
+    <set>
+      <if test="baseCurrency != null">
+        base_currency = #{baseCurrency,jdbcType=VARCHAR},
+      </if>
+      <if test="quotaCurrency != null">
+        quota_currency = #{quotaCurrency,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="ratio != null">
+        ratio = #{ratio,jdbcType=DOUBLE},
+      </if>
+      <if test="currentPrice != null">
+        current_price = #{currentPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="site != null">
+        site = #{site,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.cjie.cryptocurrency.quant.model.CurrencyRatio">
+    update currency_ratio
+    set base_currency = #{baseCurrency,jdbcType=VARCHAR},
+      quota_currency = #{quotaCurrency,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      ratio = #{ratio,jdbcType=DOUBLE},
+      current_price = #{currentPrice,jdbcType=DECIMAL},
+      site = #{site,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

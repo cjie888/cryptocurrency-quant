@@ -10,6 +10,8 @@ import com.cjie.cryptocurrency.quant.api.okex.bean.spot.result.Ticker;
 import com.cjie.cryptocurrency.quant.api.okex.service.spot.SpotAccountAPIService;
 import com.cjie.cryptocurrency.quant.api.okex.service.spot.SpotOrderAPIServive;
 import com.cjie.cryptocurrency.quant.api.okex.service.spot.SpotProductAPIService;
+import com.cjie.cryptocurrency.quant.mapper.CurrencyRatioMapper;
+import com.cjie.cryptocurrency.quant.model.CurrencyRatio;
 import com.cjie.cryptocurrency.quant.service.WeiXinMessageService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,6 +46,9 @@ public class CoinAllMineService {
 
     @Autowired
     private WeiXinMessageService weiXinMessageService;
+
+    @Autowired
+    private CurrencyRatioMapper currencyRatioMapper;
 
     private static final RetryTemplate retryTemplate = FcoinRetry.getRetryTemplate();
 
@@ -162,7 +167,7 @@ public class CoinAllMineService {
      * @throws Exception
      * @throws Exception
      */
-    public void  mine3(String baseName, String quotaName, double increment, double baseRatio) throws Exception {
+    public void  mine3(String baseName, String quotaName, double increment) throws Exception {
 
 
         String symbol = baseName.toUpperCase() + "-" + quotaName.toUpperCase();
@@ -183,6 +188,13 @@ public class CoinAllMineService {
         Ticker ticker = getTicker(baseName, quotaName);
         Double marketPrice = Double.parseDouble(ticker.getLast());
         log.info("ticker last {} -{}:{}", baseName, quotaName, marketPrice);
+        CurrencyRatio currencyRatio = currencyRatioMapper.getLatestRatio("coinall",
+                baseName.toLowerCase(), quotaName.toLowerCase());
+        if (Objects.isNull(currencyRatio)) {
+            log.error("Get currency {}-{} ratio error", baseName, quotaName);
+            throw new RuntimeException("Get currency ratio error");
+        }
+        double baseRatio = currencyRatio.getRatio();
         if ("cac".equalsIgnoreCase(baseName)) {
             if (marketPrice > 0.4) {
                 baseRatio = 0.2;
