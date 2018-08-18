@@ -1,7 +1,6 @@
 package com.cjie.cryptocurrency.quant.model;
 
-import lombok.Builder;
-import lombok.Data;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -9,6 +8,8 @@ import java.util.Date;
 
 @Data
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class CurrencyRatio {
     private Long id;
 
