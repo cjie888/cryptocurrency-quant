@@ -273,6 +273,12 @@ public class CoinAllMineService {
         double baseRatio = getRatio(currencyRatio, marketPrice);
 
         if (Math.abs(baseRatio - currencyRatio.getRatio()) > 0.001) {
+            StringBuilder sb = new StringBuilder();
+            sb.append("origin rate:");
+            sb.append(currencyRatio.getRatio());
+            sb.append(",");
+            sb.append(currencyRatio.getCurrentPrice());
+
             log.info("current base ratio:{}, price:{}", baseRatio, marketPrice);
             CurrencyRatio currentRatio = CurrencyRatio.builder()
                     .site(currencyRatio.getSite())
@@ -283,6 +289,12 @@ public class CoinAllMineService {
                     .createTime(new Date())
                     .build();
             currencyRatioMapper.insert(currentRatio);
+            sb.append("current rate:");
+            sb.append(currentRatio.getRatio());
+            sb.append(",");
+            sb.append(currentRatio.getCurrentPrice());
+
+            weiXinMessageService.sendMessage("ratio changed", sb.toString());
             return;
         }
 
