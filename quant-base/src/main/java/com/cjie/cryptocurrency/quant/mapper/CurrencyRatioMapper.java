@@ -1,6 +1,7 @@
 package com.cjie.cryptocurrency.quant.mapper;
 
 import com.cjie.cryptocurrency.quant.model.CurrencyRatio;
+import org.apache.ibatis.annotations.Param;
 
 public interface CurrencyRatioMapper {
     int deleteByPrimaryKey(Long id);
@@ -15,5 +16,7 @@ public interface CurrencyRatioMapper {
 
     int updateByPrimaryKey(CurrencyRatio record);
 
-    CurrencyRatio getLatestRatio(String site, String baseCurrency, String quotaCurrency);
+    CurrencyRatio getLatestRatio(@Param("site") String site,
+                                 @Param("baseCurrency")String baseCurrency,
+                                 @Param("quotaCurrency")String quotaCurrency);
 }
