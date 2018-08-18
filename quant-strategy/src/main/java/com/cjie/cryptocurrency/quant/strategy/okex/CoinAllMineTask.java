@@ -28,11 +28,11 @@ public class CoinAllMineTask {
     }
 
 
-    //@Scheduled(cron = "*/5 * * * * ?")
+    @Scheduled(cron = "*/5 * * * * ?")
     public void mineCurrency1() throws JobExecutionException {
         log.info("start mining");
         try {
-            mineService.mine1("okb", "btc", 0.002);
+            mineService.mine3("okb", "btc", 0.002);
         } catch (Exception e) {
             e.printStackTrace();
         }
