@@ -30,14 +30,14 @@ public class OkexKLineTask {
     @Autowired
     private CurrencyPairMapper currencyPairMapper;
 
-    @Scheduled(cron = "52 */5 * * * ?")
+    @Scheduled(cron = "52 */10 * * * ?")
     public void kline() throws Exception {
         log.info("get okex 1min kline begin");
         getKline("1min", "");
         log.info("get okex 1min kline end");
     }
 
-    @Scheduled(cron = "43 */10 * * * ?")
+    @Scheduled(cron = "43 */20 * * * ?")
     public void kline5m() throws Exception {
         log.info("get okex 5min kline begin");
         getKline("5min", "_5m");
