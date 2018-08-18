@@ -11,6 +11,7 @@ import com.cjie.cryptocurrency.quant.api.okex.bean.account.result.Wallet;
 import com.cjie.cryptocurrency.quant.api.okex.bean.account.result.WithdrawFee;
 import com.cjie.cryptocurrency.quant.api.okex.client.APIClient;
 import com.cjie.cryptocurrency.quant.api.okex.config.APIConfiguration;
+import com.cjie.cryptocurrency.quant.api.okex.service.BaseServiceImpl;
 import com.cjie.cryptocurrency.quant.api.okex.service.account.AccountAPIService;
 import com.cjie.cryptocurrency.quant.api.okex.bean.account.param.Transfer;
 import com.cjie.cryptocurrency.quant.api.okex.bean.account.param.Withdraw;
@@ -35,56 +36,83 @@ import com.cjie.cryptocurrency.quant.api.okex.bean.account.result.WithdrawFee;
 import com.cjie.cryptocurrency.quant.api.okex.client.APIClient;
 import com.cjie.cryptocurrency.quant.api.okex.config.APIConfiguration;
 import com.cjie.cryptocurrency.quant.api.okex.service.account.AccountAPIService;
+import com.cjie.cryptocurrency.quant.api.okex.service.spot.impl.SpotAccountAPI;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
-public class AccountAPIServiceImpl implements AccountAPIService {
+@Component
+@Slf4j
+public class AccountAPIServiceImpl extends BaseServiceImpl implements AccountAPIService {
 
-    private APIClient client;
-    private AccountAPI api;
+    private ConcurrentHashMap<String, AccountAPI> accountAPIs = new ConcurrentHashMap<>();
 
-    public AccountAPIServiceImpl(APIConfiguration config) {
-        this.client = new APIClient(config);
-        this.api = client.createService(AccountAPI.class);
+
+    public AccountAPI getAccountApi(String site, APIClient apiClient) {
+        AccountAPI accountAPI = accountAPIs.get(site);
+        if (accountAPI != null) {
+            return  accountAPI;
+        }
+        accountAPI = apiClient.createService(AccountAPI.class);
+        accountAPIs.put(site, accountAPI);
+        return accountAPI;
     }
 
     @Override
-    public JSONObject transfer(Transfer transfer) {
-        return this.client.executeSync(this.api.transfer(JSONObject.parseObject(JSON.toJSONString(transfer))));
+    public JSONObject transfer(String site, Transfer transfer) {
+        APIClient client = getSpotProductAPIClient(site);
+        AccountAPI api = getAccountApi(site, client);
+        return client.executeSync(api.transfer(JSONObject.parseObject(JSON.toJSONString(transfer))));
     }
 
     @Override
-    public JSONObject withdraw(Withdraw withdraw) {
-        return this.client.executeSync(this.api.withdraw(JSONObject.parseObject(JSON.toJSONString(withdraw))));
+    public JSONObject withdraw(String site, Withdraw withdraw) {
+        APIClient client = getSpotProductAPIClient(site);
+        AccountAPI api = getAccountApi(site, client);
+        return client.executeSync(api.withdraw(JSONObject.parseObject(JSON.toJSONString(withdraw))));
     }
 
     @Override
-    public List<Currency> getCurrencies() {
-        return this.client.executeSync(this.api.getCurrencies());
+    public List<Currency> getCurrencies(String site) {
+        APIClient client = getSpotProductAPIClient(site);
+        AccountAPI api = getAccountApi(site, client);
+        return client.executeSync(api.getCurrencies());
     }
 
     @Override
-    public List<Ledger> getLedger(Integer type, String currency, Integer before, Integer after, int limit) {
-        return this.client.executeSync(this.api.getLedger(type, currency, before, after, limit));
+    public List<Ledger> getLedger(String site, Integer type, String currency, Integer before, Integer after, int limit) {
+        APIClient client = getSpotProductAPIClient(site);
+        AccountAPI api = getAccountApi(site, client);
+        return client.executeSync(api.getLedger(type, currency, before, after, limit));
     }
 
     @Override
-    public List<Wallet> getWallet() {
-        return this.client.executeSync(this.api.getWallet());
+    public List<Wallet> getWallet(String site) {
+        APIClient client = getSpotProductAPIClient(site);
+        AccountAPI api = getAccountApi(site, client);
+        return client.executeSync(api.getWallet());
     }
 
     @Override
-    public List<Wallet> getWallet(String currency) {
-        return this.client.executeSync(this.api.getWallet(currency));
+    public List<Wallet> getWallet(String site, String currency) {
+        APIClient client = getSpotProductAPIClient(site);
+        AccountAPI api = getAccountApi(site, client);
+        return client.executeSync(api.getWallet(currency));
     }
 
     @Override
-    public JSONArray getDepositAddress(String currency) {
-        return this.client.executeSync(this.api.getDepositAddress(currency));
+    public JSONArray getDepositAddress(String site, String currency) {
+        APIClient client = getSpotProductAPIClient(site);
+        AccountAPI api = getAccountApi(site, client);
+        return client.executeSync(api.getDepositAddress(currency));
     }
 
     @Override
-    public List<WithdrawFee> getWithdrawFee(String currency) {
-        return this.client.executeSync(this.api.getWithdrawFee(currency));
+    public List<WithdrawFee> getWithdrawFee(String site, String currency) {
+        APIClient client = getSpotProductAPIClient(site);
+        AccountAPI api = getAccountApi(site, client);
+        return client.executeSync(api.getWithdrawFee(currency));
     }
 }

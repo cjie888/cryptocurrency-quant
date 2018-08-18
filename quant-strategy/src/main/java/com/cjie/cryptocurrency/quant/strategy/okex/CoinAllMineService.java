@@ -2,11 +2,14 @@ package com.cjie.cryptocurrency.quant.strategy.okex;
 
 import com.alibaba.fastjson.JSON;
 import com.cjie.cryptocurrency.quant.api.fcoin.FcoinRetry;
+import com.cjie.cryptocurrency.quant.api.okex.bean.account.param.Transfer;
+import com.cjie.cryptocurrency.quant.api.okex.bean.account.result.Wallet;
 import com.cjie.cryptocurrency.quant.api.okex.bean.spot.param.PlaceOrderParam;
 import com.cjie.cryptocurrency.quant.api.okex.bean.spot.result.Account;
 import com.cjie.cryptocurrency.quant.api.okex.bean.spot.result.Book;
 import com.cjie.cryptocurrency.quant.api.okex.bean.spot.result.OrderInfo;
 import com.cjie.cryptocurrency.quant.api.okex.bean.spot.result.Ticker;
+import com.cjie.cryptocurrency.quant.api.okex.service.account.AccountAPIService;
 import com.cjie.cryptocurrency.quant.api.okex.service.spot.SpotAccountAPIService;
 import com.cjie.cryptocurrency.quant.api.okex.service.spot.SpotOrderAPIServive;
 import com.cjie.cryptocurrency.quant.api.okex.service.spot.SpotProductAPIService;
@@ -43,6 +46,9 @@ public class CoinAllMineService {
 
     @Autowired
     private SpotOrderAPIServive spotOrderAPIService;
+
+    @Autowired
+    private AccountAPIService accountAPIService;
 
     @Autowired
     private WeiXinMessageService weiXinMessageService;
@@ -185,14 +191,42 @@ public class CoinAllMineService {
         if (marketPrice  > currencyRatio.getCurrentPrice()
                 .multiply(new BigDecimal("1.1")).doubleValue()) {
             baseRatio  = baseRatio - 0.03;
+            transfer(currencyRatio.getBaseCurrency(), currencyRatio.getQuotaCurrency(), 0.05);
         } else if (marketPrice  < currencyRatio.getCurrentPrice()
                 .multiply(new BigDecimal("0.9")).doubleValue()) {
             //下跌10%，买入， base增加
             baseRatio  = baseRatio + 0.03;
+            transfer(currencyRatio.getQuotaCurrency(), currencyRatio.getBaseCurrency(), 0.05);
+
         }
         return baseRatio;
     }
 
+
+    public void transfer(String inCurrency, String outCurrency, double ratio) {
+
+        List<Wallet> wallets = accountAPIService.getWallet("coinall", inCurrency);
+        if (!CollectionUtils.isEmpty(wallets)) {
+            Wallet wallet = wallets.get(0);
+            if (wallet.getAvailable().doubleValue() > 0) {
+                Transfer transferIn = new Transfer();
+                transferIn.setFrom(6);
+                transferIn.setTo(1);
+                transferIn.setAmount(wallet.getAvailable().multiply(BigDecimal.valueOf(ratio)));
+                accountAPIService.transfer("coinall", transferIn);
+            }
+        }
+
+        Account account = spotAccountAPIService.getAccountByCurrency("coinall", outCurrency);
+        if (Objects.nonNull(account) && Double.parseDouble(account.getAvailable()) > 0) {
+
+            Transfer transferOut = new Transfer();
+            transferOut.setFrom(1);
+            transferOut.setTo(6);
+            transferOut.setAmount(new BigDecimal(account.getAvailable()).multiply(BigDecimal.valueOf(ratio)));
+            accountAPIService.transfer("coinall", transferOut);
+        }
+    }
     /**
      * 动态调整策略
      *
@@ -539,7 +573,8 @@ public class CoinAllMineService {
     }
 
     public static void main(String[] args) {
-        new CoinAllMineService().getTicker("okb", "usdt");
+//        new CoinAllMineService().getTicker("okb", "usdt");
+        new CoinAllMineService().transfer("cac", "usdt", 0.001);
     }
 
     public void collectBalance() {

@@ -20,20 +20,20 @@ import java.util.List;
 
 public interface AccountAPIService {
 
-    JSONObject transfer(Transfer transfer);
+    JSONObject transfer(String site, Transfer transfer);
 
-    JSONObject withdraw(Withdraw withdraw);
+    JSONObject withdraw(String site, Withdraw withdraw);
 
-    List<Currency> getCurrencies();
+    List<Currency> getCurrencies(String site);
 
-    List<Ledger> getLedger(Integer type, String currency, Integer before, Integer after, int limit);
+    List<Ledger> getLedger(String site, Integer type, String currency, Integer before, Integer after, int limit);
 
-    List<Wallet> getWallet();
+    List<Wallet> getWallet(String site);
 
-    List<Wallet> getWallet(String currency);
+    List<Wallet> getWallet(String site, String currency);
 
-    JSONArray getDepositAddress(String currency);
+    JSONArray getDepositAddress(String site, String currency);
 
-    List<WithdrawFee> getWithdrawFee(String currency);
+    List<WithdrawFee> getWithdrawFee(String site, String currency);
 
 }
