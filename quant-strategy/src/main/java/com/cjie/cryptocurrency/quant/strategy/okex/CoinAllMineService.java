@@ -181,11 +181,13 @@ public class CoinAllMineService {
 //                baseRatio = 0.8;
 //            }
 //        }
-        //上涨，卖出， base减少
-        if (marketPrice  > currencyRatio.getCurrentPrice().multiply(new BigDecimal("1.1")).doubleValue()) {
+        //上涨10%，卖出， base减少
+        if (marketPrice  > currencyRatio.getCurrentPrice()
+                .multiply(new BigDecimal("1.1")).doubleValue()) {
             baseRatio  = baseRatio - 0.03;
-        } else if (marketPrice  < currencyRatio.getCurrentPrice().multiply(new BigDecimal("0.9")).doubleValue()) {
-            //下跌，买入， base增加
+        } else if (marketPrice  < currencyRatio.getCurrentPrice()
+                .multiply(new BigDecimal("0.9")).doubleValue()) {
+            //下跌10%，买入， base增加
             baseRatio  = baseRatio + 0.03;
         }
         return baseRatio;
@@ -227,12 +229,12 @@ public class CoinAllMineService {
             log.error("Get currency {}-{} ratio error", baseName, quotaName);
             throw new RuntimeException("Get currency ratio error");
         }
-        log.info("origin base ratio:{}", currencyRatio.getRatio());
+        log.info("origin base ratio:{}, price:{}", currencyRatio.getRatio(), currencyRatio.getCurrentPrice());
 
         double baseRatio = getRatio(currencyRatio, marketPrice);
 
         if (Math.abs(baseRatio - currencyRatio.getRatio()) > 0.001) {
-            log.info("current base ratio:{}", baseRatio);
+            log.info("current base ratio:{}, price:{}", baseRatio, marketPrice);
             CurrencyRatio currentRatio = CurrencyRatio.builder()
                     .site(currencyRatio.getSite())
                     .baseCurrency(currencyRatio.getBaseCurrency())
