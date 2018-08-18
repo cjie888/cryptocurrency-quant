@@ -115,7 +115,7 @@ public class KLineTask {
                     if (type.equals("1min")) {
                         currSuffix = currSuffix + "_" + quotaCurrency;
                     }
-                    List<HuobiKLineData> list = client.kline(baseCurrency + quotaCurrency, type, 5);
+                    List<HuobiKLineData> list = client.kline(baseCurrency + quotaCurrency, type, 3);
                     for (HuobiKLineData data : list) {
                         if (currencyKlineMapper.getCurrencyLine(new Date(data.getId() * 1000),
                                 baseCurrency, quotaCurrency, "huobi", currSuffix) != null) {
