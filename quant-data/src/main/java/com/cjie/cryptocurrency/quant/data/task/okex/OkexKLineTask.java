@@ -129,7 +129,7 @@ public class OkexKLineTask {
                                 .site("okex")
                                 .suffix(currSuffix)
                                 .build();
-                        log.info("{}-{}-{}--,{}", type, baseCurrency, quotaCurrency, JSON.toJSONString(data));
+                        //log.info("{}-{}-{}--,{}", type, baseCurrency, quotaCurrency, JSON.toJSONString(data));
 
 
                         currencyKlineMapper.insert(kline);

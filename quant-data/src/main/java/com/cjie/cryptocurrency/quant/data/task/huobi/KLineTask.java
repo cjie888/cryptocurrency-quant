@@ -134,7 +134,7 @@ public class KLineTask {
                                 .site("huobi")
                                 .suffix(currSuffix)
                                 .build();
-                        log.info("{}-{}-{}--,{}", type, baseCurrency, quotaCurrency, data);
+                        //log.info("{}-{}-{}--,{}", type, baseCurrency, quotaCurrency, data);
 
 
                         currencyKlineMapper.insert(kline);
