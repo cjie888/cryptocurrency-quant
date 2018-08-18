@@ -158,6 +158,39 @@ public class CoinAllMineService {
 
     }
 
+    private double getRatio(CurrencyRatio currencyRatio, double marketPrice) {
+        double baseRatio = currencyRatio.getRatio();
+//        if ("cac".equalsIgnoreCase(currencyRatio.getBaseCurrency())) {
+//            if (marketPrice > 0.4) {
+//                baseRatio = 0.2;
+//            } else if (marketPrice > 0.35) {
+//                baseRatio = 0.3;
+//            } else if (marketPrice > 0.3) {
+//                baseRatio = 0.35;
+//            }  else if (marketPrice > 0.25) {
+//                baseRatio = 0.4;
+//            }  else if (marketPrice > 0.2) {
+//                baseRatio = 0.45;
+//            }  else if (marketPrice > 0.15) {
+//                baseRatio = 0.5;
+//            }  else if (marketPrice > 0.12) {
+//                baseRatio = 0.6;
+//            }  else if (marketPrice > 0.1) {
+//                baseRatio = 0.7;
+//            } else {
+//                baseRatio = 0.8;
+//            }
+//        }
+        //上涨，卖出， base减少
+        if (marketPrice  > currencyRatio.getCurrentPrice().multiply(new BigDecimal("1.1")).doubleValue()) {
+            baseRatio  = baseRatio - 0.03;
+        } else if (marketPrice  < currencyRatio.getCurrentPrice().multiply(new BigDecimal("0.9")).doubleValue()) {
+            //下跌，买入， base增加
+            baseRatio  = baseRatio + 0.03;
+        }
+        return baseRatio;
+    }
+
     /**
      * 动态调整策略
      *
@@ -194,29 +227,24 @@ public class CoinAllMineService {
             log.error("Get currency {}-{} ratio error", baseName, quotaName);
             throw new RuntimeException("Get currency ratio error");
         }
-        double baseRatio = currencyRatio.getRatio();
-        if ("cac".equalsIgnoreCase(baseName)) {
-            if (marketPrice > 0.4) {
-                baseRatio = 0.2;
-            } else if (marketPrice > 0.35) {
-                baseRatio = 0.3;
-            } else if (marketPrice > 0.3) {
-                baseRatio = 0.35;
-            }  else if (marketPrice > 0.25) {
-                baseRatio = 0.4;
-            }  else if (marketPrice > 0.2) {
-                baseRatio = 0.45;
-            }  else if (marketPrice > 0.15) {
-                baseRatio = 0.5;
-            }  else if (marketPrice > 0.12) {
-                baseRatio = 0.6;
-            }  else if (marketPrice > 0.1) {
-                baseRatio = 0.7;
-            } else {
-                baseRatio = 0.8;
-            }
+        log.info("origin base ratio:{}", currencyRatio.getRatio());
+
+        double baseRatio = getRatio(currencyRatio, marketPrice);
+
+        if (Math.abs(baseRatio - currencyRatio.getRatio()) > 0.001) {
+            log.info("current base ratio:{}", baseRatio);
+            CurrencyRatio currentRatio = CurrencyRatio.builder()
+                    .site(currencyRatio.getSite())
+                    .baseCurrency(currencyRatio.getBaseCurrency())
+                    .quotaCurrency(currencyRatio.getQuotaCurrency())
+                    .currentPrice(BigDecimal.valueOf(marketPrice))
+                    .ratio(baseRatio)
+                    .createTime(new Date())
+                    .build();
+            currencyRatioMapper.insert(currentRatio);
+            return;
         }
-        log.info("base ratio:{}", baseRatio );
+
 
 
         double allAsset= baseBalance * marketPrice + quotaBalance;
