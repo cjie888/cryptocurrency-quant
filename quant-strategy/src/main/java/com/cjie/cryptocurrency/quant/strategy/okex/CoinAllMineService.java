@@ -212,8 +212,10 @@ public class CoinAllMineService {
                 Transfer transferIn = new Transfer();
                 transferIn.setFrom(6);
                 transferIn.setTo(1);
-                transferIn.setAmount(wallet.getAvailable().multiply(BigDecimal.valueOf(ratio)));
+                BigDecimal amount = wallet.getAvailable().multiply(BigDecimal.valueOf(ratio));
+                transferIn.setAmount(amount);
                 accountAPIService.transfer("coinall", transferIn);
+                log.info("transfer {} {} from wallet to spot", amount, inCurrency);
             }
         }
 
@@ -223,8 +225,11 @@ public class CoinAllMineService {
             Transfer transferOut = new Transfer();
             transferOut.setFrom(1);
             transferOut.setTo(6);
-            transferOut.setAmount(new BigDecimal(account.getAvailable()).multiply(BigDecimal.valueOf(ratio)));
+            BigDecimal amount = new BigDecimal(account.getAvailable()).multiply(BigDecimal.valueOf(ratio));
+            transferOut.setAmount(amount);
             accountAPIService.transfer("coinall", transferOut);
+            log.info("transfer {} {} from spot to wallet", amount, outCurrency);
+
         }
     }
     /**
