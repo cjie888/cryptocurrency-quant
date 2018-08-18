@@ -28,7 +28,7 @@ public class CoinAllMineTask {
     }
 
 
-    @Scheduled(cron = "*/5 * * * * ?")
+    //@Scheduled(cron = "*/5 * * * * ?")
     public void mineCurrency1() throws JobExecutionException {
         log.info("start mining");
         try {
