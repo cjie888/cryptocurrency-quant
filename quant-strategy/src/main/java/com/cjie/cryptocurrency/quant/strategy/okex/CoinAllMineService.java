@@ -210,6 +210,7 @@ public class CoinAllMineService {
             Wallet wallet = wallets.get(0);
             if (wallet.getAvailable().doubleValue() > 0) {
                 Transfer transferIn = new Transfer();
+                transferIn.setCurrency(inCurrency);
                 transferIn.setFrom(6);
                 transferIn.setTo(1);
                 BigDecimal amount = wallet.getAvailable().multiply(BigDecimal.valueOf(ratio));
@@ -223,6 +224,7 @@ public class CoinAllMineService {
         if (Objects.nonNull(account) && Double.parseDouble(account.getAvailable()) > 0) {
 
             Transfer transferOut = new Transfer();
+            transferOut.setCurrency(outCurrency);
             transferOut.setFrom(1);
             transferOut.setTo(6);
             BigDecimal amount = new BigDecimal(account.getAvailable()).multiply(BigDecimal.valueOf(ratio));
