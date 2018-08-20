@@ -29,7 +29,9 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
+import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -596,7 +598,7 @@ public class CoinAllMineService {
         new CoinAllMineService().transfer("cac", "usdt", 0.001);
     }
 
-    public void collectBalance() {
+    public void collectBalance() throws UnsupportedEncodingException {
         List<Account> accounts = spotAccountAPIService.getAccounts("coinall");
         StringBuilder sb = new StringBuilder();
         if (!CollectionUtils.isEmpty(accounts)) {
@@ -605,7 +607,7 @@ public class CoinAllMineService {
                     sb.append(account.getCurrency() + ":" + account.getBalance() + "\r\n\r\n");
                 }
             }
-            weiXinMessageService.sendMessage("balance", sb.toString());
+            weiXinMessageService.sendMessage("balance", URLEncoder.encode(sb.toString(), "utf-8"));
         }
     }
 }
