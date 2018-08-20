@@ -607,7 +607,7 @@ public class CoinAllMineService {
                     sb.append(account.getCurrency() + ":" + account.getBalance() + "\r\n\r\n");
                 }
             }
-            weiXinMessageService.sendMessage("balance", URLEncoder.encode(sb.toString(), "utf-8"));
+            weiXinMessageService.sendMessage("balance",  sb.toString());
         }
     }
 }
