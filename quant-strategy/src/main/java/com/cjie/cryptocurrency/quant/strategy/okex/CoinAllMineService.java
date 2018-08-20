@@ -602,7 +602,7 @@ public class CoinAllMineService {
         if (!CollectionUtils.isEmpty(accounts)) {
             for (Account account : accounts) {
                 if (Double.parseDouble(account.getBalance()) > 0) {
-                    sb.append(account.getCurrency() + ":" + account.getBalance() + "\r\n  </br>  </br>");
+                    sb.append(account.getCurrency() + ":" + account.getBalance() + "\r\n\r\n");
                 }
             }
             weiXinMessageService.sendMessage("balance", sb.toString());
