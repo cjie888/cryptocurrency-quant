@@ -195,12 +195,12 @@ public class CoinAllMineService {
         if (marketPrice  > currencyRatio.getCurrentPrice()
                 .multiply(new BigDecimal("1.1")).doubleValue()) {
             baseRatio  = baseRatio - 0.03;
-            //transfer(currencyRatio.getBaseCurrency(), currencyRatio.getQuotaCurrency(), 0.05);
+            transfer(currencyRatio.getBaseCurrency(), currencyRatio.getQuotaCurrency(), 0.1);
         } else if (marketPrice  < currencyRatio.getCurrentPrice()
                 .multiply(new BigDecimal("0.9")).doubleValue()) {
             //下跌10%，买入， base增加
             baseRatio  = baseRatio + 0.03;
-            //transfer(currencyRatio.getQuotaCurrency(), currencyRatio.getBaseCurrency(), 0.05);
+            transfer(currencyRatio.getQuotaCurrency(), currencyRatio.getBaseCurrency(), 0.1);
 
         }
         return baseRatio;
