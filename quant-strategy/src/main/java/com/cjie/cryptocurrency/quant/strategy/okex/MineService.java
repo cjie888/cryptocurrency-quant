@@ -1,15 +1,21 @@
 package com.cjie.cryptocurrency.quant.strategy.okex;
 
 import com.alibaba.fastjson.JSON;
+import com.cjie.cryptocurrency.quant.api.okex.bean.account.param.Transfer;
+import com.cjie.cryptocurrency.quant.api.okex.bean.account.result.Wallet;
 import com.cjie.cryptocurrency.quant.api.okex.bean.spot.param.PlaceOrderParam;
 import com.cjie.cryptocurrency.quant.api.okex.bean.spot.result.Account;
 import com.cjie.cryptocurrency.quant.api.okex.bean.spot.result.OrderInfo;
 import com.cjie.cryptocurrency.quant.api.okex.bean.spot.result.Ticker;
+import com.cjie.cryptocurrency.quant.api.okex.service.account.AccountAPIService;
 import com.cjie.cryptocurrency.quant.api.okex.service.spot.SpotAccountAPIService;
 import com.cjie.cryptocurrency.quant.api.okex.service.spot.SpotOrderAPIServive;
 import com.cjie.cryptocurrency.quant.api.okex.service.spot.SpotProductAPIService;
+import com.cjie.cryptocurrency.quant.mapper.CurrencyRatioMapper;
 import com.cjie.cryptocurrency.quant.model.APIKey;
+import com.cjie.cryptocurrency.quant.model.CurrencyRatio;
 import com.cjie.cryptocurrency.quant.service.ApiKeyService;
+import com.cjie.cryptocurrency.quant.service.WeiXinMessageService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
@@ -18,14 +24,13 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Component
 @Slf4j
@@ -41,6 +46,9 @@ public class MineService {
     private SpotOrderAPIServive spotOrderAPIService;
 
     @Autowired
+    private AccountAPIService accountAPIService;
+
+    @Autowired
     private ApiKeyService  apiKeyService;
 
 
@@ -50,6 +58,11 @@ public class MineService {
 
     private static int numPrecision = 8;
 
+    @Autowired
+    private WeiXinMessageService weiXinMessageService;
+
+    @Autowired
+    private CurrencyRatioMapper currencyRatioMapper;
 
     private static Map<String, Double> minLimitPriceOrderNums = new HashMap<>();
 
@@ -141,6 +154,81 @@ public class MineService {
 
     }
 
+    private double getRatio(CurrencyRatio currencyRatio, double marketPrice, boolean isTransfer) {
+        double baseRatio = currencyRatio.getRatio();
+//        if ("cac".equalsIgnoreCase(currencyRatio.getBaseCurrency())) {
+//            if (marketPrice > 0.4) {
+//                baseRatio = 0.2;
+//            } else if (marketPrice > 0.35) {
+//                baseRatio = 0.3;
+//            } else if (marketPrice > 0.3) {
+//                baseRatio = 0.35;
+//            }  else if (marketPrice > 0.25) {
+//                baseRatio = 0.4;
+//            }  else if (marketPrice > 0.2) {
+//                baseRatio = 0.45;
+//            }  else if (marketPrice > 0.15) {
+//                baseRatio = 0.5;
+//            }  else if (marketPrice > 0.12) {
+//                baseRatio = 0.6;
+//            }  else if (marketPrice > 0.1) {
+//                baseRatio = 0.7;
+//            } else {
+//                baseRatio = 0.8;
+//            }
+//        }
+        //上涨10%，卖出， base减少
+        if (marketPrice  > currencyRatio.getCurrentPrice()
+                .multiply(new BigDecimal("1.1")).doubleValue()) {
+            baseRatio  = baseRatio - 0.03;
+            if (isTransfer) {
+                transfer(currencyRatio.getSite(), currencyRatio.getBaseCurrency(), currencyRatio.getQuotaCurrency(), 0.05);
+            }
+        } else if (marketPrice  < currencyRatio.getCurrentPrice()
+                .multiply(new BigDecimal("0.9")).doubleValue()) {
+            //下跌10%，买入， base增加
+            baseRatio  = baseRatio + 0.03;
+            if (isTransfer) {
+                transfer(currencyRatio.getSite(), currencyRatio.getQuotaCurrency(), currencyRatio.getBaseCurrency(), 0.05);
+            }
+
+        }
+        return baseRatio;
+    }
+
+
+    public void transfer(String site, String inCurrency, String outCurrency, double ratio) {
+
+        List<Wallet> wallets = accountAPIService.getWallet(site, inCurrency);
+        if (!CollectionUtils.isEmpty(wallets)) {
+            Wallet wallet = wallets.get(0);
+            if (wallet.getAvailable().doubleValue() > 0) {
+                Transfer transferIn = new Transfer();
+                transferIn.setCurrency(inCurrency);
+                transferIn.setFrom(6);
+                transferIn.setTo(1);
+                BigDecimal amount = wallet.getAvailable().multiply(BigDecimal.valueOf(ratio));
+                transferIn.setAmount(amount);
+                accountAPIService.transfer("coinall", transferIn);
+                log.info("transfer {} {} from wallet to spot", amount, inCurrency);
+            }
+        }
+
+        Account account = spotAccountAPIService.getAccountByCurrency(site, outCurrency);
+        if (Objects.nonNull(account) && Double.parseDouble(account.getAvailable()) > 0) {
+
+            Transfer transferOut = new Transfer();
+            transferOut.setCurrency(outCurrency);
+            transferOut.setFrom(1);
+            transferOut.setTo(6);
+            BigDecimal amount = new BigDecimal(account.getAvailable()).multiply(BigDecimal.valueOf(ratio));
+            transferOut.setAmount(amount);
+            accountAPIService.transfer("coinall", transferOut);
+            log.info("transfer {} {} from spot to wallet", amount, outCurrency);
+
+        }
+    }
+
     /**
      * 动态调整策略
      *
@@ -172,6 +260,44 @@ public class MineService {
         Double marketPrice = Double.parseDouble(ticker.getLast());
         log.info("ticker last {} -{}:{}", baseName, quotaName, marketPrice);
 
+        if ("okb".equalsIgnoreCase(baseName)) {
+
+            CurrencyRatio currencyRatio = currencyRatioMapper.getLatestRatio(site,
+                    baseName.toLowerCase(), quotaName.toLowerCase());
+            if (Objects.isNull(currencyRatio)) {
+                log.error("Get currency {}-{} ratio error", baseName, quotaName);
+                throw new RuntimeException("Get currency ratio error");
+            }
+            log.info("origin base ratio:{}, price:{}", currencyRatio.getRatio(), currencyRatio.getCurrentPrice());
+
+            baseRatio = getRatio(currencyRatio, marketPrice, false);
+
+            if (Math.abs(baseRatio - currencyRatio.getRatio()) > 0.001) {
+                StringBuilder sb = new StringBuilder();
+                sb.append("origin rate:");
+                sb.append(currencyRatio.getRatio());
+                sb.append(",");
+                sb.append(currencyRatio.getCurrentPrice());
+
+                log.info("current base ratio:{}, price:{}", baseRatio, marketPrice);
+                CurrencyRatio currentRatio = CurrencyRatio.builder()
+                        .site(currencyRatio.getSite())
+                        .baseCurrency(currencyRatio.getBaseCurrency())
+                        .quotaCurrency(currencyRatio.getQuotaCurrency())
+                        .currentPrice(BigDecimal.valueOf(marketPrice))
+                        .ratio(baseRatio)
+                        .createTime(new Date())
+                        .build();
+                currencyRatioMapper.insert(currentRatio);
+                sb.append("current rate:");
+                sb.append(currentRatio.getRatio());
+                sb.append(",");
+                sb.append(currentRatio.getCurrentPrice());
+
+                weiXinMessageService.sendMessage("ratio changed", sb.toString());
+                return;
+            }
+        }
 
         double allAsset= baseBalance * marketPrice + quotaBalance;
         log.info("basebalance:{}, qutobalance:{}, allAsset:{}, asset/2:{}, basebalance-quota:{}",
