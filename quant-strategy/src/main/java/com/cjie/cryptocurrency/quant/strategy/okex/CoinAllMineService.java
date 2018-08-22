@@ -195,12 +195,16 @@ public class CoinAllMineService {
         if (marketPrice  > currencyRatio.getCurrentPrice()
                 .multiply(new BigDecimal("1.1")).doubleValue()) {
             baseRatio  = baseRatio - 0.03;
-            transfer(currencyRatio.getBaseCurrency(), currencyRatio.getQuotaCurrency(), 0.1);
+            if (baseRatio > 0.50) {
+                transfer(currencyRatio.getBaseCurrency(), currencyRatio.getQuotaCurrency(), baseRatio-50);
+            }
         } else if (marketPrice  < currencyRatio.getCurrentPrice()
                 .multiply(new BigDecimal("0.9")).doubleValue()) {
             //下跌10%，买入， base增加
             baseRatio  = baseRatio + 0.03;
-            transfer(currencyRatio.getQuotaCurrency(), currencyRatio.getBaseCurrency(), 0.1);
+            if (baseRatio < 0.5) {
+                transfer(currencyRatio.getQuotaCurrency(), currencyRatio.getBaseCurrency(), 0.5 - baseRatio);
+            }
 
         }
         return baseRatio;
@@ -217,9 +221,16 @@ public class CoinAllMineService {
                 transferIn.setCurrency(inCurrency);
                 transferIn.setFrom(6);
                 transferIn.setTo(1);
-                BigDecimal amount = wallet.getAvailable().multiply(BigDecimal.valueOf(ratio));
+                BigDecimal available = wallet.getAvailable();
+                if ("cac".equalsIgnoreCase(inCurrency)) {
+                    available = available.subtract(new BigDecimal("4000"));
+                }
+                BigDecimal amount = available.multiply(BigDecimal.valueOf(ratio));
+
                 transferIn.setAmount(amount);
-                accountAPIService.transfer("coinall", transferIn);
+                if (amount.doubleValue() > 0) {
+                    accountAPIService.transfer("coinall", transferIn);
+                }
                 log.info("transfer {} {} from wallet to spot", amount, inCurrency);
             }
         }
