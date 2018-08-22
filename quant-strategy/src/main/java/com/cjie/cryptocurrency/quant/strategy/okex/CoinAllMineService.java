@@ -196,7 +196,7 @@ public class CoinAllMineService {
                 .multiply(new BigDecimal("1.05")).doubleValue()) {
             baseRatio  = baseRatio - 0.02;
             if (baseRatio > 0.50) {
-                transfer(currencyRatio.getBaseCurrency(), currencyRatio.getQuotaCurrency(), baseRatio-50);
+                transfer(currencyRatio.getBaseCurrency(), currencyRatio.getQuotaCurrency(), baseRatio-0.50);
             }
         } else if (marketPrice  < currencyRatio.getCurrentPrice()
                 .multiply(new BigDecimal("0.95")).doubleValue()) {
