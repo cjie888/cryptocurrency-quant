@@ -193,15 +193,15 @@ public class CoinAllMineService {
 //        }
         //上涨10%，卖出， base减少
         if (marketPrice  > currencyRatio.getCurrentPrice()
-                .multiply(new BigDecimal("1.1")).doubleValue()) {
-            baseRatio  = baseRatio - 0.03;
+                .multiply(new BigDecimal("1.05")).doubleValue()) {
+            baseRatio  = baseRatio - 0.02;
             if (baseRatio > 0.50) {
                 transfer(currencyRatio.getBaseCurrency(), currencyRatio.getQuotaCurrency(), baseRatio-50);
             }
         } else if (marketPrice  < currencyRatio.getCurrentPrice()
-                .multiply(new BigDecimal("0.9")).doubleValue()) {
+                .multiply(new BigDecimal("0.95")).doubleValue()) {
             //下跌10%，买入， base增加
-            baseRatio  = baseRatio + 0.03;
+            baseRatio  = baseRatio + 0.02;
             if (baseRatio < 0.5) {
                 transfer(currencyRatio.getQuotaCurrency(), currencyRatio.getBaseCurrency(), 0.5 - baseRatio);
             }
