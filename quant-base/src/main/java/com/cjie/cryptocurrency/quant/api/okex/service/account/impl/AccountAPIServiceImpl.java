@@ -62,6 +62,7 @@ public class AccountAPIServiceImpl extends BaseServiceImpl implements AccountAPI
 
     @Override
     public JSONObject transfer(String site, Transfer transfer) {
+        log.info("transfer site-{}, {}", site, JSON.toJSONString(transfer));
         APIClient client = getSpotProductAPIClient(site);
         AccountAPI api = getAccountApi(site, client);
         return client.executeSync(api.transfer(JSONObject.parseObject(JSON.toJSONString(transfer))));
