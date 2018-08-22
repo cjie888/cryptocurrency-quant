@@ -14,6 +14,20 @@ public class MineTask {
     @Autowired
     private MineService mineService;
 
+
+    @Scheduled(cron = "* */10 * * * ?")
+    public void balance() throws JobExecutionException {
+        log.info("start balance");
+        try {
+            mineService.collectBalance();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        log.info("end balance");
+
+
+    }
+
     //@Scheduled(cron = "* */2 * * * ?")
     public void mineCurrency1() throws JobExecutionException {
         log.info("start mining");

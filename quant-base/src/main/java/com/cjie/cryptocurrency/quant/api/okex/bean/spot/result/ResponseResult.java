@@ -4,9 +4,13 @@ import java.io.Serializable;
 
 public class ResponseResult<T> implements Serializable {
 
-    private final T data;
+    private  T data;
 
-    private ResponseResult(final T data) {
+    public ResponseResult() {
+
+    }
+
+    private ResponseResult( T data) {
         this.data = data;
     }
 
@@ -20,5 +24,13 @@ public class ResponseResult<T> implements Serializable {
 
     public static <T> ResponseResult<T> build(final T data) {
         return new ResponseResult(data);
+    }
+
+    public T getData() {
+        return data;
+    }
+
+    public void setData(T data) {
+        this.data = data;
     }
 }
