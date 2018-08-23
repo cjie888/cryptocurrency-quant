@@ -24,6 +24,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
@@ -586,7 +587,10 @@ public class MineService {
         HttpEntity requestEntity = new HttpEntity<>(headers);
 
         String url =  apiKey.getDomain() + "/api/spot/v3/products/"+symbol+"/ticker";
-        RestTemplate client = new RestTemplate();
+        SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
+        requestFactory.setConnectTimeout(10000);// 设置超时
+        requestFactory.setReadTimeout(10000);
+        RestTemplate client = new RestTemplate(requestFactory);
         log.info(url);
         client.getMessageConverters().set(1, new StringHttpMessageConverter(StandardCharsets.UTF_8));
         ResponseEntity<String> response = client.exchange(url, HttpMethod.GET, requestEntity, String.class);
