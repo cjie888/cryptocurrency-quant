@@ -168,7 +168,7 @@ public class CoinAllMineService {
 
     }
 
-    private double getRatio(CurrencyRatio currencyRatio, double marketPrice) {
+    private double getRatio(CurrencyRatio currencyRatio, double marketPrice, boolean isTransfer) {
         double baseRatio = currencyRatio.getRatio();
 //        if ("cac".equalsIgnoreCase(currencyRatio.getBaseCurrency())) {
 //            if (marketPrice > 0.4) {
@@ -195,14 +195,14 @@ public class CoinAllMineService {
         if (marketPrice  > currencyRatio.getCurrentPrice()
                 .multiply(new BigDecimal("1.05")).doubleValue()) {
             baseRatio  = baseRatio - 0.02;
-            if (baseRatio > 0.50) {
+            if (isTransfer && baseRatio > 0.50) {
                 transfer(currencyRatio.getBaseCurrency(), currencyRatio.getQuotaCurrency(), baseRatio-0.50);
             }
         } else if (marketPrice  < currencyRatio.getCurrentPrice()
                 .multiply(new BigDecimal("0.95")).doubleValue()) {
             //下跌10%，买入， base增加
             baseRatio  = baseRatio + 0.02;
-            if (baseRatio < 0.5) {
+            if (isTransfer && baseRatio < 0.5) {
                 transfer(currencyRatio.getQuotaCurrency(), currencyRatio.getBaseCurrency(), 0.5 - baseRatio);
             }
 
@@ -295,7 +295,7 @@ public class CoinAllMineService {
         }
         log.info("origin base ratio:{}, price:{}", currencyRatio.getRatio(), currencyRatio.getCurrentPrice());
 
-        double baseRatio = getRatio(currencyRatio, marketPrice);
+        double baseRatio = getRatio(currencyRatio, marketPrice, false);
 
         if (Math.abs(baseRatio - currencyRatio.getRatio()) > 0.001) {
             StringBuilder sb = new StringBuilder();
