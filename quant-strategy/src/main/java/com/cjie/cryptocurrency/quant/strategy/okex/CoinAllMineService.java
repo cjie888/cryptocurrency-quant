@@ -269,12 +269,20 @@ public class CoinAllMineService {
         Account baseAccount = getBalance(baseName);
         double baseHold = new BigDecimal(baseAccount.getBalance()).doubleValue() - new BigDecimal(baseAccount.getAvailable()).doubleValue();
         double baseBalance = new BigDecimal(baseAccount.getBalance()).doubleValue();
+        double baseAvailable = new BigDecimal(baseAccount.getAvailable()).doubleValue();
+        if (baseAvailable > 500) {
+            return;
+        }
 
 
         Account quotaAccount = getBalance(quotaName);
         double quotaHold = new BigDecimal(quotaAccount.getBalance()).doubleValue() - new BigDecimal(quotaAccount.getAvailable()).doubleValue();
         double quotaBalance = new BigDecimal(quotaAccount.getBalance()).doubleValue();
+        double quotaAvailable = new BigDecimal(quotaAccount.getAvailable()).doubleValue();
 
+        if (quotaAvailable > 100) {
+            return;
+        }
 
         Ticker ticker = getTicker(baseName, quotaName);
         Double marketPrice = Double.parseDouble(ticker.getLast());
@@ -317,16 +325,16 @@ public class CoinAllMineService {
 
 
 
-        double allAsset= baseBalance * marketPrice + quotaBalance;
+        double allAsset= baseAvailable * marketPrice + quotaAvailable;
         log.info("basebalance:{}, qutobalance:{}, allAsset:{}, asset/2:{}, basebalance-quota:{}",
-                baseBalance, quotaBalance, allAsset, allAsset*baseRatio, baseBalance * marketPrice );
+                baseAvailable, quotaAvailable, allAsset, allAsset*baseRatio, baseAvailable * marketPrice );
 
         BigDecimal quotaChange = null;
         BigDecimal baseChange = null;
-        if (allAsset*baseRatio - baseBalance * marketPrice  > allAsset * increment) {
-            BigDecimal amount = new BigDecimal(allAsset*baseRatio -baseBalance* marketPrice).setScale(numPrecision, BigDecimal.ROUND_FLOOR);
-            log.info("basebalance:{}, quotabalance:{}", baseBalance + amount.doubleValue(),
-                    quotaBalance - amount.doubleValue() * getMarketPrice(marketPrice).doubleValue());
+        if (allAsset*baseRatio - baseAvailable * marketPrice  > allAsset * increment) {
+            BigDecimal amount = new BigDecimal(allAsset*baseRatio -baseAvailable* marketPrice).setScale(numPrecision, BigDecimal.ROUND_FLOOR);
+            log.info("basebalance:{}, quotabalance:{}", baseAvailable + amount.doubleValue(),
+                    quotaAvailable - amount.doubleValue() * getMarketPrice(marketPrice).doubleValue());
             log.info("buy {}, price:{}", amount, marketPrice);
             //买入
             if (amount.doubleValue() - minLimitPriceOrderNum * marketPrice < 0) {
@@ -341,11 +349,11 @@ public class CoinAllMineService {
         }
 
 
-        if (baseBalance * marketPrice - allAsset * baseRatio > allAsset * increment) {
+        if (baseAvailable * marketPrice - allAsset * baseRatio > allAsset * increment) {
             //卖出
-            BigDecimal amount = new BigDecimal(baseBalance* marketPrice-allAsset * baseRatio).setScale(numPrecision, BigDecimal.ROUND_FLOOR);
-            log.info("basebalance:{}, quotabalance:{}", baseBalance - amount.doubleValue(),
-                    quotaBalance + amount.doubleValue() * getMarketPrice(marketPrice).doubleValue());
+            BigDecimal amount = new BigDecimal(baseAvailable* marketPrice-allAsset * baseRatio).setScale(numPrecision, BigDecimal.ROUND_FLOOR);
+            log.info("basebalance:{}, quotabalance:{}", baseAvailable - amount.doubleValue(),
+                    quotaAvailable + amount.doubleValue() * getMarketPrice(marketPrice).doubleValue());
             log.info("sell {}, price:{}", amount, marketPrice);
             if (amount.doubleValue() - minLimitPriceOrderNum * marketPrice < 0) {
                 log.info("小于最小限价数量");
@@ -448,6 +456,9 @@ public class CoinAllMineService {
         }
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
         for (OrderInfo orderInfo : orderIds) {
+            if (new BigDecimal(orderInfo.getSize()).compareTo(new BigDecimal(100)) >=0) {
+                continue;
+            }
             if (System.currentTimeMillis() - 8 * 3600 * 1000 - dateFormat.parse(orderInfo.getCreated_at()).getTime() < minutes * 60 * 1000) {
                 continue;
             }
