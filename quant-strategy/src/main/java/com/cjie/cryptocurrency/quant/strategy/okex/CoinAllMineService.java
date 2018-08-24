@@ -14,7 +14,9 @@ import com.cjie.cryptocurrency.quant.api.okex.service.spot.SpotAccountAPIService
 import com.cjie.cryptocurrency.quant.api.okex.service.spot.SpotOrderAPIServive;
 import com.cjie.cryptocurrency.quant.api.okex.service.spot.SpotProductAPIService;
 import com.cjie.cryptocurrency.quant.mapper.CurrencyRatioMapper;
+import com.cjie.cryptocurrency.quant.mapper.MineConfigMapper;
 import com.cjie.cryptocurrency.quant.model.CurrencyRatio;
+import com.cjie.cryptocurrency.quant.model.MineConfig;
 import com.cjie.cryptocurrency.quant.service.WeiXinMessageService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,6 +61,9 @@ public class CoinAllMineService {
     @Autowired
     private CurrencyRatioMapper currencyRatioMapper;
 
+    @Autowired
+    private MineConfigMapper mineConfigMapper;
+
     private static final RetryTemplate retryTemplate = FcoinRetry.getRetryTemplate();
 
 
@@ -100,9 +105,16 @@ public class CoinAllMineService {
     public void mine1(String baseName, String quotaName, double increment) throws Exception {
         String symbol = baseName.toUpperCase() + "-" + quotaName.toUpperCase();
 
-        if (!"okb".equalsIgnoreCase(baseName)) {
-            cancelOrders(getNotTradeOrders(symbol, "0", "100"), 300);
+        MineConfig mineConfig = mineConfigMapper.getLatestConfig("coinall",
+                baseName.toLowerCase(), quotaName.toLowerCase());
+        if (Objects.isNull(mineConfig) || mineConfig.getStatus() == 0) {
+            log.info("mine {} - {} closed", baseName, quotaName);
+            return;
         }
+
+//        if (!"okb".equalsIgnoreCase(baseName)) {
+//            cancelOrders(getNotTradeOrders(symbol, "0", "100"), 300);
+//        }
         //查询余额
         Account baseAccount = getBalance(baseName);
         double baseHold = new BigDecimal(baseAccount.getBalance()).doubleValue() - new BigDecimal(baseAccount.getAvailable()).doubleValue();
@@ -115,8 +127,8 @@ public class CoinAllMineService {
 
 
         //判断是否有冻结的，如果冻结太多冻结就休眠，进行下次挖矿
-        if (baseHold > 0.99 * baseBalance
-                && quotaHold > 0.99 * quotaBalance) {
+        if (baseHold > 0.999 * baseBalance
+                && quotaHold > 0.999 * quotaBalance) {
             return;
         }
 
@@ -132,17 +144,23 @@ public class CoinAllMineService {
 //            logger.info("跳出循环，ustd:{}, marketPrice:{}", usdt, marketPrice);
 //            return;
 //        }
+        if (marketPrice > mineConfig.getMaxPrice().doubleValue() || marketPrice < mineConfig.getMinPrice().doubleValue()) {
+            log.info("close {} -{} mine, current price is {}", baseName, quotaName, marketPrice);
+            mineConfig.setStatus(0);
+            mineConfigMapper.updateByPrimaryKey(mineConfig);
+            weiXinMessageService.sendMessage("Mine Close", "price:" + marketPrice);
+        }
 
         //ft:usdt=1:0.6
         double initUsdt = maxNums.get(baseName.toLowerCase()) * initMultiple * marketPrice;
 //
         //初始化
-        if (!(baseHold > 0 || quotaHold > 0)) {
-            if (isHaveInitBuyAndSell(baseBalance, quotaBalance, marketPrice, initUsdt, symbol, "limit",increment)) {
-                log.info("================有进行初始化均衡操作=================");
-                return;
-            }
-        }
+//        if (!(baseHold > 0 || quotaHold > 0)) {
+//            if (isHaveInitBuyAndSell(baseBalance, quotaBalance, marketPrice, initUsdt, symbol, "limit",increment)) {
+//                log.info("================有进行初始化均衡操作=================");
+//                return;
+//            }
+//        }
 //
         //买单 卖单
         double price = Math.min(maxNums.get(baseName.toLowerCase()) *  marketPrice, Math.min((baseBalance - baseHold) * marketPrice, quotaBalance - quotaHold));

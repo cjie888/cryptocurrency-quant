@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cjie.cryptocurrency.quant.mapper.MineConfigMapper">
+  <resultMap id="BaseResultMap" type="com.cjie.cryptocurrency.quant.model.MineConfig">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="site" jdbcType="VARCHAR" property="site" />
+    <result column="base_currency" jdbcType="VARCHAR" property="baseCurrency" />
+    <result column="quota_currency" jdbcType="VARCHAR" property="quotaCurrency" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="max_price" jdbcType="DECIMAL" property="maxPrice" />
+    <result column="min_price" jdbcType="DECIMAL" property="minPrice" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modify_time" jdbcType="TIMESTAMP" property="modifyTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, site, base_currency, quota_currency, status, max_price, min_price,create_time, modify_time
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from mine_config
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <select id="getLatestRatio" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from mine_config
+    where site = #{site,jdbcType=VARCHAR} and base_currency = #{baseCurrency,jdbcType=VARCHAR}
+    and quota_currency = #{quotaCurrency,jdbcType=VARCHAR}
+    order by create_time desc limit 1
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from mine_config
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.cjie.cryptocurrency.quant.model.MineConfig">
+    insert into mine_config (id, site, base_currency, 
+      quota_currency, status, max_price, 
+      min_price)
+    values (#{id,jdbcType=BIGINT}, #{site,jdbcType=VARCHAR}, #{baseCurrency,jdbcType=VARCHAR}, 
+      #{quotaCurrency,jdbcType=VARCHAR}, #{status,jdbcType=TINYINT}, #{maxPrice,jdbcType=DECIMAL}, 
+      #{minPrice,jdbcType=DECIMAL})
+  </insert>
+  <insert id="insertSelective" parameterType="com.cjie.cryptocurrency.quant.model.MineConfig">
+    insert into mine_config
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="site != null">
+        site,
+      </if>
+      <if test="baseCurrency != null">
+        base_currency,
+      </if>
+      <if test="quotaCurrency != null">
+        quota_currency,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+      <if test="maxPrice != null">
+        max_price,
+      </if>
+      <if test="minPrice != null">
+        min_price,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="site != null">
+        #{site,jdbcType=VARCHAR},
+      </if>
+      <if test="baseCurrency != null">
+        #{baseCurrency,jdbcType=VARCHAR},
+      </if>
+      <if test="quotaCurrency != null">
+        #{quotaCurrency,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=TINYINT},
+      </if>
+      <if test="maxPrice != null">
+        #{maxPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="minPrice != null">
+        #{minPrice,jdbcType=DECIMAL},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.cjie.cryptocurrency.quant.model.MineConfig">
+    update mine_config
+    <set>
+      <if test="site != null">
+        site = #{site,jdbcType=VARCHAR},
+      </if>
+      <if test="baseCurrency != null">
+        base_currency = #{baseCurrency,jdbcType=VARCHAR},
+      </if>
+      <if test="quotaCurrency != null">
+        quota_currency = #{quotaCurrency,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        status = #{status,jdbcType=TINYINT},
+      </if>
+      <if test="maxPrice != null">
+        max_price = #{maxPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="minPrice != null">
+        min_price = #{minPrice,jdbcType=DECIMAL},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.cjie.cryptocurrency.quant.model.MineConfig">
+    update mine_config
+    set site = #{site,jdbcType=VARCHAR},
+      base_currency = #{baseCurrency,jdbcType=VARCHAR},
+      quota_currency = #{quotaCurrency,jdbcType=VARCHAR},
+      status = #{status,jdbcType=TINYINT},
+      max_price = #{maxPrice,jdbcType=DECIMAL},
+      min_price = #{minPrice,jdbcType=DECIMAL},
+      modify_time = #{modifyTime,jdbcType=TIMESTAMP},
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>
