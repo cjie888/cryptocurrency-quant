@@ -122,7 +122,7 @@
       status = #{status,jdbcType=TINYINT},
       max_price = #{maxPrice,jdbcType=DECIMAL},
       min_price = #{minPrice,jdbcType=DECIMAL},
-      modify_time = #{modifyTime,jdbcType=TIMESTAMP},
+      modify_time = #{modifyTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=BIGINT}
   </update>
 </mapper>
