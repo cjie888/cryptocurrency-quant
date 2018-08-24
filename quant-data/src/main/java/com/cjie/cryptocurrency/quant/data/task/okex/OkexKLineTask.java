@@ -111,7 +111,6 @@ public class OkexKLineTask {
                     }
                     List<String[]> klines =  spotProductAPIService.getCandles("okex", baseCurrency + "-" + quotaCurrency, getGranularity(type), null, null);
                     for (String[] data : klines) {
-                        log.info(JSON.toJSONString(data));
                         if (currencyKlineMapper.getCurrencyLine(dateFormat.parse(data[0]),
                                 baseCurrency, quotaCurrency, "okex", currSuffix) != null) {
                             continue;
