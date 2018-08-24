@@ -21,7 +21,7 @@
     from mine_config
     where id = #{id,jdbcType=BIGINT}
   </select>
-  <select id="getLatestRatio" resultMap="BaseResultMap">
+  <select id="getLatestConfig" resultMap="BaseResultMap">
     select
     <include refid="Base_Column_List" />
     from mine_config
