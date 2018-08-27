@@ -15,7 +15,7 @@ public class MineTask {
     private MineService mineService;
 
 
-    //@Scheduled(cron = "* */10 * * * ?")
+    @Scheduled(cron = "* */10 * * * ?")
     public void balance() throws JobExecutionException {
         log.info("start balance");
         try {
