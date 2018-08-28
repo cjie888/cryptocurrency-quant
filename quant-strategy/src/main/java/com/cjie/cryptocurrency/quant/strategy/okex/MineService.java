@@ -2,6 +2,7 @@ package com.cjie.cryptocurrency.quant.strategy.okex;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
+import com.cjie.cryptocurrency.quant.api.fcoin.FcoinRetry;
 import com.cjie.cryptocurrency.quant.api.okex.bean.account.param.Transfer;
 import com.cjie.cryptocurrency.quant.api.okex.bean.account.result.Wallet;
 import com.cjie.cryptocurrency.quant.api.okex.bean.spot.param.PlaceOrderParam;
@@ -26,6 +27,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.http.converter.StringHttpMessageConverter;
+import org.springframework.retry.support.RetryTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.MultiValueMap;
@@ -55,6 +57,9 @@ public class MineService {
 
     @Autowired
     private ApiKeyService  apiKeyService;
+
+    private static final RetryTemplate retryTemplate = FcoinRetry.getRetryTemplate();
+
 
 
     private static double initMultiple = 3;
@@ -609,7 +614,7 @@ public class MineService {
     }
 
     public List<OrderInfo> getOrders(String site, String symbol, String states, String after, String limit, String side) throws Exception {
-        return spotOrderAPIService.getOrders(site, symbol, states, null, null, null);
+        return retryTemplate.execute(retryContext -> spotOrderAPIService.getOrders(site, symbol, states, null, null, null));
 
     }
 
