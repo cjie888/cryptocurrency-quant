@@ -6,7 +6,7 @@ import com.dangdang.ddframe.job.api.simple.SimpleJob;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 
-@ElasticJobConf(name = "collectOkexBalanceJob", cron = "* */2 * * * ?",
+@ElasticJobConf(name = "collectOkexBalanceJob", cron = "* */30 * * * ?",
         description = "获取okex站点余额", eventTraceRdbDataSource = "logDatasource")
 @Slf4j
 public class CollectOkexBalanceJob implements SimpleJob {
