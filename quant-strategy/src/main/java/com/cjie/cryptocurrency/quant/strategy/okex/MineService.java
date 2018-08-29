@@ -169,6 +169,9 @@ public class MineService {
         noValueCurrencies.add("HORUS");
         noValueCurrencies.add("IQ");
         noValueCurrencies.add("MEETONE");
+        noValueCurrencies.add("HYC");
+        noValueCurrencies.add("SDA");
+
 
 
         BigDecimal sum = BigDecimal.ZERO;
