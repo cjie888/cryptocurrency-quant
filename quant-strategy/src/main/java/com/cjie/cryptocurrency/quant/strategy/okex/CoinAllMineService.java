@@ -475,7 +475,7 @@ public class CoinAllMineService {
         }
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
         for (OrderInfo orderInfo : orderIds) {
-            if (new BigDecimal(orderInfo.getSize()).compareTo(new BigDecimal(100)) >=0) {
+            if (new BigDecimal(orderInfo.getSize()).compareTo(new BigDecimal(90)) >=0) {
                 continue;
             }
             if (System.currentTimeMillis() - 8 * 3600 * 1000 - dateFormat.parse(orderInfo.getCreated_at()).getTime() < minutes * 60 * 1000) {
