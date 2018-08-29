@@ -20,7 +20,12 @@
 
     <name>Crypto currency quant</name>
 
-
+    <repositories>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
+    </repositories>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <rocketmq-version>4.2.0</rocketmq-version>
@@ -179,6 +184,21 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <version>1.5.10.RELEASE</version>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>druid-spring-boot-starter</artifactId>
+            <version>1.1.2</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.yinjihuan</groupId>
+            <artifactId>elastic-job-spring-boot-starter</artifactId>
+            <version>1.0.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.quartz-scheduler</groupId>
+            <artifactId>quartz</artifactId>
+            <version>2.1.7</version>
         </dependency>
     </dependencies>
 </project>
