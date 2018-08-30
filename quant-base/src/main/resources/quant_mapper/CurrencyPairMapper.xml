@@ -7,7 +7,7 @@
     <result column="base_currency" jdbcType="VARCHAR" property="baseCurrency" />
     <result column="quota_currency" jdbcType="VARCHAR" property="quotaCurrency" />
     <result column="site" jdbcType="VARCHAR" property="site" />
-    <result column="status" jdbcType="int" property="status" />
+    <result column="status" jdbcType="INTEGER" property="status" />
   </resultMap>
   <sql id="Base_Column_List">
     id, create_time, base_currency, quota_currency, site, status
