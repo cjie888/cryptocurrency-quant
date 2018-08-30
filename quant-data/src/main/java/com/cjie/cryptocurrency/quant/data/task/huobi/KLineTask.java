@@ -108,6 +108,9 @@ public class KLineTask {
             HuobiApiRestClient client = factory.newRestClient();
             List<CurrencyPair> currencies = currencyPairMapper.getAllCurrency("huobi");
             for (CurrencyPair symbol : currencies) {
+                if (symbol.getStatus() == 0) {
+                    continue;
+                }
                 String baseCurrency = symbol.getBaseCurrency();
                 String quotaCurrency = symbol.getQuotaCurrency();
                 try {

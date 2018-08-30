@@ -19,4 +19,6 @@ public class CurrencyPair {
 
     private String site;
 
+    private Integer status;
+
 }

@@ -102,6 +102,9 @@ public class OkexKLineTask {
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
             List<CurrencyPair> currencies = currencyPairMapper.getAllCurrency("okex");
             for (CurrencyPair symbol : currencies) {
+                if (symbol.getStatus() == 0) {
+                    continue;
+                }
                 String baseCurrency = symbol.getBaseCurrency();
                 String quotaCurrency = symbol.getQuotaCurrency();
                 try {
