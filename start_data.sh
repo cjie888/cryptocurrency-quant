@@ -28,6 +28,6 @@ else
     echo "kill $input1 fail"
 fi
 
-java -jar quant-data-1.0.0-SNAPSHOT.jar &
+nohup java -jar quant-data-1.0.0-SNAPSHOT.jar &
 
 echo "------success---------"
