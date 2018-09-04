@@ -189,6 +189,12 @@ public class CoinAllMineService {
 
     private double getRatio(CurrencyRatio currencyRatio, double marketPrice, boolean isTransfer) {
         double baseRatio = currencyRatio.getRatio();
+        if (baseRatio >= 0.99) {
+            return baseRatio;
+        }
+        if (baseRatio <= 0.01) {
+            return baseRatio;
+        }
 //        if ("cac".equalsIgnoreCase(currencyRatio.getBaseCurrency())) {
 //            if (marketPrice > 0.4) {
 //                baseRatio = 0.2;
