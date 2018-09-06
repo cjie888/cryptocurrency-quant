@@ -278,7 +278,12 @@ public class MineService {
 
     private double getRatio(CurrencyRatio currencyRatio, double marketPrice, boolean isTransfer) {
         double baseRatio = currencyRatio.getRatio();
-//        if ("cac".equalsIgnoreCase(currencyRatio.getBaseCurrency())) {
+        if (baseRatio >= 0.99) {
+            return baseRatio;
+        }
+        if (baseRatio <= 0.01) {
+            return baseRatio;
+        }//        if ("cac".equalsIgnoreCase(currencyRatio.getBaseCurrency())) {
 //            if (marketPrice > 0.4) {
 //                baseRatio = 0.2;
 //            } else if (marketPrice > 0.35) {
@@ -395,6 +400,9 @@ public class MineService {
             baseRatio = getRatio(currencyRatio, marketPrice, false);
 
             if (Math.abs(baseRatio - currencyRatio.getRatio()) > 0.001) {
+                if (baseRatio >= 0.99 || baseRatio <=0.01) {
+                    return;
+                }
                 StringBuilder sb = new StringBuilder();
                 sb.append("origin rate:");
                 sb.append(currencyRatio.getRatio());
