@@ -143,11 +143,11 @@ public class MineService {
             for (Account account : accounts) {
                 if (Double.parseDouble(account.getBalance()) > 0) {
                     if ("usdt".equalsIgnoreCase(account.getCurrency())) {
-                        Ticker ticker = getTicker(site, "btc", "usdt");
+                        Ticker ticker = retryTemplate.execute(retryContext->getTicker(site, "btc", "usdt"));
                         sum = sum.add(new BigDecimal(account.getBalance()).divide(new BigDecimal(ticker.getLast()), 8, RoundingMode.DOWN));
 
                     } else if (!"btc".equalsIgnoreCase(account.getCurrency())) {
-                        Ticker ticker = getTicker(site, account.getCurrency(), "btc");
+                        Ticker ticker = retryTemplate.execute(retryContext->getTicker(site, account.getCurrency(), "btc"));
                         sum = sum.add(new BigDecimal(account.getBalance()).multiply(new BigDecimal(ticker.getLast())));
                     } else {
                         sum = sum.add(new BigDecimal(account.getBalance()));
@@ -183,11 +183,11 @@ public class MineService {
                 }
                 if (account.getBalance().compareTo(BigDecimal.ZERO) > 0) {
                     if ("usdt".equalsIgnoreCase(account.getCurrency())) {
-                        Ticker ticker = getTicker(site, "btc", "usdt");
+                        Ticker ticker = retryTemplate.execute(retryContext->getTicker(site, "btc", "usdt"));
                         sum = sum.add(account.getBalance().divide(new BigDecimal(ticker.getLast()), 8, RoundingMode.DOWN));
 
                     } else if (!"btc".equalsIgnoreCase(account.getCurrency())) {
-                        Ticker ticker = getTicker(site, account.getCurrency(), "btc");
+                        Ticker ticker = retryTemplate.execute(retryContext->getTicker(site, account.getCurrency(), "btc"));
                         sum = sum.add(account.getBalance().multiply(new BigDecimal(ticker.getLast())));
                     } else {
                         sum = sum.add(account.getBalance());
