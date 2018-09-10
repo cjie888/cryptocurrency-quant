@@ -171,6 +171,8 @@ public class MineService {
         noValueCurrencies.add("MEETONE");
         noValueCurrencies.add("HYC");
         noValueCurrencies.add("SDA");
+        noValueCurrencies.add("ONG");
+
 
 
 
