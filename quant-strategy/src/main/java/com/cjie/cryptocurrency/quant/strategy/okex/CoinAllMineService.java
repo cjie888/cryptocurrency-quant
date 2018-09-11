@@ -71,7 +71,7 @@ public class CoinAllMineService {
 
     private static double maxNum = 50;
 
-    private static Map<String, Integer> maxNums = new HashMap<>();
+    private static Map<String, Double> maxNums = new HashMap<>();
 
 
     private static Map<String, Double> minLimitPriceOrderNums = new HashMap<>();
@@ -83,9 +83,9 @@ public class CoinAllMineService {
         minLimitPriceOrderNums.put("okb", 1.0);
         minLimitPriceOrderNums.put("cac", 1.0);
 
-        maxNums.put("cac", 50);
-        maxNums.put("okb", 20);
-        maxNums.put("eth", 1);
+        maxNums.put("cac", 50.0);
+        maxNums.put("okb", 20.0);
+        maxNums.put("eth", 0.01);
 
     }
 
