@@ -46,6 +46,7 @@ public class CoinAllMineTask {
         //log.info(JSON.toJSONString(spotAccountAPIService.getAccountByCurrency("btc")));
         try {
             mineService.mine1("cac", "usdt", 0.002);
+            mineService.mine1("eth", "btc", 0.002);
             //mineService.mine3("cac", "eth", 0.005);
         } catch (Exception e) {
             log.error("error mining", e);

@@ -78,6 +78,7 @@ public class CoinAllMineService {
 
     static {
         minLimitPriceOrderNums.put("eos", 0.1);
+        minLimitPriceOrderNums.put("eth", 0.001);
         minLimitPriceOrderNums.put("ltc", 0.001);
         minLimitPriceOrderNums.put("okb", 1.0);
         minLimitPriceOrderNums.put("cac", 1.0);
@@ -166,7 +167,7 @@ public class CoinAllMineService {
         double price = Math.min(maxNums.get(baseName.toLowerCase()) *  marketPrice, Math.min((baseBalance - baseHold) * marketPrice, quotaBalance - quotaHold));
 
         BigDecimal baseAmount = getNum(price * 0.99 / marketPrice);//预留点来扣手续费
-        if (baseAmount.doubleValue() - minLimitPriceOrderNum < 0) {
+        if (baseAmount.doubleValue() - minLimitPriceOrderNums.get(baseName) < 0) {
             log.info("小于最小限价数量");
             return;
         }
