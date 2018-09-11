@@ -85,7 +85,7 @@ public class CoinAllMineService {
 
         maxNums.put("cac", 50.0);
         maxNums.put("okb", 20.0);
-        maxNums.put("eth", 0.01);
+        maxNums.put("eth", 0.002);
 
     }
 
