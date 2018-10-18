@@ -122,7 +122,7 @@ public class FcoinUtils {
         RestTemplate client = new RestTemplate();
         client.getMessageConverters().set(1, new StringHttpMessageConverter(StandardCharsets.UTF_8));
         ResponseEntity<String> response = client.exchange(url, HttpMethod.GET, requestEntity, String.class);
-        logger.info(response.getBody());
+        //logger.info(response.getBody());
         return response.getBody();
     }
 
