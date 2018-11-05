@@ -87,11 +87,11 @@ public class MineService {
 
     public ValuationTicker getValuationTicker() {
         MultiValueMap<String, String> headers = new HttpHeaders();
-        headers.add("Referer", "www.okb.com");
+        headers.add("Referer", "www.okex.com");
         headers.add("user-agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.84 Safari/537.36");
         HttpEntity requestEntity = new HttpEntity<>(headers);
 
-        String url =  "https://www.okb.com/v2/futures/market/indexTicker.do?symbol=f_usd_btc";
+        String url =  "https://www.okex.com/v2/futures/market/indexTicker.do?symbol=f_usd_btc";
         RestTemplate client = new RestTemplate();
         log.info(url);
         client.getMessageConverters().set(1, new StringHttpMessageConverter(StandardCharsets.UTF_8));

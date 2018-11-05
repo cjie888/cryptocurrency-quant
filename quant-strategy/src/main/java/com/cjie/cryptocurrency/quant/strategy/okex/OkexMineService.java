@@ -333,11 +333,11 @@ public class OkexMineService {
     public Ticker getTicker(String baseCurrency, String quotaCurrency) {
         String symbol = baseCurrency.toUpperCase() + "-" + quotaCurrency.toUpperCase();
         MultiValueMap<String, String> headers = new HttpHeaders();
-        headers.add("Referer", "https://www.okb.com");
+        headers.add("Referer", "https://www.okex.com");
         headers.add("user-agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.84 Safari/537.36");
         HttpEntity requestEntity = new HttpEntity<>(headers);
 
-        String url = "https://www.okb.com/api/spot/v3/products/"+symbol+"/ticker";
+        String url = "https://www.okex.com/api/spot/v3/products/"+symbol+"/ticker";
         SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
         requestFactory.setConnectTimeout(10000);// 设置超时
         requestFactory.setReadTimeout(10000);
