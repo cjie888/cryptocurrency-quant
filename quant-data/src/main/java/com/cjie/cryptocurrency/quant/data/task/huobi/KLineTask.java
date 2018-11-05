@@ -25,7 +25,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
-@Component
+//@Component
 @Slf4j
 public class KLineTask {
 
