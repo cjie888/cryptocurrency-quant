@@ -129,7 +129,7 @@ public class OkexKLineTask {
                                 .close(new BigDecimal(data.getClose()))
                                 .high(new BigDecimal(data.getHigh()))
                                 .low(new BigDecimal(data.getLow()))
-                                .vol(new BigDecimal(data.getVol()))
+                                .vol(new BigDecimal(data.getVolume()))
                                 .site("okex")
                                 .suffix(currSuffix)
                                 .build();
