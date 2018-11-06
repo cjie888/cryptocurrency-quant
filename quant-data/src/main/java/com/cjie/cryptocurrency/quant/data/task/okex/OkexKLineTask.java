@@ -2,6 +2,7 @@ package com.cjie.cryptocurrency.quant.data.task.okex;
 
 
 import com.alibaba.fastjson.JSON;
+import com.cjie.cryptocurrency.quant.api.okex.service.spot.CurrencyKlineDTO;
 import com.cjie.cryptocurrency.quant.api.okex.service.spot.SpotProductAPIService;
 import com.cjie.cryptocurrency.quant.mapper.CurrencyKlineMapper;
 import com.cjie.cryptocurrency.quant.mapper.CurrencyPairMapper;
@@ -112,22 +113,22 @@ public class OkexKLineTask {
                     if (type.equals("1min")) {
                         currSuffix = currSuffix + "_" + quotaCurrency.toLowerCase();
                     }
-                    List<String[]> klines =  spotProductAPIService.getCandles("okex", baseCurrency + "-" + quotaCurrency, getGranularity(type), null, null);
-                    for (String[] data : klines) {
-                        if (currencyKlineMapper.getCurrencyLine(dateFormat.parse(data[0]),
+                    List<CurrencyKlineDTO> klines =  spotProductAPIService.getCandles("okex", baseCurrency + "-" + quotaCurrency, getGranularity(type), null, null);
+                    for (CurrencyKlineDTO data : klines) {
+                        if (currencyKlineMapper.getCurrencyLine(dateFormat.parse(data.getTime()),
                                 baseCurrency, quotaCurrency, "okex", currSuffix) != null) {
                             continue;
                         }
-                        CurrencyKline kline = CurrencyKline.builder().klineTime(dateFormat.parse(data[0]))
+                        CurrencyKline kline = CurrencyKline.builder().klineTime(dateFormat.parse(data.getTime()))
                                 .amount(BigDecimal.ZERO)
                                 .count(0)
                                 .baseCurrency(baseCurrency)
                                 .quotaCurrency(quotaCurrency)
-                                .open(new BigDecimal(data[3]))
-                                .close(new BigDecimal(data[4]))
-                                .high(new BigDecimal(data[2]))
-                                .low(new BigDecimal(data[1]))
-                                .vol(new BigDecimal(data[5]))
+                                .open(new BigDecimal(data.getOpen()))
+                                .close(new BigDecimal(data.getClose()))
+                                .high(new BigDecimal(data.getHigh()))
+                                .low(new BigDecimal(data.getLow()))
+                                .vol(new BigDecimal(data.getVol()))
                                 .site("okex")
                                 .suffix(currSuffix)
                                 .build();

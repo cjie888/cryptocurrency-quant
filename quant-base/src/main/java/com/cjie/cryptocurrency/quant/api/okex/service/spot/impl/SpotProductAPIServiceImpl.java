@@ -17,6 +17,7 @@ import com.cjie.cryptocurrency.quant.api.okex.bean.spot.result.Trade;
 import com.cjie.cryptocurrency.quant.api.okex.client.APIClient;
 import com.cjie.cryptocurrency.quant.api.okex.config.APIConfiguration;
 import com.cjie.cryptocurrency.quant.api.okex.service.BaseServiceImpl;
+import com.cjie.cryptocurrency.quant.api.okex.service.spot.CurrencyKlineDTO;
 import com.cjie.cryptocurrency.quant.api.okex.service.spot.SpotProductAPIService;
 import com.cjie.cryptocurrency.quant.api.okex.bean.spot.result.Ticker;
 import com.cjie.cryptocurrency.quant.api.okex.bean.spot.result.Trade;
@@ -95,7 +96,7 @@ public class SpotProductAPIServiceImpl extends BaseServiceImpl implements SpotPr
     }
 
     @Override
-    public List<String[]> getCandles(String site, final String product_id, final Integer granularity, final String start, final String end) {
+    public List<CurrencyKlineDTO> getCandles(String site, final String product_id, final Integer granularity, final String start, final String end) {
         MultiValueMap<String, String> headers = new HttpHeaders();
         headers.add("Referer", "https://www.coinall.com");
         headers.add("user-agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.84 Safari/537.36");
@@ -111,7 +112,7 @@ public class SpotProductAPIServiceImpl extends BaseServiceImpl implements SpotPr
         ResponseEntity<String> response = client.exchange(url, HttpMethod.GET, requestEntity, String.class);
         String body = response.getBody();
         log.info(body);
-        return JSON.parseObject(body,new TypeReference<List<String[]>>(){});
+        return JSON.parseObject(body,new TypeReference<List<CurrencyKlineDTO>>(){});
     }
 
 }
