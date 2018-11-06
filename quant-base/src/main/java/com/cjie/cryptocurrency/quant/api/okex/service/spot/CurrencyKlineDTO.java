@@ -22,6 +22,6 @@ public class CurrencyKlineDTO {
 
     private String high;
 
-    private String vol;
+    private String volume;
 
 }

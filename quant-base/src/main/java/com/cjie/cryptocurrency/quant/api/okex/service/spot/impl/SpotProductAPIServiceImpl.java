@@ -111,7 +111,7 @@ public class SpotProductAPIServiceImpl extends BaseServiceImpl implements SpotPr
         client.getMessageConverters().set(1, new StringHttpMessageConverter(StandardCharsets.UTF_8));
         ResponseEntity<String> response = client.exchange(url, HttpMethod.GET, requestEntity, String.class);
         String body = response.getBody();
-        log.info(body);
+        //log.info(body);
         return JSON.parseObject(body,new TypeReference<List<CurrencyKlineDTO>>(){});
     }
 
