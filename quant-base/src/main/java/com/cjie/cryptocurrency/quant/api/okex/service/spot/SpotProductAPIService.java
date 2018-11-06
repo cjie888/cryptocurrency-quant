@@ -8,6 +8,7 @@ import com.cjie.cryptocurrency.quant.api.okex.bean.spot.result.Ticker;
 import com.cjie.cryptocurrency.quant.api.okex.bean.spot.result.Trade;
 import com.cjie.cryptocurrency.quant.api.okex.bean.spot.result.Ticker;
 import com.cjie.cryptocurrency.quant.api.okex.bean.spot.result.Trade;
+import com.cjie.cryptocurrency.quant.model.CurrencyKline;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -62,6 +63,6 @@ public interface SpotProductAPIService {
      * @param end
      * @return
      */
-    List<String[]> getCandles(String site, String product_id, Integer granularity, String start, String end);
+    List<CurrencyKlineDTO> getCandles(String site, String product_id, Integer granularity, String start, String end);
 
 }
