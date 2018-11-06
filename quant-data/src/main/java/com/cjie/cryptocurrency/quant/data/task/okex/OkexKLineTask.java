@@ -119,7 +119,6 @@ public class OkexKLineTask {
                                 baseCurrency, quotaCurrency, "okex", currSuffix) != null) {
                             continue;
                         }
-                        log.info("data:{}", JSON.toJSONString(data));
                         CurrencyKline kline = CurrencyKline.builder().klineTime(dateFormat.parse(data.getTime()))
                                 .amount(BigDecimal.ZERO)
                                 .count(0)
