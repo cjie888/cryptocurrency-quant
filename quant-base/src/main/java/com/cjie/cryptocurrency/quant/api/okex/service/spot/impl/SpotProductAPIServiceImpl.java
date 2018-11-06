@@ -102,7 +102,7 @@ public class SpotProductAPIServiceImpl extends BaseServiceImpl implements SpotPr
         headers.add("user-agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.84 Safari/537.36");
         HttpEntity requestEntity = new HttpEntity<>(headers);
 
-        String url = "https://www.okex.com/api/spot/v3/products/" + product_id + "/candles?granularity=60";
+        String url = "https://www.okex.com/api/spot/v3/products/" + product_id + "/candles?granularity=" + granularity;
         SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
         requestFactory.setConnectTimeout(10000);// 设置超时
         requestFactory.setReadTimeout(10000);
