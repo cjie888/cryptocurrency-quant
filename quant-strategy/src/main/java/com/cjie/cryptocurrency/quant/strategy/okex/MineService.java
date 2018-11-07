@@ -140,6 +140,8 @@ public class MineService {
         List<String> noValueCurrencies = new ArrayList<>();
         noValueCurrencies.add("NGC");
         noValueCurrencies.add("MAG");
+        noValueCurrencies.add("AUTO");
+
         BigDecimal sum = BigDecimal.ZERO;
         List<Account> accounts = spotAccountAPIService.getAccounts(site);
         if (!CollectionUtils.isEmpty(accounts)) {
@@ -181,6 +183,7 @@ public class MineService {
         noValueCurrencies.add("ONG");
         noValueCurrencies.add("MAG");
         noValueCurrencies.add("NGC");
+        noValueCurrencies.add("AUTO");
 
 
 
