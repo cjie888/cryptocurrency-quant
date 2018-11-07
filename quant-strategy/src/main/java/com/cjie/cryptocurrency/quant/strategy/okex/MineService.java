@@ -141,6 +141,7 @@ public class MineService {
         noValueCurrencies.add("NGC");
         noValueCurrencies.add("MAG");
         noValueCurrencies.add("AUTO");
+        noValueCurrencies.add("GSC");
 
         BigDecimal sum = BigDecimal.ZERO;
         List<Account> accounts = spotAccountAPIService.getAccounts(site);
@@ -184,6 +185,7 @@ public class MineService {
         noValueCurrencies.add("MAG");
         noValueCurrencies.add("NGC");
         noValueCurrencies.add("AUTO");
+        noValueCurrencies.add("GSC");
 
 
 
