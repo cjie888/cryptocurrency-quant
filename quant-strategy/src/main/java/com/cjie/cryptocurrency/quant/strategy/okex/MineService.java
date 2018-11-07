@@ -137,10 +137,17 @@ public class MineService {
     }
 
     private BigDecimal getSpotValuation(String site) throws InterruptedException {
+        List<String> noValueCurrencies = new ArrayList<>();
+        noValueCurrencies.add("NGC");
+        noValueCurrencies.add("MAG");
         BigDecimal sum = BigDecimal.ZERO;
         List<Account> accounts = spotAccountAPIService.getAccounts(site);
         if (!CollectionUtils.isEmpty(accounts)) {
             for (Account account : accounts) {
+
+                if (noValueCurrencies.contains(account.getCurrency().toUpperCase())) {
+                    continue;
+                }
                 if (Double.parseDouble(account.getBalance()) > 0) {
                     if ("usdt".equalsIgnoreCase(account.getCurrency())) {
                         Ticker ticker = retryTemplate.execute(retryContext->getTicker(site, "btc", "usdt"));
@@ -172,6 +179,8 @@ public class MineService {
         noValueCurrencies.add("HYC");
         noValueCurrencies.add("SDA");
         noValueCurrencies.add("ONG");
+        noValueCurrencies.add("MAG");
+        noValueCurrencies.add("NGC");
 
 
 
