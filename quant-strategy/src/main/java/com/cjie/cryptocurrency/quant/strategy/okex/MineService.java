@@ -634,8 +634,14 @@ public class MineService {
     }
 
     public List<OrderInfo> getNotTradeOrders(String site, String symbol, String after, String limit) throws Exception {
-        List<OrderInfo> list1 = getOrders(site, symbol, "open", after, limit, null);
-        List<OrderInfo> list2 = getOrders(site, symbol, "part_filled", after, limit, null);
+        List<OrderInfo> list1 = new ArrayList<>();
+        List<OrderInfo> list2 = new ArrayList<>();
+        try {
+            list1 = getOrders(site, symbol, "open", after, limit, null);
+            list2 = getOrders(site, symbol, "part_filled", after, limit, null);
+        } catch (Exception e) {
+            log.error("get order error",e);
+        }
         list1.addAll(list2);
         return list1;
     }
