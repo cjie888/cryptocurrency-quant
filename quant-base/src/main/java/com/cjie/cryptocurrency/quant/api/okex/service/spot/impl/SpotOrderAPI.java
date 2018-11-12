@@ -25,7 +25,7 @@ public interface SpotOrderAPI {
     Call<OrderInfo> getOrderByOrderId(@Path("order_id") Long orderId, @Query("product_id") String productId);
 
     @GET("api/spot/v3/orders")
-    Call<List<OrderInfo>> getOrders(@Query("product_id") String productId, @Query("status") String status, @Query("before") Long before, @Query("after") Long after, @Query("limit") Integer limit);
+    Call<List<OrderInfo>> getOrders(@Query("instrument_id") String productId, @Query("status") String status, @Query("before") Long before, @Query("after") Long after, @Query("limit") Integer limit);
 
     @GET("api/spot/v3/orders_pending")
     Call<List<OrderInfo>> getPendingOrders(@Query("before") Long before, @Query("after") Long after, @Query("limit") Integer limit);
