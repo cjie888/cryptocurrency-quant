@@ -85,7 +85,7 @@ public class CoinAllMineService {
         minLimitPriceOrderNums.put("cac", 1.0);
 
         maxNums.put("cac", 50.0);
-        maxNums.put("okb", 5.0);
+        maxNums.put("okb", 3.0);
         maxNums.put("eth", 0.005);
         maxNums.put("pax", 1D);
 
