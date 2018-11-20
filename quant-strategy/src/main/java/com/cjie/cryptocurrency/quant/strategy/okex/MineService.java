@@ -17,6 +17,7 @@ import com.cjie.cryptocurrency.quant.api.okex.service.spot.SpotProductAPIService
 import com.cjie.cryptocurrency.quant.mapper.CurrencyRatioMapper;
 import com.cjie.cryptocurrency.quant.model.APIKey;
 import com.cjie.cryptocurrency.quant.model.CurrencyRatio;
+import com.cjie.cryptocurrency.quant.model.MineConfig;
 import com.cjie.cryptocurrency.quant.service.ApiKeyService;
 import com.cjie.cryptocurrency.quant.service.WeiXinMessageService;
 import lombok.extern.slf4j.Slf4j;
@@ -78,11 +79,23 @@ public class MineService {
 
     private static final int pricePrecision = 8;
 
+    private static Map<String, Double> maxNums = new HashMap<>();
+
+
     static {
+        minLimitPriceOrderNums.put("pax", 0.1);
         minLimitPriceOrderNums.put("eos", 0.1);
+        minLimitPriceOrderNums.put("eth", 0.001);
         minLimitPriceOrderNums.put("ltc", 0.001);
-        minLimitPriceOrderNums.put("bch", 0.001);
         minLimitPriceOrderNums.put("okb", 1.0);
+        minLimitPriceOrderNums.put("cac", 1.0);
+
+        maxNums.put("eos", 0.3);
+        maxNums.put("cac", 50.0);
+        maxNums.put("okb", 3.0);
+        maxNums.put("eth", 0.005);
+        maxNums.put("pax", 1D);
+
     }
 
     public ValuationTicker getValuationTicker() {
@@ -240,8 +253,8 @@ public class MineService {
 
 
         //判断是否有冻结的，如果冻结太多冻结就休眠，进行下次挖矿
-        if (baseHold > 0.099 * baseBalance
-                || quotaHold > 0.099 * quotaBalance) {
+        if (baseHold > 0.999 * baseBalance
+                && quotaHold > 0.999 * quotaBalance) {
             return;
         }
 
@@ -251,29 +264,15 @@ public class MineService {
         Double marketPrice = Double.parseDouble(ticker.getLast());
         log.info("ticker last {} -{}:{}", baseName, quotaName, marketPrice);
         //usdt小于51并且ft的价值小于51
-//        if ((usdt < (minUsdt + 1) && ft < ((minUsdt + 1) / marketPrice))
-//                || (usdt < (minUsdt + 1) && Math.abs(ft * marketPrice - usdt) < minUsdt / 5)
-//                || (ft < ((minUsdt + 1) / marketPrice) && Math.abs(ft * marketPrice - usdt) < minUsdt / 5)) {
-//            logger.info("跳出循环，ustd:{}, marketPrice:{}", usdt, marketPrice);
-//            return;
-//        }
 
         //ft:usdt=1:0.6
-        double initUsdt = maxNum * initMultiple * marketPrice;
-//
-        //初始化
-        if (!(baseHold > 0 || quotaHold > 0)) {
-            if (isHaveInitBuyAndSell(site, baseBalance - baseHold, quotaBalance - quotaHold, marketPrice, initUsdt, symbol, "limit", increment)) {
-                log.info("================有进行初始化均衡操作=================");
-                return;
-            }
-        }
+        double initUsdt = maxNums.get(baseName.toLowerCase()) * initMultiple * marketPrice;
 //
         //买单 卖单
-        double price = Math.min((baseBalance - baseHold) * marketPrice, quotaBalance - quotaHold);
+        double price = Math.min(maxNums.get(baseName.toLowerCase()) * marketPrice, Math.min((baseBalance - baseHold) * marketPrice, quotaBalance - quotaHold));
 
         BigDecimal baseAmount = getNum(price * 0.99 / marketPrice);//预留点来扣手续费
-        if (baseAmount.doubleValue() - minLimitPriceOrderNums.get(baseName.toLowerCase()) < 0) {
+        if (baseAmount.doubleValue() - minLimitPriceOrderNums.get(baseName) < 0) {
             log.info("小于最小限价数量");
             return;
         }
@@ -291,7 +290,6 @@ public class MineService {
             log.error("交易对卖出错", e);
         }
         log.info("=============================交易对结束=========================");
-
     }
 
     private double getRatio(CurrencyRatio currencyRatio, double marketPrice, boolean isTransfer) {
