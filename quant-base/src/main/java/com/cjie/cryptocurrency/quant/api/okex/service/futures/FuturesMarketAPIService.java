@@ -2,7 +2,6 @@ package com.cjie.cryptocurrency.quant.api.okex.service.futures;
 
 import com.alibaba.fastjson.JSONArray;
 import com.cjie.cryptocurrency.quant.api.okex.bean.futures.result.*;
-import com.cjie.cryptocurrency.quant.api.okex.bean.futures.result.*;
 
 import java.util.List;
 
@@ -16,7 +15,7 @@ public interface FuturesMarketAPIService {
     /**
      * Get all of futures contract list
      */
-    List<Products> getProducts();
+    List<Instrument> getProducts();
 
     /**
      * Get the futures contract currencies

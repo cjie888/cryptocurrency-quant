@@ -5,10 +5,6 @@ import com.cjie.cryptocurrency.quant.api.okex.bean.futures.result.Index;
 import com.cjie.cryptocurrency.quant.api.okex.bean.futures.result.Ticker;
 import com.cjie.cryptocurrency.quant.api.okex.bean.futures.result.Trades;
 import com.cjie.cryptocurrency.quant.api.okex.bean.futures.result.*;
-import com.cjie.cryptocurrency.quant.api.okex.bean.futures.result.*;
-import com.cjie.cryptocurrency.quant.api.okex.bean.futures.result.Index;
-import com.cjie.cryptocurrency.quant.api.okex.bean.futures.result.Ticker;
-import com.cjie.cryptocurrency.quant.api.okex.bean.futures.result.Trades;
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
@@ -31,36 +27,36 @@ interface FuturesMarketAPI {
     @GET("/api/futures/v3/exchange_rate")
     Call<ExchangeRate> getExchangeRate();
 
-    @GET("/api/futures/v3/products")
-    Call<List<Products>> getProducts();
+    @GET("/api/futures/v3/instruments")
+    Call<List<Instrument>> getProducts();
 
-    @GET("/api/futures/v3/products/currencies")
+    @GET("/api/futures/v3/instruments/currencies")
     Call<List<Currencies>> getCurrencies();
 
-    @GET("/api/futures/v3/products/{product_id}/book")
-    Call<Book> getProductBook(@Path("product_id") String productId, @Query("depth") Integer depth, @Query("conflated") Integer conflated);
+    @GET("/api/futures/v3/instruments/{instrument_id}/book")
+    Call<Book> getProductBook(@Path("instrument_id") String productId, @Query("depth") Integer depth, @Query("conflated") Integer conflated);
 
-    @GET("/api/futures/v3/products/{product_id}/ticker")
-    Call<Ticker> getProductTicker(@Path("product_id") String productId);
+    @GET("/api/futures/v3/instruments/{instrument_id}/ticker")
+    Call<Ticker> getProductTicker(@Path("instrument_id") String productId);
 
-    @GET("/api/futures/v3/products/{product_id}/trades")
+    @GET("/api/futures/v3/instruments/{instrument_id}/trades")
     Call<List<Trades>> getProductTrades(@Path("product_id") String productId);
 
-    @GET("/api/futures/v3/products/{product_id}/candles")
-    Call<JSONArray> getProductCandles(@Path("product_id") String productId, @Query("start") String start, @Query("end") String end, @Query("granularity") String granularity);
+    @GET("/api/futures/v3/instruments/{instrument_id}/candles")
+    Call<JSONArray> getProductCandles(@Path("instrument_id") String productId, @Query("start") String start, @Query("end") String end, @Query("granularity") String granularity);
 
-    @GET("/api/futures/v3/products/{product_id}/index")
-    Call<Index> getProductIndex(@Path("product_id") String productId);
+    @GET("/api/futures/v3/instruments/{instrument_id}/index")
+    Call<Index> getProductIndex(@Path("instrument_id") String productId);
 
-    @GET("/api/futures/v3/products/{product_id}/estimated_price")
-    Call<EstimatedPrice> getProductEstimatedPrice(@Path("product_id") String productId);
+    @GET("/api/futures/v3/instruments/{instrument_id}/estimated_price")
+    Call<EstimatedPrice> getProductEstimatedPrice(@Path("instrument_id") String productId);
 
-    @GET("/api/futures/v3/products/{product_id}/holds")
-    Call<Holds> getProductHolds(@Path("product_id") String productId);
+    @GET("/api/futures/v3/instruments/{instrument_id}/holds")
+    Call<Holds> getProductHolds(@Path("instrument_id") String productId);
 
-    @GET("/api/futures/v3/products/{product_id}/price_limit")
-    Call<PriceLimit> getProductPriceLimit(@Path("product_id") String productId);
+    @GET("/api/futures/v3/instruments/{instrument_id}/price_limit")
+    Call<PriceLimit> getProductPriceLimit(@Path("instrument_id") String productId);
 
-    @GET("/api/futures/v3/products/{product_id}/liquidation")
-    Call<List<Liquidation>> getProductLiquidation(@Path("product_id") String productId, @Query("status") int status);
+    @GET("/api/futures/v3/instruments/{instrument_id}/liquidation")
+    Call<List<Liquidation>> getProductLiquidation(@Path("instrument_id") String productId, @Query("status") int status);
 }
