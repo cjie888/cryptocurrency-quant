@@ -18,5 +18,6 @@ public interface FuturesKlineMapper {
 
     int updateByPrimaryKey(FuturesKline record);
 
-    FuturesKline getKLine(@Param("time") Date klineTime, @Param("instrumentId") String instrumentId);
+    FuturesKline getKLine(@Param("time") Date klineTime, @Param("instrumentId") String instrumentId,
+                          @Param("suffix") String suffix);
 }

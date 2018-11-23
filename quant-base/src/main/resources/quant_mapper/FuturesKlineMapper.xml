@@ -19,15 +19,15 @@
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
-    from futures_kline
+    from futures_kline${suffix}
     where id = #{id,jdbcType=BIGINT}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
-    delete from futures_kline
+    delete from futures_kline${suffix}
     where id = #{id,jdbcType=BIGINT}
   </delete>
   <insert id="insert" parameterType="com.cjie.cryptocurrency.quant.model.FuturesKline">
-    insert into futures_kline (id, kline_time, instrument_id, 
+    insert into futures_kline${suffix} (id, kline_time, instrument_id,
       open, close, low, high, 
       volume, currency_volume, create_time
       )
@@ -37,7 +37,7 @@
       )
   </insert>
   <insert id="insertSelective" parameterType="com.cjie.cryptocurrency.quant.model.FuturesKline">
-    insert into futures_kline
+    insert into futures_kline${suffix}
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">
         id,
@@ -104,7 +104,7 @@
     </trim>
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="com.cjie.cryptocurrency.quant.model.FuturesKline">
-    update futures_kline
+    update futures_kline${suffix}
     <set>
       <if test="klineTime != null">
         kline_time = #{klineTime,jdbcType=TIMESTAMP},
@@ -137,7 +137,7 @@
     where id = #{id,jdbcType=BIGINT}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.cjie.cryptocurrency.quant.model.FuturesKline">
-    update futures_kline
+    update futures_kline${suffix}
     set kline_time = #{klineTime,jdbcType=TIMESTAMP},
       instrument_id = #{instrumentId,jdbcType=VARCHAR},
       open = #{open,jdbcType=DECIMAL},

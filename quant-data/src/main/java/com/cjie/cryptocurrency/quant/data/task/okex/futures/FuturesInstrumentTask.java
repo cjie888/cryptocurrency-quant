@@ -90,7 +90,7 @@ public class FuturesInstrumentTask {
                     }
                     List<String[]> klines =  futuresMarketAPIService.getProductCandles(instrumentId, null, null, getGranularity(type));
                     for (String[] data : klines.subList(1,klines.size())) {
-                        if (futuresKlineMapper.getKLine(new Date(Long.valueOf(data[0])), instrumentId) != null) {
+                        if (futuresKlineMapper.getKLine(new Date(Long.valueOf(data[0])), instrumentId, currSuffix) != null) {
                             continue;
                         }
                         FuturesKline kline = FuturesKline.builder().klineTime(new Date(Long.valueOf(data[0])))
