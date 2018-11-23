@@ -158,4 +158,12 @@
     where instrument_id = #{instrumentId,jdbcType=VARCHAR}
 
   </select>
+
+  <select id="getAllInstruments" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from futures_instrument
+    where DATE_ADD(delivery,INTERVAL 16 HOUR)  >= now()
+
+  </select>
 </mapper>

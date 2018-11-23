@@ -66,7 +66,7 @@ public interface FuturesMarketAPIService {
      *                    86400  ->  1day
      *                    604800 ->  1week
      */
-    JSONArray getProductCandles(String productId, long start, long end, long granularity);
+    List<String[]> getProductCandles(String productId, Long start, Long end, long granularity);
 
     /**
      * Get the futures contract product index

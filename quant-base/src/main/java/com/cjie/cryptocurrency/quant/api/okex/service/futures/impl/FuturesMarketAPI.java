@@ -43,7 +43,7 @@ interface FuturesMarketAPI {
     Call<List<Trades>> getProductTrades(@Path("product_id") String productId);
 
     @GET("/api/futures/v3/instruments/{instrument_id}/candles")
-    Call<JSONArray> getProductCandles(@Path("instrument_id") String productId, @Query("start") String start, @Query("end") String end, @Query("granularity") String granularity);
+    Call<List<String[]>> getProductCandles(@Path("instrument_id") String productId, @Query("start") String start, @Query("end") String end, @Query("granularity") String granularity);
 
     @GET("/api/futures/v3/instruments/{instrument_id}/index")
     Call<Index> getProductIndex(@Path("instrument_id") String productId);

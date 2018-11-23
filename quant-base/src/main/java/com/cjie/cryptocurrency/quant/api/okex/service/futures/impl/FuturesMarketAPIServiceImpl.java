@@ -106,7 +106,7 @@ public class FuturesMarketAPIServiceImpl implements FuturesMarketAPIService {
     }
 
     @Override
-    public JSONArray getProductCandles(String productId, long start, long end, long granularity) {
+    public List<String[]> getProductCandles(String productId, Long start, Long end, long granularity) {
         APIClient client = getFuturesMarketAPIClient();
         FuturesMarketAPI futuresMarketAPI = getFuturesMarketApi(client);
         return client.executeSync(futuresMarketAPI.getProductCandles(productId, String.valueOf(start), String.valueOf(end), String.valueOf(granularity)));

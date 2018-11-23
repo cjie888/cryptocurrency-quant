@@ -2,6 +2,8 @@ package com.cjie.cryptocurrency.quant.mapper;
 
 import com.cjie.cryptocurrency.quant.model.FuturesInstrument;
 
+import java.util.List;
+
 public interface FuturesInstrumentMapper {
     int deleteByPrimaryKey(Long id);
 
@@ -16,4 +18,7 @@ public interface FuturesInstrumentMapper {
     int updateByPrimaryKey(FuturesInstrument record);
 
     FuturesInstrument getFuturesInstrument(String instrumentId);
+
+    List<FuturesInstrument> getAllInstruments();
+
 }
