@@ -89,7 +89,7 @@ public class FuturesInstrumentTask {
                         currSuffix = "";
                     }
                     List<String[]> klines =  futuresMarketAPIService.getProductCandles(instrumentId, null, null, getGranularity(type));
-                    for (String[] data : klines.subList(1,klines.size())) {
+                    for (String[] data : klines.subList(1,klines.size()-1)) {
                         if (futuresKlineMapper.getKLine(new Date(Long.valueOf(data[0])), instrumentId, currSuffix) != null) {
                             continue;
                         }
