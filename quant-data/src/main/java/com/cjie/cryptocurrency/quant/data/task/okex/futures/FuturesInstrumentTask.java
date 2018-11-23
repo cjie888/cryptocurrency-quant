@@ -67,6 +67,13 @@ public class FuturesInstrumentTask {
         log.info("get okex futures 1min kline end");
     }
 
+    @Scheduled(cron = "7 */5 * * * ?")
+    public void kline5m() throws Exception {
+        log.info("get okex futures 5min kline begin");
+        getKline("5min", "5m");
+        log.info("get okex futures 5min kline end");
+    }
+
     private void getKline(String type, String suffix) {
         try {
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
