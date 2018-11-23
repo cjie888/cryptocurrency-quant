@@ -70,7 +70,7 @@ public class FuturesInstrumentTask {
     @Scheduled(cron = "7 */5 * * * ?")
     public void kline5m() throws Exception {
         log.info("get okex futures 5min kline begin");
-        getKline("5min", "5m");
+        getKline("5min", "_5m");
         log.info("get okex futures 5min kline end");
     }
 
@@ -103,7 +103,7 @@ public class FuturesInstrumentTask {
                                 .currencyVolume(new BigDecimal(data[6]))
                                 .createTime(new Date())
                                 //.site("okex")
-                                //.suffix(currSuffix)
+                                .suffix(currSuffix)
                                 .build();
                         //log.info("{}-{}-{}--,{}", type, baseCurrency, quotaCurrency, JSON.toJSONString(data));
 

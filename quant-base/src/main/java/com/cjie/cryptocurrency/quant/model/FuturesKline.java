@@ -31,4 +31,6 @@ public class FuturesKline {
 
     private Date createTime;
 
+    private String suffix = "";
+
 }

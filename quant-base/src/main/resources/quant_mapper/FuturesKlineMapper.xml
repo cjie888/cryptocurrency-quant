@@ -152,7 +152,7 @@
   <select id="getKLine" resultMap="BaseResultMap">
     select
     <include refid="Base_Column_List" />
-    from futures_kline
+    from futures_kline${suffix}
     where kline_time = #{time,jdbcType=BIGINT}
     and instrument_id = #{instrumentId,jdbcType=VARCHAR}
 
