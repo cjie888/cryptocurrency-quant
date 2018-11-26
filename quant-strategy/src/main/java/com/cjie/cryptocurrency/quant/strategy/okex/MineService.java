@@ -403,47 +403,47 @@ public class MineService {
         Double marketPrice = Double.parseDouble(ticker.getLast());
         log.info("ticker last {} -{}:{}", baseName, quotaName, marketPrice);
 
-        if ("okb".equalsIgnoreCase(baseName)) {
-
-            CurrencyRatio currencyRatio = currencyRatioMapper.getLatestRatio(site,
-                    baseName.toLowerCase(), quotaName.toLowerCase());
-            if (Objects.isNull(currencyRatio)) {
-                log.error("Get currency {}-{} ratio error", baseName, quotaName);
-                throw new RuntimeException("Get currency ratio error");
-            }
-            log.info("origin base ratio:{}, price:{}", currencyRatio.getRatio(), currencyRatio.getCurrentPrice());
-
-            baseRatio = getRatio(currencyRatio, marketPrice, false);
-
-            if (Math.abs(baseRatio - currencyRatio.getRatio()) > 0.001) {
-                if (baseRatio >= 0.99 || baseRatio <=0.01) {
-                    return;
-                }
-                StringBuilder sb = new StringBuilder();
-                sb.append("origin rate:");
-                sb.append(currencyRatio.getRatio());
-                sb.append(",");
-                sb.append(currencyRatio.getCurrentPrice());
-
-                log.info("current base ratio:{}, price:{}", baseRatio, marketPrice);
-                CurrencyRatio currentRatio = CurrencyRatio.builder()
-                        .site(currencyRatio.getSite())
-                        .baseCurrency(currencyRatio.getBaseCurrency())
-                        .quotaCurrency(currencyRatio.getQuotaCurrency())
-                        .currentPrice(BigDecimal.valueOf(marketPrice))
-                        .ratio(baseRatio)
-                        .createTime(new Date())
-                        .build();
-                currencyRatioMapper.insert(currentRatio);
-                sb.append("current rate:");
-                sb.append(currentRatio.getRatio());
-                sb.append(",");
-                sb.append(currentRatio.getCurrentPrice());
-
-                weiXinMessageService.sendMessage("ratio changed", sb.toString());
-                return;
-            }
-        }
+//        if ("okb".equalsIgnoreCase(baseName)) {
+//
+//            CurrencyRatio currencyRatio = currencyRatioMapper.getLatestRatio(site,
+//                    baseName.toLowerCase(), quotaName.toLowerCase());
+//            if (Objects.isNull(currencyRatio)) {
+//                log.error("Get currency {}-{} ratio error", baseName, quotaName);
+//                throw new RuntimeException("Get currency ratio error");
+//            }
+//            log.info("origin base ratio:{}, price:{}", currencyRatio.getRatio(), currencyRatio.getCurrentPrice());
+//
+//            baseRatio = getRatio(currencyRatio, marketPrice, false);
+//
+//            if (Math.abs(baseRatio - currencyRatio.getRatio()) > 0.001) {
+//                if (baseRatio >= 0.99 || baseRatio <=0.01) {
+//                    return;
+//                }
+//                StringBuilder sb = new StringBuilder();
+//                sb.append("origin rate:");
+//                sb.append(currencyRatio.getRatio());
+//                sb.append(",");
+//                sb.append(currencyRatio.getCurrentPrice());
+//
+//                log.info("current base ratio:{}, price:{}", baseRatio, marketPrice);
+//                CurrencyRatio currentRatio = CurrencyRatio.builder()
+//                        .site(currencyRatio.getSite())
+//                        .baseCurrency(currencyRatio.getBaseCurrency())
+//                        .quotaCurrency(currencyRatio.getQuotaCurrency())
+//                        .currentPrice(BigDecimal.valueOf(marketPrice))
+//                        .ratio(baseRatio)
+//                        .createTime(new Date())
+//                        .build();
+//                currencyRatioMapper.insert(currentRatio);
+//                sb.append("current rate:");
+//                sb.append(currentRatio.getRatio());
+//                sb.append(",");
+//                sb.append(currentRatio.getCurrentPrice());
+//
+//                weiXinMessageService.sendMessage("ratio changed", sb.toString());
+//                return;
+//            }
+//        }
 
         double allAsset= baseBalance * marketPrice + quotaBalance;
         log.info("basebalance:{}, qutobalance:{}, allAsset:{}, asset/2:{}, basebalance-quota:{}",
