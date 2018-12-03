@@ -35,7 +35,7 @@ public class PerpetualFuturesInstrumentTask {
 //    private FuturesKlineMapper futuresKlineMapper;
 
 
-    @Scheduled(cron = "11 * */1 * * ?")
+    @Scheduled(cron = "11 */1 * * * ?")
     public void instruments() throws Exception {
         log.info("get futures instrument  begin");
         List<PerputalInstrument> products = futuresMarketAPIService.getInstruments();
