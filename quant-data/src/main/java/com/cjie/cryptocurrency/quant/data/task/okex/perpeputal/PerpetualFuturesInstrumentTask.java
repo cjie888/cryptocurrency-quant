@@ -51,6 +51,7 @@ public class PerpetualFuturesInstrumentTask {
                     .delivery(symbol.getDelivery())
                     .tickSize(symbol.getTick_size())
                     .sizeIncrement(symbol.getSize_increment())
+                    .coin(symbol.getCoin())
                     .quoteCurrency(symbol.getQuote_currency())
                     .createTime(new Date()).build();
             futuresInstrumentMapper.insert(futuresInstrument);
