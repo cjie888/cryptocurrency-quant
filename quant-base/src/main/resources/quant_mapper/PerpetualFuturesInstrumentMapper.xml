@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cjie.cryptocurrency.quant.mapper.PerpetualFuturesInstrumentMapper">
+  <resultMap id="BaseResultMap" type="com.cjie.cryptocurrency.quant.model.PerpetualFuturesInstrument">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="instrument_id" jdbcType="VARCHAR" property="instrumentId" />
+    <result column="underlying_index" jdbcType="VARCHAR" property="underlyingIndex" />
+    <result column="quote_currency" jdbcType="VARCHAR" property="quoteCurrency" />
+    <result column="coin" jdbcType="VARCHAR" property="coin" />
+    <result column="contract_val" jdbcType="DECIMAL" property="contractVal" />
+    <result column="listing" jdbcType="TIMESTAMP" property="listing" />
+    <result column="delivery" jdbcType="TIMESTAMP" property="delivery" />
+    <result column="tick_size" jdbcType="DECIMAL" property="tickSize" />
+    <result column="size_increment" jdbcType="DECIMAL" property="sizeIncrement" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, instrument_id, underlying_index, quote_currency, coin, contract_val, listing, 
+    delivery, tick_size, size_increment, create_time
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from perpetual_futures_instrument
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from perpetual_futures_instrument
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.cjie.cryptocurrency.quant.model.PerpetualFuturesInstrument">
+    insert into perpetual_futures_instrument (id, instrument_id, underlying_index, 
+      quote_currency, coin, contract_val, 
+      listing, delivery, tick_size, 
+      size_increment, create_time)
+    values (#{id,jdbcType=BIGINT}, #{instrumentId,jdbcType=VARCHAR}, #{underlyingIndex,jdbcType=VARCHAR}, 
+      #{quoteCurrency,jdbcType=VARCHAR}, #{coin,jdbcType=VARCHAR}, #{contractVal,jdbcType=DECIMAL}, 
+      #{listing,jdbcType=TIMESTAMP}, #{delivery,jdbcType=TIMESTAMP}, #{tickSize,jdbcType=DECIMAL}, 
+      #{sizeIncrement,jdbcType=DECIMAL}, #{createTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.cjie.cryptocurrency.quant.model.PerpetualFuturesInstrument">
+    insert into perpetual_futures_instrument
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="instrumentId != null">
+        instrument_id,
+      </if>
+      <if test="underlyingIndex != null">
+        underlying_index,
+      </if>
+      <if test="quoteCurrency != null">
+        quote_currency,
+      </if>
+      <if test="coin != null">
+        coin,
+      </if>
+      <if test="contractVal != null">
+        contract_val,
+      </if>
+      <if test="listing != null">
+        listing,
+      </if>
+      <if test="delivery != null">
+        delivery,
+      </if>
+      <if test="tickSize != null">
+        tick_size,
+      </if>
+      <if test="sizeIncrement != null">
+        size_increment,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="instrumentId != null">
+        #{instrumentId,jdbcType=VARCHAR},
+      </if>
+      <if test="underlyingIndex != null">
+        #{underlyingIndex,jdbcType=VARCHAR},
+      </if>
+      <if test="quoteCurrency != null">
+        #{quoteCurrency,jdbcType=VARCHAR},
+      </if>
+      <if test="coin != null">
+        #{coin,jdbcType=VARCHAR},
+      </if>
+      <if test="contractVal != null">
+        #{contractVal,jdbcType=DECIMAL},
+      </if>
+      <if test="listing != null">
+        #{listing,jdbcType=TIMESTAMP},
+      </if>
+      <if test="delivery != null">
+        #{delivery,jdbcType=TIMESTAMP},
+      </if>
+      <if test="tickSize != null">
+        #{tickSize,jdbcType=DECIMAL},
+      </if>
+      <if test="sizeIncrement != null">
+        #{sizeIncrement,jdbcType=DECIMAL},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.cjie.cryptocurrency.quant.model.PerpetualFuturesInstrument">
+    update perpetual_futures_instrument
+    <set>
+      <if test="instrumentId != null">
+        instrument_id = #{instrumentId,jdbcType=VARCHAR},
+      </if>
+      <if test="underlyingIndex != null">
+        underlying_index = #{underlyingIndex,jdbcType=VARCHAR},
+      </if>
+      <if test="quoteCurrency != null">
+        quote_currency = #{quoteCurrency,jdbcType=VARCHAR},
+      </if>
+      <if test="coin != null">
+        coin = #{coin,jdbcType=VARCHAR},
+      </if>
+      <if test="contractVal != null">
+        contract_val = #{contractVal,jdbcType=DECIMAL},
+      </if>
+      <if test="listing != null">
+        listing = #{listing,jdbcType=TIMESTAMP},
+      </if>
+      <if test="delivery != null">
+        delivery = #{delivery,jdbcType=TIMESTAMP},
+      </if>
+      <if test="tickSize != null">
+        tick_size = #{tickSize,jdbcType=DECIMAL},
+      </if>
+      <if test="sizeIncrement != null">
+        size_increment = #{sizeIncrement,jdbcType=DECIMAL},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.cjie.cryptocurrency.quant.model.PerpetualFuturesInstrument">
+    update perpetual_futures_instrument
+    set instrument_id = #{instrumentId,jdbcType=VARCHAR},
+      underlying_index = #{underlyingIndex,jdbcType=VARCHAR},
+      quote_currency = #{quoteCurrency,jdbcType=VARCHAR},
+      coin = #{coin,jdbcType=VARCHAR},
+      contract_val = #{contractVal,jdbcType=DECIMAL},
+      listing = #{listing,jdbcType=TIMESTAMP},
+      delivery = #{delivery,jdbcType=TIMESTAMP},
+      tick_size = #{tickSize,jdbcType=DECIMAL},
+      size_increment = #{sizeIncrement,jdbcType=DECIMAL},
+      create_time = #{createTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+
+  <select id="getFuturesInstrument" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from perpetual_futures_instrument
+    where instrument_id = #{instrumentId,jdbcType=VARCHAR}
+
+  </select>
+
+  <select id="getAllInstruments" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from perpetual_futures_instrument
+    where DATE_ADD(delivery,INTERVAL 16 HOUR)  >= now()
+
+  </select>
+</mapper>
