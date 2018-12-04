@@ -1,23 +1,15 @@
 package com.cjie.cryptocurrency.quant.data.task.okex.perpeputal;
 
 
-import com.cjie.cryptocurrency.quant.api.okex.bean.futures.result.Instrument;
 import com.cjie.cryptocurrency.quant.api.okex.bean.perpetual.result.PerputalInstrument;
-import com.cjie.cryptocurrency.quant.api.okex.service.futures.FuturesMarketAPIService;
 import com.cjie.cryptocurrency.quant.api.okex.service.perpetual.PerpetualFuturesMarketAPIService;
-import com.cjie.cryptocurrency.quant.mapper.FuturesInstrumentMapper;
-import com.cjie.cryptocurrency.quant.mapper.FuturesKlineMapper;
 import com.cjie.cryptocurrency.quant.mapper.PerpetualFuturesInstrumentMapper;
-import com.cjie.cryptocurrency.quant.model.FuturesInstrument;
-import com.cjie.cryptocurrency.quant.model.FuturesKline;
 import com.cjie.cryptocurrency.quant.model.PerpetualFuturesInstrument;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -35,7 +27,7 @@ public class PerpetualFuturesInstrumentTask {
 //    private FuturesKlineMapper futuresKlineMapper;
 
 
-    @Scheduled(cron = "11 * */ * * ?")
+    @Scheduled(cron = "11 * */1 * * ?")
     public void instruments() throws Exception {
         log.info("get futures instrument  begin");
         List<PerputalInstrument> products = futuresMarketAPIService.getInstruments();
