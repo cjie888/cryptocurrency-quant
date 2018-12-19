@@ -33,9 +33,12 @@ public class MineTask {
         log.info("start mining");
         //log.info(JSON.toJSONString(spotAccountAPIService.getAccountByCurrency("btc")));
         try {
+            mineService.mine1("okex","bch", "btc", 0.005);
+            Thread.sleep(1000);
             mineService.mine1("okex","eos", "btc", 0.005);
             Thread.sleep(1000);
             mineService.mine1("okex","eos", "eth", 0.005);
+
 
         } catch (Exception e) {
             e.printStackTrace();
