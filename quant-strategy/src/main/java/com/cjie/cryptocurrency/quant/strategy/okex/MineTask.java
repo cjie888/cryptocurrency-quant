@@ -35,10 +35,11 @@ public class MineTask {
         try {
             mineService.mine1("okex","bch", "btc", 0.005);
             Thread.sleep(1000);
+            mineService.mine1("okex","eos", "eth", 0.005);
+            Thread.sleep(1000);
             mineService.mine1("okex","eos", "btc", 0.005);
             Thread.sleep(1000);
-            mineService.mine1("okex","eos", "eth", 0.005);
-
+            mineService.mine1("okex","zil", "eth", 0.005);
 
         } catch (Exception e) {
             e.printStackTrace();
