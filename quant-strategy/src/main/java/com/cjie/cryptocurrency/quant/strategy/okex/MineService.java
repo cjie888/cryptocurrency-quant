@@ -98,7 +98,7 @@ public class MineService {
         maxNums.put("eth", 0.005);
         maxNums.put("bch", 0.1);
         maxNums.put("pax", 1D);
-        maxNums.put("zil", 10D);
+        maxNums.put("zil", 50D);
 
     }
 
