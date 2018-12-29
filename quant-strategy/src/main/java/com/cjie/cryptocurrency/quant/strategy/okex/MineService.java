@@ -255,10 +255,6 @@ public class MineService {
         double quotaHold = new BigDecimal(quotaAccount.getBalance()).doubleValue() - new BigDecimal(quotaAccount.getAvailable()).doubleValue();
         double quotaBalance = new BigDecimal(quotaAccount.getBalance()).doubleValue();
 
-        if (baseHold > 0 || quotaHold > 0) {
-            return;
-        }
-
         //判断是否有冻结的，如果冻结太多冻结就休眠，进行下次挖矿
         if (baseHold > 0.999 * baseBalance
                 && quotaHold > 0.999 * quotaBalance) {
