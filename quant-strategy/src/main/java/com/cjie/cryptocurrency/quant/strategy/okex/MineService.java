@@ -401,6 +401,9 @@ public class MineService {
         double quotaHold = new BigDecimal(quotaAccount.getBalance()).doubleValue() - new BigDecimal(quotaAccount.getAvailable()).doubleValue();
         double quotaBalance = new BigDecimal(quotaAccount.getBalance()).doubleValue();
 
+        if (baseHold > 0.01 || quotaHold > 0.01) {
+            return;
+        }
 
         Ticker ticker = getTicker(site, baseName, quotaName);
         Double marketPrice = Double.parseDouble(ticker.getLast());
