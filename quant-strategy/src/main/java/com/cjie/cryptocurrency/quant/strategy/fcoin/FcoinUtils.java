@@ -83,7 +83,7 @@ public class FcoinUtils {
         minUsdt = Double.valueOf(properties.getProperty("minUsdt", "10"));
 
         initInterval = Integer.valueOf(properties.getProperty("initInterval", "10"));
-        pricePrecision = Integer.valueOf(properties.getProperty("pricePrecision", "5"));
+        pricePrecision = Integer.valueOf(properties.getProperty("pricePrecision", "4"));
         numPrecision = Integer.valueOf(properties.getProperty("numPrecision", "2"));
         minLimitPriceOrderNum = Double.valueOf(properties.getProperty("minLimitPriceOrderNum", "3.01"));
     }
