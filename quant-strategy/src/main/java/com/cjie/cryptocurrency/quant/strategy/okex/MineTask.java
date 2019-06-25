@@ -56,6 +56,8 @@ public class MineTask {
             //mineService.mine3("okex","eos", "btc", 0.003, 0.5);
             //Thread.sleep(1000);
             mineService.mine3("okex","okb", "usdt", 0.003, 0.5);
+            mineService.mine3("okexsub1","eth", "usdt", 0.005, 0.5);
+
             //Thread.sleep(1000);
             //mineService.mine3("oktop","bch", "eth", 0.005, 0.5);
             //mineService.mine3("cac", "eth", 0.005);
