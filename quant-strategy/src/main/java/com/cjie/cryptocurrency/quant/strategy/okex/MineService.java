@@ -401,7 +401,7 @@ public class MineService {
         double quotaHold = new BigDecimal(quotaAccount.getBalance()).doubleValue() - new BigDecimal(quotaAccount.getAvailable()).doubleValue();
         double quotaBalance = new BigDecimal(quotaAccount.getBalance()).doubleValue();
 
-        if (baseHold > 0.01 || quotaHold > 0.01) {
+        if (baseHold > 0.001 || quotaHold > 0.001) {
             return;
         }
 
