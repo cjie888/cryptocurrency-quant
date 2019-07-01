@@ -91,6 +91,8 @@ public class MineService {
         minLimitPriceOrderNums.put("cac", 1.0);
         minLimitPriceOrderNums.put("bch", 0.01);
         minLimitPriceOrderNums.put("zil", 1.0);
+        minLimitPriceOrderNums.put("btc", 0.001);
+
 
         maxNums.put("eos", 0.3);
         maxNums.put("cac", 50.0);
