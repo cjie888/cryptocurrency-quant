@@ -89,7 +89,7 @@ public class CCICorrctionStrategy implements SimpleJob {
             if (timeSeries == null) {
                 timeSeries = new BaseTimeSeries();
 
-                for (int i = currencyKlineDTOS.size(); i >= 0; i--) {
+                for (int i = currencyKlineDTOS.size() -1; i >= 0; i--) {
                     CurrencyKlineDTO currencyKlineDTO = currencyKlineDTOS.get(i);
                     ZonedDateTime beginTime = ZonedDateTime.ofInstant(
                             Instant.ofEpochMilli(Long.parseLong(currencyKlineDTO.getTime())), ZoneId.systemDefault());
@@ -142,7 +142,7 @@ public class CCICorrctionStrategy implements SimpleJob {
                 }
             }
         }catch (Exception e) {
-            log.error("Moving momentum strategy error", e);
+            log.error("Cci correction strategy error", e);
         }
     }
 }
