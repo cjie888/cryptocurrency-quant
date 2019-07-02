@@ -91,13 +91,13 @@ public class MovingMomentumStrategy implements SimpleJob {
             if (timeSeries == null) {
                 timeSeries = new BaseTimeSeries();
 
-                for (int i = currencyKlineDTOS.size() - 1; i >= 0; i--) {
+                for (int i = currencyKlineDTOS.size() - 26 -  1; i <= 0; i++) {
                     CurrencyKlineDTO currencyKlineDTO = currencyKlineDTOS.get(i);
                     ZonedDateTime beginTime = ZonedDateTime.ofInstant(
                             Instant.ofEpochMilli(Long.parseLong(currencyKlineDTO.getTime())), ZoneId.systemDefault());
 
                     timeSeries.addBar(beginTime, currencyKlineDTO.getOpen(), currencyKlineDTO.getHigh(), currencyKlineDTO.getLow(), currencyKlineDTO.getClose());
-                    if (timeSeries.getBarCount() > 26) {
+                    if (timeSeries.getBarCount() >= 26) {
                         break;
                     }
                 }
@@ -108,7 +108,7 @@ public class MovingMomentumStrategy implements SimpleJob {
                 tradingRecord = new BaseTradingRecord();
 
             } else {
-                CurrencyKlineDTO currencyKlineDTO = currencyKlineDTOS.get(currencyKlineDTOS.size() - 1);
+                CurrencyKlineDTO currencyKlineDTO = currencyKlineDTOS.get(0);
 
                 ZonedDateTime beginTime = ZonedDateTime.ofInstant(
                         Instant.ofEpochMilli(Long.parseLong(currencyKlineDTO.getTime())), ZoneId.systemDefault());
