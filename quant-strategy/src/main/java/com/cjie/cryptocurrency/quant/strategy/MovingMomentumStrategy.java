@@ -86,7 +86,7 @@ public class MovingMomentumStrategy implements SimpleJob {
     public void execute(ShardingContext shardingContext) {
         try {
             List<CurrencyKlineDTO> currencyKlineDTOS = spotProductAPIService.getCandles("okex", "btc-usdt", 60, null, null);
-            log.info(JSON.toJSONString(currencyKlineDTOS));
+            //log.info(JSON.toJSONString(currencyKlineDTOS));
             // Getting the time series
             if (timeSeries == null) {
                 timeSeries = new BaseTimeSeries();
@@ -111,7 +111,7 @@ public class MovingMomentumStrategy implements SimpleJob {
                 CurrencyKlineDTO currencyKlineDTO = currencyKlineDTOS.get(currencyKlineDTOS.size() - 1);
 
                 ZonedDateTime beginTime = ZonedDateTime.ofInstant(
-                        Instant.ofEpochMilli(Long.parseLong(currencyKlineDTO.getTime()) * 1000), ZoneId.systemDefault());
+                        Instant.ofEpochMilli(Long.parseLong(currencyKlineDTO.getTime())), ZoneId.systemDefault());
                 timeSeries.addBar(beginTime, currencyKlineDTO.getOpen(), currencyKlineDTO.getHigh(), currencyKlineDTO.getLow(), currencyKlineDTO.getClose());
 
             }
