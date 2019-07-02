@@ -113,7 +113,6 @@ public class SpotProductAPIServiceImpl extends BaseServiceImpl implements SpotPr
         client.getMessageConverters().set(1, new StringHttpMessageConverter(StandardCharsets.UTF_8));
         ResponseEntity<String> response = client.exchange(url, HttpMethod.GET, requestEntity, String.class);
         String body = response.getBody();
-        log.info(body);
         List<List<String>> klines =  JSON.parseObject(body,new TypeReference<List<List<String>>>(){});
         List<CurrencyKlineDTO> currencyKlineDTOS = new ArrayList<>();
         for(List<String> kline : klines) {
@@ -123,6 +122,7 @@ public class SpotProductAPIServiceImpl extends BaseServiceImpl implements SpotPr
             currencyKlineDTO.setHigh(kline.get(2));
             currencyKlineDTO.setLow(kline.get(3));
             currencyKlineDTO.setClose(kline.get(4));
+            currencyKlineDTOS.add(currencyKlineDTO);
 
         }
         return currencyKlineDTOS;
