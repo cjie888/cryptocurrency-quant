@@ -63,6 +63,6 @@ public interface SpotProductAPIService {
      * @param end
      * @return
      */
-    List<CurrencyKlineDTO> getCandles(String site, String product_id, Integer granularity, String start, String end);
+    List<CurrencyKlineDTO> getCandles(String site, String product_id, Integer granularity, String start, String end) throws Exception;
 
 }

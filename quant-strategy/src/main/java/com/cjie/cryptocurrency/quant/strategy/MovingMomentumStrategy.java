@@ -84,61 +84,65 @@ public class MovingMomentumStrategy implements SimpleJob {
 
     @Override
     public void execute(ShardingContext shardingContext) {
-        List<CurrencyKlineDTO> currencyKlineDTOS = spotProductAPIService.getCandles("okex",  "btc-usdt",60,null, null);
-        // Getting the time series
-        if (timeSeries == null) {
-            timeSeries = new BaseTimeSeries();
+        try {
+            List<CurrencyKlineDTO> currencyKlineDTOS = spotProductAPIService.getCandles("okex", "btc-usdt", 60, null, null);
+            // Getting the time series
+            if (timeSeries == null) {
+                timeSeries = new BaseTimeSeries();
 
-            for (int i = currencyKlineDTOS.size() -1; i>=0;i-- ) {
-                CurrencyKlineDTO currencyKlineDTO = currencyKlineDTOS.get(i);
+                for (int i = currencyKlineDTOS.size() - 1; i >= 0; i--) {
+                    CurrencyKlineDTO currencyKlineDTO = currencyKlineDTOS.get(i);
+                    ZonedDateTime beginTime = ZonedDateTime.ofInstant(
+                            Instant.ofEpochMilli(Long.parseLong(currencyKlineDTO.getTime())), ZoneId.systemDefault());
+
+                    timeSeries.addBar(beginTime, currencyKlineDTO.getOpen(), currencyKlineDTO.getHigh(), currencyKlineDTO.getLow(), currencyKlineDTO.getClose());
+                    if (timeSeries.getBarCount() > 26) {
+                        break;
+                    }
+                }
+                // Building the trading strategy
+                strategy = buildStrategy(timeSeries);
+
+                // Initializing the trading history
+                tradingRecord = new BaseTradingRecord();
+
+            } else {
+                CurrencyKlineDTO currencyKlineDTO = currencyKlineDTOS.get(currencyKlineDTOS.size() - 1);
+
                 ZonedDateTime beginTime = ZonedDateTime.ofInstant(
                         Instant.ofEpochMilli(Long.parseLong(currencyKlineDTO.getTime()) * 1000), ZoneId.systemDefault());
-
                 timeSeries.addBar(beginTime, currencyKlineDTO.getOpen(), currencyKlineDTO.getHigh(), currencyKlineDTO.getLow(), currencyKlineDTO.getClose());
-                if (timeSeries.getBarCount() > 26) {
-                    break;
+
+            }
+
+            log.info("Current bar is {}", JSON.toJSONString(timeSeries.getBarData()));
+
+
+            int endIndex = timeSeries.getEndIndex();
+            Bar newBar = timeSeries.getLastBar();
+            if (strategy.shouldEnter(endIndex)) {
+                // Our strategy should enter
+                log.info("Strategy should ENTER on " + endIndex);
+                boolean entered = tradingRecord.enter(endIndex, newBar.getClosePrice(), PrecisionNum.valueOf(10));
+                if (entered) {
+                    Order entry = tradingRecord.getLastEntry();
+                    log.info("Entered on " + entry.getIndex()
+                            + " (price=" + entry.getPrice().doubleValue()
+                            + ", amount=" + entry.getAmount().doubleValue() + ")");
+                }
+            } else if (strategy.shouldExit(endIndex)) {
+                // Our strategy should exit
+                log.info("Strategy should EXIT on " + endIndex);
+                boolean exited = tradingRecord.exit(endIndex, newBar.getClosePrice(), PrecisionNum.valueOf(10));
+                if (exited) {
+                    Order exit = tradingRecord.getLastExit();
+                    log.info("Exited on " + exit.getIndex()
+                            + " (price=" + exit.getPrice().doubleValue()
+                            + ", amount=" + exit.getAmount().doubleValue() + ")");
                 }
             }
-            // Building the trading strategy
-            strategy = buildStrategy(timeSeries);
-
-            // Initializing the trading history
-            tradingRecord = new BaseTradingRecord();
-
-        } else {
-            CurrencyKlineDTO currencyKlineDTO = currencyKlineDTOS.get(currencyKlineDTOS.size() - 1);
-
-            ZonedDateTime beginTime = ZonedDateTime.ofInstant(
-            Instant.ofEpochMilli(Long.parseLong(currencyKlineDTO.getTime()) * 1000), ZoneId.systemDefault());
-            timeSeries.addBar(beginTime, currencyKlineDTO.getOpen(), currencyKlineDTO.getHigh(), currencyKlineDTO.getLow(), currencyKlineDTO.getClose());
-
-        }
-
-        log.info("Current bar is {}", JSON.toJSONString(timeSeries.getBarData()));
-
-
-        int endIndex = timeSeries.getEndIndex();
-        Bar newBar = timeSeries.getLastBar();
-        if (strategy.shouldEnter(endIndex)) {
-            // Our strategy should enter
-            log.info("Strategy should ENTER on " + endIndex);
-            boolean entered = tradingRecord.enter(endIndex, newBar.getClosePrice(), PrecisionNum.valueOf(10));
-            if (entered) {
-                Order entry = tradingRecord.getLastEntry();
-                log.info("Entered on " + entry.getIndex()
-                        + " (price=" + entry.getPrice().doubleValue()
-                        + ", amount=" + entry.getAmount().doubleValue() + ")");
-            }
-        } else if (strategy.shouldExit(endIndex)) {
-            // Our strategy should exit
-            log.info("Strategy should EXIT on " + endIndex);
-            boolean exited = tradingRecord.exit(endIndex, newBar.getClosePrice(), PrecisionNum.valueOf(10));
-            if (exited) {
-                Order exit = tradingRecord.getLastExit();
-                log.info("Exited on " + exit.getIndex()
-                        + " (price=" + exit.getPrice().doubleValue()
-                        + ", amount=" + exit.getAmount().doubleValue() + ")");
-            }
+        }catch (Exception e) {
+            log.error("Moving momentum strategy error", e);
         }
     }
 }

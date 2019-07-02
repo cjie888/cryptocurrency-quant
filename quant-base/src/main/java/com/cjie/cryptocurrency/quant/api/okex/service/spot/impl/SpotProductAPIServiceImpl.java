@@ -21,6 +21,7 @@ import com.cjie.cryptocurrency.quant.api.okex.service.spot.CurrencyKlineDTO;
 import com.cjie.cryptocurrency.quant.api.okex.service.spot.SpotProductAPIService;
 import com.cjie.cryptocurrency.quant.api.okex.bean.spot.result.Ticker;
 import com.cjie.cryptocurrency.quant.api.okex.bean.spot.result.Trade;
+import com.cjie.cryptocurrency.quant.api.okex.utils.DateUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -34,6 +35,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -96,7 +98,7 @@ public class SpotProductAPIServiceImpl extends BaseServiceImpl implements SpotPr
     }
 
     @Override
-    public List<CurrencyKlineDTO> getCandles(String site, final String product_id, final Integer granularity, final String start, final String end) {
+    public List<CurrencyKlineDTO> getCandles(String site, final String product_id, final Integer granularity, final String start, final String end) throws Exception {
         MultiValueMap<String, String> headers = new HttpHeaders();
         headers.add("Referer", "https://www.coinall.com");
         headers.add("user-agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.84 Safari/537.36");
@@ -112,7 +114,18 @@ public class SpotProductAPIServiceImpl extends BaseServiceImpl implements SpotPr
         ResponseEntity<String> response = client.exchange(url, HttpMethod.GET, requestEntity, String.class);
         String body = response.getBody();
         log.info(body);
-        return JSON.parseObject(body,new TypeReference<List<CurrencyKlineDTO>>(){});
+        List<List<String>> klines =  JSON.parseObject(body,new TypeReference<List<List<String>>>(){});
+        List<CurrencyKlineDTO> currencyKlineDTOS = new ArrayList<>();
+        for(List<String> kline : klines) {
+            CurrencyKlineDTO currencyKlineDTO = new CurrencyKlineDTO();
+            currencyKlineDTO.setTime(String.valueOf(DateUtils.parseUTCTime(kline.get(0)).getTime()));
+            currencyKlineDTO.setOpen(kline.get(1));
+            currencyKlineDTO.setHigh(kline.get(2));
+            currencyKlineDTO.setLow(kline.get(3));
+            currencyKlineDTO.setClose(kline.get(4));
+
+        }
+        return currencyKlineDTOS;
     }
 
 }
