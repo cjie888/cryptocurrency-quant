@@ -133,7 +133,7 @@ public class MovingMomentumStrategy implements SimpleJob {
                 }
             } else if (strategy.shouldExit(endIndex)) {
                 // Our strategy should exit
-                strategyLog.info("Strategy should EXIT on {}, time:{}" , endIndex, newBar.getTimePeriod());
+                strategyLog.info("Strategy should EXIT on {}, time:{}" , endIndex, newBar.getBeginTime());
 
                 boolean exited = tradingRecord.exit(endIndex, newBar.getClosePrice(), PrecisionNum.valueOf(10));
                 if (exited) {
