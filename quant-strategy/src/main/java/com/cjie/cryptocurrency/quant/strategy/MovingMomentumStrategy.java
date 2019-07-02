@@ -123,7 +123,7 @@ public class MovingMomentumStrategy implements SimpleJob {
             Bar newBar = timeSeries.getLastBar();
             if (strategy.shouldEnter(endIndex)) {
                 // Our strategy should enter
-                log.info("Strategy should ENTER on " + endIndex);
+                log.info("Strategy should ENTER on {}, time:{}" , endIndex, newBar.getTimePeriod());
                 boolean entered = tradingRecord.enter(endIndex, newBar.getClosePrice(), PrecisionNum.valueOf(10));
                 if (entered) {
                     Order entry = tradingRecord.getLastEntry();
@@ -133,7 +133,8 @@ public class MovingMomentumStrategy implements SimpleJob {
                 }
             } else if (strategy.shouldExit(endIndex)) {
                 // Our strategy should exit
-                log.info("Strategy should EXIT on " + endIndex);
+                log.info("Strategy should EXIT on {}, time:{}" , endIndex, newBar.getTimePeriod());
+
                 boolean exited = tradingRecord.exit(endIndex, newBar.getClosePrice(), PrecisionNum.valueOf(10));
                 if (exited) {
                     Order exit = tradingRecord.getLastExit();
