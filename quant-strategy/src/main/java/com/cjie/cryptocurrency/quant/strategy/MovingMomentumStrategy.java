@@ -38,6 +38,9 @@ import java.util.List;
 @Slf4j
 public class MovingMomentumStrategy implements SimpleJob {
 
+    private static final org.slf4j.Logger strategyLog = org.slf4j.LoggerFactory.getLogger("strategy");
+
+
     private TimeSeries timeSeries;
 
     private Strategy strategy;
@@ -120,7 +123,7 @@ public class MovingMomentumStrategy implements SimpleJob {
             Bar newBar = timeSeries.getLastBar();
             if (strategy.shouldEnter(endIndex)) {
                 // Our strategy should enter
-                log.info("Strategy should ENTER on {}, time:{}" , endIndex, newBar.getBeginTime());
+                strategyLog.info("Strategy should ENTER on {}, time:{}" , endIndex, newBar.getBeginTime());
                 boolean entered = tradingRecord.enter(endIndex, newBar.getClosePrice(), PrecisionNum.valueOf(10));
                 if (entered) {
                     Order entry = tradingRecord.getLastEntry();
@@ -130,7 +133,7 @@ public class MovingMomentumStrategy implements SimpleJob {
                 }
             } else if (strategy.shouldExit(endIndex)) {
                 // Our strategy should exit
-                log.info("Strategy should EXIT on {}, time:{}" , endIndex, newBar.getTimePeriod());
+                strategyLog.info("Strategy should EXIT on {}, time:{}" , endIndex, newBar.getTimePeriod());
 
                 boolean exited = tradingRecord.exit(endIndex, newBar.getClosePrice(), PrecisionNum.valueOf(10));
                 if (exited) {
