@@ -111,11 +111,12 @@ public class CCICorrctionStrategy implements SimpleJob {
 
             }
             log.info("Current bar is {}", JSON.toJSONString(timeSeries.getBarData()));
-            strategyLog.info("Current cci short:{}, long:{}", shortCci.getValue(timeSeries.getEndIndex()-1).doubleValue(),
-                    longCci.getValue(timeSeries.getEndIndex()-1).doubleValue());
-
             int endIndex = timeSeries.getEndIndex();
             Bar newBar = timeSeries.getLastBar();
+            strategyLog.info("Current cci time:{}, short:{}, long:{}", newBar.getBeginTime(),
+                    shortCci.getValue(endIndex-1).doubleValue(),
+                    longCci.getValue(endIndex -1).doubleValue());
+
             if (strategy.shouldEnter(endIndex)) {
                 // Our strategy should enter
                 strategyLog.info("Strategy should ENTER on {}, time:{}" , endIndex, newBar.getBeginTime());
