@@ -91,7 +91,7 @@ public class MovingMomentumStrategy implements SimpleJob {
             if (timeSeries == null) {
                 timeSeries = new BaseTimeSeries();
 
-                for (int i = 25; i >= 0; i--) {
+                for (int i = currencyKlineDTOS.size(); i >= 0; i--) {
                     CurrencyKlineDTO currencyKlineDTO = currencyKlineDTOS.get(i);
                     ZonedDateTime beginTime = ZonedDateTime.ofInstant(
                             Instant.ofEpochMilli(Long.parseLong(currencyKlineDTO.getTime())), ZoneId.systemDefault());
