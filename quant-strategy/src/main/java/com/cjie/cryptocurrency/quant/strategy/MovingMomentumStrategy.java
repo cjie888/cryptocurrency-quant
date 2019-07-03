@@ -112,7 +112,8 @@ public class MovingMomentumStrategy implements SimpleJob {
 
                 ZonedDateTime beginTime = ZonedDateTime.ofInstant(
                         Instant.ofEpochMilli(Long.parseLong(currencyKlineDTO.getTime())), ZoneId.systemDefault());
-                timeSeries.addBar(beginTime, currencyKlineDTO.getOpen(), currencyKlineDTO.getHigh(), currencyKlineDTO.getLow(), currencyKlineDTO.getClose());
+                timeSeries.addBar(beginTime, currencyKlineDTO.getOpen(), currencyKlineDTO.getHigh(), currencyKlineDTO.getLow(),
+                        currencyKlineDTO.getClose(), currencyKlineDTO.getVolume());
 
             }
 

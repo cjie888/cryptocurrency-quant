@@ -122,6 +122,7 @@ public class SpotProductAPIServiceImpl extends BaseServiceImpl implements SpotPr
             currencyKlineDTO.setHigh(kline.get(2));
             currencyKlineDTO.setLow(kline.get(3));
             currencyKlineDTO.setClose(kline.get(4));
+            currencyKlineDTO.setVolume(kline.get(5));
             currencyKlineDTOS.add(currencyKlineDTO);
 
         }

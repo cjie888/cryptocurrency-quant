@@ -94,7 +94,8 @@ public class CCICorrctionStrategy implements SimpleJob {
                     ZonedDateTime beginTime = ZonedDateTime.ofInstant(
                             Instant.ofEpochMilli(Long.parseLong(currencyKlineDTO.getTime())), ZoneId.systemDefault());
 
-                    timeSeries.addBar(beginTime, currencyKlineDTO.getOpen(), currencyKlineDTO.getHigh(), currencyKlineDTO.getLow(), currencyKlineDTO.getClose());
+                    timeSeries.addBar(beginTime, currencyKlineDTO.getOpen(), currencyKlineDTO.getHigh(),
+                            currencyKlineDTO.getLow(), currencyKlineDTO.getClose(), currencyKlineDTO.getVolume());
                 }
                 // Building the trading strategy
                 strategy = buildStrategy(timeSeries);
@@ -116,8 +117,8 @@ public class CCICorrctionStrategy implements SimpleJob {
 
             log.info("cci:{}", JSON.toJSONString(shortCci));
             strategyLog.info("Current cci time:{}, short:{}, long:{}", newBar.getBeginTime(),
-                    shortCci.getValue(endIndex-1).doubleValue(),
-                    longCci.getValue(endIndex -1).doubleValue());
+                    shortCci.getValue(endIndex).doubleValue(),
+                    longCci.getValue(endIndex).doubleValue());
 
             if (strategy.shouldEnter(endIndex)) {
                 // Our strategy should enter
