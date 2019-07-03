@@ -121,7 +121,7 @@ public class MovingMomentumStrategy implements SimpleJob {
 
             }
 
-            log.info("Current bar is {}", JSON.toJSONString(timeSeries.getBarData()));
+            //log.info("Current bar is {}", JSON.toJSONString(timeSeries.getBarData()));
 
 
             int endIndex = timeSeries.getEndIndex();

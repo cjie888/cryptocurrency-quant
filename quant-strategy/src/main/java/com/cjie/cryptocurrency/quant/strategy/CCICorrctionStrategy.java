@@ -115,7 +115,7 @@ public class CCICorrctionStrategy implements SimpleJob {
                 timeSeries.addBar(beginTime, currencyKlineDTO.getOpen(), currencyKlineDTO.getHigh(), currencyKlineDTO.getLow(), currencyKlineDTO.getClose());
 
             }
-            log.info("Current bar is {}", JSON.toJSONString(timeSeries.getBarData()));
+            //log.info("Current bar is {}", JSON.toJSONString(timeSeries.getBarData()));
             int endIndex = timeSeries.getEndIndex();
             Bar newBar = timeSeries.getLastBar();
 
