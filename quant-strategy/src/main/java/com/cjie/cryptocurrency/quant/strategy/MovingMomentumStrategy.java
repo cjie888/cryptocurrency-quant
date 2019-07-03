@@ -4,6 +4,7 @@ package com.cjie.cryptocurrency.quant.strategy;
 import com.alibaba.fastjson.JSON;
 import com.cjie.cryptocurrency.quant.api.okex.service.spot.CurrencyKlineDTO;
 import com.cjie.cryptocurrency.quant.api.okex.service.spot.SpotProductAPIService;
+import com.cjie.cryptocurrency.quant.service.WeiXinMessageService;
 import com.cxytiandi.elasticjob.annotation.ElasticJobConf;
 import com.dangdang.ddframe.job.api.ShardingContext;
 import com.dangdang.ddframe.job.api.simple.SimpleJob;
@@ -49,6 +50,9 @@ public class MovingMomentumStrategy implements SimpleJob {
 
     @Autowired
     private SpotProductAPIService spotProductAPIService;
+
+    @Autowired
+    private WeiXinMessageService weiXinMessageService;
 
     /**
      * @param series a time series
@@ -123,6 +127,10 @@ public class MovingMomentumStrategy implements SimpleJob {
             int endIndex = timeSeries.getEndIndex();
             Bar newBar = timeSeries.getLastBar();
             if (strategy.shouldEnter(endIndex)) {
+                StringBuilder stringBuilder = new StringBuilder();
+                stringBuilder.append("Buy").append(" ").append(newBar.getBeginTime())
+                        .append(" ").append(newBar.getClosePrice()).append("\r\n\n");
+                weiXinMessageService.sendMessage("buy-mm",  stringBuilder.toString());
                 // Our strategy should enter
                 strategyLog.info("Strategy should ENTER on {}, time:{}" , endIndex, newBar.getBeginTime());
                 boolean entered = tradingRecord.enter(endIndex, newBar.getClosePrice(), PrecisionNum.valueOf(10));
@@ -133,6 +141,10 @@ public class MovingMomentumStrategy implements SimpleJob {
                             + ", amount=" + entry.getAmount().doubleValue() + ")");
                 }
             } else if (strategy.shouldExit(endIndex)) {
+                StringBuilder stringBuilder = new StringBuilder();
+                stringBuilder.append("Sell").append(" ").append(newBar.getBeginTime())
+                        .append(" ").append(newBar.getClosePrice()).append("\r\n\n");
+                weiXinMessageService.sendMessage("sell-mm",  stringBuilder.toString());
                 // Our strategy should exit
                 strategyLog.info("Strategy should EXIT on {}, time:{}" , endIndex, newBar.getBeginTime());
 
