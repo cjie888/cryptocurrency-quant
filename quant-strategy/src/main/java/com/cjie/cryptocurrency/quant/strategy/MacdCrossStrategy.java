@@ -121,7 +121,7 @@ public class MacdCrossStrategy implements SimpleJob {
                 StringBuilder stringBuilder = new StringBuilder();
                 stringBuilder.append("Buy").append(" ").append(newBar.getBeginTime())
                         .append(" ").append(newBar.getClosePrice()).append("\r\n\n");
-                weiXinMessageService.sendMessage("buy-mm",  stringBuilder.toString());
+                weiXinMessageService.sendMessage("buy-macd",  stringBuilder.toString());
                 // Our strategy should enter
                 strategyLog.info("Strategy should ENTER on {}, time:{}" , endIndex, newBar.getBeginTime());
                 boolean entered = tradingRecord.enter(endIndex, newBar.getClosePrice(), PrecisionNum.valueOf(10));
@@ -135,7 +135,7 @@ public class MacdCrossStrategy implements SimpleJob {
                 StringBuilder stringBuilder = new StringBuilder();
                 stringBuilder.append("Sell").append(" ").append(newBar.getBeginTime())
                         .append(" ").append(newBar.getClosePrice()).append("\r\n\n");
-                weiXinMessageService.sendMessage("sell-mm",  stringBuilder.toString());
+                weiXinMessageService.sendMessage("sell-macd",  stringBuilder.toString());
                 // Our strategy should exit
                 strategyLog.info("Strategy should EXIT on {}, time:{}" , endIndex, newBar.getBeginTime());
 
