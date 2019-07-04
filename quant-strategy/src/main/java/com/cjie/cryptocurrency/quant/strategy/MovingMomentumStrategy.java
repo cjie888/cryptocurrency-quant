@@ -28,12 +28,7 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
 
-/**
- * Moving momentum strategy.
- * </p>
- * @see <a href="http://stockcharts.com/help/doku.php?id=chart_school:trading_strategies:moving_momentum">
- *     http://stockcharts.com/help/doku.php?id=chart_school:trading_strategies:moving_momentum</a>
- */
+
 //@ElasticJobConf(name = "movingMomentumJob", cron = "30 */1 * * * ?",
 ///        description = "移动动量策略", eventTraceRdbDataSource = "logDatasource")
 @Slf4j
