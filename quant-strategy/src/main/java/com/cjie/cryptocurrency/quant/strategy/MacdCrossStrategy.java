@@ -1,7 +1,6 @@
 
 package com.cjie.cryptocurrency.quant.strategy;
 
-import com.alibaba.fastjson.JSON;
 import com.cjie.cryptocurrency.quant.api.okex.service.spot.CurrencyKlineDTO;
 import com.cjie.cryptocurrency.quant.api.okex.service.spot.SpotProductAPIService;
 import com.cjie.cryptocurrency.quant.service.WeiXinMessageService;
@@ -10,13 +9,12 @@ import com.dangdang.ddframe.job.api.ShardingContext;
 import com.dangdang.ddframe.job.api.simple.SimpleJob;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.ta4j.core.*;
-import org.ta4j.core.analysis.criteria.TotalProfitCriterion;
 import org.ta4j.core.indicators.EMAIndicator;
 import org.ta4j.core.indicators.MACDIndicator;
 import org.ta4j.core.indicators.StochasticOscillatorKIndicator;
 import org.ta4j.core.indicators.helpers.ClosePriceIndicator;
+import org.ta4j.core.indicators.helpers.DifferenceIndicator;
 import org.ta4j.core.num.PrecisionNum;
 import org.ta4j.core.trading.rules.CrossedDownIndicatorRule;
 import org.ta4j.core.trading.rules.CrossedUpIndicatorRule;
@@ -34,10 +32,10 @@ import java.util.List;
  * @see <a href="http://stockcharts.com/help/doku.php?id=chart_school:trading_strategies:moving_momentum">
  *     http://stockcharts.com/help/doku.php?id=chart_school:trading_strategies:moving_momentum</a>
  */
-//@ElasticJobConf(name = "movingMomentumJob", cron = "30 */1 * * * ?",
-///        description = "移动动量策略", eventTraceRdbDataSource = "logDatasource")
+@ElasticJobConf(name = "macdCrossJob", cron = "30 */1 * * * ?",
+       description = "macd上穿下穿策略", eventTraceRdbDataSource = "logDatasource")
 @Slf4j
-public class MovingMomentumStrategy implements SimpleJob {
+public class MacdCrossStrategy implements SimpleJob {
 
     private static final org.slf4j.Logger strategyLog = org.slf4j.LoggerFactory.getLogger("strategy");
 
@@ -70,21 +68,13 @@ public class MovingMomentumStrategy implements SimpleJob {
         EMAIndicator shortEma = new EMAIndicator(closePrice, 9);
         EMAIndicator longEma = new EMAIndicator(closePrice, 26);
 
-        StochasticOscillatorKIndicator stochasticOscillK = new StochasticOscillatorKIndicator(series, 14);
 
-        MACDIndicator macd = new MACDIndicator(closePrice, 9, 26);
-        EMAIndicator emaMacd = new EMAIndicator(macd, 18);
-        
         // Entry rule
-        Rule entryRule = new OverIndicatorRule(shortEma, longEma) // Trend
-                .and(new CrossedDownIndicatorRule(stochasticOscillK, 20)) // Signal 1
-                .and(new OverIndicatorRule(macd, emaMacd)); // Signal 2
+        Rule entryRule = new CrossedUpIndicatorRule(shortEma, longEma);
         
         // Exit rule
-        Rule exitRule = new UnderIndicatorRule(shortEma, longEma) // Trend
-                .and(new CrossedUpIndicatorRule(stochasticOscillK,20)) // Signal 1
-                .and(new UnderIndicatorRule(macd, emaMacd)); // Signal 2
-        
+        Rule exitRule = new CrossedDownIndicatorRule(shortEma, longEma); // Trend
+
         return new BaseStrategy(entryRule, exitRule);
     }
 
