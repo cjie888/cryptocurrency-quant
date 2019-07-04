@@ -120,7 +120,7 @@ public class CCICorrctionStrategy implements SimpleJob {
             int endIndex = timeSeries.getEndIndex();
             Bar newBar = timeSeries.getLastBar();
 
-            log.info("cci:{}", JSON.toJSONString(shortCci));
+            //log.info("cci:{}", JSON.toJSONString(shortCci));
             strategyLog.info("Current cci time:{}, short:{}, long:{}", newBar.getBeginTime(),
                     shortCci.getValue(endIndex).doubleValue(),
                     longCci.getValue(endIndex).doubleValue());
