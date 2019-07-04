@@ -97,6 +97,7 @@ public class MovingMomentumStrategy implements SimpleJob {
             // Getting the time series
             if (timeSeries == null) {
                 timeSeries = new BaseTimeSeries();
+                timeSeries.setMaximumBarCount(1000);
 
                 for (int i = currencyKlineDTOS.size() - 1; i >= 0; i--) {
                     CurrencyKlineDTO currencyKlineDTO = currencyKlineDTOS.get(i);
