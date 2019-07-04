@@ -15,6 +15,7 @@ import org.ta4j.core.indicators.MACDIndicator;
 import org.ta4j.core.indicators.StochasticOscillatorKIndicator;
 import org.ta4j.core.indicators.helpers.ClosePriceIndicator;
 import org.ta4j.core.indicators.helpers.DifferenceIndicator;
+import org.ta4j.core.indicators.helpers.MaxPriceIndicator;
 import org.ta4j.core.num.PrecisionNum;
 import org.ta4j.core.trading.rules.CrossedDownIndicatorRule;
 import org.ta4j.core.trading.rules.CrossedUpIndicatorRule;
@@ -32,10 +33,10 @@ import java.util.List;
  * @see <a href="http://stockcharts.com/help/doku.php?id=chart_school:trading_strategies:moving_momentum">
  *     http://stockcharts.com/help/doku.php?id=chart_school:trading_strategies:moving_momentum</a>
  */
-@ElasticJobConf(name = "macdCrossJob", cron = "30 */1 * * * ?",
-       description = "macd上穿下穿策略", eventTraceRdbDataSource = "logDatasource")
+@ElasticJobConf(name = "emaCrossJob", cron = "30 */1 * * * ?",
+       description = "ema上穿下穿策略", eventTraceRdbDataSource = "logDatasource")
 @Slf4j
-public class MacdCrossStrategy implements SimpleJob {
+public class EmaCrossStrategy implements SimpleJob {
 
     private static final org.slf4j.Logger strategyLog = org.slf4j.LoggerFactory.getLogger("strategy");
 
@@ -65,8 +66,8 @@ public class MacdCrossStrategy implements SimpleJob {
         
         // The bias is bullish when the shorter-moving average moves above the longer moving average.
         // The bias is bearish when the shorter-moving average moves below the longer moving average.
-        EMAIndicator shortEma = new EMAIndicator(closePrice, 9);
-        EMAIndicator longEma = new EMAIndicator(closePrice, 26);
+        EMAIndicator shortEma = new EMAIndicator(closePrice, 7);
+        EMAIndicator longEma = new EMAIndicator(closePrice, 30);
 
 
         // Entry rule
@@ -121,7 +122,7 @@ public class MacdCrossStrategy implements SimpleJob {
                 StringBuilder stringBuilder = new StringBuilder();
                 stringBuilder.append("Buy").append(" ").append(newBar.getBeginTime())
                         .append(" ").append(newBar.getClosePrice()).append("\r\n\n");
-                weiXinMessageService.sendMessage("buy-macd",  stringBuilder.toString());
+                weiXinMessageService.sendMessage("buy-ema",  stringBuilder.toString());
                 // Our strategy should enter
                 strategyLog.info("Strategy should ENTER on {}, time:{}" , endIndex, newBar.getBeginTime());
                 boolean entered = tradingRecord.enter(endIndex, newBar.getClosePrice(), PrecisionNum.valueOf(10));
@@ -135,7 +136,7 @@ public class MacdCrossStrategy implements SimpleJob {
                 StringBuilder stringBuilder = new StringBuilder();
                 stringBuilder.append("Sell").append(" ").append(newBar.getBeginTime())
                         .append(" ").append(newBar.getClosePrice()).append("\r\n\n");
-                weiXinMessageService.sendMessage("sell-macd",  stringBuilder.toString());
+                weiXinMessageService.sendMessage("sell-ema",  stringBuilder.toString());
                 // Our strategy should exit
                 strategyLog.info("Strategy should EXIT on {}, time:{}" , endIndex, newBar.getBeginTime());
 
