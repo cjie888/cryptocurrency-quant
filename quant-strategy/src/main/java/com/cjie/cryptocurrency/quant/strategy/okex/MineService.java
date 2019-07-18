@@ -332,11 +332,11 @@ public class MineService {
         while(count++ < maxCount) {
             //查询余额
             Account baseAccount = getBalance(site, baseName);
-            double baseHold = new BigDecimal(baseAccount.getBalance()).doubleValue() - new BigDecimal(baseAccount.getAvailable()).doubleValue();
+            double baseAvailable = new BigDecimal(baseAccount.getAvailable()).doubleValue();
             double baseBalance = new BigDecimal(baseAccount.getBalance()).doubleValue();
 
             Account quotaAccount = getBalance(site, quotaName);
-            double quotaHold = new BigDecimal(quotaAccount.getBalance()).doubleValue() - new BigDecimal(quotaAccount.getAvailable()).doubleValue();
+            double quotaAvailable = new BigDecimal(quotaAccount.getAvailable()).doubleValue();
             double quotaBalance = new BigDecimal(quotaAccount.getBalance()).doubleValue();
 
             log.info("===============balance: base:{},quota:{}========================", baseBalance, quotaBalance);
@@ -348,12 +348,12 @@ public class MineService {
             double sellPrice = marketPrice * (1 + count * increment);
 
 
-            if (baseBalance < amount.doubleValue()) {  //base 币余额不足
+            if (baseAvailable < amount.doubleValue()) {  //base 币余额不足
                 log.info("base balance not enough,{}", baseBalance);
                 break;
             }
 
-            if (quotaBalance < amount.doubleValue() * marketPrice) {  //quota 币余额不足
+            if (quotaAvailable < amount.doubleValue() * marketPrice) {  //quota 币余额不足
                 log.info("quota balance not enough,{}", quotaBalance);
                 break;
             }
