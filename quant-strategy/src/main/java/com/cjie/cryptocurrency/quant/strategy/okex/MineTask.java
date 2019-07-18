@@ -57,7 +57,27 @@ public class MineTask {
             //Thread.sleep(1000);
             mineService.mine3("okex","okb", "usdt", 0.003, 0.5);
             mineService.mine3("okexsub1","eth", "usdt", 0.003, 0.5);
-            mineService.mine3("okexsub2","btc", "usdt", 0.003, 0.5);
+            //mineService.mine3("okexsub2","btc", "usdt", 0.003, 0.5);
+            //Thread.sleep(1000);
+            //mineService.mine3("oktop","bch", "eth", 0.005, 0.5);
+            //mineService.mine3("cac", "eth", 0.005);
+        } catch (Exception e) {
+            log.error("error mining", e);
+        }
+        log.info("end mining");
+
+
+    }
+
+    @Scheduled(cron = "*/30 * * * * ?")
+    public void mineCurrency4() throws JobExecutionException {
+        log.info("start mining");
+        //log.info(JSON.toJSONString(spotAccountAPIService.getAccountByCurrency("btc")));
+        try {
+            //mineService.mine3("okex","eos", "btc", 0.003, 0.5);
+            //Thread.sleep(1000);
+            //mineService.mine3("okexsub1","eth", "usdt", 0.003, 0.5);
+            mineService.mine4("okexsub2","btc", "usdt", 0.003, 2, 10);
             //Thread.sleep(1000);
             //mineService.mine3("oktop","bch", "eth", 0.005, 0.5);
             //mineService.mine3("cac", "eth", 0.005);

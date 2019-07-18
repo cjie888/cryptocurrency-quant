@@ -297,6 +297,87 @@ public class MineService {
         log.info("=============================交易对结束=========================");
     }
 
+
+    /**
+     * 自买自卖交易(多单)
+     *
+     * @param baseName    交易币名称
+     * @param quotaName  市场币名称
+     * @param increment 收益率一半
+     * @throws Exception
+     */
+    public void mine4(String site, String baseName, String quotaName, double increment, int times, int maxCount) throws Exception {
+        String symbol = baseName.toUpperCase() + "-" + quotaName.toUpperCase();
+        //买单数量=卖单数量  取消所有订单
+        List<OrderInfo> orderInfos = getNotTradeOrders(site, symbol, "0", "100");
+        if (!CollectionUtils.isEmpty(orderInfos)) {
+            int buyCount = 0;
+            int sellCount = 0;
+            for(OrderInfo orderInfo : orderInfos) {
+                if ("buy".equals(orderInfo.getSide())) {
+                    buyCount ++;
+                } else if ("sell".equals(orderInfo.getSide())) {
+                    sellCount ++;
+                }
+            }
+            if (buyCount == sellCount) {
+                cancelOrders(site, getNotTradeOrders(site, symbol, "0", "100"));
+            }
+
+        }
+
+        BigDecimal amount = new BigDecimal(minLimitPriceOrderNums.get(baseName)).multiply(new BigDecimal("2"));
+
+        int count = 1;
+        while(count++ < maxCount) {
+            //查询余额
+            Account baseAccount = getBalance(site, baseName);
+            double baseHold = new BigDecimal(baseAccount.getBalance()).doubleValue() - new BigDecimal(baseAccount.getAvailable()).doubleValue();
+            double baseBalance = new BigDecimal(baseAccount.getBalance()).doubleValue();
+
+            Account quotaAccount = getBalance(site, quotaName);
+            double quotaHold = new BigDecimal(quotaAccount.getBalance()).doubleValue() - new BigDecimal(quotaAccount.getAvailable()).doubleValue();
+            double quotaBalance = new BigDecimal(quotaAccount.getBalance()).doubleValue();
+
+            log.info("===============balance: base:{},quota:{}========================", baseBalance, quotaBalance);
+
+            Ticker ticker = getTicker(site, baseName, quotaName);
+            Double marketPrice = Double.parseDouble(ticker.getLast());
+            log.info("ticker last {} -{}:{}", baseName, quotaName, marketPrice);
+            double buyPrice = marketPrice * (1 - count * increment);
+            double sellPrice = marketPrice * (1 + count * increment);
+
+
+            if (baseBalance < amount.doubleValue()) {  //base 币余额不足
+                log.info("base balance not enough,{}", baseBalance);
+                break;
+            }
+
+            if (quotaBalance < amount.doubleValue() * marketPrice) {  //quota 币余额不足
+                log.info("quota balance not enough,{}", quotaBalance);
+                break;
+            }
+
+            log.info("=============================交易对开始=========================");
+
+            try {
+                log.info("buy {} amount {} ", baseName, amount);
+                buyNotLimit(site, symbol, "limit", amount, getMarketPrice(buyPrice));
+            } catch (Exception e) {
+                log.error("交易对买出错", e);
+            }
+            try {
+                log.info("sell {} amount {} ", baseName, amount);
+                sellNotLimit(site, symbol, "limit", amount, getMarketPrice(sellPrice));
+            } catch (Exception e) {
+                log.error("交易对卖出错", e);
+            }
+            Thread.sleep(100);
+            amount = amount.multiply(new BigDecimal(times));
+            log.info("=============================交易对结束=========================");
+        }
+    }
+
     private double getRatio(CurrencyRatio currencyRatio, double marketPrice, boolean isTransfer) {
         double baseRatio = currencyRatio.getRatio();
         if (baseRatio >= 0.99) {
