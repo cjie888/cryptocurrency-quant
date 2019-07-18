@@ -313,14 +313,19 @@ public class MineService {
         if (!CollectionUtils.isEmpty(orderInfos)) {
             int buyCount = 0;
             int sellCount = 0;
+            double buyAmount = 0.0;
+            double sellAmount = 0.0;
             for(OrderInfo orderInfo : orderInfos) {
                 if ("buy".equals(orderInfo.getSide())) {
                     buyCount ++;
+                    buyAmount =  buyAmount + Double.parseDouble(orderInfo.getSize());
                 } else if ("sell".equals(orderInfo.getSide())) {
                     sellCount ++;
+                    sellAmount =  sellAmount + Double.parseDouble(orderInfo.getSize());
+
                 }
             }
-            if (buyCount == sellCount) {
+            if (buyCount == sellCount&&Math.abs(buyAmount-sellAmount) < minLimitPriceOrderNums.get(baseName)) {
                 cancelOrders(site, getNotTradeOrders(site, symbol, "0", "100"));
             }
 
