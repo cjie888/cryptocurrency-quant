@@ -349,8 +349,8 @@ public class MineService {
             Ticker ticker = getTicker(site, baseName, quotaName);
             Double marketPrice = Double.parseDouble(ticker.getLast());
             log.info("ticker last {} -{}:{}", baseName, quotaName, marketPrice);
-            double buyPrice = marketPrice * (1 - count * increment);
-            double sellPrice = marketPrice * (1 + count * increment);
+            double buyPrice = marketPrice * (1 - count * increment * times);
+            double sellPrice = marketPrice * (1 + count * increment * times);
 
 
             if (baseAvailable < amount.doubleValue()) {  //base 币余额不足
