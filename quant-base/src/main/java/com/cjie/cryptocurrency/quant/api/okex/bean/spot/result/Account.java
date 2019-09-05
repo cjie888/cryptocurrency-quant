@@ -3,7 +3,7 @@ package com.cjie.cryptocurrency.quant.api.okex.bean.spot.result;
 public class Account {
 
     // 账户id，目前暂时为空
-    private Long id;
+    //private Long id;
     // 币种 如：BTC
     private String currency;
     // 账户总资产
@@ -13,13 +13,13 @@ public class Account {
     // 账户冻余额
     private String hold;
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
+//    public Long getId() {
+//        return id;
+//    }
+//
+//    public void setId(Long id) {
+//        this.id = id;
+//    }
 
     public String getCurrency() {
         return currency;
