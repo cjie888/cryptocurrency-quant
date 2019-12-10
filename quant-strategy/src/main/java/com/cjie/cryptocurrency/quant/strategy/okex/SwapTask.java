@@ -15,7 +15,7 @@ public class SwapTask {
 
     @Scheduled(cron = "*/7 * * * * ?")
     public  void netGrid() {
-        swapService.netGrid("ETH-USD-SWAP", "2", 0.5);
+        swapService.netGrid("ETH-USD-SWAP", "2", 1.0);
         swapService.netGrid("EOS-USD-SWAP", "2", 0.03);
 
     }
