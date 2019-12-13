@@ -14,6 +14,9 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 @Component
 @Slf4j
 public class SwapService {
@@ -44,6 +47,22 @@ public class SwapService {
         //取消未成交订单
         if (apiOrderWaitResultVO != null && CollectionUtils.isNotEmpty(apiOrderWaitResultVO.getOrder_info())) {
             log.info("当前持有等待成交订单{}-{}", instrumentId, JSON.toJSONString(waitsell));
+            for (ApiOrderResultVO.PerOrderResult perOrderResult : apiOrderWaitResultVO.getOrder_info()) {
+                try {
+                    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+                    Date orderDate = dateFormat.parse(perOrderResult.getTimestamp());
+                    if (System.currentTimeMillis() - 10 * 60 * 1000L > orderDate.getTime() ) {
+                        swapTradeAPIService.cancelOrder(instrumentId, perOrderResult.getOrder_id());
+                        log.info("取消等待成交订单{}-{}", instrumentId, perOrderResult.getClient_oid());
+                    }
+                } catch (Exception e) {
+                    log.error("取消等待成交订单失败{}-{}", instrumentId, perOrderResult.getClient_oid(), e);
+
+                }
+
+
+
+            }
             return;
         }
         //获取未成交订单
