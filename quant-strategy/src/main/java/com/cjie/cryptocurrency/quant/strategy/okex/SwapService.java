@@ -38,25 +38,25 @@ public class SwapService {
         //String instrumentId = "ETH-USD-SWAP";
         //String size = "1";
         //Double increment = 1.0;
-        //获取等待成交订单
-        String waitsell = swapUserAPIServive.selectOrders(instrumentId, "6", null, null, "10");
+        //获取部分成交订单
+        String waitsell = swapUserAPIServive.selectOrders(instrumentId, "1", null, null, "10");
         //{"order_info":[{"client_oid":"","contract_val":"10","fee":"0.000000","filled_qty":"0","instrument_id":"ETH-USD-SWAP","order_id":"384556031446822912","order_type":"0","price":"100.00","price_avg":"0.00","size":"1","state":"0","status":"0","timestamp":"2019-12-08T10:23:11.315Z","trigger_price":"","type":"1"}]}
-        log.info("获取等待成交订单{}-{}", instrumentId, JSON.toJSONString(waitsell));
+        log.info("获取部分成交订单{}-{}", instrumentId, JSON.toJSONString(waitsell));
         //{"order_info":[]}
         ApiOrderResultVO apiOrderWaitResultVO = JSON.parseObject(waitsell, ApiOrderResultVO.class);
         //取消未成交订单
         if (apiOrderWaitResultVO != null && CollectionUtils.isNotEmpty(apiOrderWaitResultVO.getOrder_info())) {
-            log.info("当前持有等待成交订单{}-{}", instrumentId, JSON.toJSONString(waitsell));
+            log.info("当前持有部分成交订单{}-{}", instrumentId, JSON.toJSONString(waitsell));
             for (ApiOrderResultVO.PerOrderResult perOrderResult : apiOrderWaitResultVO.getOrder_info()) {
                 try {
                     SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
                     Date orderDate = dateFormat.parse(perOrderResult.getTimestamp());
-                    if (System.currentTimeMillis() - 10 * 60 * 1000L > orderDate.getTime() ) {
+                    if (System.currentTimeMillis() - 3 * 60 * 1000L > orderDate.getTime() ) {
                         swapTradeAPIService.cancelOrder(instrumentId, perOrderResult.getOrder_id());
-                        log.info("取消等待成交订单{}-{}", instrumentId, perOrderResult.getClient_oid());
+                        log.info("取消部分成交订单{}-{}", instrumentId, perOrderResult.getClient_oid());
                     }
                 } catch (Exception e) {
-                    log.error("取消等待成交订单失败{}-{}", instrumentId, perOrderResult.getClient_oid(), e);
+                    log.error("取消部分成交订单失败{}-{}", instrumentId, perOrderResult.getClient_oid(), e);
 
                 }
 
