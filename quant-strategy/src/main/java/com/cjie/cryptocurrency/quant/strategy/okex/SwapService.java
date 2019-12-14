@@ -49,7 +49,7 @@ public class SwapService {
         //获取部分成交订单
         String waitsell = swapUserAPIServive.selectOrders(instrumentId, "1", null, null, "10");
         //{"order_info":[{"client_oid":"","contract_val":"10","fee":"0.000000","filled_qty":"0","instrument_id":"ETH-USD-SWAP","order_id":"384556031446822912","order_type":"0","price":"100.00","price_avg":"0.00","size":"1","state":"0","status":"0","timestamp":"2019-12-08T10:23:11.315Z","trigger_price":"","type":"1"}]}
-        log.info("获取部分成交订单{}-{}", instrumentId, JSON.toJSONString(waitsell));
+        //log.info("获取部分成交订单{}-{}", instrumentId, JSON.toJSONString(waitsell));
         //{"order_info":[]}
         ApiOrderResultVO apiOrderWaitResultVO = JSON.parseObject(waitsell, ApiOrderResultVO.class);
         //取消未成交订单
@@ -76,7 +76,7 @@ public class SwapService {
         //获取未成交订单
         String unsell = swapUserAPIServive.selectOrders(instrumentId, "0", null, null, "10");
         //{"order_info":[{"client_oid":"","contract_val":"10","fee":"0.000000","filled_qty":"0","instrument_id":"ETH-USD-SWAP","order_id":"384556031446822912","order_type":"0","price":"100.00","price_avg":"0.00","size":"1","state":"0","status":"0","timestamp":"2019-12-08T10:23:11.315Z","trigger_price":"","type":"1"}]}
-        log.info("获取未成交订单{}-{}", instrumentId, JSON.toJSONString(unsell));
+        //log.info("获取未成交订单{}-{}", instrumentId, JSON.toJSONString(unsell));
         //{"order_info":[]}
         ApiOrderResultVO apiOrderResultVO = JSON.parseObject(unsell, ApiOrderResultVO.class);
         //取消未成交订单
@@ -94,7 +94,7 @@ public class SwapService {
 
         //获取已成交订单
         String sell = swapUserAPIServive.selectOrders(instrumentId, "2", null, null, "10");
-        log.info("获取已成交订单{}-{}", instrumentId, JSON.toJSONString(sell));
+        //log.info("获取已成交订单{}-{}", instrumentId, JSON.toJSONString(sell));
 
         ApiOrderResultVO sellOrderResultVO = JSON.parseObject(sell, ApiOrderResultVO.class);
         //过滤开空或开多的订单
@@ -120,7 +120,7 @@ public class SwapService {
 
         }
         String position =  swapUserAPIServive.getPosition(instrumentId);
-        log.info("获取持仓{}-{}", instrumentId, JSON.toJSONString(position));
+        //log.info("获取持仓{}-{}", instrumentId, JSON.toJSONString(position));
         ApiPositionsVO apiPositionsVO = JSON.parseObject(position, ApiPositionsVO.class);
         if (apiPositionsVO != null && !apiPositionsVO.getMargin_mode().equals("crossed")) {//不是全仓
             return;
