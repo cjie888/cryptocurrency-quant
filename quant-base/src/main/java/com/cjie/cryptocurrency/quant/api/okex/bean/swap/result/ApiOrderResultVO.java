@@ -43,6 +43,8 @@ public class ApiOrderResultVO {
         String error_code;
         String error_message;
 
+        String timestamp;
+
         public PerOrderResult() {
         }
 
@@ -67,6 +69,14 @@ public class ApiOrderResultVO {
 
         public void setPrice(String price) {
             this.price = price;
+        }
+
+        public String getTimestamp() {
+            return timestamp;
+        }
+
+        public void setTimestamp(String timestamp) {
+            this.timestamp = timestamp;
         }
 
         public String getOrder_id() {
