@@ -1,11 +1,9 @@
 package com.cjie.cryptocurrency.quant.strategy.okex;
 
 import com.alibaba.fastjson.JSON;
+import com.cjie.cryptocurrency.quant.api.okex.bean.spot.result.Account;
 import com.cjie.cryptocurrency.quant.api.okex.bean.swap.param.PpOrder;
-import com.cjie.cryptocurrency.quant.api.okex.bean.swap.result.ApiOrderResultVO;
-import com.cjie.cryptocurrency.quant.api.okex.bean.swap.result.ApiPositionVO;
-import com.cjie.cryptocurrency.quant.api.okex.bean.swap.result.ApiPositionsVO;
-import com.cjie.cryptocurrency.quant.api.okex.bean.swap.result.ApiTickerVO;
+import com.cjie.cryptocurrency.quant.api.okex.bean.swap.result.*;
 import com.cjie.cryptocurrency.quant.api.okex.service.swap.SwapMarketAPIService;
 import com.cjie.cryptocurrency.quant.api.okex.service.swap.SwapTradeAPIService;
 import com.cjie.cryptocurrency.quant.api.okex.service.swap.SwapUserAPIServive;
@@ -38,6 +36,16 @@ public class SwapService {
         //String instrumentId = "ETH-USD-SWAP";
         //String size = "1";
         //Double increment = 1.0;
+        //获取账户信息
+        String accounts = swapUserAPIServive.selectAccount(instrumentId);
+        log.info("获取账户信息{}-{}", instrumentId, JSON.toJSONString(accounts));
+        ApiAccountsVO apiAccountsVO = JSON.parseObject(accounts, ApiAccountsVO.class);
+        if (apiAccountsVO != null && CollectionUtils.isNotEmpty(apiAccountsVO.getInfo())) {
+            for (ApiAccountVO apiAccountVO : apiAccountsVO.getInfo()) {
+                log.info("获取账户信息保证金率{}-{}", instrumentId, apiAccountVO.getMargin_ratio());
+            }
+        }
+
         //获取部分成交订单
         String waitsell = swapUserAPIServive.selectOrders(instrumentId, "1", null, null, "10");
         //{"order_info":[{"client_oid":"","contract_val":"10","fee":"0.000000","filled_qty":"0","instrument_id":"ETH-USD-SWAP","order_id":"384556031446822912","order_type":"0","price":"100.00","price_avg":"0.00","size":"1","state":"0","status":"0","timestamp":"2019-12-08T10:23:11.315Z","trigger_price":"","type":"1"}]}
