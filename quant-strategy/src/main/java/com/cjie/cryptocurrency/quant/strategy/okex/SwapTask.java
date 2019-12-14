@@ -15,11 +15,11 @@ public class SwapTask {
 
     @Scheduled(cron = "*/11 * * * * ?")
     public  void netGrid() {
-        swapService.netGrid("BTC-USD-SWAP", "1", 60.0);
-        swapService.netGrid("ETH-USD-SWAP", "2", 0.6);
-        swapService.netGrid("EOS-USD-SWAP", "2", 0.015);
-        swapService.netGrid("BCH-USD-SWAP", "2", 0.7);
-        swapService.netGrid("XRP-USD-SWAP", "2", 0.001);
+        swapService.netGrid("BTC-USD-SWAP", "1", 60.0, 0.002);
+        swapService.netGrid("ETH-USD-SWAP", "2", 0.6, 0.1);
+        swapService.netGrid("EOS-USD-SWAP", "2", 0.015, 1.0);
+        swapService.netGrid("BCH-USD-SWAP", "2", 0.7, 0.1);
+        swapService.netGrid("XRP-USD-SWAP", "2", 0.001, 10.0);
 
 
 
