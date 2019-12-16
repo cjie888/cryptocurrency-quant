@@ -28,8 +28,8 @@ import java.time.ZonedDateTime;
 import java.util.List;
 
 
-@ElasticJobConf(name = "emaCrossJob", cron = "30 */1 * * * ?",
-       description = "ema上穿下穿策略", eventTraceRdbDataSource = "logDatasource")
+//@ElasticJobConf(name = "emaCrossJob", cron = "30 */1 * * * ?",
+ //      description = "ema上穿下穿策略", eventTraceRdbDataSource = "logDatasource")
 @Slf4j
 public class EmaCrossStrategy implements SimpleJob {
 

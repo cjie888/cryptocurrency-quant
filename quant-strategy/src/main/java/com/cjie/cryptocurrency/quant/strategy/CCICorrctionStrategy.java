@@ -29,8 +29,8 @@ import java.time.ZonedDateTime;
 import java.util.List;
 
 
-@ElasticJobConf(name = "cciJob", cron = "40 */1 * * * ?",
-        description = "cci", eventTraceRdbDataSource = "logDatasource")
+//@ElasticJobConf(name = "cciJob", cron = "40 */1 * * * ?",
+ //       description = "cci", eventTraceRdbDataSource = "logDatasource")
 @Slf4j
 public class CCICorrctionStrategy implements SimpleJob {
 
