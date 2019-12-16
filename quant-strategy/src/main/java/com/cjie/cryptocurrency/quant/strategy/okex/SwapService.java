@@ -10,6 +10,7 @@ import com.cjie.cryptocurrency.quant.api.okex.service.account.AccountAPIService;
 import com.cjie.cryptocurrency.quant.api.okex.service.swap.SwapMarketAPIService;
 import com.cjie.cryptocurrency.quant.api.okex.service.swap.SwapTradeAPIService;
 import com.cjie.cryptocurrency.quant.api.okex.service.swap.SwapUserAPIServive;
+import com.cjie.cryptocurrency.quant.service.WeiXinMessageService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,8 @@ import org.springframework.stereotype.Component;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 @Component
 @Slf4j
@@ -34,6 +37,36 @@ public class SwapService {
 
     @Autowired
     private AccountAPIService accountAPIService;
+
+    @Autowired
+    private WeiXinMessageService weiXinMessageService;
+
+    public void computeBenefit() {
+        String[] instrumentIds = new String[]{"BTC-USD-SWAP","ETH-USD-SWAP","BCH-USD-SWAP",
+                "EOS-USD-SWAP","XRP-USD-SWAP","LTC-USD-SWAP"};
+        Map<String,BigDecimal> costs = new HashMap<>();
+        costs.put("BTC-USD-SWAP", new BigDecimal("0.04"));
+        costs.put("ETH-USD-SWAP", new BigDecimal("1"));
+        costs.put("BCH-USD-SWAP",new BigDecimal("0.8"));
+        costs.put("EOS-USD-SWAP",new BigDecimal("60"));
+        costs.put("XRP-USD-SWAP",new BigDecimal("500"));
+        costs.put("LTC-USD-SWAP",new BigDecimal("3"));
+        String accounts = swapUserAPIServive.getAccounts();
+        log.info("获取所有账户信息{}", JSON.toJSONString(accounts));
+        ApiAccountsVO apiAccountsVO = JSON.parseObject(accounts, ApiAccountsVO.class);
+        BigDecimal benefit = BigDecimal.ZERO;
+        if (apiAccountsVO != null && CollectionUtils.isNotEmpty(apiAccountsVO.getInfo())) {
+            for (ApiAccountVO apiAccountVO : apiAccountsVO.getInfo()) {
+                String swapTicker = swapMarketAPIService.getTickerApi(apiAccountVO.getInstrument_id());
+                ApiTickerVO apiTickerVO = JSON.parseObject(swapTicker, ApiTickerVO.class);
+                log.info("当前价格{}-{}", apiAccountVO.getInstrument_id(), apiTickerVO.getLast());
+                BigDecimal currentBenefit = new BigDecimal(apiAccountVO.getEquity()).subtract(costs.get(apiAccountVO.getInstrument_id())).multiply(new BigDecimal(apiTickerVO.getLast()));
+                log.info("当前收益{}-{}", apiAccountVO.getInstrument_id(), currentBenefit);
+                benefit = benefit.add(currentBenefit);
+            }
+        }
+        weiXinMessageService.sendMessage("benefit", "总收益" + benefit);
+    }
 
     public void netGrid(String instrumentId, String size, Double increment, Double transferAmount) {
 
@@ -88,7 +121,6 @@ public class SwapService {
                     log.error("取消部分成交订单失败{}-{}", instrumentId, perOrderResult.getClient_oid(), e);
 
                 }
-
 
 
             }

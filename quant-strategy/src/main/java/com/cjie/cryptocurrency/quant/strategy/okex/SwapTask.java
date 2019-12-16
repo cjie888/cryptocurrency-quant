@@ -23,4 +23,10 @@ public class SwapTask {
         swapService.netGrid("LTC-USD-SWAP", "2", 0.2, 0.3);
 
     }
+
+    @Scheduled(cron = "*/30 * * * * ?")
+    public  void benefit() {
+        swapService.computeBenefit();
+
+    }
 }
