@@ -55,6 +55,7 @@ public class SwapService {
         log.info("获取所有账户信息{}", JSON.toJSONString(accounts));
         ApiAccountsVO apiAccountsVO = JSON.parseObject(accounts, ApiAccountsVO.class);
         BigDecimal benefit = BigDecimal.ZERO;
+        StringBuilder sb = new StringBuilder();
         if (apiAccountsVO != null && CollectionUtils.isNotEmpty(apiAccountsVO.getInfo())) {
             for (ApiAccountVO apiAccountVO : apiAccountsVO.getInfo()) {
                 String swapTicker = swapMarketAPIService.getTickerApi(apiAccountVO.getInstrument_id());
@@ -62,10 +63,13 @@ public class SwapService {
                 log.info("当前价格{}-{}", apiAccountVO.getInstrument_id(), apiTickerVO.getLast());
                 BigDecimal currentBenefit = new BigDecimal(apiAccountVO.getEquity()).subtract(costs.get(apiAccountVO.getInstrument_id())).multiply(new BigDecimal(apiTickerVO.getLast()));
                 log.info("当前收益{}-{}", apiAccountVO.getInstrument_id(), currentBenefit);
+                sb.append(apiAccountVO.getInstrument_id() + ":" + currentBenefit);
+                sb.append("\r\n\n");
                 benefit = benefit.add(currentBenefit);
             }
         }
-        weiXinMessageService.sendMessage("benefit", "总收益" + benefit);
+        sb.append("总收益" + benefit);
+        weiXinMessageService.sendMessage("benefit", sb.toString());
     }
 
     public void netGrid(String instrumentId, String size, Double increment, Double transferAmount) {
