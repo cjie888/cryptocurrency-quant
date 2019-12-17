@@ -150,7 +150,7 @@ public class SwapService {
         log.info("当前价格{}-{}", instrumentId, apiTickerVO.getLast());
 
         //获取已成交订单
-        String sell = swapUserAPIServive.selectOrders(instrumentId, "2", null, null, "10");
+        String sell = swapUserAPIServive.selectOrders(instrumentId, "2", null, null, "100");
         //log.info("获取已成交订单{}-{}", instrumentId, JSON.toJSONString(sell));
 
         ApiOrderResultVO sellOrderResultVO = JSON.parseObject(sell, ApiOrderResultVO.class);
