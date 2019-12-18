@@ -46,10 +46,10 @@ public class SwapService {
                 "EOS-USD-SWAP","XRP-USD-SWAP","LTC-USD-SWAP"};
         Map<String,BigDecimal> costs = new HashMap<>();
         costs.put("BTC-USD-SWAP", new BigDecimal("0.04"));
-        costs.put("ETH-USD-SWAP", new BigDecimal("1"));
-        costs.put("BCH-USD-SWAP",new BigDecimal("0.8"));
+        costs.put("ETH-USD-SWAP", new BigDecimal("1.4"));
+        costs.put("BCH-USD-SWAP",new BigDecimal("0.9"));
         costs.put("EOS-USD-SWAP",new BigDecimal("60"));
-        costs.put("XRP-USD-SWAP",new BigDecimal("500"));
+        costs.put("XRP-USD-SWAP",new BigDecimal("900"));
         costs.put("LTC-USD-SWAP",new BigDecimal("3"));
         String accounts = swapUserAPIServive.getAccounts();
         log.info("获取所有账户信息{}", JSON.toJSONString(accounts));
