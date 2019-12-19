@@ -64,7 +64,7 @@ public class SwapService {
                 BigDecimal currentCurrencyBenefit = new BigDecimal(apiAccountVO.getEquity()).subtract(costs.get(apiAccountVO.getInstrument_id()));
                 BigDecimal currentBenefit = currentCurrencyBenefit.multiply(new BigDecimal(apiTickerVO.getLast()));
                 log.info("当前收益{}-{}-{}", apiAccountVO.getInstrument_id(),currentCurrencyBenefit, currentBenefit);
-                sb.append(apiAccountVO.getInstrument_id() + ":" + currentBenefit);
+                sb.append(apiAccountVO.getInstrument_id() + ":" + currentCurrencyBenefit + ":" + currentBenefit);
                 sb.append("\r\n\n");
                 benefit = benefit.add(currentBenefit);
             }
