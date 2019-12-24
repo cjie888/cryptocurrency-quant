@@ -45,7 +45,7 @@ public class SwapService {
         String[] instrumentIds = new String[]{"BTC-USD-SWAP","ETH-USD-SWAP","BCH-USD-SWAP",
                 "EOS-USD-SWAP","XRP-USD-SWAP","LTC-USD-SWAP"};
         Map<String,BigDecimal> costs = new HashMap<>();
-        costs.put("BTC-USD-SWAP", new BigDecimal("0.04"));
+        costs.put("BTC-USD-SWAP", new BigDecimal("0.05"));
         costs.put("ETH-USD-SWAP", new BigDecimal("1.4"));
         costs.put("BCH-USD-SWAP",new BigDecimal("0.9"));
         costs.put("EOS-USD-SWAP",new BigDecimal("60"));
@@ -55,13 +55,16 @@ public class SwapService {
         log.info("获取所有账户信息{}", JSON.toJSONString(accounts));
         ApiAccountsVO apiAccountsVO = JSON.parseObject(accounts, ApiAccountsVO.class);
         BigDecimal benefit = BigDecimal.ZERO;
+        BigDecimal allAsset = BigDecimal.ZERO;
         StringBuilder sb = new StringBuilder();
         if (apiAccountsVO != null && CollectionUtils.isNotEmpty(apiAccountsVO.getInfo())) {
             for (ApiAccountVO apiAccountVO : apiAccountsVO.getInfo()) {
                 String swapTicker = swapMarketAPIService.getTickerApi(apiAccountVO.getInstrument_id());
                 ApiTickerVO apiTickerVO = JSON.parseObject(swapTicker, ApiTickerVO.class);
                 log.info("当前价格{}-{}", apiAccountVO.getInstrument_id(), apiTickerVO.getLast());
-                BigDecimal currentCurrencyBenefit = new BigDecimal(apiAccountVO.getEquity()).subtract(costs.get(apiAccountVO.getInstrument_id()));
+                BigDecimal asset =  new BigDecimal(apiAccountVO.getEquity());
+                allAsset = asset.add(asset.multiply(new BigDecimal(apiTickerVO.getLast())));
+                BigDecimal currentCurrencyBenefit = asset.subtract(costs.get(apiAccountVO.getInstrument_id()));
                 BigDecimal currentBenefit = currentCurrencyBenefit.multiply(new BigDecimal(apiTickerVO.getLast()));
                 log.info("当前收益{}-{}-{}", apiAccountVO.getInstrument_id(),currentCurrencyBenefit, currentBenefit);
                 sb.append(apiAccountVO.getInstrument_id() + ":" + currentCurrencyBenefit + ":" + currentBenefit);
@@ -69,8 +72,8 @@ public class SwapService {
                 benefit = benefit.add(currentBenefit);
             }
         }
-        sb.append("总收益" + benefit);
-        weiXinMessageService.sendMessage("benefit", sb.toString());
+        sb.append("总资产" + allAsset + ", 总收益" + benefit);
+        weiXinMessageService.sendMessage("收益", sb.toString());
     }
 
     public void netGrid(String instrumentId, String size, Double increment, Double transferAmount) {
