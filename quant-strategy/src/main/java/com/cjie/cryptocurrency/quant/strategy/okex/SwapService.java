@@ -63,7 +63,7 @@ public class SwapService {
                 ApiTickerVO apiTickerVO = JSON.parseObject(swapTicker, ApiTickerVO.class);
                 log.info("当前价格{}-{}", apiAccountVO.getInstrument_id(), apiTickerVO.getLast());
                 BigDecimal asset =  new BigDecimal(apiAccountVO.getEquity());
-                allAsset = asset.add(asset.multiply(new BigDecimal(apiTickerVO.getLast())));
+                allAsset = allAsset.add(asset.multiply(new BigDecimal(apiTickerVO.getLast())));
                 BigDecimal currentCurrencyBenefit = asset.subtract(costs.get(apiAccountVO.getInstrument_id()));
                 BigDecimal currentBenefit = currentCurrencyBenefit.multiply(new BigDecimal(apiTickerVO.getLast()));
                 log.info("当前收益{}-{}-{}", apiAccountVO.getInstrument_id(),currentCurrencyBenefit, currentBenefit);
