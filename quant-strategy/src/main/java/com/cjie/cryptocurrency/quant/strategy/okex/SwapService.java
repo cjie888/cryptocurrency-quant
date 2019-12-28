@@ -104,6 +104,7 @@ public class SwapService {
                 }
                 if (Double.valueOf(apiAccountVO.getMargin_ratio()) < 0.10) {
                     //停止交易，报警
+                    weiXinMessageService.sendMessage("保证金不足10%", "保证金不足10%，" + instrumentId);
                     return;
                 }
             }
