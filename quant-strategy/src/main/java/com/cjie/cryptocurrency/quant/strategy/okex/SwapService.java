@@ -21,6 +21,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TimeZone;
 
 @Component
 @Slf4j
@@ -119,11 +120,12 @@ public class SwapService {
             log.info("当前持有部分成交订单{}-{}", instrumentId, JSON.toJSONString(waitsell));
             for (ApiOrderResultVO.PerOrderResult perOrderResult : apiOrderWaitResultVO.getOrder_info()) {
                 try {
-                    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+                    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+                    dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
                     Date orderDate = dateFormat.parse(perOrderResult.getTimestamp());
-                    if (System.currentTimeMillis() - 3 * 60 * 1000L > orderDate.getTime() ) {
+                    if (System.currentTimeMillis() - 30 * 60 * 1000L > orderDate.getTime() ) {
                         swapTradeAPIService.cancelOrder(instrumentId, perOrderResult.getOrder_id());
-                        log.info("取消部分成交订单{}-{}", instrumentId, perOrderResult.getClient_oid());
+                        log.info("取消部分成交订单{}-{}", instrumentId, perOrderResult.getOrder_id());
                     }
                 } catch (Exception e) {
                     log.error("取消部分成交订单失败{}-{}", instrumentId, perOrderResult.getClient_oid(), e);
