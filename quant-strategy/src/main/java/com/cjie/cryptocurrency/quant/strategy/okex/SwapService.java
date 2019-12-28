@@ -20,6 +20,7 @@ import org.springframework.stereotype.Component;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Component
 @Slf4j
@@ -40,7 +41,7 @@ public class SwapService {
     @Autowired
     private WeiXinMessageService weiXinMessageService;
 
-    private Map<String,Double> ranges;
+    private Map<String,Double> ranges = new ConcurrentHashMap<>();
 
     public void computeBenefit() {
         String[] instrumentIds = new String[]{"BTC-USD-SWAP","ETH-USD-SWAP","BCH-USD-SWAP",
