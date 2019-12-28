@@ -2,6 +2,7 @@ package com.cjie.cryptocurrency.quant.strategy.okex;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.TypeReference;
 import com.cjie.cryptocurrency.quant.api.okex.bean.account.param.Transfer;
 import com.cjie.cryptocurrency.quant.api.okex.bean.spot.result.Account;
 import com.cjie.cryptocurrency.quant.api.okex.bean.swap.param.PpOrder;
@@ -18,10 +19,7 @@ import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.TimeZone;
+import java.util.*;
 
 @Component
 @Slf4j
@@ -41,6 +39,8 @@ public class SwapService {
 
     @Autowired
     private WeiXinMessageService weiXinMessageService;
+
+    private Map<String,Double> ranges;
 
     public void computeBenefit() {
         String[] instrumentIds = new String[]{"BTC-USD-SWAP","ETH-USD-SWAP","BCH-USD-SWAP",
@@ -76,6 +76,57 @@ public class SwapService {
         sb.append("总资产" + allAsset + ", 总收益" + benefit);
         weiXinMessageService.sendMessage("收益", sb.toString());
     }
+
+
+    public void dualTrust(String instrumentId) {
+        Double range = ranges.get(instrumentId);
+        if (range == null) {
+            String kline = swapMarketAPIService.getCandlesApi(instrumentId, null, null, "3600");
+            log.info("获取  {} k线 {} ", instrumentId, kline);
+            double maxHigh = 0.0;
+            double maxClose = 0.0 ;
+            double minClose = 0.0;
+            double minLow = 0.0;
+            List<String[]> apiKlineVOs = JSON.parseObject(kline, new TypeReference<List<String[]>>(){});
+            if (CollectionUtils.isNotEmpty(apiKlineVOs)) {
+                apiKlineVOs = apiKlineVOs.subList(0, Math.min(apiKlineVOs.size(), 4));
+
+                int count = 0;
+                for (String[]  apiKlineVO: apiKlineVOs) {
+                    double high = Double.valueOf(apiKlineVO[2]);
+                    double close = Double.valueOf(apiKlineVO[4]);
+                    double low = Double.valueOf(apiKlineVO[3]);
+                    if (count == 0) {
+                        maxHigh = high;
+                        maxClose = close;
+                        minClose = close;
+                        minLow = low;
+                    } else {
+                        if (high > maxHigh) {
+                            maxHigh = high;
+                        }
+                        if (close > maxClose) {
+                            maxClose = close;
+                        }
+                        if (low < minLow) {
+                            minLow = low;
+                        }
+                        if (close < minClose) {
+                            minClose = close;
+                        }
+                    }
+                    count++;
+                }
+                range = Math.max(maxHigh - minClose, maxClose - minLow);
+                log.info("{} maxHigh:{},minCLose:{},maxClose:{},minLow:{},range:{}", instrumentId,  maxHigh, minClose, maxClose, minLow, range);
+                ranges.put(instrumentId, range);
+            }
+
+        }
+
+    }
+
+
 
     public void netGrid(String instrumentId, String size, Double increment, Double transferAmount) {
 

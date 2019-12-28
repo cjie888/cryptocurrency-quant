@@ -24,6 +24,17 @@ public class SwapTask {
 
     }
 
+    @Scheduled(cron = "3 */1 * * * ?")
+    public void dualThrust() {
+        swapService.dualTrust("BTC-USD-SWAP");
+        swapService.dualTrust("ETH-USD-SWAP");
+        swapService.dualTrust("EOS-USD-SWAP");
+        swapService.dualTrust("BCH-USD-SWAP");
+        swapService.dualTrust("XRP-USD-SWAP");
+        swapService.dualTrust("LTC-USD-SWAP");
+
+    }
+
     @Scheduled(cron = "7 */30 * * * ?")
     public  void benefit() {
         swapService.computeBenefit();
