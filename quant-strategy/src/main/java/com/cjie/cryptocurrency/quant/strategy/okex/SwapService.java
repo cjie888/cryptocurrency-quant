@@ -43,6 +43,8 @@ public class SwapService {
 
     private Map<String,Double> ranges = new ConcurrentHashMap<>();
 
+    private Map<String,Double> opens = new ConcurrentHashMap<>();
+
     public void computeBenefit() {
         String[] instrumentIds = new String[]{"BTC-USD-SWAP","ETH-USD-SWAP","BCH-USD-SWAP",
                 "EOS-USD-SWAP","XRP-USD-SWAP","LTC-USD-SWAP"};
@@ -79,7 +81,7 @@ public class SwapService {
     }
 
 
-    public void dualTrust(String instrumentId) {
+    public void dualTrust(String instrumentId, double ratio) {
         Double range = ranges.get(instrumentId);
         if (range == null) {
             String kline = swapMarketAPIService.getCandlesApi(instrumentId, null, null, "3600");
@@ -93,6 +95,7 @@ public class SwapService {
                 apiKlineVOs = apiKlineVOs.subList(0, Math.min(apiKlineVOs.size(), 4));
 
                 int count = 0;
+                double open = 0;
                 for (String[]  apiKlineVO: apiKlineVOs) {
                     double high = Double.valueOf(apiKlineVO[2]);
                     double close = Double.valueOf(apiKlineVO[4]);
@@ -102,6 +105,7 @@ public class SwapService {
                         maxClose = close;
                         minClose = close;
                         minLow = low;
+                        open = close;
                     } else {
                         if (high > maxHigh) {
                             maxHigh = high;
@@ -121,8 +125,23 @@ public class SwapService {
                 range = Math.max(maxHigh - minClose, maxClose - minLow);
                 log.info("{} maxHigh:{},minCLose:{},maxClose:{},minLow:{},range:{}", instrumentId,  maxHigh, minClose, maxClose, minLow, range);
                 ranges.put(instrumentId, range);
+                opens.put(instrumentId, open);
             }
 
+        }
+        Double open = opens.get(instrumentId);
+        String swapTicker = swapMarketAPIService.getTickerApi(instrumentId);
+        ApiTickerVO apiTickerVO = JSON.parseObject(swapTicker, ApiTickerVO.class);
+        log.info("当前价格{}-{}", instrumentId, apiTickerVO.getLast());
+        Double currentPrice = Double.valueOf(apiTickerVO.getLast());
+        if (currentPrice > open +  range * ratio) {//突破上轨，开多
+            weiXinMessageService.sendMessage("平空开多", "平空开多" + instrumentId  + ",价格：" + currentPrice);
+            ranges.remove(instrumentId);
+            opens.remove(instrumentId);
+        } else if (currentPrice < open - range * ratio) {
+            weiXinMessageService.sendMessage("平多开空", "平多开空" + instrumentId  + ",价格：" + currentPrice);
+            ranges.remove(instrumentId);
+            opens.remove(instrumentId);
         }
 
     }
