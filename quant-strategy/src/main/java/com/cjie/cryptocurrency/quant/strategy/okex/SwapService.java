@@ -46,7 +46,7 @@ public class SwapService {
 
     private Map<String,Double> opens = new ConcurrentHashMap<>();
 
-    private LocalDateTime lastDate;
+    private Map<String,LocalDateTime>  lastDates = new ConcurrentHashMap<>();
 
     public void computeBenefit() {
         String[] instrumentIds = new String[]{"BTC-USD-SWAP","ETH-USD-SWAP","BCH-USD-SWAP",
@@ -88,6 +88,7 @@ public class SwapService {
 
         LocalDateTime currentHour = LocalDateTime.now().withMinute(0).withSecond(0).withNano(0);
 
+        LocalDateTime lastDate = lastDates.get(instrumentId);
         if (lastDate == null || lastDate.isBefore(currentHour) ) {
             String kline = swapMarketAPIService.getCandlesApi(instrumentId, null, null, "3600");
             log.info("获取  {} k线 {} ", instrumentId, kline);
@@ -131,7 +132,7 @@ public class SwapService {
                 log.info("{} maxHigh:{},minCLose:{},maxClose:{},minLow:{},range:{}", instrumentId,  maxHigh, minClose, maxClose, minLow, range);
                 ranges.put(instrumentId, range);
                 opens.put(instrumentId, open);
-                lastDate = currentHour;
+                lastDates.put(instrumentId, currentHour);
             }
 
         }
@@ -139,16 +140,18 @@ public class SwapService {
         Double open = opens.get(instrumentId);
         String swapTicker = swapMarketAPIService.getTickerApi(instrumentId);
         ApiTickerVO apiTickerVO = JSON.parseObject(swapTicker, ApiTickerVO.class);
-        log.info("当前价格{}-{}", instrumentId, apiTickerVO.getLast());
+        log.info("当前价格{}-{}-open:{}, range:{}", instrumentId, apiTickerVO.getLast(), open, range);
         Double currentPrice = Double.valueOf(apiTickerVO.getLast());
         if (currentPrice > open +  range * ratio) {//突破上轨，开多
             weiXinMessageService.sendMessage("平空开多", "平空开多" + instrumentId  + ",价格：" + currentPrice);
             ranges.remove(instrumentId);
             opens.remove(instrumentId);
+            lastDates.remove(instrumentId);
         } else if (currentPrice < open - range * ratio) {
             weiXinMessageService.sendMessage("平多开空", "平多开空" + instrumentId  + ",价格：" + currentPrice);
             ranges.remove(instrumentId);
             opens.remove(instrumentId);
+            lastDates.remove(instrumentId);
         }
 
     }
