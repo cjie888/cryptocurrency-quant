@@ -19,6 +19,7 @@ import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -44,6 +45,8 @@ public class SwapService {
     private Map<String,Double> ranges = new ConcurrentHashMap<>();
 
     private Map<String,Double> opens = new ConcurrentHashMap<>();
+
+    private LocalDateTime lastDate;
 
     public void computeBenefit() {
         String[] instrumentIds = new String[]{"BTC-USD-SWAP","ETH-USD-SWAP","BCH-USD-SWAP",
@@ -82,8 +85,10 @@ public class SwapService {
 
 
     public void dualTrust(String instrumentId, double ratio) {
-        Double range = ranges.get(instrumentId);
-        if (range == null) {
+
+        LocalDateTime currentHour = LocalDateTime.now().withMinute(0).withSecond(0).withNano(0);
+
+        if (lastDate == null || lastDate.isBefore(currentHour) ) {
             String kline = swapMarketAPIService.getCandlesApi(instrumentId, null, null, "3600");
             log.info("获取  {} k线 {} ", instrumentId, kline);
             double maxHigh = 0.0;
@@ -122,13 +127,15 @@ public class SwapService {
                     }
                     count++;
                 }
-                range = Math.max(maxHigh - minClose, maxClose - minLow);
+                double range = Math.max(maxHigh - minClose, maxClose - minLow);
                 log.info("{} maxHigh:{},minCLose:{},maxClose:{},minLow:{},range:{}", instrumentId,  maxHigh, minClose, maxClose, minLow, range);
                 ranges.put(instrumentId, range);
                 opens.put(instrumentId, open);
+                lastDate = currentHour;
             }
 
         }
+        Double range = ranges.get(instrumentId);
         Double open = opens.get(instrumentId);
         String swapTicker = swapMarketAPIService.getTickerApi(instrumentId);
         ApiTickerVO apiTickerVO = JSON.parseObject(swapTicker, ApiTickerVO.class);
