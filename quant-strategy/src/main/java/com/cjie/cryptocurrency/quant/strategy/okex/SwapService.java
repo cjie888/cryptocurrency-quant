@@ -201,12 +201,14 @@ public class SwapService {
                 if (Double.valueOf(apiAccountVO.getMargin_ratio()) < 0.20) {
                     //转入
                     Transfer transferIn = new Transfer();
-                    transferIn.setCurrency(instrumentId.substring(0,3).toLowerCase());
+                    String currency = instrumentId.substring(0,3).toLowerCase();
+                    transferIn.setCurrency(currency);
                     transferIn.setFrom(8);
                     transferIn.setTo(9);
                     transferIn.setAmount(BigDecimal.valueOf(transferAmount));
                     JSONObject result =  accountAPIService.transfer("okex", transferIn);
                     log.info("transfer {} {} from financial to swap", transferAmount, JSON.toJSONString(result));
+                    weiXinMessageService.sendMessage("划转" + currency.toUpperCase(), "划转" + instrumentId + ", 数量：" + transferAmount);
                 }
                 if (Double.valueOf(apiAccountVO.getMargin_ratio()) < 0.10) {
                     //停止交易，报警
