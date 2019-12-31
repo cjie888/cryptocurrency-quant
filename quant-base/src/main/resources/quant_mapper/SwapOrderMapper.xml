@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cjie.cryptocurrency.quant.mapper.SwapOrderMapper">
+  <resultMap id="BaseResultMap" type="com.cjie.cryptocurrency.quant.model.SwapOrder">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="instrument_id" jdbcType="VARCHAR" property="instrumentId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="type" jdbcType="TINYINT" property="type" />
+    <result column="size" jdbcType="DECIMAL" property="size" />
+    <result column="price" jdbcType="DECIMAL" property="price" />
+    <result column="is_mock" jdbcType="TINYINT" property="isMock" />
+    <result column="order_id" jdbcType="VARCHAR" property="orderId" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, instrument_id, create_time, type, size, price, is_mock, order_id
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from swap_order
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from swap_order
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.cjie.cryptocurrency.quant.model.SwapOrder">
+    insert into swap_order (id, instrument_id, create_time, 
+      type, size, price, 
+      is_mock, order_id)
+    values (#{id,jdbcType=BIGINT}, #{instrumentId,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{type,jdbcType=TINYINT}, #{size,jdbcType=DECIMAL}, #{price,jdbcType=DECIMAL}, 
+      #{isMock,jdbcType=TINYINT}, #{orderId,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.cjie.cryptocurrency.quant.model.SwapOrder">
+    insert into swap_order
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="instrumentId != null">
+        instrument_id,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="type != null">
+        type,
+      </if>
+      <if test="size != null">
+        size,
+      </if>
+      <if test="price != null">
+        price,
+      </if>
+      <if test="isMock != null">
+        is_mock,
+      </if>
+      <if test="orderId != null">
+        order_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="instrumentId != null">
+        #{instrumentId,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="type != null">
+        #{type,jdbcType=TINYINT},
+      </if>
+      <if test="size != null">
+        #{size,jdbcType=DECIMAL},
+      </if>
+      <if test="price != null">
+        #{price,jdbcType=DECIMAL},
+      </if>
+      <if test="isMock != null">
+        #{isMock,jdbcType=TINYINT},
+      </if>
+      <if test="orderId != null">
+        #{orderId,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.cjie.cryptocurrency.quant.model.SwapOrder">
+    update swap_order
+    <set>
+      <if test="instrumentId != null">
+        instrument_id = #{instrumentId,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="type != null">
+        type = #{type,jdbcType=TINYINT},
+      </if>
+      <if test="size != null">
+        size = #{size,jdbcType=DECIMAL},
+      </if>
+      <if test="price != null">
+        price = #{price,jdbcType=DECIMAL},
+      </if>
+      <if test="isMock != null">
+        is_mock = #{isMock,jdbcType=TINYINT},
+      </if>
+      <if test="orderId != null">
+        order_id = #{orderId,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.cjie.cryptocurrency.quant.model.SwapOrder">
+    update swap_order
+    set instrument_id = #{instrumentId,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      type = #{type,jdbcType=TINYINT},
+      size = #{size,jdbcType=DECIMAL},
+      price = #{price,jdbcType=DECIMAL},
+      is_mock = #{isMock,jdbcType=TINYINT},
+      order_id = #{orderId,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

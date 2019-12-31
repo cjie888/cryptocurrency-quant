@@ -11,6 +11,8 @@ import com.cjie.cryptocurrency.quant.api.okex.service.account.AccountAPIService;
 import com.cjie.cryptocurrency.quant.api.okex.service.swap.SwapMarketAPIService;
 import com.cjie.cryptocurrency.quant.api.okex.service.swap.SwapTradeAPIService;
 import com.cjie.cryptocurrency.quant.api.okex.service.swap.SwapUserAPIServive;
+import com.cjie.cryptocurrency.quant.mapper.SwapOrderMapper;
+import com.cjie.cryptocurrency.quant.model.SwapOrder;
 import com.cjie.cryptocurrency.quant.service.WeiXinMessageService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -41,6 +43,9 @@ public class SwapService {
 
     @Autowired
     private WeiXinMessageService weiXinMessageService;
+
+    @Autowired
+    private SwapOrderMapper swapOrderMapper;
 
     private Map<String,Double> ranges = new ConcurrentHashMap<>();
 
@@ -144,14 +149,26 @@ public class SwapService {
         Double currentPrice = Double.valueOf(apiTickerVO.getLast());
         if (currentPrice > open +  range * ratio) {//突破上轨，开多
             weiXinMessageService.sendMessage("平空开多", "平空开多" + instrumentId  + ",价格：" + currentPrice);
-            ranges.remove(instrumentId);
-            opens.remove(instrumentId);
-            lastDates.remove(instrumentId);
+            SwapOrder swapOrder = SwapOrder.builder()
+                    .createTime(new Date())
+                    .instrumentId(instrumentId)
+                    .isMock(Byte.valueOf("1"))
+                    .size(new BigDecimal(100))
+                    .price(BigDecimal.valueOf(currentPrice))
+                    .type(Byte.valueOf("1"))
+                    .build();
+            swapOrderMapper.insert(swapOrder);
         } else if (currentPrice < open - range * ratio) {
             weiXinMessageService.sendMessage("平多开空", "平多开空" + instrumentId  + ",价格：" + currentPrice);
-            ranges.remove(instrumentId);
-            opens.remove(instrumentId);
-            lastDates.remove(instrumentId);
+            SwapOrder swapOrder = SwapOrder.builder()
+                    .createTime(new Date())
+                    .instrumentId(instrumentId)
+                    .isMock(Byte.valueOf("1"))
+                    .size(new BigDecimal(100))
+                    .price(BigDecimal.valueOf(currentPrice))
+                    .type(Byte.valueOf("2"))
+                    .build();
+            swapOrderMapper.insert(swapOrder);
         }
 
     }
