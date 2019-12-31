@@ -96,7 +96,7 @@ public class SwapService {
         LocalDateTime lastDate = lastDates.get(instrumentId);
         if (lastDate == null || lastDate.isBefore(currentHour) ) {
             String kline = swapMarketAPIService.getCandlesApi(instrumentId, null, null, "3600");
-            log.info("获取  {} k线 {} ", instrumentId, kline);
+            //log.info("获取  {} k线 {} ", instrumentId, kline);
             double maxHigh = 0.0;
             double maxClose = 0.0 ;
             double minClose = 0.0;
@@ -193,7 +193,7 @@ public class SwapService {
         //Double increment = 1.0;
         //获取账户信息
         String accounts = swapUserAPIServive.selectAccount(instrumentId);
-        log.info("获取账户信息{}-{}", instrumentId, JSON.toJSONString(accounts));
+        //log.info("获取账户信息{}-{}", instrumentId, JSON.toJSONString(accounts));
         ApiAccountsVO apiAccountsVO = JSON.parseObject(accounts, ApiAccountsVO.class);
         if (apiAccountsVO != null && CollectionUtils.isNotEmpty(apiAccountsVO.getInfo())) {
             for (ApiAccountVO apiAccountVO : apiAccountsVO.getInfo()) {
