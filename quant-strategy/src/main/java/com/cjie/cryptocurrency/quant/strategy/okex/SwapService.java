@@ -148,6 +148,10 @@ public class SwapService {
         log.info("当前价格{}-{}-open:{}, range:{}", instrumentId, apiTickerVO.getLast(), open, range);
         Double currentPrice = Double.valueOf(apiTickerVO.getLast());
         if (currentPrice > open +  range * ratio) {//突破上轨，开多
+            SwapOrder lastOrder = swapOrderMapper.selectLatest(instrumentId);
+            if (lastOrder != null && lastOrder.getType() == 1) {
+                return;
+            }
             weiXinMessageService.sendMessage("平空开多", "平空开多" + instrumentId  + ",价格：" + currentPrice);
             SwapOrder swapOrder = SwapOrder.builder()
                     .createTime(new Date())
@@ -159,6 +163,10 @@ public class SwapService {
                     .build();
             swapOrderMapper.insert(swapOrder);
         } else if (currentPrice < open - range * ratio) {
+            SwapOrder lastOrder = swapOrderMapper.selectLatest(instrumentId);
+            if (lastOrder != null && lastOrder.getType() == 2) {
+                return;
+            }
             weiXinMessageService.sendMessage("平多开空", "平多开空" + instrumentId  + ",价格：" + currentPrice);
             SwapOrder swapOrder = SwapOrder.builder()
                     .createTime(new Date())

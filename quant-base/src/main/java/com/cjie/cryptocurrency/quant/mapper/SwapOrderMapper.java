@@ -11,6 +11,9 @@ public interface SwapOrderMapper {
 
     SwapOrder selectByPrimaryKey(Long id);
 
+
+    SwapOrder selectLatest(String instrumentId);
+
     int updateByPrimaryKeySelective(SwapOrder record);
 
     int updateByPrimaryKey(SwapOrder record);
