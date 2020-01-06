@@ -63,6 +63,7 @@ public class SwapService {
         costs.put("EOS-USD-SWAP",new BigDecimal("60"));
         costs.put("XRP-USD-SWAP",new BigDecimal("900"));
         costs.put("LTC-USD-SWAP",new BigDecimal("3"));
+        costs.put("ETH-USDT-SWAP", new BigDecimal("100"));
         String accounts = swapUserAPIServive.getAccounts();
         log.info("获取所有账户信息{}", JSON.toJSONString(accounts));
         ApiAccountsVO apiAccountsVO = JSON.parseObject(accounts, ApiAccountsVO.class);
@@ -71,17 +72,28 @@ public class SwapService {
         StringBuilder sb = new StringBuilder();
         if (apiAccountsVO != null && CollectionUtils.isNotEmpty(apiAccountsVO.getInfo())) {
             for (ApiAccountVO apiAccountVO : apiAccountsVO.getInfo()) {
-                String swapTicker = swapMarketAPIService.getTickerApi(apiAccountVO.getInstrument_id());
-                ApiTickerVO apiTickerVO = JSON.parseObject(swapTicker, ApiTickerVO.class);
-                log.info("当前价格{}-{}", apiAccountVO.getInstrument_id(), apiTickerVO.getLast());
-                BigDecimal asset =  new BigDecimal(apiAccountVO.getEquity());
-                allAsset = allAsset.add(asset.multiply(new BigDecimal(apiTickerVO.getLast())));
-                BigDecimal currentCurrencyBenefit = asset.subtract(costs.get(apiAccountVO.getInstrument_id()));
-                BigDecimal currentBenefit = currentCurrencyBenefit.multiply(new BigDecimal(apiTickerVO.getLast()));
-                log.info("当前收益{}-{}-{}", apiAccountVO.getInstrument_id(),currentCurrencyBenefit, currentBenefit);
-                sb.append(apiAccountVO.getInstrument_id() + ":" + currentCurrencyBenefit + ":" + currentBenefit);
-                sb.append("\r\n\n");
-                benefit = benefit.add(currentBenefit);
+                if (apiAccountVO.getInstrument_id().toUpperCase().indexOf("USDT") >=0) {
+                    BigDecimal asset = new BigDecimal(apiAccountVO.getEquity());
+                    allAsset = allAsset.add(asset);
+                    BigDecimal currentCurrencyBenefit = asset.subtract(costs.get(apiAccountVO.getInstrument_id()));
+                    BigDecimal currentBenefit = currentCurrencyBenefit;
+                    log.info("当前收益{}-{}-{}", apiAccountVO.getInstrument_id(), currentCurrencyBenefit, currentBenefit);
+                    sb.append(apiAccountVO.getInstrument_id() + ":" + currentCurrencyBenefit + ":" + currentBenefit);
+                    sb.append("\r\n\n");
+                    benefit = benefit.add(currentBenefit);
+                } else {
+                    String swapTicker = swapMarketAPIService.getTickerApi(apiAccountVO.getInstrument_id());
+                    ApiTickerVO apiTickerVO = JSON.parseObject(swapTicker, ApiTickerVO.class);
+                    log.info("当前价格{}-{}", apiAccountVO.getInstrument_id(), apiTickerVO.getLast());
+                    BigDecimal asset = new BigDecimal(apiAccountVO.getEquity());
+                    allAsset = allAsset.add(asset.multiply(new BigDecimal(apiTickerVO.getLast())));
+                    BigDecimal currentCurrencyBenefit = asset.subtract(costs.get(apiAccountVO.getInstrument_id()));
+                    BigDecimal currentBenefit = currentCurrencyBenefit.multiply(new BigDecimal(apiTickerVO.getLast()));
+                    log.info("当前收益{}-{}-{}", apiAccountVO.getInstrument_id(), currentCurrencyBenefit, currentBenefit);
+                    sb.append(apiAccountVO.getInstrument_id() + ":" + currentCurrencyBenefit + ":" + currentBenefit);
+                    sb.append("\r\n\n");
+                    benefit = benefit.add(currentBenefit);
+                }
             }
         }
         sb.append("总资产" + allAsset + ", 总收益" + benefit);
@@ -202,6 +214,10 @@ public class SwapService {
                     //转入
                     Transfer transferIn = new Transfer();
                     String currency = instrumentId.substring(0,3).toLowerCase();
+                    if (instrumentId.toUpperCase().indexOf("USDT") > 0) {
+                        currency = "usdt";
+
+                    }
                     transferIn.setCurrency(currency);
                     transferIn.setFrom(8);
                     transferIn.setTo(9);
