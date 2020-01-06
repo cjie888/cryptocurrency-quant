@@ -334,7 +334,7 @@ public class SwapService {
             ppUpOrder.setPrice(String.valueOf(currentPrice));
             ppUpOrder.setSize(size);
             ppUpOrder.setInstrument_id(instrumentId);
-            //ppUpOrder.setMatch_price("1");
+            ppUpOrder.setMatch_price("1");
             swapTradeAPIService.order(ppUpOrder);
             log.info("开多{}-{}", instrumentId, JSON.toJSONString(ppUpOrder));
 
@@ -343,7 +343,7 @@ public class SwapService {
             ppDownOrder.setPrice(String.valueOf(currentPrice));
             ppDownOrder.setSize(size);
             ppDownOrder.setInstrument_id(instrumentId);
-            //ppDownOrder.setMatch_price("1");
+            ppDownOrder.setMatch_price("1");
             swapTradeAPIService.order(ppDownOrder);
             log.info("开空{}-{}", instrumentId, JSON.toJSONString(ppDownOrder));
             return;
