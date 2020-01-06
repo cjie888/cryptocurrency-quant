@@ -16,6 +16,8 @@ public class Transfer {
 
     private Integer product_id;
 
+    private String to_instrument_id;
+
     public String getCurrency() {
         return currency;
     }
@@ -63,5 +65,13 @@ public class Transfer {
 
     public void setProduct_id(Integer product_id) {
         this.product_id = product_id;
+    }
+
+    public String getTo_instrument_id() {
+        return to_instrument_id;
+    }
+
+    public void setTo_instrument_id(String to_instrument_id) {
+        this.to_instrument_id = to_instrument_id;
     }
 }
