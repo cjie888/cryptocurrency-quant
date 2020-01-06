@@ -331,19 +331,19 @@ public class SwapService {
             //同时开多和空
             PpOrder ppUpOrder = new PpOrder();
             ppUpOrder.setType("1");
-            //ppUpOrder.setPrice(String.valueOf(currentPrice));
+            ppUpOrder.setPrice(String.valueOf(currentPrice));
             ppUpOrder.setSize(size);
             ppUpOrder.setInstrument_id(instrumentId);
-            ppUpOrder.setMatch_price("1");
+            //ppUpOrder.setMatch_price("1");
             swapTradeAPIService.order(ppUpOrder);
             log.info("开多{}-{}", instrumentId, JSON.toJSONString(ppUpOrder));
 
             PpOrder ppDownOrder = new PpOrder();
             ppDownOrder.setType("2");
-            //ppDownOrder.setPrice(String.valueOf(currentPrice));
+            ppDownOrder.setPrice(String.valueOf(currentPrice));
             ppDownOrder.setSize(size);
             ppDownOrder.setInstrument_id(instrumentId);
-            ppDownOrder.setMatch_price("1");
+            //ppDownOrder.setMatch_price("1");
             swapTradeAPIService.order(ppDownOrder);
             log.info("开空{}-{}", instrumentId, JSON.toJSONString(ppDownOrder));
             return;
