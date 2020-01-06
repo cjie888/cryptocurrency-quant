@@ -332,7 +332,7 @@ public class SwapService {
             PpOrder ppUpOrder = new PpOrder();
             ppUpOrder.setType("1");
             ppUpOrder.setPrice(String.valueOf(currentPrice));
-            ppUpOrder.setSize(size);
+            //ppUpOrder.setSize(size);
             ppUpOrder.setInstrument_id(instrumentId);
             ppUpOrder.setMatch_price("1");
             swapTradeAPIService.order(ppUpOrder);
@@ -341,7 +341,7 @@ public class SwapService {
             PpOrder ppDownOrder = new PpOrder();
             ppDownOrder.setType("2");
             ppDownOrder.setPrice(String.valueOf(currentPrice));
-            ppDownOrder.setSize(size);
+            //ppDownOrder.setSize(size);
             ppDownOrder.setInstrument_id(instrumentId);
             ppDownOrder.setMatch_price("1");
             swapTradeAPIService.order(ppDownOrder);
