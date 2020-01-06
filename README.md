@@ -1,4 +1,4 @@
-# cryptocurrency-quant（数字货币量化收割）
+# cryptocurrency-quant（数字货币量化）
 
 1. 各个交易所数据行情抓取
     1. okex
