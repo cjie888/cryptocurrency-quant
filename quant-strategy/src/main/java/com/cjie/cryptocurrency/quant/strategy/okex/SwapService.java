@@ -215,9 +215,8 @@ public class SwapService {
                     Transfer transferIn = new Transfer();
                     String currency = instrumentId.substring(0,3).toLowerCase();
                     if (instrumentId.toUpperCase().indexOf("USDT") > 0) {
-                        currency = "usdt";
                         transferIn.setTo_instrument_id(currency + "-" + "usdt");
-
+                        currency = "usdt";
                     }
                     transferIn.setCurrency(currency);
                     transferIn.setFrom(8);
