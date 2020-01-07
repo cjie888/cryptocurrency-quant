@@ -72,6 +72,10 @@ public class SwapService {
         StringBuilder sb = new StringBuilder();
         if (apiAccountsVO != null && CollectionUtils.isNotEmpty(apiAccountsVO.getInfo())) {
             for (ApiAccountVO apiAccountVO : apiAccountsVO.getInfo()) {
+                String instrumentId = apiAccountVO.getInstrument_id();
+                if (costs.get(instrumentId) == null) {
+                    continue;
+                }
                 if (apiAccountVO.getInstrument_id().toUpperCase().indexOf("USDT") >=0) {
                     BigDecimal asset = new BigDecimal(apiAccountVO.getEquity());
                     allAsset = allAsset.add(asset);
