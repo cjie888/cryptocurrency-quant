@@ -13,7 +13,7 @@ public class SwapTask {
     private SwapService swapService;
 
 
-    @Scheduled(cron = "*/12 * * * * ?")
+    @Scheduled(cron = "*/20 * * * * ?")
     public  void netGrid() {
         swapService.netGrid("BTC-USD-SWAP", "1", 60.0, 0.002);
         swapService.netGrid("ETH-USD-SWAP", "2", 0.6, 0.1);
@@ -26,7 +26,7 @@ public class SwapTask {
 
     }
 
-    @Scheduled(cron = "*/7 * * * * ?")
+    @Scheduled(cron = "*/17 * * * * ?")
     public void dualThrust() {
         swapService.dualTrust("BTC-USD-SWAP", 0.7);
         swapService.dualTrust("ETH-USD-SWAP", 0.7);
