@@ -226,9 +226,13 @@ public class SwapService {
                     transferIn.setFrom(8);
                     transferIn.setTo(9);
                     transferIn.setAmount(BigDecimal.valueOf(transferAmount));
-                    JSONObject result =  accountAPIService.transfer("okex", transferIn);
-                    log.info("transfer {} {} from financial to swap", transferAmount, JSON.toJSONString(result));
-                    weiXinMessageService.sendMessage("划转" + currency.toUpperCase(), "划转" + instrumentId + ", 数量：" + transferAmount);
+                    try {
+                        JSONObject result = accountAPIService.transfer("okex", transferIn);
+                        log.info("transfer {} {} from financial to swap", transferAmount, JSON.toJSONString(result));
+                        weiXinMessageService.sendMessage("划转" + currency.toUpperCase(), "划转" + instrumentId + ", 数量：" + transferAmount);
+                    } catch (Exception e) {
+                        log.info("transfer {} {} from financial to swap error", instrumentId, transferAmount);
+                    }
                 }
                 if (Double.valueOf(apiAccountVO.getMargin_ratio()) < 0.10) {
                     //停止交易，报警
