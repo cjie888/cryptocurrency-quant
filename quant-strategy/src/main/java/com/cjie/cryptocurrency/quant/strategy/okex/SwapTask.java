@@ -30,10 +30,10 @@ public class SwapTask {
     public void dualThrust() {
         swapService.dualTrust("BTC-USD-SWAP", 0.7);
         swapService.dualTrust("ETH-USD-SWAP", 0.7);
-        //swapService.dualTrust("EOS-USD-SWAP", 0.7);
-       // swapService.dualTrust("BCH-USD-SWAP", 0.7);
+        swapService.dualTrust("EOS-USD-SWAP", 0.7);
+        swapService.dualTrust("BCH-USD-SWAP", 0.7);
         swapService.dualTrust("XRP-USD-SWAP", 0.7);
-        //swapService.dualTrust("LTC-USD-SWAP", 0.7);
+        swapService.dualTrust("LTC-USD-SWAP", 0.7);
 
     }
 
