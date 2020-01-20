@@ -24,7 +24,7 @@
     select
     <include refid="Base_Column_List" />
     from swap_order
-    where instrument_id = #{instrumentId,jdbcType=BIGINT} order by create_time desc
+    where instrument_id = #{instrumentId,jdbcType=BIGINT} order by create_time desc limit 1
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
     delete from swap_order
