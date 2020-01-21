@@ -82,7 +82,7 @@ public class CCICorrctionStrategy implements SimpleJob {
     @Override
     public void execute(ShardingContext shardingContext) {
         try {
-            List<CurrencyKlineDTO> currencyKlineDTOS = spotProductAPIService.getCandles("okex", "btc-usdt", 60, null, null);
+            List<CurrencyKlineDTO> currencyKlineDTOS = spotProductAPIService.getCandles("okex", "btc-usdt", 3600, null, null);
             //log.info(JSON.toJSONString(currencyKlineDTOS));
             // Getting the time series
             if (timeSeries == null) {
