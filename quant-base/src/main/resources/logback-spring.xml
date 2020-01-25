@@ -95,10 +95,7 @@
         <appender-ref ref="FILE_TIME"/>
     </logger>
 
-    <logger name="com.okcoin.ex" level="INFO"/>
     <logger name="org.mybatis" level="ERROR"/>
-    <logger name="com.okcoin.util" level="ERROR"/>
-    <logger name="com.okcoin.wallet" level="ERROR"/>
 
     <root level="INFO">
         <appender-ref ref="ASYNC_FILE_ALL"/>
