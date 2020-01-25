@@ -100,7 +100,7 @@ public class OkexKLineTask {
     }
     private void getKline(String type, String suffix) {
         try {
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
             List<CurrencyPair> currencies = currencyPairMapper.getAllCurrency("okex");
             for (CurrencyPair symbol : currencies) {
                 if (symbol.getStatus() == 0) {
