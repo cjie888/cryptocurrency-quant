@@ -117,7 +117,8 @@ public class SpotProductAPIServiceImpl extends BaseServiceImpl implements SpotPr
         List<CurrencyKlineDTO> currencyKlineDTOS = new ArrayList<>();
         for(List<String> kline : klines) {
             CurrencyKlineDTO currencyKlineDTO = new CurrencyKlineDTO();
-            currencyKlineDTO.setTime(String.valueOf(DateUtils.parseUTCTime(kline.get(0)).getTime()));
+            //currencyKlineDTO.setTime(String.valueOf(DateUtils.parseUTCTime(kline.get(0)).getTime()));
+            currencyKlineDTO.setTime(kline.get(0));
             currencyKlineDTO.setOpen(kline.get(1));
             currencyKlineDTO.setHigh(kline.get(2));
             currencyKlineDTO.setLow(kline.get(3));
