@@ -52,6 +52,21 @@
         </rollingPolicy>
     </appender>
 
+    <appender name="FILE_TIME" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>/var/log/mine/time.log</file>
+        <encoder>
+            <pattern>${FILE_LOG_PATTERN}</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>/var/log/mine/history_time.%d{yyyy-MM-dd}.%i.zip</fileNamePattern>
+            <maxHistory>7</maxHistory>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>500MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+    </appender>
+
     <!--direct log messages to stdout -->
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
@@ -74,6 +89,10 @@
 
     <logger name="strategy" additivity="false">
         <appender-ref ref="FILE_STRATEGY"/>
+    </logger>
+
+    <logger name="time" additivity="false">
+        <appender-ref ref="FILE_TIME"/>
     </logger>
 
     <logger name="com.okcoin.ex" level="INFO"/>
