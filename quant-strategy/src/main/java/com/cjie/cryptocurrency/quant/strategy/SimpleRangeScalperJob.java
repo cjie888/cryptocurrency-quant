@@ -34,9 +34,8 @@ import java.util.Map;
 
 @ElasticJobConf(name = "srsJob", cron = "20 */1 * * * ?",
         description = "srs", eventTraceRdbDataSource = "logDatasource")
-@Slf4j
+@Slf4j(topic = "strategy")
 public class SimpleRangeScalperJob implements SimpleJob {
-    private static final org.slf4j.Logger strategyLog = org.slf4j.LoggerFactory.getLogger("strategy");
 
     @Autowired
     private WeiXinMessageService weiXinMessageService;
@@ -130,7 +129,7 @@ public class SimpleRangeScalperJob implements SimpleJob {
                         .append(" ").append(newBar.getClosePrice()).append("\r\n\n");
                 weiXinMessageService.sendMessage("开多-srs",  stringBuilder.toString());
                 // Our strategy should enter
-                strategyLog.info("Simple Range Scalper Strategy should ENTER on {}, time:{}" , endIndex, newBar.getBeginTime());
+                log.info("Simple Range Scalper Strategy should ENTER on {}, time:{}" , endIndex, newBar.getBeginTime());
                 boolean entered = tradingRecord.enter(endIndex, newBar.getClosePrice(), PrecisionNum.valueOf(10));
                 if (entered) {
                     Order entry = tradingRecord.getLastEntry();
@@ -154,7 +153,7 @@ public class SimpleRangeScalperJob implements SimpleJob {
                         .append(" ").append(newBar.getClosePrice()).append("\r\n\n");
                 weiXinMessageService.sendMessage("平多-srs",  stringBuilder.toString());
                 // Our strategy should exit
-                strategyLog.info("Strategy should EXIT on {}, time:{}" , endIndex, newBar.getBeginTime());
+                log.info("Strategy should EXIT on {}, time:{}" , endIndex, newBar.getBeginTime());
 
                 boolean exited = tradingRecord.exit(endIndex, newBar.getClosePrice(), PrecisionNum.valueOf(10));
                 if (exited) {
@@ -181,7 +180,7 @@ public class SimpleRangeScalperJob implements SimpleJob {
                         .append(" ").append(newBar.getClosePrice()).append("\r\n\n");
                 weiXinMessageService.sendMessage("开空-srs",  stringBuilder.toString());
                 // Our strategy should enter
-                strategyLog.info("Simple Range Scalper Strategy should ENTER on {}, time:{}" , endIndex, newBar.getBeginTime());
+                log.info("Simple Range Scalper Strategy should ENTER on {}, time:{}" , endIndex, newBar.getBeginTime());
                 boolean entered = tradingRecord.enter(endIndex, newBar.getClosePrice(), PrecisionNum.valueOf(10));
                 if (entered) {
                     Order entry = tradingRecord.getLastEntry();
@@ -205,7 +204,7 @@ public class SimpleRangeScalperJob implements SimpleJob {
                         .append(" ").append(newBar.getClosePrice()).append("\r\n\n");
                 weiXinMessageService.sendMessage("平空-srs",  stringBuilder.toString());
                 // Our strategy should exit
-                strategyLog.info("Strategy should EXIT on {}, time:{}" , endIndex, newBar.getBeginTime());
+                log.info("Strategy should EXIT on {}, time:{}" , endIndex, newBar.getBeginTime());
 
                 boolean exited = tradingRecord.exit(endIndex, newBar.getClosePrice(), PrecisionNum.valueOf(10));
                 if (exited) {

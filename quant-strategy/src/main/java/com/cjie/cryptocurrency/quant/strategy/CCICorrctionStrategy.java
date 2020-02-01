@@ -31,11 +31,8 @@ import java.util.List;
 
 @ElasticJobConf(name = "cciJob", cron = "40 */1 * * * ?",
         description = "cci", eventTraceRdbDataSource = "logDatasource")
-@Slf4j
+@Slf4j(topic = "strategy")
 public class CCICorrctionStrategy implements SimpleJob {
-
-    private static final org.slf4j.Logger strategyLog = org.slf4j.LoggerFactory.getLogger("strategy");
-
 
     private TimeSeries timeSeries;
 
@@ -81,6 +78,8 @@ public class CCICorrctionStrategy implements SimpleJob {
 
     @Override
     public void execute(ShardingContext shardingContext) {
+        log.info("start cci correction job");
+
         try {
             List<CurrencyKlineDTO> currencyKlineDTOS = spotProductAPIService.getCandles("okex", "btc-usdt", 3600, null, null);
             //log.info(JSON.toJSONString(currencyKlineDTOS));
@@ -116,7 +115,7 @@ public class CCICorrctionStrategy implements SimpleJob {
             Bar newBar = timeSeries.getLastBar();
 
             //log.info("cci:{}", JSON.toJSONString(shortCci));
-            strategyLog.info("Current cci time:{}, short:{}, long:{}", newBar.getBeginTime(),
+            log.info("Current cci time:{}, short:{}, long:{}", newBar.getBeginTime(),
                     shortCci.getValue(endIndex).doubleValue(),
                     longCci.getValue(endIndex).doubleValue());
 
@@ -126,7 +125,7 @@ public class CCICorrctionStrategy implements SimpleJob {
                         .append(" ").append(newBar.getClosePrice()).append("\r\n\n");
                 weiXinMessageService.sendMessage("buy-cci",  stringBuilder.toString());
                 // Our strategy should enter
-                strategyLog.info("Strategy should ENTER on {}, time:{}" , endIndex, newBar.getBeginTime());
+                log.info("Strategy should ENTER on {}, time:{}" , endIndex, newBar.getBeginTime());
                 boolean entered = tradingRecord.enter(endIndex, newBar.getClosePrice(), PrecisionNum.valueOf(10));
                 if (entered) {
                     Order entry = tradingRecord.getLastEntry();
@@ -140,7 +139,7 @@ public class CCICorrctionStrategy implements SimpleJob {
                         .append(" ").append(newBar.getClosePrice()).append("\r\n\n");
                 weiXinMessageService.sendMessage("sell-cci",  stringBuilder.toString());
                 // Our strategy should exit
-                strategyLog.info("Strategy should EXIT on {}, time:{}" , endIndex, newBar.getBeginTime());
+                log.info("Strategy should EXIT on {}, time:{}" , endIndex, newBar.getBeginTime());
 
                 boolean exited = tradingRecord.exit(endIndex, newBar.getClosePrice(), PrecisionNum.valueOf(10));
                 if (exited) {
