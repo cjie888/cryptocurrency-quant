@@ -74,7 +74,6 @@ public class SimpleRangeScalperJob implements SimpleJob {
         try {
             TimeSeries timeSeries =  timeSeriesMap.get(instrumentId);
             SimpleRangeScalperStrategy strategy = strategyMap.get(instrumentId);
-            strategy.setParams(20, BigDecimal.valueOf(1));
 
             TradingRecord longTradingRecord = longTradingRecordMap.get(instrumentId);
             TradingRecord shortTradingRecord = shortTradingRecordMap.get(instrumentId);
@@ -102,6 +101,7 @@ public class SimpleRangeScalperJob implements SimpleJob {
                     }
                 }
                 strategy = new SimpleRangeScalperStrategy(timeSeries);
+                strategy.setParams(20, BigDecimal.valueOf(1));
                 // Initializing the trading history
                 longTradingRecord = new BaseTradingRecord();
                 shortTradingRecord = new BaseTradingRecord();
