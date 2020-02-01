@@ -56,6 +56,7 @@ public class SimpleRangeScalperJob implements SimpleJob {
 
     @Override
     public void execute(ShardingContext shardingContext) {
+        log.info("start simple range scalper job");
         executeSrs("BTC-USD-SWAP");
         executeSrs("ETH-USD-SWAP");
         executeSrs("EOS-USD-SWAP");
