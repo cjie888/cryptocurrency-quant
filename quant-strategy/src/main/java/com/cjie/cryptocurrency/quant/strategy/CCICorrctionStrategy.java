@@ -23,6 +23,7 @@ import org.ta4j.core.trading.rules.CrossedUpIndicatorRule;
 import org.ta4j.core.trading.rules.OverIndicatorRule;
 import org.ta4j.core.trading.rules.UnderIndicatorRule;
 
+import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -79,6 +80,7 @@ public class CCICorrctionStrategy implements SimpleJob {
     @Override
     public void execute(ShardingContext shardingContext) {
         log.info("start cci correction job");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 
         try {
             List<CurrencyKlineDTO> currencyKlineDTOS = spotProductAPIService.getCandles("okex", "btc-usdt", 3600, null, null);
@@ -90,8 +92,8 @@ public class CCICorrctionStrategy implements SimpleJob {
 
                 for (int i = currencyKlineDTOS.size() -1; i >= 0; i--) {
                     CurrencyKlineDTO currencyKlineDTO = currencyKlineDTOS.get(i);
-                    ZonedDateTime beginTime = ZonedDateTime.ofInstant(
-                            Instant.ofEpochMilli(Long.parseLong(currencyKlineDTO.getTime())), ZoneId.systemDefault());
+                      ZonedDateTime beginTime = ZonedDateTime.ofInstant(
+                            Instant.ofEpochMilli(dateFormat.parse(currencyKlineDTO.getTime()).getTime()), ZoneId.systemDefault());
 
                     timeSeries.addBar(beginTime, currencyKlineDTO.getOpen(), currencyKlineDTO.getHigh(),
                             currencyKlineDTO.getLow(), currencyKlineDTO.getClose(), currencyKlineDTO.getVolume());
