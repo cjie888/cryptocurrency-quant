@@ -12,7 +12,7 @@ public interface SwapOrderMapper {
     SwapOrder selectByPrimaryKey(Long id);
 
 
-    SwapOrder selectLatest(String instrumentId);
+    SwapOrder selectLatest(String instrumentId, String strategy);
 
     int updateByPrimaryKeySelective(SwapOrder record);
 

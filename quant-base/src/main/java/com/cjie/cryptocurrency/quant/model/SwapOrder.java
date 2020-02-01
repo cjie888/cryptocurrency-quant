@@ -25,4 +25,6 @@ public class SwapOrder {
     private Byte isMock;
 
     private String orderId;
+
+    private String strategy;
 }
