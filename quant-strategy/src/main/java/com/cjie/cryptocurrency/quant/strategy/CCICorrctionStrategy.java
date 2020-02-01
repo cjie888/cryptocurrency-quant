@@ -9,6 +9,7 @@ import com.cxytiandi.elasticjob.annotation.ElasticJobConf;
 import com.dangdang.ddframe.job.api.ShardingContext;
 import com.dangdang.ddframe.job.api.simple.SimpleJob;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.ta4j.core.*;
 import org.ta4j.core.indicators.CCIIndicator;
@@ -16,6 +17,7 @@ import org.ta4j.core.indicators.EMAIndicator;
 import org.ta4j.core.indicators.MACDIndicator;
 import org.ta4j.core.indicators.StochasticOscillatorKIndicator;
 import org.ta4j.core.indicators.helpers.ClosePriceIndicator;
+import org.ta4j.core.num.DoubleNum;
 import org.ta4j.core.num.Num;
 import org.ta4j.core.num.PrecisionNum;
 import org.ta4j.core.trading.rules.CrossedDownIndicatorRule;
@@ -105,12 +107,17 @@ public class CCICorrctionStrategy implements SimpleJob {
                 tradingRecord = new BaseTradingRecord();
 
             } else {
-                CurrencyKlineDTO currencyKlineDTO = currencyKlineDTOS.get(0);
+                if (CollectionUtils.isNotEmpty(currencyKlineDTOS)) {
+                    for (int i = Math.min(currencyKlineDTOS.size() - 1, 4); i >= 0; i--) {
+                        CurrencyKlineDTO currencyKlineDTO = currencyKlineDTOS.get(0);
 
-                ZonedDateTime beginTime = ZonedDateTime.ofInstant(
-                        Instant.ofEpochMilli(Long.parseLong(currencyKlineDTO.getTime())), ZoneId.systemDefault());
-                timeSeries.addBar(beginTime, currencyKlineDTO.getOpen(), currencyKlineDTO.getHigh(), currencyKlineDTO.getLow(), currencyKlineDTO.getClose());
-
+                        ZonedDateTime beginTime = ZonedDateTime.ofInstant(
+                                Instant.ofEpochMilli(dateFormat.parse(currencyKlineDTO.getTime()).getTime()), ZoneId.systemDefault());
+                        Bar bar = new BaseBar(beginTime, DoubleNum.valueOf(currencyKlineDTO.getOpen()), DoubleNum.valueOf(currencyKlineDTO.getHigh()),
+                                DoubleNum.valueOf(currencyKlineDTO.getLow()), DoubleNum.valueOf(currencyKlineDTO.getClose()), DoubleNum.valueOf(currencyKlineDTO.getVolume()), DoubleNum.valueOf(0));
+                        timeSeries.addBar(bar, true);
+                    }
+                }
             }
             //log.info("Current bar is {}", JSON.toJSONString(timeSeries.getBarData()));
             int endIndex = timeSeries.getEndIndex();
