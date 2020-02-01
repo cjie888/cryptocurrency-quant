@@ -49,7 +49,7 @@ public class SimpleRangeScalperJob implements SimpleJob {
 
     private Map<String,TimeSeries> timeSeriesMap = new HashMap<>();
 
-    private Map<String,StrategyBuilder> strategyMap = new HashMap<>();
+    private Map<String,SimpleRangeScalperStrategy> strategyMap = new HashMap<>();
 
     private Map<String,TradingRecord> longTradingRecordMap = new HashMap<>();
 
@@ -73,7 +73,9 @@ public class SimpleRangeScalperJob implements SimpleJob {
 
         try {
             TimeSeries timeSeries =  timeSeriesMap.get(instrumentId);
-            StrategyBuilder strategy = strategyMap.get(instrumentId);
+            SimpleRangeScalperStrategy strategy = strategyMap.get(instrumentId);
+            strategy.setParams(20, BigDecimal.valueOf(1));
+
             TradingRecord longTradingRecord = longTradingRecordMap.get(instrumentId);
             TradingRecord shortTradingRecord = shortTradingRecordMap.get(instrumentId);
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
