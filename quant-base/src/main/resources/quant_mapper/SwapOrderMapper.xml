@@ -37,7 +37,7 @@
       is_mock, order_id, strategy)
     values (#{id,jdbcType=BIGINT}, #{instrumentId,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, 
       #{type,jdbcType=TINYINT}, #{size,jdbcType=DECIMAL}, #{price,jdbcType=DECIMAL}, 
-      #{isMock,jdbcType=TINYINT}, #{orderId,jdbcType=VARCHAR}, #{orderId,jdbcType=strategy})
+      #{isMock,jdbcType=TINYINT}, #{orderId,jdbcType=VARCHAR}, #{strategy,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.cjie.cryptocurrency.quant.model.SwapOrder">
     insert into swap_order
