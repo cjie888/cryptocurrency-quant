@@ -113,8 +113,8 @@ public class CCICorrctionStrategy implements SimpleJob {
 
                         ZonedDateTime beginTime = ZonedDateTime.ofInstant(
                                 Instant.ofEpochMilli(dateFormat.parse(currencyKlineDTO.getTime()).getTime()), ZoneId.systemDefault());
-                        Bar bar = new BaseBar(beginTime, DoubleNum.valueOf(currencyKlineDTO.getOpen()), DoubleNum.valueOf(currencyKlineDTO.getHigh()),
-                                DoubleNum.valueOf(currencyKlineDTO.getLow()), DoubleNum.valueOf(currencyKlineDTO.getClose()), DoubleNum.valueOf(currencyKlineDTO.getVolume()), DoubleNum.valueOf(0));
+                        Bar bar = new BaseBar(beginTime, PrecisionNum.valueOf(currencyKlineDTO.getOpen()), PrecisionNum.valueOf(currencyKlineDTO.getHigh()),
+                                PrecisionNum.valueOf(currencyKlineDTO.getLow()), PrecisionNum.valueOf(currencyKlineDTO.getClose()), PrecisionNum.valueOf(currencyKlineDTO.getVolume()), DoubleNum.valueOf(0));
                         timeSeries.addBar(bar, true);
                     }
                 }

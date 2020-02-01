@@ -115,7 +115,9 @@ public class SimpleRangeScalperJob implements SimpleJob {
                         double close = Double.valueOf(apiKlineVO[4]);
                         double low = Double.valueOf(apiKlineVO[3]);
                         double volume = Double.valueOf(apiKlineVO[5]);
-                        Bar bar = new BaseBar(beginTime, DoubleNum.valueOf(open), DoubleNum.valueOf(high), DoubleNum.valueOf(low), DoubleNum.valueOf(close), DoubleNum.valueOf(volume), DoubleNum.valueOf(0));
+                        Bar bar = new BaseBar(beginTime, PrecisionNum.valueOf(open), PrecisionNum.valueOf(high),
+                                PrecisionNum.valueOf(low), PrecisionNum.valueOf(close), PrecisionNum.valueOf(volume),
+                                PrecisionNum.valueOf(0));
                         timeSeries.addBar(bar, true);
                     }
                 }
