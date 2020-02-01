@@ -79,7 +79,8 @@ public class SimpleRangeScalperJob implements SimpleJob {
                 timeSeries = new BaseTimeSeries();
                 timeSeries.setMaximumBarCount(1000);
                 if (CollectionUtils.isNotEmpty(apiKlineVOs)) {
-                    for (String[] apiKlineVO : apiKlineVOs) {
+                    for (int i = apiKlineVOs.size() -1; i >= 0; i--) {
+                        String[] apiKlineVO = apiKlineVOs.get(i);
                         ZonedDateTime beginTime = ZonedDateTime.ofInstant(
                                 Instant.ofEpochMilli(dateFormat.parse(apiKlineVO[0]).getTime()), ZoneId.systemDefault());
                         double open = Double.valueOf(apiKlineVO[1]);
