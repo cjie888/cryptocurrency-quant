@@ -137,7 +137,7 @@ public class SimpleRangeScalperJob implements SimpleJob {
             Bar newBar = timeSeries.getLastBar();
 
 
-            if (longStrategy.shouldEnter(endIndex, longTradingRecord)) {
+            if ((longTradingRecord.getCurrentTrade().isNew() || longTradingRecord.getCurrentTrade().isClosed() )&&longStrategy.shouldEnter(endIndex, longTradingRecord)) {
                 StringBuilder stringBuilder = new StringBuilder();
                 stringBuilder.append("开多").append(" ").append(instrumentId).append(" ").append(newBar.getBeginTime())
                         .append(" ").append(newBar.getClosePrice()).append("\r\n\n");
@@ -161,7 +161,7 @@ public class SimpleRangeScalperJob implements SimpleJob {
                         .type(Byte.valueOf("1"))
                         .build();
                 swapOrderMapper.insert(swapOrder);
-            } else if (longStrategy.shouldExit(endIndex, longTradingRecord)) {
+            } else if (longTradingRecord.getCurrentTrade().isOpened() && longStrategy.shouldExit(endIndex, longTradingRecord)) {
                 StringBuilder stringBuilder = new StringBuilder();
                 stringBuilder.append("平多").append(" ").append(instrumentId).append(" ").append(newBar.getBeginTime())
                         .append(" ").append(newBar.getClosePrice()).append("\r\n\n");
@@ -188,7 +188,7 @@ public class SimpleRangeScalperJob implements SimpleJob {
                 swapOrderMapper.insert(swapOrder);
             }
 
-            if (shortStrategy.shouldEnter(endIndex, shortTradingRecord)) {
+            if ((shortTradingRecord.getCurrentTrade().isNew() || shortTradingRecord.getCurrentTrade().isClosed()) && shortStrategy.shouldEnter(endIndex)) {
                 StringBuilder stringBuilder = new StringBuilder();
                 stringBuilder.append("开空").append(" ").append(instrumentId).append(" ").append(newBar.getBeginTime())
                         .append(" ").append(newBar.getClosePrice()).append("\r\n\n");
@@ -212,7 +212,7 @@ public class SimpleRangeScalperJob implements SimpleJob {
                         .type(Byte.valueOf("2"))
                         .build();
                 swapOrderMapper.insert(swapOrder);
-            } else if (shortStrategy.shouldExit(endIndex, shortTradingRecord)) {
+            } else if (shortTradingRecord.getCurrentTrade().isOpened() && shortStrategy.shouldExit(endIndex, shortTradingRecord)) {
                 StringBuilder stringBuilder = new StringBuilder();
                 stringBuilder.append("平空").append(" ").append(instrumentId).append(" ").append(newBar.getBeginTime())
                         .append(" ").append(newBar.getClosePrice()).append("\r\n\n");
