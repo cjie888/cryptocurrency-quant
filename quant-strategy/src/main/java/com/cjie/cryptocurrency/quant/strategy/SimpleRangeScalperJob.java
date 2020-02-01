@@ -17,6 +17,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.ta4j.core.*;
 import org.ta4j.core.indicators.CCIIndicator;
+import org.ta4j.core.num.DoubleNum;
 import org.ta4j.core.num.Num;
 import org.ta4j.core.num.PrecisionNum;
 import org.ta4j.core.trading.rules.OverIndicatorRule;
@@ -103,18 +104,21 @@ public class SimpleRangeScalperJob implements SimpleJob {
                 tradingRecordMap.put(instrumentId, tradingRecord);
 
             } else {
-                String[] apiKlineVO = apiKlineVOs.get(0);
 
-                ZonedDateTime beginTime = ZonedDateTime.ofInstant(
-                        Instant.ofEpochMilli(dateFormat.parse(apiKlineVO[0]).getTime()), ZoneId.systemDefault());
-                double open = Double.valueOf(apiKlineVO[1]);
-                double high = Double.valueOf(apiKlineVO[2]);
-                double close = Double.valueOf(apiKlineVO[4]);
-                double low = Double.valueOf(apiKlineVO[3]);
-                double volume = Double.valueOf(apiKlineVO[5]);
-
-                timeSeries.addBar(beginTime, open, high,
-                        low, close, volume);
+                if (CollectionUtils.isNotEmpty(apiKlineVOs)) {
+                    for (int i = Math.min(apiKlineVOs.size() - 1, 4); i >= 0; i--) {
+                        String[] apiKlineVO = apiKlineVOs.get(i);
+                        ZonedDateTime beginTime = ZonedDateTime.ofInstant(
+                                Instant.ofEpochMilli(dateFormat.parse(apiKlineVO[0]).getTime()), ZoneId.systemDefault());
+                        double open = Double.valueOf(apiKlineVO[1]);
+                        double high = Double.valueOf(apiKlineVO[2]);
+                        double close = Double.valueOf(apiKlineVO[4]);
+                        double low = Double.valueOf(apiKlineVO[3]);
+                        double volume = Double.valueOf(apiKlineVO[5]);
+                        Bar bar = new BaseBar(beginTime, DoubleNum.valueOf(open), DoubleNum.valueOf(high), DoubleNum.valueOf(low), DoubleNum.valueOf(close), DoubleNum.valueOf(volume), DoubleNum.valueOf(0));
+                        timeSeries.addBar(bar, true);
+                    }
+                }
 
             }
             Strategy longStrategy = strategy.buildStrategy(Order.OrderType.BUY);
