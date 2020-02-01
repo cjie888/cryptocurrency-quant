@@ -168,7 +168,7 @@ public class SwapService {
         log.info("当前价格{}-{}-open:{}, range:{}", instrumentId, apiTickerVO.getLast(), open, range);
         Double currentPrice = Double.valueOf(apiTickerVO.getLast());
         if (currentPrice > open +  range * ratio) {//突破上轨，开多
-            SwapOrder lastOrder = swapOrderMapper.selectLatest(instrumentId);
+            SwapOrder lastOrder = swapOrderMapper.selectLatest(instrumentId, "DualThrust");
             if (lastOrder != null && lastOrder.getType() == 1) {
                 return;
             }
@@ -180,10 +180,11 @@ public class SwapService {
                     .size(new BigDecimal(100))
                     .price(BigDecimal.valueOf(currentPrice))
                     .type(Byte.valueOf("1"))
+                    .strategy("DualThrust")
                     .build();
             swapOrderMapper.insert(swapOrder);
         } else if (currentPrice < open - range * ratio) {
-            SwapOrder lastOrder = swapOrderMapper.selectLatest(instrumentId);
+            SwapOrder lastOrder = swapOrderMapper.selectLatest(instrumentId, "DualThrust");
             if (lastOrder != null && lastOrder.getType() == 2) {
                 return;
             }
@@ -195,6 +196,7 @@ public class SwapService {
                     .size(new BigDecimal(100))
                     .price(BigDecimal.valueOf(currentPrice))
                     .type(Byte.valueOf("2"))
+                    .strategy("DualThrust")
                     .build();
             swapOrderMapper.insert(swapOrder);
         }

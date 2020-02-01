@@ -1,7 +1,7 @@
 package com.cjie.cryptocurrency.quant.backtest;
 
 
-import com.cjie.cryptocurrency.quant.backtest.strategies.SimpleRangeScalper;
+import com.cjie.cryptocurrency.quant.strategy.SimpleRangeScalperStrategy;
 import org.ta4j.core.TimeSeries;
 
 import java.math.BigDecimal;
@@ -19,7 +19,7 @@ public class Run {
         TimeSeries series = loader.getMinuteTimeSeries("/Users/hucj/cryptocurrency-quant/quant-strategy/src/main/data/btc_minutes.csv", "btc");
 
         // create and initialize a strategy
-        SimpleRangeScalper simpleRangeScalper = new SimpleRangeScalper();
+        SimpleRangeScalperStrategy simpleRangeScalper = new SimpleRangeScalperStrategy();
         simpleRangeScalper.initStrategy(series);
 
         // run strategy on time series and analyse results

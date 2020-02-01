@@ -10,9 +10,10 @@
     <result column="price" jdbcType="DECIMAL" property="price" />
     <result column="is_mock" jdbcType="TINYINT" property="isMock" />
     <result column="order_id" jdbcType="VARCHAR" property="orderId" />
+    <result column="strategy" jdbcType="VARCHAR" property="strategy" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, instrument_id, create_time, type, size, price, is_mock, order_id
+    id, instrument_id, create_time, type, size, price, is_mock, order_id, strategy
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select 
@@ -20,11 +21,11 @@
     from swap_order
     where id = #{id,jdbcType=BIGINT}
   </select>
-  <select id="selectLatest" parameterType="java.lang.String" resultMap="BaseResultMap">
+  <select id="selectLatest" resultMap="BaseResultMap">
     select
     <include refid="Base_Column_List" />
     from swap_order
-    where instrument_id = #{instrumentId,jdbcType=BIGINT} order by create_time desc limit 1
+    where instrument_id = #{instrumentId,jdbcType=BIGINT} and strategy = #{strategy,jdbcType=VARCHAR} order by create_time desc limit 1
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
     delete from swap_order
@@ -33,10 +34,10 @@
   <insert id="insert" parameterType="com.cjie.cryptocurrency.quant.model.SwapOrder">
     insert into swap_order (id, instrument_id, create_time, 
       type, size, price, 
-      is_mock, order_id)
+      is_mock, order_id, strategy)
     values (#{id,jdbcType=BIGINT}, #{instrumentId,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, 
       #{type,jdbcType=TINYINT}, #{size,jdbcType=DECIMAL}, #{price,jdbcType=DECIMAL}, 
-      #{isMock,jdbcType=TINYINT}, #{orderId,jdbcType=VARCHAR})
+      #{isMock,jdbcType=TINYINT}, #{orderId,jdbcType=VARCHAR}, #{orderId,jdbcType=strategy})
   </insert>
   <insert id="insertSelective" parameterType="com.cjie.cryptocurrency.quant.model.SwapOrder">
     insert into swap_order

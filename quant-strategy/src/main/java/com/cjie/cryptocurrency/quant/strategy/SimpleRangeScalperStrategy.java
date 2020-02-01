@@ -1,6 +1,7 @@
-package com.cjie.cryptocurrency.quant.backtest.strategies;
+package com.cjie.cryptocurrency.quant.strategy;
 
 import com.cjie.cryptocurrency.quant.backtest.StrategyBuilder;
+import org.springframework.stereotype.Component;
 import org.ta4j.core.*;
 import org.ta4j.core.indicators.EMAIndicator;
 import org.ta4j.core.indicators.bollinger.BollingerBandsLowerIndicator;
@@ -21,7 +22,7 @@ import java.util.List;
     http://www.investopedia.com/terms/s/scalping.asp
     http://forexop.com/strategy/simple-range-scalper/
  */
-public class SimpleRangeScalper implements StrategyBuilder {
+public class SimpleRangeScalperStrategy implements StrategyBuilder {
 
     private TimeSeries series;
 
@@ -39,9 +40,9 @@ public class SimpleRangeScalper implements StrategyBuilder {
     /**
      * Constructor
      */
-    public SimpleRangeScalper(){}
+    public SimpleRangeScalperStrategy(){}
 
-    public SimpleRangeScalper(TimeSeries series){
+    public SimpleRangeScalperStrategy(TimeSeries series){
         initStrategy(series);
     }
 
