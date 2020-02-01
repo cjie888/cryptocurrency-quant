@@ -51,7 +51,10 @@ public class SimpleRangeScalperJob implements SimpleJob {
 
     private Map<String,StrategyBuilder> strategyMap = new HashMap<>();
 
-    private Map<String,TradingRecord> tradingRecordMap = new HashMap<>();
+    private Map<String,TradingRecord> longTradingRecordMap = new HashMap<>();
+
+    private Map<String,TradingRecord> shortTradingRecordMap = new HashMap<>();
+
 
 
     @Override
@@ -71,7 +74,8 @@ public class SimpleRangeScalperJob implements SimpleJob {
         try {
             TimeSeries timeSeries =  timeSeriesMap.get(instrumentId);
             StrategyBuilder strategy = strategyMap.get(instrumentId);
-            TradingRecord tradingRecord = tradingRecordMap.get(instrumentId);
+            TradingRecord longTradingRecord = longTradingRecordMap.get(instrumentId);
+            TradingRecord shortTradingRecord = shortTradingRecordMap.get(instrumentId);
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
             String kline = swapMarketAPIService.getCandlesApi(instrumentId, null, null, "60");
             List<String[]> apiKlineVOs = JSON.parseObject(kline, new TypeReference<List<String[]>>(){});
@@ -97,11 +101,14 @@ public class SimpleRangeScalperJob implements SimpleJob {
                 }
                 strategy = new SimpleRangeScalperStrategy(timeSeries);
                 // Initializing the trading history
-                tradingRecord = new BaseTradingRecord();
+                longTradingRecord = new BaseTradingRecord();
+                shortTradingRecord = new BaseTradingRecord();
 
                 timeSeriesMap.put(instrumentId, timeSeries);
                 strategyMap.put(instrumentId, strategy);
-                tradingRecordMap.put(instrumentId, tradingRecord);
+                longTradingRecordMap.put(instrumentId, longTradingRecord);
+                shortTradingRecordMap.put(instrumentId, shortTradingRecord);
+
 
             } else {
 
@@ -130,16 +137,16 @@ public class SimpleRangeScalperJob implements SimpleJob {
             Bar newBar = timeSeries.getLastBar();
 
 
-            if (longStrategy.shouldEnter(endIndex)) {
+            if (longStrategy.shouldEnter(endIndex, longTradingRecord)) {
                 StringBuilder stringBuilder = new StringBuilder();
                 stringBuilder.append("开多").append(" ").append(instrumentId).append(" ").append(newBar.getBeginTime())
                         .append(" ").append(newBar.getClosePrice()).append("\r\n\n");
                 weiXinMessageService.sendMessage("开多-srs",  stringBuilder.toString());
                 // Our strategy should enter
-                log.info("Simple Range Scalper Strategy should ENTER on {}, time:{}" , endIndex, newBar.getBeginTime());
-                boolean entered = tradingRecord.enter(endIndex, newBar.getClosePrice(), PrecisionNum.valueOf(10));
+                log.info("Simple Range Scalper Strategy {} should ENTER on {}, time:{}" , instrumentId, endIndex, newBar.getBeginTime());
+                boolean entered = longTradingRecord.enter(endIndex, newBar.getClosePrice(), PrecisionNum.valueOf(10));
                 if (entered) {
-                    Order entry = tradingRecord.getLastEntry();
+                    Order entry = longTradingRecord.getLastEntry();
                     log.info("Entered on " + entry.getIndex()
                             + " (price=" + entry.getPrice().doubleValue()
                             + ", amount=" + entry.getAmount().doubleValue() + ")");
@@ -154,17 +161,17 @@ public class SimpleRangeScalperJob implements SimpleJob {
                         .type(Byte.valueOf("1"))
                         .build();
                 swapOrderMapper.insert(swapOrder);
-            } else if (longStrategy.shouldExit(endIndex)) {
+            } else if (longStrategy.shouldExit(endIndex, longTradingRecord)) {
                 StringBuilder stringBuilder = new StringBuilder();
                 stringBuilder.append("平多").append(" ").append(instrumentId).append(" ").append(newBar.getBeginTime())
                         .append(" ").append(newBar.getClosePrice()).append("\r\n\n");
                 weiXinMessageService.sendMessage("平多-srs",  stringBuilder.toString());
                 // Our strategy should exit
-                log.info("Strategy should EXIT on {}, time:{}" , endIndex, newBar.getBeginTime());
+                log.info("Simple Range Scalper Strategy {} should EXIT on {}, time:{}" , instrumentId, endIndex, newBar.getBeginTime());
 
-                boolean exited = tradingRecord.exit(endIndex, newBar.getClosePrice(), PrecisionNum.valueOf(10));
+                boolean exited = longTradingRecord.exit(endIndex, newBar.getClosePrice(), PrecisionNum.valueOf(10));
                 if (exited) {
-                    Order exit = tradingRecord.getLastExit();
+                    Order exit = longTradingRecord.getLastExit();
                     log.info("Exited on " + exit.getIndex()
                             + " (price=" + exit.getPrice().doubleValue()
                             + ", amount=" + exit.getAmount().doubleValue() + ")");
@@ -181,16 +188,16 @@ public class SimpleRangeScalperJob implements SimpleJob {
                 swapOrderMapper.insert(swapOrder);
             }
 
-            if (shortStrategy.shouldEnter(endIndex)) {
+            if (shortStrategy.shouldEnter(endIndex, shortTradingRecord)) {
                 StringBuilder stringBuilder = new StringBuilder();
                 stringBuilder.append("开空").append(" ").append(instrumentId).append(" ").append(newBar.getBeginTime())
                         .append(" ").append(newBar.getClosePrice()).append("\r\n\n");
                 weiXinMessageService.sendMessage("开空-srs",  stringBuilder.toString());
                 // Our strategy should enter
-                log.info("Simple Range Scalper Strategy should ENTER on {}, time:{}" , endIndex, newBar.getBeginTime());
-                boolean entered = tradingRecord.enter(endIndex, newBar.getClosePrice(), PrecisionNum.valueOf(10));
+                log.info("Simple Range Scalper Strategy {} should ENTER on {}, time:{}" , instrumentId, endIndex, newBar.getBeginTime());
+                boolean entered = shortTradingRecord.enter(endIndex, newBar.getClosePrice(), PrecisionNum.valueOf(10));
                 if (entered) {
-                    Order entry = tradingRecord.getLastEntry();
+                    Order entry = shortTradingRecord.getLastEntry();
                     log.info("Entered on " + entry.getIndex()
                             + " (price=" + entry.getPrice().doubleValue()
                             + ", amount=" + entry.getAmount().doubleValue() + ")");
@@ -205,17 +212,17 @@ public class SimpleRangeScalperJob implements SimpleJob {
                         .type(Byte.valueOf("2"))
                         .build();
                 swapOrderMapper.insert(swapOrder);
-            } else if (shortStrategy.shouldExit(endIndex)) {
+            } else if (shortStrategy.shouldExit(endIndex, shortTradingRecord)) {
                 StringBuilder stringBuilder = new StringBuilder();
                 stringBuilder.append("平空").append(" ").append(instrumentId).append(" ").append(newBar.getBeginTime())
                         .append(" ").append(newBar.getClosePrice()).append("\r\n\n");
                 weiXinMessageService.sendMessage("平空-srs",  stringBuilder.toString());
                 // Our strategy should exit
-                log.info("Strategy should EXIT on {}, time:{}" , endIndex, newBar.getBeginTime());
+                log.info("Simple Range Scalper Strategy {} should EXIT on {}, time:{}" , instrumentId, endIndex, newBar.getBeginTime());
 
-                boolean exited = tradingRecord.exit(endIndex, newBar.getClosePrice(), PrecisionNum.valueOf(10));
+                boolean exited = shortTradingRecord.exit(endIndex, newBar.getClosePrice(), PrecisionNum.valueOf(10));
                 if (exited) {
-                    Order exit = tradingRecord.getLastExit();
+                    Order exit = shortTradingRecord.getLastExit();
                     log.info("Exited on " + exit.getIndex()
                             + " (price=" + exit.getPrice().doubleValue()
                             + ", amount=" + exit.getAmount().doubleValue() + ")");
