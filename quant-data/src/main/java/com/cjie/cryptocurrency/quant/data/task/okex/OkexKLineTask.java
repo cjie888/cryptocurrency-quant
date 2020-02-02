@@ -110,6 +110,9 @@ public class OkexKLineTask {
                 String quotaCurrency = symbol.getQuotaCurrency();
                 try {
                     String currSuffix = suffix;
+                    if (type.equals("1min")) {
+                        currSuffix = currSuffix + "_" + quotaCurrency.toLowerCase();
+                    }
                     List<CurrencyKlineDTO> klines =  spotProductAPIService.getCandles("okex", baseCurrency + "-" + quotaCurrency, getGranularity(type), null, null);
                     for (CurrencyKlineDTO data : klines) {
                         if (currencyKlineMapper.getCurrencyLine(dateFormat.parse(data.getTime()),
