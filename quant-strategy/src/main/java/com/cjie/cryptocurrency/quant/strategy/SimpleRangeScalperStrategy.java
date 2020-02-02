@@ -76,7 +76,7 @@ public class SimpleRangeScalperStrategy implements StrategyBuilder {
 
     @Override
     public String getName(){
-        return "Simple Range Scalper";
+        return "SimpleRangeScalper";
     }
 
     @Override

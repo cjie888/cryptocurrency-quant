@@ -1,247 +1,40 @@
 package com.cjie.cryptocurrency.quant.strategy;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.TypeReference;
-import com.cjie.cryptocurrency.quant.api.okex.service.spot.CurrencyKlineDTO;
-import com.cjie.cryptocurrency.quant.api.okex.service.spot.SpotProductAPIService;
-import com.cjie.cryptocurrency.quant.api.okex.service.swap.SwapMarketAPIService;
+
 import com.cjie.cryptocurrency.quant.backtest.StrategyBuilder;
-import com.cjie.cryptocurrency.quant.mapper.SwapOrderMapper;
-import com.cjie.cryptocurrency.quant.model.SwapOrder;
-import com.cjie.cryptocurrency.quant.service.WeiXinMessageService;
 import com.cxytiandi.elasticjob.annotation.ElasticJobConf;
 import com.dangdang.ddframe.job.api.ShardingContext;
-import com.dangdang.ddframe.job.api.simple.SimpleJob;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.CollectionUtils;
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.ta4j.core.*;
-import org.ta4j.core.indicators.CCIIndicator;
-import org.ta4j.core.num.DoubleNum;
-import org.ta4j.core.num.Num;
-import org.ta4j.core.num.PrecisionNum;
-import org.ta4j.core.trading.rules.OverIndicatorRule;
-import org.ta4j.core.trading.rules.UnderIndicatorRule;
+
 
 import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.time.Instant;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 @ElasticJobConf(name = "srsJob", cron = "20 */1 * * * ?",
         description = "srs", eventTraceRdbDataSource = "logDatasource")
 @Slf4j(topic = "strategy")
-public class SimpleRangeScalperJob implements SimpleJob {
-
-    @Autowired
-    private WeiXinMessageService weiXinMessageService;
-
-    @Autowired
-    private SwapMarketAPIService swapMarketAPIService;
-
-    @Autowired
-    private SwapOrderMapper swapOrderMapper;
-
-    private Map<String,TimeSeries> timeSeriesMap = new HashMap<>();
-
-    private Map<String,SimpleRangeScalperStrategy> strategyMap = new HashMap<>();
-
-    private Map<String,TradingRecord> longTradingRecordMap = new HashMap<>();
-
-    private Map<String,TradingRecord> shortTradingRecordMap = new HashMap<>();
-
+public class SimpleRangeScalperJob extends BaseSwapStrategyJob {
 
 
     @Override
     public void execute(ShardingContext shardingContext) {
         log.info("start simple range scalper job");
-        executeSrs("BTC-USD-SWAP");
-        executeSrs("ETH-USD-SWAP");
-        executeSrs("EOS-USD-SWAP");
-        executeSrs("LTC-USD-SWAP");
-        executeSrs("XRP-USD-SWAP");
-        executeSrs("BCH-USD-SWAP");
-        executeSrs("BSV-USD-SWAP");
+        executeStrategy("BTC-USD-SWAP");
+        executeStrategy("ETH-USD-SWAP");
+        executeStrategy("EOS-USD-SWAP");
+        executeStrategy("LTC-USD-SWAP");
+        executeStrategy("XRP-USD-SWAP");
+        executeStrategy("BCH-USD-SWAP");
+        executeStrategy("BSV-USD-SWAP");
+        executeStrategy("ETC-USD-SWAP");
     }
 
-    public void executeSrs(String instrumentId) {
 
-        try {
-            TimeSeries timeSeries =  timeSeriesMap.get(instrumentId);
-            SimpleRangeScalperStrategy strategy = strategyMap.get(instrumentId);
-
-            TradingRecord longTradingRecord = longTradingRecordMap.get(instrumentId);
-            TradingRecord shortTradingRecord = shortTradingRecordMap.get(instrumentId);
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-            String kline = swapMarketAPIService.getCandlesApi(instrumentId, null, null, "60");
-            List<String[]> apiKlineVOs = JSON.parseObject(kline, new TypeReference<List<String[]>>(){});
-            // Getting the time series
-            if (timeSeries == null) {
-                timeSeries = new BaseTimeSeries();
-                timeSeries.setMaximumBarCount(1000);
-                if (CollectionUtils.isNotEmpty(apiKlineVOs)) {
-                    for (int i = apiKlineVOs.size() -1; i >= 0; i--) {
-                        String[] apiKlineVO = apiKlineVOs.get(i);
-                        ZonedDateTime beginTime = ZonedDateTime.ofInstant(
-                                Instant.ofEpochMilli(dateFormat.parse(apiKlineVO[0]).getTime()), ZoneId.systemDefault());
-                        double open = Double.valueOf(apiKlineVO[1]);
-                        double high = Double.valueOf(apiKlineVO[2]);
-                        double close = Double.valueOf(apiKlineVO[4]);
-                        double low = Double.valueOf(apiKlineVO[3]);
-                        double volume = Double.valueOf(apiKlineVO[5]);
-
-                        timeSeries.addBar(beginTime, open, high,
-                                low, close, volume);
-
-                    }
-                }
-                strategy = new SimpleRangeScalperStrategy(timeSeries);
-                strategy.setParams(20, BigDecimal.valueOf(1));
-                // Initializing the trading history
-                longTradingRecord = new BaseTradingRecord();
-                shortTradingRecord = new BaseTradingRecord();
-
-                timeSeriesMap.put(instrumentId, timeSeries);
-                strategyMap.put(instrumentId, strategy);
-                longTradingRecordMap.put(instrumentId, longTradingRecord);
-                shortTradingRecordMap.put(instrumentId, shortTradingRecord);
-
-
-            } else {
-
-                if (CollectionUtils.isNotEmpty(apiKlineVOs)) {
-                    for (int i = Math.min(apiKlineVOs.size() - 1, 4); i >= 0; i--) {
-                        String[] apiKlineVO = apiKlineVOs.get(i);
-                        ZonedDateTime beginTime = ZonedDateTime.ofInstant(
-                                Instant.ofEpochMilli(dateFormat.parse(apiKlineVO[0]).getTime()), ZoneId.systemDefault());
-                        double open = Double.valueOf(apiKlineVO[1]);
-                        double high = Double.valueOf(apiKlineVO[2]);
-                        double close = Double.valueOf(apiKlineVO[4]);
-                        double low = Double.valueOf(apiKlineVO[3]);
-                        double volume = Double.valueOf(apiKlineVO[5]);
-                        Bar bar = new BaseBar(beginTime, PrecisionNum.valueOf(open), PrecisionNum.valueOf(high),
-                                PrecisionNum.valueOf(low), PrecisionNum.valueOf(close), PrecisionNum.valueOf(volume),
-                                PrecisionNum.valueOf(0));
-                        timeSeries.addBar(bar, true);
-                    }
-                }
-
-            }
-            Strategy longStrategy = strategy.buildStrategy(Order.OrderType.BUY);
-            Strategy shortStrategy = strategy.buildStrategy(Order.OrderType.SELL);
-            //log.info("Current bar is {}", JSON.toJSONString(timeSeries.getBarData()));
-            int endIndex = timeSeries.getEndIndex();
-            Bar newBar = timeSeries.getLastBar();
-
-
-            if ((longTradingRecord.getCurrentTrade().isNew() || longTradingRecord.getCurrentTrade().isClosed() )&&longStrategy.shouldEnter(endIndex, longTradingRecord)) {
-                StringBuilder stringBuilder = new StringBuilder();
-                stringBuilder.append("开多").append(" ").append(instrumentId).append(" ").append(newBar.getBeginTime())
-                        .append(" ").append(newBar.getClosePrice()).append("\r\n\n");
-                weiXinMessageService.sendMessage("开多-srs",  stringBuilder.toString());
-                // Our strategy should enter
-                log.info("Simple Range Scalper Strategy {} should ENTER on {}, time:{}" , instrumentId, endIndex, newBar.getBeginTime());
-                boolean entered = longTradingRecord.enter(endIndex, newBar.getClosePrice(), PrecisionNum.valueOf(10));
-                if (entered) {
-                    Order entry = longTradingRecord.getLastEntry();
-                    log.info("Entered on " + entry.getIndex()
-                            + " (price=" + entry.getPrice().doubleValue()
-                            + ", amount=" + entry.getAmount().doubleValue() + ")");
-                }
-                SwapOrder swapOrder = SwapOrder.builder()
-                        .createTime(new Date())
-                        .instrumentId(instrumentId)
-                        .isMock(Byte.valueOf("1"))
-                        .size(new BigDecimal(100))
-                        .price(BigDecimal.valueOf(newBar.getClosePrice().doubleValue()))
-                        .strategy("SimpleRangeScalper")
-                        .type(Byte.valueOf("1"))
-                        .build();
-                swapOrderMapper.insert(swapOrder);
-            } else if (longTradingRecord.getCurrentTrade().isOpened() && longStrategy.shouldExit(endIndex, longTradingRecord)) {
-                StringBuilder stringBuilder = new StringBuilder();
-                stringBuilder.append("平多").append(" ").append(instrumentId).append(" ").append(newBar.getBeginTime())
-                        .append(" ").append(newBar.getClosePrice()).append("\r\n\n");
-                weiXinMessageService.sendMessage("平多-srs",  stringBuilder.toString());
-                // Our strategy should exit
-                log.info("Simple Range Scalper Strategy {} should EXIT on {}, time:{}" , instrumentId, endIndex, newBar.getBeginTime());
-
-                boolean exited = longTradingRecord.exit(endIndex, newBar.getClosePrice(), PrecisionNum.valueOf(10));
-                if (exited) {
-                    Order exit = longTradingRecord.getLastExit();
-                    log.info("Exited on " + exit.getIndex()
-                            + " (price=" + exit.getPrice().doubleValue()
-                            + ", amount=" + exit.getAmount().doubleValue() + ")");
-                }
-                SwapOrder swapOrder = SwapOrder.builder()
-                        .createTime(new Date())
-                        .instrumentId(instrumentId)
-                        .isMock(Byte.valueOf("1"))
-                        .size(new BigDecimal(100))
-                        .price(BigDecimal.valueOf(newBar.getClosePrice().doubleValue()))
-                        .strategy("SimpleRangeScalper")
-                        .type(Byte.valueOf("3"))
-                        .build();
-                swapOrderMapper.insert(swapOrder);
-            }
-
-            if ((shortTradingRecord.getCurrentTrade().isNew() || shortTradingRecord.getCurrentTrade().isClosed()) && shortStrategy.shouldEnter(endIndex)) {
-                StringBuilder stringBuilder = new StringBuilder();
-                stringBuilder.append("开空").append(" ").append(instrumentId).append(" ").append(newBar.getBeginTime())
-                        .append(" ").append(newBar.getClosePrice()).append("\r\n\n");
-                weiXinMessageService.sendMessage("开空-srs",  stringBuilder.toString());
-                // Our strategy should enter
-                log.info("Simple Range Scalper Strategy {} should ENTER on {}, time:{}" , instrumentId, endIndex, newBar.getBeginTime());
-                boolean entered = shortTradingRecord.enter(endIndex, newBar.getClosePrice(), PrecisionNum.valueOf(10));
-                if (entered) {
-                    Order entry = shortTradingRecord.getLastEntry();
-                    log.info("Entered on " + entry.getIndex()
-                            + " (price=" + entry.getPrice().doubleValue()
-                            + ", amount=" + entry.getAmount().doubleValue() + ")");
-                }
-                SwapOrder swapOrder = SwapOrder.builder()
-                        .createTime(new Date())
-                        .instrumentId(instrumentId)
-                        .isMock(Byte.valueOf("1"))
-                        .size(new BigDecimal(100))
-                        .price(BigDecimal.valueOf(newBar.getClosePrice().doubleValue()))
-                        .strategy("SimpleRangeScalper")
-                        .type(Byte.valueOf("2"))
-                        .build();
-                swapOrderMapper.insert(swapOrder);
-            } else if (shortTradingRecord.getCurrentTrade().isOpened() && shortStrategy.shouldExit(endIndex, shortTradingRecord)) {
-                StringBuilder stringBuilder = new StringBuilder();
-                stringBuilder.append("平空").append(" ").append(instrumentId).append(" ").append(newBar.getBeginTime())
-                        .append(" ").append(newBar.getClosePrice()).append("\r\n\n");
-                weiXinMessageService.sendMessage("平空-srs",  stringBuilder.toString());
-                // Our strategy should exit
-                log.info("Simple Range Scalper Strategy {} should EXIT on {}, time:{}" , instrumentId, endIndex, newBar.getBeginTime());
-
-                boolean exited = shortTradingRecord.exit(endIndex, newBar.getClosePrice(), PrecisionNum.valueOf(10));
-                if (exited) {
-                    Order exit = shortTradingRecord.getLastExit();
-                    log.info("Exited on " + exit.getIndex()
-                            + " (price=" + exit.getPrice().doubleValue()
-                            + ", amount=" + exit.getAmount().doubleValue() + ")");
-                }
-                SwapOrder swapOrder = SwapOrder.builder()
-                        .createTime(new Date())
-                        .instrumentId(instrumentId)
-                        .isMock(Byte.valueOf("1"))
-                        .size(new BigDecimal(100))
-                        .price(BigDecimal.valueOf(newBar.getClosePrice().doubleValue()))
-                        .strategy("SimpleRangeScalper")
-                        .type(Byte.valueOf("4"))
-                        .build();
-                swapOrderMapper.insert(swapOrder);
-            }
-        } catch (Exception e) {
-            log.error("Simple range scalper strategy error", e);
-        }
+    @Override
+    public StrategyBuilder buildStrategy(TimeSeries timeSeries) {
+        SimpleRangeScalperStrategy strategy = new SimpleRangeScalperStrategy(timeSeries);
+        strategy.setParams(20, BigDecimal.valueOf(1));
+        return strategy;
     }
 }
