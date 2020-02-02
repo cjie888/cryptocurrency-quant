@@ -11,6 +11,7 @@ import com.dangdang.ddframe.job.api.simple.SimpleJob;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.ta4j.core.*;
 import org.ta4j.core.num.PrecisionNum;
 
@@ -24,6 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Component
 @Slf4j(topic = "strategy")
 public abstract class BaseSwapStrategyJob implements SimpleJob {
 
