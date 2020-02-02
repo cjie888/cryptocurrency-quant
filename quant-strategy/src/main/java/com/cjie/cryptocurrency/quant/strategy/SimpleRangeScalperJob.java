@@ -4,6 +4,7 @@ package com.cjie.cryptocurrency.quant.strategy;
 import com.cjie.cryptocurrency.quant.backtest.StrategyBuilder;
 import com.cxytiandi.elasticjob.annotation.ElasticJobConf;
 import com.dangdang.ddframe.job.api.ShardingContext;
+import com.dangdang.ddframe.job.api.simple.SimpleJob;
 import lombok.extern.slf4j.Slf4j;
 
 import org.ta4j.core.*;
@@ -11,10 +12,10 @@ import org.ta4j.core.*;
 
 import java.math.BigDecimal;
 
-//@ElasticJobConf(name = "srsJob", cron = "20 */1 * * * ?",
-//        description = "srs", eventTraceRdbDataSource = "logDatasource")
+@ElasticJobConf(name = "srsJob", cron = "20 */1 * * * ?",
+        description = "srs", eventTraceRdbDataSource = "logDatasource")
 @Slf4j(topic = "strategy")
-public class SimpleRangeScalperJob extends BaseSwapStrategyJob {
+public class SimpleRangeScalperJob extends BaseSwapStrategyJob implements SimpleJob {
 
 
     @Override

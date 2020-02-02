@@ -27,7 +27,7 @@ import java.util.Map;
 
 @Component
 @Slf4j(topic = "strategy")
-public abstract class BaseSwapStrategyJob implements SimpleJob {
+public abstract class BaseSwapStrategyJob  {
 
     private Map<String,TimeSeries> timeSeriesMap = new HashMap<>();
 
