@@ -122,7 +122,7 @@ public class OkexSwapHistoryKLineTask {
                     String endTime =  dateFormat.format(new Date(minKline.getKlineTime().getTime() + 60L * 1000 * 10 * getMintutes(type)));
                     String klineS = swapMarketAPIService.getCandlesApi(instrumentId, null,
                            endTime, String.valueOf(getGranularity(type)));
-
+                    log.info("get swap history {} -{}", instrumentId, endTime);
                     List<String[]> apiKlineVOs = JSON.parseObject(klineS, new TypeReference<List<String[]>>() {
                     });
                     for (String[] apiKlineVO : apiKlineVOs) {
