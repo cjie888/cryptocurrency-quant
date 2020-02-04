@@ -65,7 +65,7 @@ public abstract class BaseSwapStrategyJob  {
                 timeSeries = new BaseTimeSeries();
                 timeSeries.setMaximumBarCount(1000);
                 if (CollectionUtils.isNotEmpty(apiKlineVOs)) {
-                    for (int i = apiKlineVOs.size() -1; i >= 0; i--) {
+                    for (int i = apiKlineVOs.size() -2; i >= 0; i--) {
                         String[] apiKlineVO = apiKlineVOs.get(i);
                         ZonedDateTime beginTime = ZonedDateTime.ofInstant(
                                 Instant.ofEpochMilli(dateFormat.parse(apiKlineVO[0]).getTime()), ZoneId.systemDefault());
@@ -94,20 +94,19 @@ public abstract class BaseSwapStrategyJob  {
             } else {
 
                 if (CollectionUtils.isNotEmpty(apiKlineVOs)) {
-                    for (int i = Math.min(apiKlineVOs.size() - 1, 4); i >= 0; i--) {
-                        String[] apiKlineVO = apiKlineVOs.get(i);
-                        ZonedDateTime beginTime = ZonedDateTime.ofInstant(
-                                Instant.ofEpochMilli(dateFormat.parse(apiKlineVO[0]).getTime()), ZoneId.systemDefault());
-                        double open = Double.valueOf(apiKlineVO[1]);
-                        double high = Double.valueOf(apiKlineVO[2]);
-                        double close = Double.valueOf(apiKlineVO[4]);
-                        double low = Double.valueOf(apiKlineVO[3]);
-                        double volume = Double.valueOf(apiKlineVO[5]);
-                        Bar bar = new BaseBar(beginTime, PrecisionNum.valueOf(open), PrecisionNum.valueOf(high),
-                                PrecisionNum.valueOf(low), PrecisionNum.valueOf(close), PrecisionNum.valueOf(volume),
-                                PrecisionNum.valueOf(0));
-                        timeSeries.addBar(bar, true);
-                    }
+                    String[] apiKlineVO = apiKlineVOs.get(1);
+                    ZonedDateTime beginTime = ZonedDateTime.ofInstant(
+                            Instant.ofEpochMilli(dateFormat.parse(apiKlineVO[0]).getTime()), ZoneId.systemDefault());
+                    double open = Double.valueOf(apiKlineVO[1]);
+                    double high = Double.valueOf(apiKlineVO[2]);
+                    double close = Double.valueOf(apiKlineVO[4]);
+                    double low = Double.valueOf(apiKlineVO[3]);
+                    double volume = Double.valueOf(apiKlineVO[5]);
+                    Bar bar = new BaseBar(beginTime, PrecisionNum.valueOf(open), PrecisionNum.valueOf(high),
+                            PrecisionNum.valueOf(low), PrecisionNum.valueOf(close), PrecisionNum.valueOf(volume),
+                            PrecisionNum.valueOf(0));
+                    timeSeries.addBar(bar, true);
+
                 }
 
             }
