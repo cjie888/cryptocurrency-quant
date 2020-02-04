@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Component
@@ -118,8 +119,10 @@ public class OkexSwapHistoryKLineTask {
                         continue;
                     }
                     int count = 0;
+                    String endTime =  dateFormat.format(new Date(minKline.getKlineTime().getTime() + 60L * 1000 * 10 * getMintutes(type)));
                     String klineS = swapMarketAPIService.getCandlesApi(instrumentId, null,
-                            dateFormat.format(minKline.getKlineTime().getTime() + 60L * 1000 * 10 * getMintutes(type)), String.valueOf(getGranularity(type)));
+                           endTime, String.valueOf(getGranularity(type)));
+
                     List<String[]> apiKlineVOs = JSON.parseObject(klineS, new TypeReference<List<String[]>>() {
                     });
                     for (String[] apiKlineVO : apiKlineVOs) {
