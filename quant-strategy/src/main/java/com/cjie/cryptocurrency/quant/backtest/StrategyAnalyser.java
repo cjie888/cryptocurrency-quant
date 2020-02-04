@@ -67,7 +67,8 @@ public class StrategyAnalyser {
                     Bar exitTick = series.getBar(exit.getIndex());
 
                     print("     -Entry: "+entry.getIndex()+" "+entryTick.getSimpleDateName()+" "+round(entry.getPrice(),4)
-                            +" Exit: "+exit.getIndex()+" "+exitTick.getSimpleDateName()+" "+round(exit.getPrice(),4)+" ");
+                            +" Exit: "+exit.getIndex()+" "+exitTick.getSimpleDateName()+" "+round(exit.getPrice(),4) + " "
+                            + "isProfit:" + (entry.isBuy() ? entryTick.getClosePrice().doubleValue() < exitTick.getClosePrice().doubleValue() : entryTick.getClosePrice().doubleValue() > exitTick.getClosePrice().doubleValue()));
                 }
             }
         }

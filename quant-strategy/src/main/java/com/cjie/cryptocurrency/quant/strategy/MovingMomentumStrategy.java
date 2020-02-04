@@ -29,8 +29,8 @@ import java.time.ZonedDateTime;
 import java.util.List;
 
 
-//@ElasticJobConf(name = "movingMomentumJob", cron = "30 */1 * * * ?",
-///        description = "移动动量策略", eventTraceRdbDataSource = "logDatasource")
+@ElasticJobConf(name = "movingMomentumJob", cron = "30 */1 * * * ?",
+        description = "移动动量策略", eventTraceRdbDataSource = "logDatasource")
 @Slf4j
 public class MovingMomentumStrategy implements SimpleJob {
 
@@ -94,7 +94,7 @@ public class MovingMomentumStrategy implements SimpleJob {
                 timeSeries = new BaseTimeSeries();
                 timeSeries.setMaximumBarCount(1000);
 
-                for (int i = currencyKlineDTOS.size() - 1; i >= 0; i--) {
+                for (int i = currencyKlineDTOS.size() - 2; i >= 0; i--) {
                     CurrencyKlineDTO currencyKlineDTO = currencyKlineDTOS.get(i);
                     ZonedDateTime beginTime = ZonedDateTime.ofInstant(
                             Instant.ofEpochMilli(Long.parseLong(currencyKlineDTO.getTime())), ZoneId.systemDefault());
@@ -108,7 +108,7 @@ public class MovingMomentumStrategy implements SimpleJob {
                 tradingRecord = new BaseTradingRecord();
 
             } else {
-                CurrencyKlineDTO currencyKlineDTO = currencyKlineDTOS.get(0);
+                CurrencyKlineDTO currencyKlineDTO = currencyKlineDTOS.get(1);
 
                 ZonedDateTime beginTime = ZonedDateTime.ofInstant(
                         Instant.ofEpochMilli(Long.parseLong(currencyKlineDTO.getTime())), ZoneId.systemDefault());

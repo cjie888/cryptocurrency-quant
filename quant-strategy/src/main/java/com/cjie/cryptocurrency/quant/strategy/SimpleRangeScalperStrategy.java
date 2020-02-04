@@ -9,6 +9,7 @@ import org.ta4j.core.indicators.bollinger.BollingerBandsMiddleIndicator;
 import org.ta4j.core.indicators.bollinger.BollingerBandsUpperIndicator;
 import org.ta4j.core.indicators.helpers.*;
 import org.ta4j.core.indicators.statistics.StandardDeviationIndicator;
+import org.ta4j.core.num.DoubleNum;
 import org.ta4j.core.num.Num;
 import org.ta4j.core.num.PrecisionNum;
 import org.ta4j.core.trading.rules.*;
@@ -52,7 +53,7 @@ public class SimpleRangeScalperStrategy implements StrategyBuilder {
         this.minPrice = new MinPriceIndicator(this.series);
         this.closePrice = new ClosePriceIndicator(this.series);
         this.maxPrice = new MaxPriceIndicator(this.series);
-        setParams(14, BigDecimal.valueOf(0.01));
+        setParams(14, BigDecimal.valueOf(0.5));
     }
 
     @Override
@@ -115,7 +116,7 @@ public class SimpleRangeScalperStrategy implements StrategyBuilder {
         Rule entrySignal2 = new UnderIndicatorRule(this.minPrice, this.upperBollingerBand);
 
         Rule exitSignal = new CrossedDownIndicatorRule(this.closePrice, threshold);
-        Rule exitSignal2 = new StopGainRule(closePrice, this.takeProfitValue);
+        Rule exitSignal2 = new TrailingStopLossRule(closePrice, DoubleNum.valueOf(this.takeProfitValue));
 
         return new BaseStrategy(entrySignal.and(entrySignal2), exitSignal.or(exitSignal2), 5);
 
@@ -131,7 +132,7 @@ public class SimpleRangeScalperStrategy implements StrategyBuilder {
         Rule entrySignal2 = new OverIndicatorRule(this.maxPrice, this.lowerBollingeBand);
 
         Rule exitSignal = new CrossedUpIndicatorRule(this.closePrice, threshold);
-        Rule exitSignal2 = new StopLossRule(closePrice, this.takeProfitValue); // stop loss long = stop gain short?
+        Rule exitSignal2 = new TrailingStopLossRule(closePrice, DoubleNum.valueOf(this.takeProfitValue)); // stop loss long = stop gain short?
 
         return new BaseStrategy(entrySignal.and(entrySignal2), exitSignal.or(exitSignal2), 5);
     }

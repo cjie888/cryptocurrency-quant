@@ -1,150 +1,132 @@
-
 package com.cjie.cryptocurrency.quant.strategy;
 
-import com.cjie.cryptocurrency.quant.api.okex.service.spot.CurrencyKlineDTO;
-import com.cjie.cryptocurrency.quant.api.okex.service.spot.SpotProductAPIService;
-import com.cjie.cryptocurrency.quant.service.WeiXinMessageService;
-import com.cxytiandi.elasticjob.annotation.ElasticJobConf;
-import com.dangdang.ddframe.job.api.ShardingContext;
-import com.dangdang.ddframe.job.api.simple.SimpleJob;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.cjie.cryptocurrency.quant.backtest.StrategyBuilder;
+import org.springframework.stereotype.Component;
 import org.ta4j.core.*;
 import org.ta4j.core.indicators.EMAIndicator;
-import org.ta4j.core.indicators.MACDIndicator;
-import org.ta4j.core.indicators.StochasticOscillatorKIndicator;
-import org.ta4j.core.indicators.helpers.ClosePriceIndicator;
-import org.ta4j.core.indicators.helpers.DifferenceIndicator;
-import org.ta4j.core.indicators.helpers.MaxPriceIndicator;
+import org.ta4j.core.indicators.bollinger.BollingerBandsLowerIndicator;
+import org.ta4j.core.indicators.bollinger.BollingerBandsMiddleIndicator;
+import org.ta4j.core.indicators.bollinger.BollingerBandsUpperIndicator;
+import org.ta4j.core.indicators.helpers.*;
+import org.ta4j.core.indicators.statistics.StandardDeviationIndicator;
+import org.ta4j.core.num.DoubleNum;
+import org.ta4j.core.num.Num;
 import org.ta4j.core.num.PrecisionNum;
-import org.ta4j.core.trading.rules.CrossedDownIndicatorRule;
-import org.ta4j.core.trading.rules.CrossedUpIndicatorRule;
-import org.ta4j.core.trading.rules.OverIndicatorRule;
-import org.ta4j.core.trading.rules.UnderIndicatorRule;
+import org.ta4j.core.trading.rules.*;
 
-import java.time.Instant;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 
-//@ElasticJobConf(name = "emaCrossJob", cron = "30 */1 * * * ?",
- //      description = "ema上穿下穿策略", eventTraceRdbDataSource = "logDatasource")
-@Slf4j
-public class EmaCrossStrategy implements SimpleJob {
+/*
+    http://www.investopedia.com/terms/s/scalping.asp
+    http://forexop.com/strategy/simple-range-scalper/
+ */
+public class EmaCrossStrategy implements StrategyBuilder {
 
-    private static final org.slf4j.Logger strategyLog = org.slf4j.LoggerFactory.getLogger("strategy");
+    private TimeSeries series;
 
+    private ClosePriceIndicator closePrice;
+    private Indicator<Num> maxPrice;
+    private Indicator<Num> minPrice;
 
-    private TimeSeries timeSeries;
+    EMAIndicator shortEma;
+    EMAIndicator longEma;
 
-    private Strategy strategy;
+    // parameters
+    private BigDecimal takeProfitValue;
 
-    private TradingRecord tradingRecord;
+    private int shortEmaCount;
 
-    @Autowired
-    private SpotProductAPIService spotProductAPIService;
-
-    @Autowired
-    private WeiXinMessageService weiXinMessageService;
-
+    private int longEmaCount;
     /**
-     * @param series a time series
-     * @return a moving momentum strategy
+     * Constructor
      */
-    public static Strategy buildStrategy(TimeSeries series) {
-        if (series == null) {
-            throw new IllegalArgumentException("Series cannot be null");
-        }
+    public EmaCrossStrategy(){}
 
-        ClosePriceIndicator closePrice = new ClosePriceIndicator(series);
-        
-        // The bias is bullish when the shorter-moving average moves above the longer moving average.
-        // The bias is bearish when the shorter-moving average moves below the longer moving average.
-        EMAIndicator shortEma = new EMAIndicator(closePrice, 7);
-        EMAIndicator longEma = new EMAIndicator(closePrice, 30);
-
-
-        // Entry rule
-        Rule entryRule = new CrossedUpIndicatorRule(shortEma, longEma);
-        
-        // Exit rule
-        Rule exitRule = new CrossedDownIndicatorRule(shortEma, longEma); // Trend
-
-        return new BaseStrategy(entryRule, exitRule);
+    public EmaCrossStrategy(TimeSeries series){
+        initStrategy(series);
     }
 
+    @Override
+    public void initStrategy(TimeSeries series) {
+        this.series = series;
+        this.minPrice = new MinPriceIndicator(this.series);
+        this.closePrice = new ClosePriceIndicator(this.series);
+        this.maxPrice = new MaxPriceIndicator(this.series);
+        setParams(7, 30, BigDecimal.valueOf(0.5));
+    }
 
     @Override
-    public void execute(ShardingContext shardingContext) {
-        try {
-            List<CurrencyKlineDTO> currencyKlineDTOS = spotProductAPIService.getCandles("okex", "btc-usdt", 60, null, null);
-            //log.info(JSON.toJSONString(currencyKlineDTOS));
-            // Getting the time series
-            if (timeSeries == null) {
-                timeSeries = new BaseTimeSeries();
-                timeSeries.setMaximumBarCount(1000);
-
-                for (int i = currencyKlineDTOS.size() - 1; i >= 0; i--) {
-                    CurrencyKlineDTO currencyKlineDTO = currencyKlineDTOS.get(i);
-                    ZonedDateTime beginTime = ZonedDateTime.ofInstant(
-                            Instant.ofEpochMilli(Long.parseLong(currencyKlineDTO.getTime())), ZoneId.systemDefault());
-
-                    timeSeries.addBar(beginTime, currencyKlineDTO.getOpen(), currencyKlineDTO.getHigh(), currencyKlineDTO.getLow(), currencyKlineDTO.getClose());
-                }
-                // Building the trading strategy
-                strategy = buildStrategy(timeSeries);
-
-                // Initializing the trading history
-                tradingRecord = new BaseTradingRecord();
-
-            } else {
-                CurrencyKlineDTO currencyKlineDTO = currencyKlineDTOS.get(0);
-
-                ZonedDateTime beginTime = ZonedDateTime.ofInstant(
-                        Instant.ofEpochMilli(Long.parseLong(currencyKlineDTO.getTime())), ZoneId.systemDefault());
-                timeSeries.addBar(beginTime, currencyKlineDTO.getOpen(), currencyKlineDTO.getHigh(), currencyKlineDTO.getLow(),
-                        currencyKlineDTO.getClose(), currencyKlineDTO.getVolume());
-
-            }
-
-            //log.info("Current bar is {}", JSON.toJSONString(timeSeries.getBarData()));
-
-
-            int endIndex = timeSeries.getEndIndex();
-            Bar newBar = timeSeries.getLastBar();
-            if (strategy.shouldEnter(endIndex)) {
-                StringBuilder stringBuilder = new StringBuilder();
-                stringBuilder.append("Buy").append(" ").append(newBar.getBeginTime())
-                        .append(" ").append(newBar.getClosePrice()).append("\r\n\n");
-                weiXinMessageService.sendMessage("buy-ema",  stringBuilder.toString());
-                // Our strategy should enter
-                strategyLog.info("Strategy should ENTER on {}, time:{}" , endIndex, newBar.getBeginTime());
-                boolean entered = tradingRecord.enter(endIndex, newBar.getClosePrice(), PrecisionNum.valueOf(10));
-                if (entered) {
-                    Order entry = tradingRecord.getLastEntry();
-                    log.info("Entered on " + entry.getIndex()
-                            + " (price=" + entry.getPrice().doubleValue()
-                            + ", amount=" + entry.getAmount().doubleValue() + ")");
-                }
-            } else if (strategy.shouldExit(endIndex)) {
-                StringBuilder stringBuilder = new StringBuilder();
-                stringBuilder.append("Sell").append(" ").append(newBar.getBeginTime())
-                        .append(" ").append(newBar.getClosePrice()).append("\r\n\n");
-                weiXinMessageService.sendMessage("sell-ema",  stringBuilder.toString());
-                // Our strategy should exit
-                strategyLog.info("Strategy should EXIT on {}, time:{}" , endIndex, newBar.getBeginTime());
-
-                boolean exited = tradingRecord.exit(endIndex, newBar.getClosePrice(), PrecisionNum.valueOf(10));
-                if (exited) {
-                    Order exit = tradingRecord.getLastExit();
-                    log.info("Exited on " + exit.getIndex()
-                            + " (price=" + exit.getPrice().doubleValue()
-                            + ", amount=" + exit.getAmount().doubleValue() + ")");
-                }
-            }
-        }catch (Exception e) {
-            log.error("Moving momentum strategy error", e);
+    public Strategy buildStrategy(Order.OrderType type){
+        if (type.equals(Order.OrderType.SELL)) {
+            return getShortStrategy();
         }
+        return getLongStrategy();
+    }
+
+    @Override
+    public TradingRecord getTradingRecord(Order.OrderType type) {
+        TimeSeriesManager seriesManager = new TimeSeriesManager(series);
+        return seriesManager.run(buildStrategy(type), type);
+    }
+
+    @Override
+    public TimeSeries getTimeSeries(){
+        return this.series;
+    }
+
+    @Override
+    public String getName(){
+        return "EmaCross";
+    }
+
+    @Override
+    public List<String> getParamters(){
+        ArrayList<String> parameters = new ArrayList<String>();
+        String takeProfit = "Take Profit: "+ this.takeProfitValue;
+        String emaShort = "EMA Short:"+ this.shortEmaCount;
+        String emaLong = "EMA Long:"+ this.longEmaCount;
+        parameters.add(takeProfit);
+        parameters.add(emaShort);
+        parameters.add(emaLong);
+        return  parameters;
+    }
+
+    /**
+     * call this function to change the parameter of the strategy
+     * @param shortEmaCount short exponential moving average the bands are based on
+     * @param takeProfitValue close a trade if this percentage profit is reached
+     */
+    public void setParams(int shortEmaCount, int longEmaCount, BigDecimal takeProfitValue){
+        this.takeProfitValue = takeProfitValue;
+        this.shortEmaCount = shortEmaCount;
+        this.longEmaCount = longEmaCount;
+
+        shortEma = new EMAIndicator(closePrice, shortEmaCount);
+        longEma = new EMAIndicator(closePrice, longEmaCount);
+    }
+
+    private Strategy getLongStrategy() {
+
+
+        Rule entrySignal = new CrossedUpIndicatorRule(shortEma, longEma);
+
+        Rule exitSignal = new CrossedDownIndicatorRule(shortEma, longEma);
+        Rule exitSignal2 = new TrailingStopLossRule(closePrice, DoubleNum.valueOf(this.takeProfitValue));
+
+        return new BaseStrategy(entrySignal, exitSignal.or(exitSignal2), 5);
+
+    }
+
+    private Strategy getShortStrategy(){
+
+        Rule entrySignal = new CrossedDownIndicatorRule(shortEma, longEma);
+
+        Rule exitSignal = new CrossedUpIndicatorRule(shortEma, longEma);
+        Rule exitSignal2 = new TrailingStopLossRule(closePrice, DoubleNum.valueOf(this.takeProfitValue));
+
+        return new BaseStrategy(entrySignal, exitSignal.or(exitSignal2), 5);
     }
 }
