@@ -256,7 +256,7 @@ public class OkexSwapHistoryKLineTask {
         client.getMessageConverters().set(1, new StringHttpMessageConverter(StandardCharsets.UTF_8));
         ResponseEntity<String> response = client.exchange(url, HttpMethod.GET, requestEntity, String.class);
         String body = response.getBody();
-        log.info(body);
+        //log.info(body);
         JSONObject result =  JSON.parseObject(body);
         return result.getString("data");
 
