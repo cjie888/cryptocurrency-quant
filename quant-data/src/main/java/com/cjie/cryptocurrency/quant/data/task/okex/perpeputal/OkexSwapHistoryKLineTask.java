@@ -248,6 +248,7 @@ public class OkexSwapHistoryKLineTask {
         HttpEntity requestEntity = new HttpEntity<>(headers);
 
         String url = "https://www.okex.com/v2/perpetual/pc/public/instruments/" + instrument + "/candles?granularity=" + type + "&size=1000&t=" + endDate.getTime();
+        System.out.println(url);
         SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
         requestFactory.setConnectTimeout(10000);// 设置超时
         requestFactory.setReadTimeout(10000);
