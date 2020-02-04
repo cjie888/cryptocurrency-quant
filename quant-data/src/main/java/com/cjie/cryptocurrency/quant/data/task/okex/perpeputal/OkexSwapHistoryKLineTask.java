@@ -114,12 +114,12 @@ public class OkexSwapHistoryKLineTask {
                     String currSuffix = suffix;
                     SwapKline minKline = swapKlineMapper.getMinKLine(
                             instrumentId, currSuffix);
-                    if ( minKline == null) {
+                    if (minKline == null) {
                         continue;
                     }
                     int count = 0;
                     String klineS = swapMarketAPIService.getCandlesApi(instrumentId, null,
-                            dateFormat.format(minKline.getKlineTime().getTime() + 3600L * 1000 * 10), String.valueOf(getGranularity(type)));
+                            dateFormat.format(minKline.getKlineTime().getTime() + 60L * 1000 * 10 * getMintutes(type)), String.valueOf(getGranularity(type)));
                     List<String[]> apiKlineVOs = JSON.parseObject(klineS, new TypeReference<List<String[]>>() {
                     });
                     for (String[] apiKlineVO : apiKlineVOs) {
@@ -160,6 +160,37 @@ public class OkexSwapHistoryKLineTask {
         } catch (Exception e) {
             log.error("get swap kline error", e);
         }
+    }
+
+    private Integer getMintutes(String type) {
+        if ("1min".equals(type)) {
+            return 1;
+        }
+        if ("5min".equals(type)) {
+            return 5;
+        }
+        if ("15min".equals(type)) {
+            return 15;
+        }
+        if ("30min".equals(type)) {
+            return 30;
+        }
+        if ("60min".equals(type)) {
+            return 60;
+        }
+        if ("1mon".equals(type)) {
+            return 60 * 24 * 30;
+        }
+        if ("1day".equals(type)) {
+            return 60 * 24;
+        }
+        if ("1week".equals(type)) {
+            return 60 * 24 * 7;
+        }
+        if ("1year".equals(type)) {
+            return 60 * 24 * 360;
+        }
+        return 60;
     }
 
     private Integer getGranularity(String type) {
