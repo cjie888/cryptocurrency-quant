@@ -247,7 +247,7 @@ public class OkexSwapHistoryKLineTask {
         headers.add("user-agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.84 Safari/537.36");
         HttpEntity requestEntity = new HttpEntity<>(headers);
 
-        String url = "v2/perpetual/pc/public/instruments/" + instrument + "/candles?granularity=" + type + "&size=1000&t=" + endDate.getTime();
+        String url = "https://www.okex.com/v2/perpetual/pc/public/instruments/" + instrument + "/candles?granularity=" + type + "&size=1000&t=" + endDate.getTime();
         SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
         requestFactory.setConnectTimeout(10000);// 设置超时
         requestFactory.setReadTimeout(10000);
