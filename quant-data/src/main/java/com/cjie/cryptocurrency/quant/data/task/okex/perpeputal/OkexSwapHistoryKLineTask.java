@@ -2,16 +2,27 @@ package com.cjie.cryptocurrency.quant.data.task.okex.perpeputal;
 
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
+import com.cjie.cryptocurrency.quant.api.okex.bean.spot.result.Ticker;
 import com.cjie.cryptocurrency.quant.api.okex.service.swap.SwapMarketAPIService;
 import com.cjie.cryptocurrency.quant.mapper.SwapKlineMapper;
 import com.cjie.cryptocurrency.quant.model.SwapKline;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
+import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.RestTemplate;
 
 import java.math.BigDecimal;
+import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -119,8 +130,8 @@ public class OkexSwapHistoryKLineTask {
                         continue;
                     }
                     int count = 0;
-                    String endTime =  dateFormat.format(new Date(minKline.getKlineTime().getTime() + 60L * 1000 * 10 * getMintutes(type)));
-                    String klineS = swapMarketAPIService.getCandlesApi(instrumentId, null,
+                    Date endTime =  new Date(minKline.getKlineTime().getTime() + 60L * 1000 * 10 * getMintutes(type));
+                    String klineS = getCandlesApi(instrumentId,
                            endTime, String.valueOf(getGranularity(type)));
                     List<String[]> apiKlineVOs = JSON.parseObject(klineS, new TypeReference<List<String[]>>() {
                     });
@@ -227,5 +238,29 @@ public class OkexSwapHistoryKLineTask {
             return 3600 * 24 * 360;
         }
         return 60;
+    }
+
+
+    public String getCandlesApi(String instrument,Date endDate, String type) {
+        MultiValueMap<String, String> headers = new HttpHeaders();
+        headers.add("Referer", "https://www.okex.com");
+        headers.add("user-agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.84 Safari/537.36");
+        HttpEntity requestEntity = new HttpEntity<>(headers);
+
+        String url = "v2/perpetual/pc/public/instruments/" + instrument + "/candles?granularity=" + type + "&size=1000&t=" + endDate.getTime();
+        SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
+        requestFactory.setConnectTimeout(10000);// 设置超时
+        requestFactory.setReadTimeout(10000);
+        RestTemplate client = new RestTemplate(requestFactory);
+
+        client.getMessageConverters().set(1, new StringHttpMessageConverter(StandardCharsets.UTF_8));
+        ResponseEntity<String> response = client.exchange(url, HttpMethod.GET, requestEntity, String.class);
+        String body = response.getBody();
+        log.info(body);
+        JSONObject result =  JSON.parseObject(body);
+        return result.getString("data");
+
+
+        //return spotProductAPIService.getTickerByProductId(baseCurrency.toUpperCase() + "-" + quotaCurrency.toUpperCase());
     }
 }
