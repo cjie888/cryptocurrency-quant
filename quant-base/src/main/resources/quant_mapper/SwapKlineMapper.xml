@@ -157,4 +157,10 @@
     and instrument_id = #{instrumentId,jdbcType=VARCHAR}
 
   </select>
+  <select id="getMinKLine" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from swap_kline${suffix}
+    where instrument_id = #{instrumentId,jdbcType=VARCHAR} order by kline_time limit 1
+  </select>
 </mapper>

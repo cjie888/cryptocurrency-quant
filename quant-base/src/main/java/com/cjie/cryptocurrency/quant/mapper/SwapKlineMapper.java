@@ -21,4 +21,8 @@ public interface SwapKlineMapper {
 
     SwapKline getKLine(@Param("time") Date klineTime, @Param("instrumentId") String instrumentId,
                        @Param("suffix") String suffix);
+
+
+    SwapKline getMinKLine(@Param("instrumentId") String instrumentId,
+                       @Param("suffix") String suffix);
 }

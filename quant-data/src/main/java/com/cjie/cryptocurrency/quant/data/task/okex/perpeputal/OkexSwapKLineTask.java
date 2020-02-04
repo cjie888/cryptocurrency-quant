@@ -1,4 +1,4 @@
-package com.cjie.cryptocurrency.quant.data.task.okex;
+package com.cjie.cryptocurrency.quant.data.task.okex.perpeputal;
 
 
 import com.alibaba.fastjson.JSON;
