@@ -114,7 +114,7 @@ public class OkexSwapHistoryKLineTask {
                     String currSuffix = suffix;
                     SwapKline minKline = swapKlineMapper.getMinKLine(
                             instrumentId, currSuffix);
-                    if ( minKline != null) {
+                    if ( minKline == null) {
                         continue;
                     }
                     int count = 0;
