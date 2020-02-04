@@ -124,7 +124,9 @@ public class OkexSwapHistoryKLineTask {
                            endTime, String.valueOf(getGranularity(type)));
                     List<String[]> apiKlineVOs = JSON.parseObject(klineS, new TypeReference<List<String[]>>() {
                     });
-                    log.info("get swap history {} -{}-{}", instrumentId, endTime, klineS);
+                    if (currSuffix.equals("")) {
+                        log.info("get swap history {} -{}-{}", instrumentId, endTime, klineS);
+                    }
                     for (String[] apiKlineVO : apiKlineVOs) {
                         String time = apiKlineVO[0];
                         if (count++ < 1) {
