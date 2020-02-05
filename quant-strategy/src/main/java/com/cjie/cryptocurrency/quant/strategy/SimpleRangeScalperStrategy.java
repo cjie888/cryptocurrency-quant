@@ -116,7 +116,7 @@ public class SimpleRangeScalperStrategy implements StrategyBuilder {
         Rule entrySignal2 = new UnderIndicatorRule(this.minPrice, this.upperBollingerBand);
 
         Rule exitSignal = new CrossedDownIndicatorRule(this.closePrice, threshold);
-        Rule exitSignal2 = new TrailingStopLossRule(closePrice, DoubleNum.valueOf(this.takeProfitValue));
+        Rule exitSignal2 = new TrailingStopLossRule(closePrice, PrecisionNum.valueOf(this.takeProfitValue));
 
         return new BaseStrategy(entrySignal.and(entrySignal2), exitSignal.or(exitSignal2), 5);
 
@@ -132,7 +132,7 @@ public class SimpleRangeScalperStrategy implements StrategyBuilder {
         Rule entrySignal2 = new OverIndicatorRule(this.maxPrice, this.lowerBollingeBand);
 
         Rule exitSignal = new CrossedUpIndicatorRule(this.closePrice, threshold);
-        Rule exitSignal2 = new TrailingStopLossRule(closePrice, DoubleNum.valueOf(this.takeProfitValue)); // stop loss long = stop gain short?
+        Rule exitSignal2 = new TrailingStopLossRule(closePrice, PrecisionNum.valueOf(this.takeProfitValue)); // stop loss long = stop gain short?
 
         return new BaseStrategy(entrySignal.and(entrySignal2), exitSignal.or(exitSignal2), 5);
     }
