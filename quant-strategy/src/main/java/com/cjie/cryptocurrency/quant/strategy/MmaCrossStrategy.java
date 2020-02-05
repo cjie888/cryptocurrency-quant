@@ -1,17 +1,10 @@
 package com.cjie.cryptocurrency.quant.strategy;
 
 import com.cjie.cryptocurrency.quant.backtest.StrategyBuilder;
-import org.springframework.stereotype.Component;
+import com.cjie.cryptocurrency.quant.indicator.MMAIndicator;
 import org.ta4j.core.*;
-import org.ta4j.core.indicators.EMAIndicator;
-import org.ta4j.core.indicators.bollinger.BollingerBandsLowerIndicator;
-import org.ta4j.core.indicators.bollinger.BollingerBandsMiddleIndicator;
-import org.ta4j.core.indicators.bollinger.BollingerBandsUpperIndicator;
 import org.ta4j.core.indicators.helpers.*;
-import org.ta4j.core.indicators.statistics.StandardDeviationIndicator;
 import org.ta4j.core.num.DoubleNum;
-import org.ta4j.core.num.Num;
-import org.ta4j.core.num.PrecisionNum;
 import org.ta4j.core.trading.rules.*;
 
 import java.math.BigDecimal;
@@ -20,27 +13,27 @@ import java.util.List;
 
 
 
-public class EmaCrossStrategy implements StrategyBuilder {
+public class MmaCrossStrategy implements StrategyBuilder {
 
     private TimeSeries series;
 
     private ClosePriceIndicator closePrice;
 
-    EMAIndicator shortEma;
-    EMAIndicator longEma;
+    MMAIndicator shortMma;
+    MMAIndicator longMma;
 
     // parameters
     private BigDecimal takeProfitValue;
 
-    private int shortEmaCount;
+    private int shortMmaCount;
 
-    private int longEmaCount;
+    private int longMmaCount;
     /**
      * Constructor
      */
-    public EmaCrossStrategy(){}
+    public MmaCrossStrategy(){}
 
-    public EmaCrossStrategy(TimeSeries series){
+    public MmaCrossStrategy(TimeSeries series){
         initStrategy(series);
     }
 
@@ -72,54 +65,54 @@ public class EmaCrossStrategy implements StrategyBuilder {
 
     @Override
     public String getName(){
-        return "EmaCross";
+        return "MmaCross";
     }
 
     @Override
     public List<String> getParamters(){
         ArrayList<String> parameters = new ArrayList<String>();
         String takeProfit = "Take Profit: "+ this.takeProfitValue;
-        String emaShort = "EMA Short:"+ this.shortEmaCount;
-        String emaLong = "EMA Long:"+ this.longEmaCount;
+        String mmaShort = "MMA Short:"+ this.shortMmaCount;
+        String mmaLong = "MMA Long:"+ this.longMmaCount;
         parameters.add(takeProfit);
-        parameters.add(emaShort);
-        parameters.add(emaLong);
+        parameters.add(mmaShort);
+        parameters.add(mmaLong);
         return  parameters;
     }
 
     /**
      * call this function to change the parameter of the strategy
-     * @param shortEmaCount short exponential moving average the bands are based on
+     * @param shortMmaCount short moving average the bands are based on
      * @param takeProfitValue close a trade if this percentage profit is reached
      */
-    public void setParams(int shortEmaCount, int longEmaCount, BigDecimal takeProfitValue){
+    public void setParams(int shortMmaCount, int longMmaCount, BigDecimal takeProfitValue){
         this.takeProfitValue = takeProfitValue;
-        this.shortEmaCount = shortEmaCount;
-        this.longEmaCount = longEmaCount;
+        this.shortMmaCount = shortMmaCount;
+        this.longMmaCount = longMmaCount;
 
-        shortEma = new EMAIndicator(closePrice, shortEmaCount);
-        longEma = new EMAIndicator(closePrice, longEmaCount);
+        shortMma = new MMAIndicator(closePrice, shortMmaCount);
+        longMma = new MMAIndicator(closePrice, longMmaCount);
     }
 
     private Strategy getLongStrategy() {
 
 
-        Rule entrySignal = new CrossedUpIndicatorRule(shortEma, longEma);
+        Rule entrySignal = new CrossedUpIndicatorRule(shortMma, longMma);
 
-        Rule exitSignal = new CrossedDownIndicatorRule(shortEma, longEma);
+        Rule exitSignal = new CrossedDownIndicatorRule(shortMma, longMma);
         Rule exitSignal2 = new TrailingStopLossRule(closePrice, DoubleNum.valueOf(this.takeProfitValue));
 
-        return new BaseStrategy(entrySignal, exitSignal.or(exitSignal2), longEmaCount);
+        return new BaseStrategy(entrySignal, exitSignal.or(exitSignal2), longMmaCount);
 
     }
 
     private Strategy getShortStrategy(){
 
-        Rule entrySignal = new CrossedDownIndicatorRule(shortEma, longEma);
+        Rule entrySignal = new CrossedDownIndicatorRule(shortMma, longMma);
 
-        Rule exitSignal = new CrossedUpIndicatorRule(shortEma, longEma);
+        Rule exitSignal = new CrossedUpIndicatorRule(shortMma, longMma);
         Rule exitSignal2 = new TrailingStopLossRule(closePrice, DoubleNum.valueOf(this.takeProfitValue));
 
-        return new BaseStrategy(entrySignal, exitSignal.or(exitSignal2), longEmaCount);
+        return new BaseStrategy(entrySignal, exitSignal.or(exitSignal2), longMmaCount);
     }
 }

@@ -15,6 +15,7 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -35,7 +36,7 @@ public class SwapLoader{
             String[] line;
             reader.readNext();
             while ((line = reader.readNext()) != null) {
-                ZonedDateTime date = ZonedDateTime.parse(line[0] + " PST", DATE_FORMAT_HOURLY_MINUTE);
+                ZonedDateTime date = ZonedDateTime.parse(line[0] + " GMT", DATE_FORMAT_HOURLY_MINUTE);
                 double open = Double.parseDouble(line[1]);
                 double high = Double.parseDouble(line[2]);
                 double low = Double.parseDouble(line[3]);

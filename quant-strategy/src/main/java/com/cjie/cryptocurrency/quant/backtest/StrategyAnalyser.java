@@ -10,6 +10,7 @@ import org.ta4j.core.num.Num;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.sql.Date;
 
 public class StrategyAnalyser {
 
@@ -59,6 +60,7 @@ public class StrategyAnalyser {
             print("     -Maximum Drawdown:                  " + maxDrawDown.calculate(series, record));
 
             print(" -Trades:");
+            double profitSum = 0.0;
             if (showTrades) {
                 for (int i = 0; i < record.getTrades().size(); i++) {
                     Order entry = record.getTrades().get(i).getEntry();
@@ -66,11 +68,15 @@ public class StrategyAnalyser {
                     Bar entryTick = series.getBar(entry.getIndex());
                     Bar exitTick = series.getBar(exit.getIndex());
 
-                    print("     -Entry: "+entry.getIndex()+" "+entryTick.getSimpleDateName()+" "+round(entry.getPrice(),4)
-                            +" Exit: "+exit.getIndex()+" "+exitTick.getSimpleDateName()+" "+round(exit.getPrice(),4) + " "
-                            + "isProfit:" + (entry.isBuy() ? entryTick.getClosePrice().doubleValue() < exitTick.getClosePrice().doubleValue() : entryTick.getClosePrice().doubleValue() > exitTick.getClosePrice().doubleValue()));
+                    profitSum += (entry.isBuy() ? exitTick.getClosePrice().doubleValue()  - entryTick.getClosePrice().doubleValue() : entryTick.getClosePrice().doubleValue() - exitTick.getClosePrice().doubleValue());
+
+                    print("     -Entry: "+entry.getIndex()+" "+ Date.from(entryTick.getBeginTime().toInstant())+" "+round(entry.getPrice(),4)
+                            +" Exit: "+exit.getIndex()+" "+Date.from(exitTick.getBeginTime().toInstant())+" "+round(exit.getPrice(),4) + " "
+                            + "isProfit:" + (entry.isBuy() ? exitTick.getClosePrice().doubleValue()  - entryTick.getClosePrice().doubleValue() : entryTick.getClosePrice().doubleValue() - exitTick.getClosePrice().doubleValue()));
                 }
             }
+            print("  -Profit Sum:                  " + profitSum);
+
         }
     }
 
