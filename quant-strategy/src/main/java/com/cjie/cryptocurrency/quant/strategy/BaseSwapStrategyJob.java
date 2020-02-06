@@ -118,8 +118,9 @@ public abstract class BaseSwapStrategyJob  {
             int endIndex = timeSeries.getEndIndex();
             Bar newBar = timeSeries.getLastBar();
 
-            log.info("kline date:" + JSON.toJSONString(newBar.getBeginTime()) + "price:" + newBar.getClosePrice());
-
+            if (instrumentId.contains("BTC")) {
+                log.info("kline date:" + JSON.toJSONString(newBar.getBeginTime()) + "price:" + newBar.getClosePrice());
+            }
 
             if ((longTradingRecord.getCurrentTrade().isNew() || longTradingRecord.getCurrentTrade().isClosed() )&&longStrategy.shouldEnter(endIndex, longTradingRecord)) {
                 StringBuilder stringBuilder = new StringBuilder();
