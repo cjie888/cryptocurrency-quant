@@ -46,6 +46,8 @@ public abstract class BaseSwapStrategyJob  {
     @Autowired
     private SwapOrderMapper swapOrderMapper;
 
+    private boolean isMock = true;
+
     public abstract StrategyBuilder buildStrategy(TimeSeries timeSeries);
 
 
@@ -134,16 +136,8 @@ public abstract class BaseSwapStrategyJob  {
                             + ", price=" + entry.getPrice().doubleValue()
                             + ", amount=" + entry.getAmount().doubleValue() + ")");
                 }
-                SwapOrder swapOrder = SwapOrder.builder()
-                        .createTime(new Date())
-                        .instrumentId(instrumentId)
-                        .isMock(Byte.valueOf("1"))
-                        .size(new BigDecimal(100))
-                        .price(BigDecimal.valueOf(newBar.getClosePrice().doubleValue()))
-                        .strategy(strategy.getName())
-                        .type(Byte.valueOf("1"))
-                        .build();
-                swapOrderMapper.insert(swapOrder);
+                createOrder(instrumentId, "1", BigDecimal.valueOf(newBar.getClosePrice().doubleValue()), new BigDecimal(100));
+
             } else if (longTradingRecord.getCurrentTrade().isOpened() && longStrategy.shouldExit(endIndex, longTradingRecord)) {
                 StringBuilder stringBuilder = new StringBuilder();
                 stringBuilder.append("平多").append(" ").append(instrumentId).append(" ").append(newBar.getBeginTime())
@@ -162,16 +156,8 @@ public abstract class BaseSwapStrategyJob  {
                             + ", price=" + exit.getPrice().doubleValue()
                             + ", amount=" + exit.getAmount().doubleValue() + ")");
                 }
-                SwapOrder swapOrder = SwapOrder.builder()
-                        .createTime(new Date())
-                        .instrumentId(instrumentId)
-                        .isMock(Byte.valueOf("1"))
-                        .size(new BigDecimal(100))
-                        .price(BigDecimal.valueOf(newBar.getClosePrice().doubleValue()))
-                        .strategy("SimpleRangeScalper")
-                        .type(Byte.valueOf("3"))
-                        .build();
-                swapOrderMapper.insert(swapOrder);
+                createOrder(instrumentId, "3", BigDecimal.valueOf(newBar.getClosePrice().doubleValue()), new BigDecimal(100));
+
             }
 
             if ((shortTradingRecord.getCurrentTrade().isNew() || shortTradingRecord.getCurrentTrade().isClosed()) && shortStrategy.shouldEnter(endIndex)) {
@@ -191,16 +177,7 @@ public abstract class BaseSwapStrategyJob  {
                             + ", price=" + entry.getPrice().doubleValue()
                             + ", amount=" + entry.getAmount().doubleValue() + ")");
                 }
-                SwapOrder swapOrder = SwapOrder.builder()
-                        .createTime(new Date())
-                        .instrumentId(instrumentId)
-                        .isMock(Byte.valueOf("1"))
-                        .size(new BigDecimal(100))
-                        .price(BigDecimal.valueOf(newBar.getClosePrice().doubleValue()))
-                        .strategy("SimpleRangeScalper")
-                        .type(Byte.valueOf("2"))
-                        .build();
-                swapOrderMapper.insert(swapOrder);
+                createOrder(instrumentId, "2", BigDecimal.valueOf(newBar.getClosePrice().doubleValue()), new BigDecimal(100));
             } else if (shortTradingRecord.getCurrentTrade().isOpened() && shortStrategy.shouldExit(endIndex, shortTradingRecord)) {
                 StringBuilder stringBuilder = new StringBuilder();
                 stringBuilder.append("平空").append(" ").append(instrumentId).append(" ").append(newBar.getBeginTime())
@@ -219,19 +196,27 @@ public abstract class BaseSwapStrategyJob  {
                             + ", price=" + exit.getPrice().doubleValue()
                             + ", amount=" + exit.getAmount().doubleValue() + ")");
                 }
-                SwapOrder swapOrder = SwapOrder.builder()
-                        .createTime(new Date())
-                        .instrumentId(instrumentId)
-                        .isMock(Byte.valueOf("1"))
-                        .size(new BigDecimal(100))
-                        .price(BigDecimal.valueOf(newBar.getClosePrice().doubleValue()))
-                        .strategy("SimpleRangeScalper")
-                        .type(Byte.valueOf("4"))
-                        .build();
-                swapOrderMapper.insert(swapOrder);
+                createOrder(instrumentId, "4", BigDecimal.valueOf(newBar.getClosePrice().doubleValue()), new BigDecimal(100));
             }
         } catch (Exception e) {
             log.error("Simple range scalper strategy error", e);
         }
+    }
+
+    private void createOrder(String instrumentId, String type, BigDecimal price, BigDecimal size) {
+        SwapOrder swapOrder = SwapOrder.builder()
+                .createTime(new Date())
+                .instrumentId(instrumentId)
+                .isMock(isMock ? Byte.valueOf("1") : Byte.valueOf("0"))
+                .size(size)
+                .price(price)
+                .strategy(strategyMap.get(instrumentId).getName())
+                .type(Byte.valueOf(type))
+                .build();
+        swapOrderMapper.insert(swapOrder);
+    }
+
+    public void setMock(boolean mock) {
+        isMock = mock;
     }
 }
