@@ -67,7 +67,7 @@ public abstract class BaseSwapStrategyJob  {
                 timeSeries = new BaseTimeSeries();
                 timeSeries.setMaximumBarCount(1000);
                 if (CollectionUtils.isNotEmpty(apiKlineVOs)) {
-                    for (int i = apiKlineVOs.size() -2; i >= 0; i--) {
+                    for (int i = apiKlineVOs.size() -1; i > 0; i--) {
                         String[] apiKlineVO = apiKlineVOs.get(i);
                         ZonedDateTime beginTime = ZonedDateTime.ofInstant(
                                 Instant.ofEpochMilli(dateFormat.parse(apiKlineVO[0]).getTime()), ZoneId.systemDefault());
