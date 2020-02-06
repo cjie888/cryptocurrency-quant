@@ -1,7 +1,6 @@
 package com.cjie.cryptocurrency.quant.strategy;
 
 import com.cjie.cryptocurrency.quant.backtest.StrategyBuilder;
-import org.springframework.stereotype.Component;
 import org.ta4j.core.*;
 import org.ta4j.core.indicators.EMAIndicator;
 import org.ta4j.core.indicators.bollinger.BollingerBandsLowerIndicator;
@@ -9,7 +8,6 @@ import org.ta4j.core.indicators.bollinger.BollingerBandsMiddleIndicator;
 import org.ta4j.core.indicators.bollinger.BollingerBandsUpperIndicator;
 import org.ta4j.core.indicators.helpers.*;
 import org.ta4j.core.indicators.statistics.StandardDeviationIndicator;
-import org.ta4j.core.num.DoubleNum;
 import org.ta4j.core.num.Num;
 import org.ta4j.core.num.PrecisionNum;
 import org.ta4j.core.trading.rules.*;
@@ -25,11 +23,17 @@ import java.util.List;
  */
 public class SimpleRangeScalperStrategy implements StrategyBuilder {
 
+    private boolean isMock;
+
     private TimeSeries series;
 
     private ClosePriceIndicator closePrice;
     private Indicator<Num> maxPrice;
     private Indicator<Num> minPrice;
+
+    // parameters
+    private BigDecimal takeProfitValue;
+    private int emaForBollingerBandValue;
 
     private BollingerBandsUpperIndicator upperBollingerBand;
     private BollingerBandsMiddleIndicator middleBollingerBand;
@@ -46,10 +50,6 @@ public class SimpleRangeScalperStrategy implements StrategyBuilder {
     public BollingerBandsLowerIndicator getLowerBollingeBand() {
         return lowerBollingeBand;
     }
-
-    // parameters
-    private BigDecimal takeProfitValue;
-    private int emaForBollingerBandValue;
     /**
      * Constructor
      */
@@ -100,6 +100,11 @@ public class SimpleRangeScalperStrategy implements StrategyBuilder {
         parameters.add(takeProfit);
         parameters.add(ema);
         return  parameters;
+    }
+
+    @Override
+    public boolean isMock() {
+        return isMock;
     }
 
     /**

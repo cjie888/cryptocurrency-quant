@@ -4,14 +4,8 @@ import com.cjie.cryptocurrency.quant.backtest.StrategyBuilder;
 import org.springframework.stereotype.Component;
 import org.ta4j.core.*;
 import org.ta4j.core.indicators.EMAIndicator;
-import org.ta4j.core.indicators.bollinger.BollingerBandsLowerIndicator;
-import org.ta4j.core.indicators.bollinger.BollingerBandsMiddleIndicator;
-import org.ta4j.core.indicators.bollinger.BollingerBandsUpperIndicator;
 import org.ta4j.core.indicators.helpers.*;
-import org.ta4j.core.indicators.statistics.StandardDeviationIndicator;
 import org.ta4j.core.num.DoubleNum;
-import org.ta4j.core.num.Num;
-import org.ta4j.core.num.PrecisionNum;
 import org.ta4j.core.trading.rules.*;
 
 import java.math.BigDecimal;
@@ -85,6 +79,11 @@ public class EmaCrossStrategy implements StrategyBuilder {
         parameters.add(emaShort);
         parameters.add(emaLong);
         return  parameters;
+    }
+
+    @Override
+    public boolean isMock() {
+        return false;
     }
 
     /**

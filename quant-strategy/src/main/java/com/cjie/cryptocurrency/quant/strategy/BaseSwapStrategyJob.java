@@ -46,8 +46,6 @@ public abstract class BaseSwapStrategyJob  {
     @Autowired
     private SwapOrderMapper swapOrderMapper;
 
-    private boolean isMock = true;
-
     public abstract StrategyBuilder buildStrategy(TimeSeries timeSeries);
 
 
@@ -124,6 +122,13 @@ public abstract class BaseSwapStrategyJob  {
                 double upBollingeBand =  ((SimpleRangeScalperStrategy)strategy).getUpperBollingerBand().getValue(endIndex).doubleValue();
                 log.info("kline date:" + JSON.toJSONString(newBar.getBeginTime()) + "price:" + newBar.getClosePrice() +
                         " middleBollingeBand:" + middleBollingeBand + " lowerBollingeBand:" + lowerBollingeBand + " upBollingeBand" + upBollingeBand);
+            }
+
+            if (instrumentId.contains("BTC") && strategy instanceof MmaCrossStrategy) {
+                double shortMMa =  ((MmaCrossStrategy)strategy).getShortMma().getValue(endIndex).doubleValue();
+                double longMMa =  ((MmaCrossStrategy)strategy).getLongMma().getValue(endIndex).doubleValue();
+                log.info("kline date:" + JSON.toJSONString(newBar.getBeginTime()) + "price:" + newBar.getClosePrice() +
+                        " shortMMa:" + shortMMa + " longMMa:" + longMMa);
             }
 
             if ((longTradingRecord.getCurrentTrade().isNew() || longTradingRecord.getCurrentTrade().isClosed() )&&longStrategy.shouldEnter(endIndex, longTradingRecord)) {
@@ -214,16 +219,12 @@ public abstract class BaseSwapStrategyJob  {
         SwapOrder swapOrder = SwapOrder.builder()
                 .createTime(new Date())
                 .instrumentId(instrumentId)
-                .isMock(isMock ? Byte.valueOf("1") : Byte.valueOf("0"))
+                .isMock(strategyMap.get(instrumentId).isMock() ? Byte.valueOf("1") : Byte.valueOf("0"))
                 .size(size)
                 .price(price)
                 .strategy(strategyMap.get(instrumentId).getName())
                 .type(Byte.valueOf(type))
                 .build();
         swapOrderMapper.insert(swapOrder);
-    }
-
-    public void setMock(boolean mock) {
-        isMock = mock;
     }
 }

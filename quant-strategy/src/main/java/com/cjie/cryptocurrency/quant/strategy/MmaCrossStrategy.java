@@ -37,6 +37,15 @@ public class MmaCrossStrategy implements StrategyBuilder {
         initStrategy(series);
     }
 
+    public MMAIndicator getShortMma() {
+        return shortMma;
+    }
+
+
+    public MMAIndicator getLongMma() {
+        return longMma;
+    }
+
     @Override
     public void initStrategy(TimeSeries series) {
         this.series = series;
@@ -78,6 +87,11 @@ public class MmaCrossStrategy implements StrategyBuilder {
         parameters.add(mmaShort);
         parameters.add(mmaLong);
         return  parameters;
+    }
+
+    @Override
+    public boolean isMock() {
+        return false;
     }
 
     /**
