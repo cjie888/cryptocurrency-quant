@@ -5,6 +5,7 @@ import com.cjie.cryptocurrency.quant.indicator.MMAIndicator;
 import org.ta4j.core.*;
 import org.ta4j.core.indicators.helpers.*;
 import org.ta4j.core.num.DoubleNum;
+import org.ta4j.core.num.PrecisionNum;
 import org.ta4j.core.trading.rules.*;
 
 import java.math.BigDecimal;
@@ -114,7 +115,7 @@ public class MmaCrossStrategy implements StrategyBuilder {
         Rule entrySignal = new CrossedUpIndicatorRule(shortMma, longMma);
 
         Rule exitSignal = new CrossedDownIndicatorRule(shortMma, longMma);
-        Rule exitSignal2 = new TrailingStopLossRule(closePrice, DoubleNum.valueOf(this.takeProfitValue));
+        Rule exitSignal2 = new TrailingStopLossRule(closePrice, PrecisionNum.valueOf(this.takeProfitValue));
 
         return new BaseStrategy(entrySignal, exitSignal.or(exitSignal2), longMmaCount);
 
@@ -125,7 +126,7 @@ public class MmaCrossStrategy implements StrategyBuilder {
         Rule entrySignal = new CrossedDownIndicatorRule(shortMma, longMma);
 
         Rule exitSignal = new CrossedUpIndicatorRule(shortMma, longMma);
-        Rule exitSignal2 = new TrailingStopLossRule(closePrice, DoubleNum.valueOf(this.takeProfitValue));
+        Rule exitSignal2 = new TrailingStopLossRule(closePrice, PrecisionNum.valueOf(this.takeProfitValue));
 
         return new BaseStrategy(entrySignal, exitSignal.or(exitSignal2), longMmaCount);
     }
