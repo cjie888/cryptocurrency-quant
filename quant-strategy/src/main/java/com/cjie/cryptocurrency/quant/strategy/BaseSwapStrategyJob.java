@@ -118,7 +118,7 @@ public abstract class BaseSwapStrategyJob  {
             int endIndex = timeSeries.getEndIndex();
             Bar newBar = timeSeries.getLastBar();
 
-            if (instrumentId.contains("BTC") && shortStrategy instanceof SimpleRangeScalperStrategy) {
+            if (instrumentId.contains("BTC") && strategy instanceof SimpleRangeScalperStrategy) {
                 double lowerBollingeBand =  ((SimpleRangeScalperStrategy)strategy).getLowerBollingeBand().getValue(endIndex).doubleValue();
                 double middleBollingeBand =  ((SimpleRangeScalperStrategy)strategy).getMiddleBollingerBand().getValue(endIndex).doubleValue();
                 double upBollingeBand =  ((SimpleRangeScalperStrategy)strategy).getUpperBollingerBand().getValue(endIndex).doubleValue();
