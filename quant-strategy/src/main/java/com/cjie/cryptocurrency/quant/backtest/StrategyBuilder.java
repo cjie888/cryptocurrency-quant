@@ -50,4 +50,7 @@ public interface StrategyBuilder{
      */
     List<String> getParamters();
 
+
+    boolean isMock();
+
 }
