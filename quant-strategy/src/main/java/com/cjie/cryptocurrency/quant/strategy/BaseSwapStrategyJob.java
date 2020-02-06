@@ -51,9 +51,9 @@ public abstract class BaseSwapStrategyJob  {
 
     public void executeStrategy(String instrumentId) {
 
+        StrategyBuilder strategy = strategyMap.get(instrumentId);
         try {
             TimeSeries timeSeries =  timeSeriesMap.get(instrumentId);
-            StrategyBuilder strategy = strategyMap.get(instrumentId);
 
             TradingRecord longTradingRecord = longTradingRecordMap.get(instrumentId);
             TradingRecord shortTradingRecord = shortTradingRecordMap.get(instrumentId);
@@ -135,9 +135,9 @@ public abstract class BaseSwapStrategyJob  {
                 StringBuilder stringBuilder = new StringBuilder();
                 stringBuilder.append("开多").append(" ").append(instrumentId).append(" ").append(newBar.getBeginTime())
                         .append(" ").append(newBar.getClosePrice()).append("\r\n\n");
-                weiXinMessageService.sendMessage("开多-srs-" + instrumentId,  stringBuilder.toString());
+                weiXinMessageService.sendMessage("开多-" + strategy.getName()  + instrumentId,  stringBuilder.toString());
                 // Our strategy should enter
-                log.info("Simple Range Scalper Strategy {} should ENTER on {}, time:{}" , instrumentId, endIndex, newBar.getBeginTime());
+                log.info("Strategy {} {} should ENTER on {}, time:{}" , strategy, instrumentId, endIndex, newBar.getBeginTime());
                 boolean entered = longTradingRecord.enter(endIndex, newBar.getClosePrice(), PrecisionNum.valueOf(10));
                 if (entered) {
                     Order entry = longTradingRecord.getLastEntry();
@@ -154,9 +154,9 @@ public abstract class BaseSwapStrategyJob  {
                 StringBuilder stringBuilder = new StringBuilder();
                 stringBuilder.append("平多").append(" ").append(instrumentId).append(" ").append(newBar.getBeginTime())
                         .append(" ").append(newBar.getClosePrice()).append("\r\n\n");
-                weiXinMessageService.sendMessage("平多-srs" + instrumentId,  stringBuilder.toString());
+                weiXinMessageService.sendMessage("平多" + strategy.getName() + instrumentId,  stringBuilder.toString());
                 // Our strategy should exit
-                log.info("Simple Range Scalper Strategy {} should EXIT on {}, time:{}" , instrumentId, endIndex, newBar.getBeginTime());
+                log.info( "Strategy {} {} should EXIT on {}, time:{}" , strategy.getName(), instrumentId, endIndex, newBar.getBeginTime());
 
                 boolean exited = longTradingRecord.exit(endIndex, newBar.getClosePrice(), PrecisionNum.valueOf(10));
                 if (exited) {
@@ -176,9 +176,9 @@ public abstract class BaseSwapStrategyJob  {
                 StringBuilder stringBuilder = new StringBuilder();
                 stringBuilder.append("开空").append(" ").append(instrumentId).append(" ").append(newBar.getBeginTime())
                         .append(" ").append(newBar.getClosePrice()).append("\r\n\n");
-                weiXinMessageService.sendMessage("开空-srs" + instrumentId,  stringBuilder.toString());
+                weiXinMessageService.sendMessage("开空" + strategy.getName() + instrumentId,  stringBuilder.toString());
                 // Our strategy should enter
-                log.info("Simple Range Scalper Strategy {} should ENTER on {}, time:{}" , instrumentId, endIndex, newBar.getBeginTime());
+                log.info("Strategy {} {} should ENTER on {}, time:{}" , shortStrategy.getName(), instrumentId, endIndex, newBar.getBeginTime());
                 boolean entered = shortTradingRecord.enter(endIndex, newBar.getClosePrice(), PrecisionNum.valueOf(10));
                 if (entered) {
                     Order entry = shortTradingRecord.getLastEntry();
@@ -194,9 +194,9 @@ public abstract class BaseSwapStrategyJob  {
                 StringBuilder stringBuilder = new StringBuilder();
                 stringBuilder.append("平空").append(" ").append(instrumentId).append(" ").append(newBar.getBeginTime())
                         .append(" ").append(newBar.getClosePrice()).append("\r\n\n");
-                weiXinMessageService.sendMessage("平空-srs" + instrumentId,  stringBuilder.toString());
+                weiXinMessageService.sendMessage("平空" + strategy.getName() + instrumentId,  stringBuilder.toString());
                 // Our strategy should exit
-                log.info("Simple Range Scalper Strategy {} should EXIT on {}, time:{}" , instrumentId, endIndex, newBar.getBeginTime());
+                log.info("Strategy {} {} should EXIT on {}, time:{}" , strategy.getName(), instrumentId, endIndex, newBar.getBeginTime());
 
                 boolean exited = shortTradingRecord.exit(endIndex, newBar.getClosePrice(), PrecisionNum.valueOf(10));
                 if (exited) {
@@ -211,7 +211,7 @@ public abstract class BaseSwapStrategyJob  {
                 createOrder(instrumentId, "4", BigDecimal.valueOf(newBar.getClosePrice().doubleValue()), new BigDecimal(100));
             }
         } catch (Exception e) {
-            log.error("Simple range scalper strategy error", e);
+            log.error("Strategy {} error", strategy.getName(), e);
         }
     }
 
