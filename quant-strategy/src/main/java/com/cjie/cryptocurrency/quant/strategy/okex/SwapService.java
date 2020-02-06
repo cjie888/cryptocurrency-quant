@@ -54,15 +54,17 @@ public class SwapService {
     private Map<String,LocalDateTime>  lastDates = new ConcurrentHashMap<>();
 
     public void computeBenefit() {
-        String[] instrumentIds = new String[]{"BTC-USD-SWAP","ETH-USD-SWAP",
+        String[] instrumentIds = new String[]{
+                //"BTC-USD-SWAP",
+                "ETH-USD-SWAP",
                 //"BCH-USD-SWAP",
                 //"EOS-USD-SWAP",
                 "XRP-USD-SWAP",
                 //"LTC-USD-SWAP"
         };
         Map<String,BigDecimal> costs = new HashMap<>();
-        costs.put("BTC-USD-SWAP", new BigDecimal("0.05"));
-        costs.put("ETH-USD-SWAP", new BigDecimal("1.4"));
+        //costs.put("BTC-USD-SWAP", new BigDecimal("0.05"));
+        costs.put("ETH-USD-SWAP", new BigDecimal("2.0"));
         //costs.put("BCH-USD-SWAP",new BigDecimal("0.9"));
         //costs.put("EOS-USD-SWAP",new BigDecimal("60"));
         costs.put("XRP-USD-SWAP",new BigDecimal("700"));
