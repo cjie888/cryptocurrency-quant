@@ -118,8 +118,12 @@ public abstract class BaseSwapStrategyJob  {
             int endIndex = timeSeries.getEndIndex();
             Bar newBar = timeSeries.getLastBar();
 
-            if (instrumentId.contains("BTC")) {
-                log.info("kline date:" + JSON.toJSONString(newBar.getBeginTime()) + "price:" + newBar.getClosePrice());
+            if (instrumentId.contains("BTC") && shortStrategy instanceof SimpleRangeScalperStrategy) {
+                double lowerBollingeBand =  ((SimpleRangeScalperStrategy)strategy).getLowerBollingeBand().getValue(endIndex).doubleValue();
+                double middleBollingeBand =  ((SimpleRangeScalperStrategy)strategy).getMiddleBollingerBand().getValue(endIndex).doubleValue();
+                double upBollingeBand =  ((SimpleRangeScalperStrategy)strategy).getUpperBollingerBand().getValue(endIndex).doubleValue();
+                log.info("kline date:" + JSON.toJSONString(newBar.getBeginTime()) + "price:" + newBar.getClosePrice() +
+                        " middleBollingeBand:" + middleBollingeBand + " lowerBollingeBand:" + lowerBollingeBand + " upBollingeBand" + upBollingeBand);
             }
 
             if ((longTradingRecord.getCurrentTrade().isNew() || longTradingRecord.getCurrentTrade().isClosed() )&&longStrategy.shouldEnter(endIndex, longTradingRecord)) {

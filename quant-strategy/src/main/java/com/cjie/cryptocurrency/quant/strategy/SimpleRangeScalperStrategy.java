@@ -35,6 +35,18 @@ public class SimpleRangeScalperStrategy implements StrategyBuilder {
     private BollingerBandsMiddleIndicator middleBollingerBand;
     private BollingerBandsLowerIndicator lowerBollingeBand;
 
+    public BollingerBandsUpperIndicator getUpperBollingerBand() {
+        return upperBollingerBand;
+    }
+
+    public BollingerBandsMiddleIndicator getMiddleBollingerBand() {
+        return middleBollingerBand;
+    }
+
+    public BollingerBandsLowerIndicator getLowerBollingeBand() {
+        return lowerBollingeBand;
+    }
+
     // parameters
     private BigDecimal takeProfitValue;
     private int emaForBollingerBandValue;
