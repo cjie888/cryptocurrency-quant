@@ -105,7 +105,7 @@ public abstract class BaseSwapStrategyJob  {
                     Bar bar = new BaseBar(beginTime, PrecisionNum.valueOf(open), PrecisionNum.valueOf(high),
                             PrecisionNum.valueOf(low), PrecisionNum.valueOf(close), PrecisionNum.valueOf(volume),
                             PrecisionNum.valueOf(0));
-                    timeSeries.addBar(bar, true);
+                    timeSeries.addBar(bar);
 
                 }
 
