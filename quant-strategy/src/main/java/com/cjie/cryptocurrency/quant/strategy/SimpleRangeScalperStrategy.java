@@ -23,7 +23,7 @@ import java.util.List;
  */
 public class SimpleRangeScalperStrategy implements StrategyBuilder {
 
-    private boolean isMock;
+    private boolean isMock = true;
 
     private TimeSeries series;
 

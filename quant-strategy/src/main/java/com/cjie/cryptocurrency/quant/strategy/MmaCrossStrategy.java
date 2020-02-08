@@ -16,6 +16,8 @@ import java.util.List;
 
 public class MmaCrossStrategy implements StrategyBuilder {
 
+    private boolean isMock;
+
     private TimeSeries series;
 
     private ClosePriceIndicator closePrice;
@@ -92,7 +94,7 @@ public class MmaCrossStrategy implements StrategyBuilder {
 
     @Override
     public boolean isMock() {
-        return false;
+        return this.isMock;
     }
 
     /**
