@@ -48,7 +48,7 @@ public class MMAIndicator extends AbstractEMAIndicator {
             }
         }
         Num num = (index + 1) < barCount ? sum.dividedBy(numOf(index+1)) : sum.dividedBy(numOf(barCount));
-        log.info("mma {} closes:{}", num, stringBuilder.toString());
+        //log.info("mma {} closes:{}", num, stringBuilder.toString());
         //System.out.println(index  + ":" + num + " pre:" + prevValue + " curr:" + indicator.getValue(index));
         return num;
     }
