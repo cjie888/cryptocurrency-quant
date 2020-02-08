@@ -46,10 +46,10 @@ public abstract class BaseSwapStrategyJob  {
     @Autowired
     private SwapOrderMapper swapOrderMapper;
 
-    public abstract StrategyBuilder buildStrategy(TimeSeries timeSeries);
+    public abstract StrategyBuilder buildStrategy(TimeSeries timeSeries, boolean isMock);
 
 
-    public void executeStrategy(String instrumentId) {
+    public void executeStrategy(String instrumentId, boolean isMock) {
 
         StrategyBuilder strategy = strategyMap.get(instrumentId);
         try {
@@ -80,7 +80,7 @@ public abstract class BaseSwapStrategyJob  {
 
                     }
                 }
-                strategy = buildStrategy(timeSeries);
+                strategy = buildStrategy(timeSeries, isMock);
                 // Initializing the trading history
                 longTradingRecord = new BaseTradingRecord();
                 shortTradingRecord = new BaseTradingRecord();

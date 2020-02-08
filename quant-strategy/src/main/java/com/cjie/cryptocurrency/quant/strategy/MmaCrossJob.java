@@ -21,20 +21,20 @@ public class MmaCrossJob extends BaseSwapStrategyJob implements SimpleJob {
     @Override
     public void execute(ShardingContext shardingContext) {
         log.info("start mma cross job");
-        executeStrategy("BTC-USD-SWAP");
-        executeStrategy("ETH-USD-SWAP");
-        executeStrategy("EOS-USD-SWAP");
-        executeStrategy("LTC-USD-SWAP");
-        executeStrategy("XRP-USD-SWAP");
-        executeStrategy("BCH-USD-SWAP");
-        executeStrategy("BSV-USD-SWAP");
-        executeStrategy("ETC-USD-SWAP");
+        executeStrategy("BTC-USD-SWAP", true);
+        executeStrategy("ETH-USD-SWAP", true);
+        executeStrategy("EOS-USD-SWAP", true);
+        executeStrategy("LTC-USD-SWAP", true);
+        executeStrategy("XRP-USD-SWAP", true);
+        executeStrategy("BCH-USD-SWAP", true);
+        executeStrategy("BSV-USD-SWAP", true);
+        executeStrategy("ETC-USD-SWAP", true);
     }
 
 
     @Override
-    public StrategyBuilder buildStrategy(TimeSeries timeSeries) {
-        MmaCrossStrategy strategy = new MmaCrossStrategy(timeSeries, false, true);
+    public StrategyBuilder buildStrategy(TimeSeries timeSeries, boolean isMock) {
+        MmaCrossStrategy strategy = new MmaCrossStrategy(timeSeries, false, isMock);
         return strategy;
     }
 }
