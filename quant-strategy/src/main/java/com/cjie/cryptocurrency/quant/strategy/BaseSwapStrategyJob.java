@@ -165,7 +165,7 @@ public abstract class BaseSwapStrategyJob  {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append(operation).append(" ").append(instrumentId).append(" ").append(newBar.getBeginTime())
                 .append(" ").append(newBar.getClosePrice()).append("\r\n\n");
-        weiXinMessageService.sendMessage("operation" + strategyBuilder.getName() + instrumentId,  stringBuilder.toString());
+        weiXinMessageService.sendMessage(operation + strategyBuilder.getName() + instrumentId,  stringBuilder.toString());
         // Our strategy should enter
         log.info("Strategy {} {} should ENTER on {}, time:{}, price:{}" , strategyBuilder.getName(), instrumentId, endIndex, newBar.getBeginTime(), newBar.getClosePrice());
         if (shouldEnter) {
