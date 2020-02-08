@@ -122,6 +122,11 @@ public abstract class BaseSwapStrategyJob  {
                 double upBollingeBand =  ((SimpleRangeScalperStrategy)strategy).getUpperBollingerBand().getValue(endIndex).doubleValue();
                 log.info("kline date:" + JSON.toJSONString(newBar.getBeginTime()) + "price:" + newBar.getClosePrice() +
                         " middleBollingeBand:" + middleBollingeBand + " lowerBollingeBand:" + lowerBollingeBand + " upBollingeBand" + upBollingeBand);
+                StringBuilder sb = new StringBuilder();
+                for (Bar bar :  timeSeries.getBarData()) {
+                    sb.append("time:" +bar.getSimpleDateName() + ",close:"+bar.getClosePrice());
+                }
+                log.info("time series:{}", sb.toString());
             }
 
             if (instrumentId.contains("BTC") && strategy instanceof MmaCrossStrategy) {
