@@ -131,88 +131,94 @@ public abstract class BaseSwapStrategyJob  {
                         " shortMMa:" + shortMMa + " longMMa:" + longMMa);
             }
 
-            if ((longTradingRecord.getCurrentTrade().isNew() || longTradingRecord.getCurrentTrade().isClosed() )&&longStrategy.shouldEnter(endIndex, longTradingRecord)) {
-                StringBuilder stringBuilder = new StringBuilder();
-                stringBuilder.append("开多").append(" ").append(instrumentId).append(" ").append(newBar.getBeginTime())
-                        .append(" ").append(newBar.getClosePrice()).append("\r\n\n");
-                weiXinMessageService.sendMessage("开多-" + strategy.getName()  + instrumentId,  stringBuilder.toString());
-                // Our strategy should enter
-                log.info("Strategy {} {} should ENTER on {}, time:{}" , strategy, instrumentId, endIndex, newBar.getBeginTime());
-                boolean entered = longTradingRecord.enter(endIndex, newBar.getClosePrice(), PrecisionNum.valueOf(10));
-                if (entered) {
-                    Order entry = longTradingRecord.getLastEntry();
-                    log.info("Entered on " + entry.getIndex()
-                            + "(type = " + entry.getType().name()
-                            + ", instrumentId=" +  instrumentId
-                            + ", time=" + timeSeries.getBar(entry.getIndex()).getBeginTime()
-                            + ", price=" + entry.getPrice().doubleValue()
-                            + ", amount=" + entry.getAmount().doubleValue() + ")");
-                }
-                createOrder(instrumentId, "1", BigDecimal.valueOf(newBar.getClosePrice().doubleValue()), new BigDecimal(100));
-
-            } else if (longTradingRecord.getCurrentTrade().isOpened() && longStrategy.shouldExit(endIndex, longTradingRecord)) {
-                StringBuilder stringBuilder = new StringBuilder();
-                stringBuilder.append("平多").append(" ").append(instrumentId).append(" ").append(newBar.getBeginTime())
-                        .append(" ").append(newBar.getClosePrice()).append("\r\n\n");
-                weiXinMessageService.sendMessage("平多" + strategy.getName() + instrumentId,  stringBuilder.toString());
-                // Our strategy should exit
-                log.info( "Strategy {} {} should EXIT on {}, time:{}" , strategy.getName(), instrumentId, endIndex, newBar.getBeginTime());
-
-                boolean exited = longTradingRecord.exit(endIndex, newBar.getClosePrice(), PrecisionNum.valueOf(10));
-                if (exited) {
-                    Order exit = longTradingRecord.getLastExit();
-                    log.info("Exited on " + exit.getIndex()
-                            + "(type = " + exit.getType().name()
-                            + ", instrumentId=" +  instrumentId
-                            + ", time=" + timeSeries.getBar(exit.getIndex()).getBeginTime()
-                            + ", price=" + exit.getPrice().doubleValue()
-                            + ", amount=" + exit.getAmount().doubleValue() + ")");
-                }
-                createOrder(instrumentId, "3", BigDecimal.valueOf(newBar.getClosePrice().doubleValue()), new BigDecimal(100));
-
+            if (longStrategy.shouldEnter(endIndex, longTradingRecord)) {
+                enter(instrumentId, longTradingRecord, Order.OrderType.BUY);
+            } else if (longStrategy.shouldExit(endIndex, longTradingRecord)) {
+                exit(instrumentId, longTradingRecord, Order.OrderType.BUY);
             }
 
-            if ((shortTradingRecord.getCurrentTrade().isNew() || shortTradingRecord.getCurrentTrade().isClosed()) && shortStrategy.shouldEnter(endIndex)) {
-                StringBuilder stringBuilder = new StringBuilder();
-                stringBuilder.append("开空").append(" ").append(instrumentId).append(" ").append(newBar.getBeginTime())
-                        .append(" ").append(newBar.getClosePrice()).append("\r\n\n");
-                weiXinMessageService.sendMessage("开空" + strategy.getName() + instrumentId,  stringBuilder.toString());
-                // Our strategy should enter
-                log.info("Strategy {} {} should ENTER on {}, time:{}" , shortStrategy.getName(), instrumentId, endIndex, newBar.getBeginTime());
-                boolean entered = shortTradingRecord.enter(endIndex, newBar.getClosePrice(), PrecisionNum.valueOf(10));
-                if (entered) {
-                    Order entry = shortTradingRecord.getLastEntry();
-                    log.info("Entered on " + entry.getIndex()
-                            + "(type = " + entry.getType().name()
-                            + ", instrumentId=" +  instrumentId
-                            + ", time=" + timeSeries.getBar(entry.getIndex()).getBeginTime()
-                            + ", price=" + entry.getPrice().doubleValue()
-                            + ", amount=" + entry.getAmount().doubleValue() + ")");
-                }
-                createOrder(instrumentId, "2", BigDecimal.valueOf(newBar.getClosePrice().doubleValue()), new BigDecimal(100));
-            } else if (shortTradingRecord.getCurrentTrade().isOpened() && shortStrategy.shouldExit(endIndex, shortTradingRecord)) {
-                StringBuilder stringBuilder = new StringBuilder();
-                stringBuilder.append("平空").append(" ").append(instrumentId).append(" ").append(newBar.getBeginTime())
-                        .append(" ").append(newBar.getClosePrice()).append("\r\n\n");
-                weiXinMessageService.sendMessage("平空" + strategy.getName() + instrumentId,  stringBuilder.toString());
-                // Our strategy should exit
-                log.info("Strategy {} {} should EXIT on {}, time:{}" , strategy.getName(), instrumentId, endIndex, newBar.getBeginTime());
-
-                boolean exited = shortTradingRecord.exit(endIndex, newBar.getClosePrice(), PrecisionNum.valueOf(10));
-                if (exited) {
-                    Order exit = shortTradingRecord.getLastExit();
-                    log.info("Exited on " + exit.getIndex()
-                            + "(type = " + exit.getType().name()
-                            + ", instrumentId=" +  instrumentId
-                            + ", time=" + timeSeries.getBar(exit.getIndex()).getBeginTime()
-                            + ", price=" + exit.getPrice().doubleValue()
-                            + ", amount=" + exit.getAmount().doubleValue() + ")");
-                }
-                createOrder(instrumentId, "4", BigDecimal.valueOf(newBar.getClosePrice().doubleValue()), new BigDecimal(100));
+            if (shortStrategy.shouldEnter(endIndex)) {
+                enter(instrumentId, shortTradingRecord, Order.OrderType.SELL);
+            } else if (shortStrategy.shouldExit(endIndex, shortTradingRecord)) {
+                exit(instrumentId, shortTradingRecord, Order.OrderType.SELL);
             }
         } catch (Exception e) {
             log.error("Strategy {} error", strategy.getName(), e);
         }
+    }
+
+    private void enter(String instrumentId, TradingRecord tradingRecord, Order.OrderType orderType) {
+        TimeSeries timeSeries = timeSeriesMap.get(instrumentId);
+        int endIndex = timeSeries.getEndIndex();
+        Bar newBar = timeSeries.getLastBar();
+        boolean shouldEnter = tradingRecord.getCurrentTrade().isNew() || tradingRecord.getCurrentTrade().isClosed();
+        StrategyBuilder strategyBuilder =  strategyMap.get(instrumentId);
+        String operation;
+        String type;
+        if (orderType == Order.OrderType.BUY) {
+            operation = "开多";
+            type = "1";
+        } else {
+            operation = "开空";
+            type = "2";
+        }
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append(operation).append(" ").append(instrumentId).append(" ").append(newBar.getBeginTime())
+                .append(" ").append(newBar.getClosePrice()).append("\r\n\n");
+        weiXinMessageService.sendMessage("operation" + strategyBuilder.getName() + instrumentId,  stringBuilder.toString());
+        // Our strategy should enter
+        log.info("Strategy {} {} should ENTER on {}, time:{}, price:{}" , strategyBuilder.getName(), instrumentId, endIndex, newBar.getBeginTime(), newBar.getClosePrice());
+        if (shouldEnter) {
+            boolean entered = tradingRecord.enter(endIndex, newBar.getClosePrice(), PrecisionNum.valueOf(10));
+            if (entered) {
+                Order entry = tradingRecord.getLastEntry();
+                log.info("Entered on " + entry.getIndex()
+                        + "(type = " + entry.getType().name()
+                        + ", instrumentId=" + instrumentId
+                        + ", time=" + timeSeries.getBar(entry.getIndex()).getBeginTime()
+                        + ", price=" + entry.getPrice().doubleValue()
+                        + ", amount=" + entry.getAmount().doubleValue() + ")");
+            }
+        }
+
+        createOrder(instrumentId, type, BigDecimal.valueOf(newBar.getClosePrice().doubleValue()), new BigDecimal(100));
+    }
+
+    private  void exit(String instrumentId, TradingRecord tradingRecord, Order.OrderType orderType) {
+        TimeSeries timeSeries = timeSeriesMap.get(instrumentId);
+        int endIndex = timeSeries.getEndIndex();
+        Bar newBar = timeSeries.getLastBar();
+        boolean shouldExit = tradingRecord.getCurrentTrade().isOpened();
+        StrategyBuilder strategyBuilder =  strategyMap.get(instrumentId);
+        String operation;
+        String type;
+        if (orderType == Order.OrderType.BUY) {
+            operation = "平多";
+            type = "3";
+        } else {
+            operation = "开空";
+            type = "4";
+        }
+
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append(operation).append(" ").append(instrumentId).append(" ").append(newBar.getBeginTime())
+                .append(" ").append(newBar.getClosePrice()).append("\r\n\n");
+        weiXinMessageService.sendMessage(operation + strategyBuilder.getName() + instrumentId,  stringBuilder.toString());
+        // Our strategy should exit
+        log.info("Strategy {} {} should EXIT on {}, time:{}, price:{}" , strategyBuilder.getName(), instrumentId, endIndex, newBar.getBeginTime(), newBar.getClosePrice());
+        if (shouldExit) {
+            boolean exited = tradingRecord.exit(endIndex, newBar.getClosePrice(), PrecisionNum.valueOf(10));
+            if (exited) {
+                Order exit = tradingRecord.getLastExit();
+                log.info("Exited on " + exit.getIndex()
+                        + "(type = " + exit.getType().name()
+                        + ", instrumentId=" + instrumentId
+                        + ", time=" + timeSeries.getBar(exit.getIndex()).getBeginTime()
+                        + ", price=" + exit.getPrice().doubleValue()
+                        + ", amount=" + exit.getAmount().doubleValue() + ")");
+            }
+        }
+        createOrder(instrumentId, type, BigDecimal.valueOf(newBar.getClosePrice().doubleValue()), new BigDecimal(100));
     }
 
     private void createOrder(String instrumentId, String type, BigDecimal price, BigDecimal size) {
