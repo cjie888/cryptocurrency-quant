@@ -162,13 +162,13 @@ public abstract class BaseSwapStrategyJob  {
             operation = "开空";
             type = "2";
         }
-        StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append(operation).append(" ").append(instrumentId).append(" ").append(newBar.getBeginTime())
-                .append(" ").append(newBar.getClosePrice()).append("\r\n\n");
-        weiXinMessageService.sendMessage(operation + strategyBuilder.getName() + instrumentId,  stringBuilder.toString());
         // Our strategy should enter
         log.info("Strategy {} {} should ENTER on {}, time:{}, price:{}" , strategyBuilder.getName(), instrumentId, endIndex, newBar.getBeginTime(), newBar.getClosePrice());
         if (shouldEnter) {
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append(operation).append(" ").append(instrumentId).append(" ").append(newBar.getBeginTime())
+                    .append(" ").append(newBar.getClosePrice()).append("\r\n\n");
+            weiXinMessageService.sendMessage(operation + strategyBuilder.getName() + instrumentId,  stringBuilder.toString());
             boolean entered = tradingRecord.enter(endIndex, newBar.getClosePrice(), PrecisionNum.valueOf(10));
             if (entered) {
                 Order entry = tradingRecord.getLastEntry();
@@ -200,13 +200,13 @@ public abstract class BaseSwapStrategyJob  {
             type = "4";
         }
 
-        StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append(operation).append(" ").append(instrumentId).append(" ").append(newBar.getBeginTime())
-                .append(" ").append(newBar.getClosePrice()).append("\r\n\n");
-        weiXinMessageService.sendMessage(operation + strategyBuilder.getName() + instrumentId,  stringBuilder.toString());
         // Our strategy should exit
         log.info("Strategy {} {} should EXIT on {}, time:{}, price:{}" , strategyBuilder.getName(), instrumentId, endIndex, newBar.getBeginTime(), newBar.getClosePrice());
         if (shouldExit) {
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append(operation).append(" ").append(instrumentId).append(" ").append(newBar.getBeginTime())
+                    .append(" ").append(newBar.getClosePrice()).append("\r\n\n");
+            weiXinMessageService.sendMessage(operation + strategyBuilder.getName() + instrumentId,  stringBuilder.toString());
             boolean exited = tradingRecord.exit(endIndex, newBar.getClosePrice(), PrecisionNum.valueOf(10));
             if (exited) {
                 Order exit = tradingRecord.getLastExit();
