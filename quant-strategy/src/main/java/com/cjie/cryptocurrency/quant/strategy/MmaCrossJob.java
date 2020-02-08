@@ -34,7 +34,7 @@ public class MmaCrossJob extends BaseSwapStrategyJob implements SimpleJob {
 
     @Override
     public StrategyBuilder buildStrategy(TimeSeries timeSeries) {
-        MmaCrossStrategy strategy = new MmaCrossStrategy(timeSeries);
+        MmaCrossStrategy strategy = new MmaCrossStrategy(timeSeries, false, true);
         return strategy;
     }
 }

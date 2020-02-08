@@ -34,7 +34,7 @@ public class Run {
 
         // create and initialize a strategy
 
-        MmaCrossStrategy simpleRangeScalper = new MmaCrossStrategy();
+        MmaCrossStrategy simpleRangeScalper = new MmaCrossStrategy(series, true, false);
         simpleRangeScalper.initStrategy(series);
 
         // run strategy on time series and analyse results

@@ -1,6 +1,5 @@
 package com.cjie.cryptocurrency.quant.strategy;
 
-import com.cjie.cryptocurrency.quant.backtest.StrategyBuilder;
 import org.ta4j.core.*;
 import org.ta4j.core.indicators.EMAIndicator;
 import org.ta4j.core.indicators.bollinger.BollingerBandsLowerIndicator;
@@ -21,13 +20,8 @@ import java.util.List;
     http://www.investopedia.com/terms/s/scalping.asp
     http://forexop.com/strategy/simple-range-scalper/
  */
-public class SimpleRangeScalperStrategy implements StrategyBuilder {
+public class SimpleRangeScalperStrategy extends BaseStrategyBuilder {
 
-    private boolean isMock = true;
-
-    private TimeSeries series;
-
-    private ClosePriceIndicator closePrice;
     private Indicator<Num> maxPrice;
     private Indicator<Num> minPrice;
 
@@ -50,20 +44,16 @@ public class SimpleRangeScalperStrategy implements StrategyBuilder {
     public BollingerBandsLowerIndicator getLowerBollingeBand() {
         return lowerBollingeBand;
     }
-    /**
-     * Constructor
-     */
-    public SimpleRangeScalperStrategy(){}
 
-    public SimpleRangeScalperStrategy(TimeSeries series){
+
+    public SimpleRangeScalperStrategy(TimeSeries series, boolean isBackTest, boolean isMock){
+        super(series, isBackTest, isMock);
         initStrategy(series);
     }
 
     @Override
     public void initStrategy(TimeSeries series) {
-        this.series = series;
         this.minPrice = new MinPriceIndicator(this.series);
-        this.closePrice = new ClosePriceIndicator(this.series);
         this.maxPrice = new MaxPriceIndicator(this.series);
         setParams(14, BigDecimal.valueOf(0.5));
     }
@@ -74,17 +64,6 @@ public class SimpleRangeScalperStrategy implements StrategyBuilder {
             return getShortStrategy();
         }
         return getLongStrategy();
-    }
-
-    @Override
-    public TradingRecord getTradingRecord(Order.OrderType type) {
-        TimeSeriesManager seriesManager = new TimeSeriesManager(series);
-        return seriesManager.run(buildStrategy(type), type);
-    }
-
-    @Override
-    public TimeSeries getTimeSeries(){
-        return this.series;
     }
 
     @Override
@@ -100,11 +79,6 @@ public class SimpleRangeScalperStrategy implements StrategyBuilder {
         parameters.add(takeProfit);
         parameters.add(ema);
         return  parameters;
-    }
-
-    @Override
-    public boolean isMock() {
-        return isMock;
     }
 
     /**
@@ -135,7 +109,7 @@ public class SimpleRangeScalperStrategy implements StrategyBuilder {
         Rule exitSignal = new CrossedDownIndicatorRule(this.closePrice, threshold);
         Rule exitSignal2 = new TrailingStopLossRule(closePrice, PrecisionNum.valueOf(this.takeProfitValue));
 
-        return new BaseStrategy(entrySignal.and(entrySignal2), exitSignal.or(exitSignal2), 5);
+        return new BaseStrategy(entrySignal.and(entrySignal2), isBackTest == false ? exitSignal : exitSignal.or(exitSignal2), 5);
 
     }
 
@@ -151,6 +125,6 @@ public class SimpleRangeScalperStrategy implements StrategyBuilder {
         Rule exitSignal = new CrossedUpIndicatorRule(this.closePrice, threshold);
         Rule exitSignal2 = new TrailingStopLossRule(closePrice, PrecisionNum.valueOf(this.takeProfitValue)); // stop loss long = stop gain short?
 
-        return new BaseStrategy(entrySignal.and(entrySignal2), exitSignal.or(exitSignal2), 5);
+        return new BaseStrategy(entrySignal.and(entrySignal2), isBackTest == false ? exitSignal :  exitSignal.or(exitSignal2), 5);
     }
 }

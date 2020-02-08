@@ -14,13 +14,7 @@ import java.util.List;
 
 
 
-public class MmaCrossStrategy implements StrategyBuilder {
-
-    private boolean isMock;
-
-    private TimeSeries series;
-
-    private ClosePriceIndicator closePrice;
+public class MmaCrossStrategy extends BaseStrategyBuilder {
 
     MMAIndicator shortMma;
     MMAIndicator longMma;
@@ -31,12 +25,9 @@ public class MmaCrossStrategy implements StrategyBuilder {
     private int shortMmaCount;
 
     private int longMmaCount;
-    /**
-     * Constructor
-     */
-    public MmaCrossStrategy(){}
 
-    public MmaCrossStrategy(TimeSeries series){
+    public MmaCrossStrategy(TimeSeries series, boolean isBackTest, boolean isMock){
+        super(series, isBackTest, isMock);
         initStrategy(series);
     }
 
@@ -51,8 +42,6 @@ public class MmaCrossStrategy implements StrategyBuilder {
 
     @Override
     public void initStrategy(TimeSeries series) {
-        this.series = series;
-        this.closePrice = new ClosePriceIndicator(this.series);
         setParams(7, 30, BigDecimal.valueOf(0.5));
     }
 
@@ -62,17 +51,6 @@ public class MmaCrossStrategy implements StrategyBuilder {
             return getShortStrategy();
         }
         return getLongStrategy();
-    }
-
-    @Override
-    public TradingRecord getTradingRecord(Order.OrderType type) {
-        TimeSeriesManager seriesManager = new TimeSeriesManager(series);
-        return seriesManager.run(buildStrategy(type), type);
-    }
-
-    @Override
-    public TimeSeries getTimeSeries(){
-        return this.series;
     }
 
     @Override
@@ -90,11 +68,6 @@ public class MmaCrossStrategy implements StrategyBuilder {
         parameters.add(mmaShort);
         parameters.add(mmaLong);
         return  parameters;
-    }
-
-    @Override
-    public boolean isMock() {
-        return this.isMock;
     }
 
     /**
@@ -119,7 +92,7 @@ public class MmaCrossStrategy implements StrategyBuilder {
         Rule exitSignal = new CrossedDownIndicatorRule(shortMma, longMma);
         Rule exitSignal2 = new TrailingStopLossRule(closePrice, PrecisionNum.valueOf(this.takeProfitValue));
 
-        return new BaseStrategy(entrySignal, exitSignal.or(exitSignal2), longMmaCount);
+        return new BaseStrategy(entrySignal, isBackTest == false ? exitSignal :exitSignal.or(exitSignal2), longMmaCount);
 
     }
 
@@ -130,6 +103,6 @@ public class MmaCrossStrategy implements StrategyBuilder {
         Rule exitSignal = new CrossedUpIndicatorRule(shortMma, longMma);
         Rule exitSignal2 = new TrailingStopLossRule(closePrice, PrecisionNum.valueOf(this.takeProfitValue));
 
-        return new BaseStrategy(entrySignal, exitSignal.or(exitSignal2), longMmaCount);
+        return new BaseStrategy(entrySignal, isBackTest == false ? exitSignal : exitSignal.or(exitSignal2), longMmaCount);
     }
 }

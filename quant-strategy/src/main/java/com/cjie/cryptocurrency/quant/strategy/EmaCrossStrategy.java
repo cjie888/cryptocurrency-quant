@@ -1,10 +1,7 @@
 package com.cjie.cryptocurrency.quant.strategy;
 
-import com.cjie.cryptocurrency.quant.backtest.StrategyBuilder;
-import org.springframework.stereotype.Component;
 import org.ta4j.core.*;
 import org.ta4j.core.indicators.EMAIndicator;
-import org.ta4j.core.indicators.helpers.*;
 import org.ta4j.core.num.DoubleNum;
 import org.ta4j.core.trading.rules.*;
 
@@ -14,11 +11,7 @@ import java.util.List;
 
 
 
-public class EmaCrossStrategy implements StrategyBuilder {
-
-    private TimeSeries series;
-
-    private ClosePriceIndicator closePrice;
+public class EmaCrossStrategy extends BaseStrategyBuilder {
 
     EMAIndicator shortEma;
     EMAIndicator longEma;
@@ -29,19 +22,15 @@ public class EmaCrossStrategy implements StrategyBuilder {
     private int shortEmaCount;
 
     private int longEmaCount;
-    /**
-     * Constructor
-     */
-    public EmaCrossStrategy(){}
 
-    public EmaCrossStrategy(TimeSeries series){
+
+    public EmaCrossStrategy(TimeSeries series, boolean isBackTest, boolean isMock) {
+        super(series, isBackTest, isMock);
         initStrategy(series);
     }
 
     @Override
     public void initStrategy(TimeSeries series) {
-        this.series = series;
-        this.closePrice = new ClosePriceIndicator(this.series);
         setParams(7, 30, BigDecimal.valueOf(0.5));
     }
 
@@ -53,16 +42,6 @@ public class EmaCrossStrategy implements StrategyBuilder {
         return getLongStrategy();
     }
 
-    @Override
-    public TradingRecord getTradingRecord(Order.OrderType type) {
-        TimeSeriesManager seriesManager = new TimeSeriesManager(series);
-        return seriesManager.run(buildStrategy(type), type);
-    }
-
-    @Override
-    public TimeSeries getTimeSeries(){
-        return this.series;
-    }
 
     @Override
     public String getName(){
@@ -79,11 +58,6 @@ public class EmaCrossStrategy implements StrategyBuilder {
         parameters.add(emaShort);
         parameters.add(emaLong);
         return  parameters;
-    }
-
-    @Override
-    public boolean isMock() {
-        return false;
     }
 
     /**
@@ -108,7 +82,7 @@ public class EmaCrossStrategy implements StrategyBuilder {
         Rule exitSignal = new CrossedDownIndicatorRule(shortEma, longEma);
         Rule exitSignal2 = new TrailingStopLossRule(closePrice, DoubleNum.valueOf(this.takeProfitValue));
 
-        return new BaseStrategy(entrySignal, exitSignal.or(exitSignal2), longEmaCount);
+        return new BaseStrategy(entrySignal, isBackTest == false ? exitSignal :  exitSignal.or(exitSignal2), longEmaCount);
 
     }
 
@@ -119,6 +93,6 @@ public class EmaCrossStrategy implements StrategyBuilder {
         Rule exitSignal = new CrossedUpIndicatorRule(shortEma, longEma);
         Rule exitSignal2 = new TrailingStopLossRule(closePrice, DoubleNum.valueOf(this.takeProfitValue));
 
-        return new BaseStrategy(entrySignal, exitSignal.or(exitSignal2), longEmaCount);
+        return new BaseStrategy(entrySignal, isBackTest == false ? exitSignal : exitSignal.or(exitSignal2), longEmaCount);
     }
 }

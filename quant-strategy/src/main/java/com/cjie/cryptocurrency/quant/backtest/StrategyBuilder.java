@@ -53,4 +53,7 @@ public interface StrategyBuilder{
 
     boolean isMock();
 
+
+    boolean isBackTest();
+
 }

@@ -34,7 +34,7 @@ public class SimpleRangeScalperJob extends BaseSwapStrategyJob implements Simple
 
     @Override
     public StrategyBuilder buildStrategy(TimeSeries timeSeries) {
-        SimpleRangeScalperStrategy strategy = new SimpleRangeScalperStrategy(timeSeries);
+        SimpleRangeScalperStrategy strategy = new SimpleRangeScalperStrategy(timeSeries, false, true);
         strategy.setParams(20, BigDecimal.valueOf(0.5));
         return strategy;
     }
