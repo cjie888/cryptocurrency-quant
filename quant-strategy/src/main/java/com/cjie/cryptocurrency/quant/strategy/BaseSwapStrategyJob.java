@@ -94,9 +94,13 @@ public abstract class BaseSwapStrategyJob  {
             } else {
 
                 if (CollectionUtils.isNotEmpty(apiKlineVOs)) {
+                    ZonedDateTime seriesBeginTime = timeSeries.getLastBar().getBeginTime();
                     String[] apiKlineVO = apiKlineVOs.get(1);
                     ZonedDateTime beginTime = ZonedDateTime.ofInstant(
                             Instant.ofEpochMilli(dateFormat.parse(apiKlineVO[0]).getTime()), ZoneId.systemDefault());
+                    if (!beginTime.isAfter(seriesBeginTime)) {
+                        return;
+                    }
                     double open = Double.valueOf(apiKlineVO[1]);
                     double high = Double.valueOf(apiKlineVO[2]);
                     double close = Double.valueOf(apiKlineVO[4]);
