@@ -7,6 +7,7 @@ import org.ta4j.core.BaseBar;
 import org.ta4j.core.BaseTimeSeries;
 import org.ta4j.core.TimeSeries;
 import org.ta4j.core.num.DoubleNum;
+import org.ta4j.core.num.PrecisionNum;
 
 import java.io.FileReader;
 import java.io.IOException;
@@ -43,7 +44,7 @@ public class SwapLoader{
                 double close = Double.parseDouble(line[4]);
                 double volume = Double.parseDouble(line[5]);
 
-                ticks.add(new BaseBar(date, DoubleNum.valueOf(open), DoubleNum.valueOf(high), DoubleNum.valueOf(low), DoubleNum.valueOf(close), DoubleNum.valueOf(volume), DoubleNum.valueOf(0)));
+                ticks.add(new BaseBar(date, PrecisionNum.valueOf(open), PrecisionNum.valueOf(high), PrecisionNum.valueOf(low), PrecisionNum.valueOf(close), PrecisionNum.valueOf(volume), PrecisionNum.valueOf(0)));
             }
         } catch (IOException e) {
             e.printStackTrace();

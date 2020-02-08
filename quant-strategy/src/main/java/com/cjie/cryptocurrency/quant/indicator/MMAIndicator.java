@@ -30,12 +30,19 @@ public class MMAIndicator extends AbstractEMAIndicator {
 
     @Override
     protected Num calculate(int index) {
-        if (index == 0) {
-            return indicator.getValue(0);
+//        if (index == 0) {
+//            return indicator.getValue(0);
+//        }
+//        Num prevValue = getValue(index - 1);
+//        Num num = indicator.getValue(index).minus(prevValue).multipliedBy(index < barCount ? numOf(1.0/(index + 1)) : multiplier)
+//                .plus(prevValue);
+        Num sum = indicator.getValue(index);
+        for (int i = 1; i < barCount; i++)  {
+            if (index - i >= 0) {
+                sum = sum.plus(indicator.getValue(index-i));
+            }
         }
-        Num prevValue = getValue(index - 1);
-        Num num = indicator.getValue(index).minus(prevValue).multipliedBy(index < barCount ? numOf(1.0/(index + 1)) : multiplier)
-                .plus(prevValue);
+        Num num = (index + 1) < barCount ? sum.dividedBy(numOf(index+1)) : sum.dividedBy(numOf(barCount));
         //System.out.println(index  + ":" + num + " pre:" + prevValue + " curr:" + indicator.getValue(index));
         return num;
     }
