@@ -107,6 +107,7 @@ public class SwapService {
             }
         }
         sb.append("总资产" + allAsset + ", 总收益" + benefit);
+        log.info("swap asset:{}", sb.toString());
         weiXinMessageService.sendMessage("收益", sb.toString());
     }
 
