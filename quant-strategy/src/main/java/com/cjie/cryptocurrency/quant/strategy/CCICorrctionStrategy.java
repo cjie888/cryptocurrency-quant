@@ -1,165 +1,117 @@
 
 package com.cjie.cryptocurrency.quant.strategy;
 
-import com.alibaba.fastjson.JSON;
-import com.cjie.cryptocurrency.quant.api.okex.service.spot.CurrencyKlineDTO;
-import com.cjie.cryptocurrency.quant.api.okex.service.spot.SpotProductAPIService;
-import com.cjie.cryptocurrency.quant.service.WeiXinMessageService;
-import com.cxytiandi.elasticjob.annotation.ElasticJobConf;
-import com.dangdang.ddframe.job.api.ShardingContext;
-import com.dangdang.ddframe.job.api.simple.SimpleJob;
+
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.CollectionUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.ta4j.core.*;
-import org.ta4j.core.indicators.CCIIndicator;
-import org.ta4j.core.indicators.EMAIndicator;
-import org.ta4j.core.indicators.MACDIndicator;
-import org.ta4j.core.indicators.StochasticOscillatorKIndicator;
-import org.ta4j.core.indicators.helpers.ClosePriceIndicator;
-import org.ta4j.core.num.DoubleNum;
+import org.ta4j.core.indicators.CCIIndicator;;
 import org.ta4j.core.num.Num;
 import org.ta4j.core.num.PrecisionNum;
-import org.ta4j.core.trading.rules.CrossedDownIndicatorRule;
-import org.ta4j.core.trading.rules.CrossedUpIndicatorRule;
-import org.ta4j.core.trading.rules.OverIndicatorRule;
-import org.ta4j.core.trading.rules.UnderIndicatorRule;
+import org.ta4j.core.trading.rules.*;
 
-import java.text.SimpleDateFormat;
-import java.time.Instant;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
+import java.math.BigDecimal;;
+import java.util.ArrayList;
 import java.util.List;
 
 
-@ElasticJobConf(name = "cciJob", cron = "40 */1 * * * ?",
-        description = "cci", eventTraceRdbDataSource = "logDatasource")
+//@ElasticJobConf(name = "cciJob", cron = "40 */1 * * * ?",
+//        description = "cci", eventTraceRdbDataSource = "logDatasource")
 @Slf4j(topic = "strategy")
-public class CCICorrctionStrategy implements SimpleJob {
+public class CCICorrctionStrategy extends BaseStrategyBuilder {
 
-    private TimeSeries timeSeries;
+    CCIIndicator shortCci;
 
-    private Strategy strategy;
+    CCIIndicator longCci;
 
-    private TradingRecord tradingRecord;
+    // parameters
+    private BigDecimal takeProfitValue;
 
-    private CCIIndicator longCci;
+    private int shortMmaCount;
 
-    private CCIIndicator shortCci;
+    private int longMmaCount;
 
-    @Autowired
-    private WeiXinMessageService weiXinMessageService;
+    public CCICorrctionStrategy(TimeSeries series, boolean isBackTest, boolean isMock){
+        super(series, isBackTest, isMock);
+        initStrategy(series);
+    }
 
-    @Autowired
-    private SpotProductAPIService spotProductAPIService;
+
+    @Override
+    public void initStrategy(TimeSeries series) {
+        setParams(5, 200, BigDecimal.valueOf(0.5));
+    }
+
+    @Override
+    public Strategy buildStrategy(Order.OrderType type){
+        if (type.equals(Order.OrderType.SELL)) {
+            return getShortStrategy();
+        }
+        return getLongStrategy();
+    }
+
+    @Override
+    public String getName(){
+        return "CciCross";
+    }
+
+    @Override
+    public List<String> getParamters(){
+        ArrayList<String> parameters = new ArrayList<String>();
+        String takeProfit = "Take Profit: "+ this.takeProfitValue;
+        String mmaShort = "CCI Short:"+ this.shortMmaCount;
+        String mmaLong = "CCI Long:"+ this.longMmaCount;
+        parameters.add(takeProfit);
+        parameters.add(mmaShort);
+        parameters.add(mmaLong);
+        return  parameters;
+    }
 
     /**
-     * @param series a time series
-     * @return a CCI correction strategy
+     * call this function to change the parameter of the strategy
+     * @param shortMmaCount short moving average the bands are based on
+     * @param takeProfitValue close a trade if this percentage profit is reached
      */
-    public Strategy buildStrategy(TimeSeries series) {
-        if (series == null) {
-            throw new IllegalArgumentException("Series cannot be null");
-        }
+    public void setParams(int shortMmaCount, int longMmaCount, BigDecimal takeProfitValue){
+        this.takeProfitValue = takeProfitValue;
+        this.shortMmaCount = shortMmaCount;
+        this.longMmaCount = longMmaCount;
 
-        longCci = new CCIIndicator(series, 200);
-        shortCci = new CCIIndicator(series, 5);
+        longCci = new CCIIndicator(series, longMmaCount);
+        shortCci = new CCIIndicator(series, shortMmaCount);
+
+    }
+
+    private Strategy getLongStrategy() {
+
         Num plus100 = series.numOf(100);
         Num minus100 = series.numOf(-100);
+
 
         Rule entryRule = new OverIndicatorRule(longCci, plus100) // Bull trend
                 .and(new UnderIndicatorRule(shortCci, minus100)); // Signal
 
         Rule exitRule = new UnderIndicatorRule(longCci, minus100) // Bear trend
                 .and(new OverIndicatorRule(shortCci, plus100)); // Signal
+        Rule exitSignal2 = new TrailingStopLossRule(closePrice, PrecisionNum.valueOf(this.takeProfitValue));
 
-        Strategy strategy = new BaseStrategy(entryRule, exitRule);
-        strategy.setUnstablePeriod(5);
-        return strategy;
+        return new BaseStrategy(entryRule, isBackTest == false ? exitRule :exitRule.or(exitSignal2), longMmaCount);
+
     }
 
+    private Strategy getShortStrategy(){
 
-    @Override
-    public void execute(ShardingContext shardingContext) {
-        log.info("start cci correction job");
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+        Num plus100 = series.numOf(100);
+        Num minus100 = series.numOf(-100);
 
-        try {
-            List<CurrencyKlineDTO> currencyKlineDTOS = spotProductAPIService.getCandles("okex", "btc-usdt", 3600, null, null);
-            //log.info(JSON.toJSONString(currencyKlineDTOS));
-            // Getting the time series
-            if (timeSeries == null) {
-                timeSeries = new BaseTimeSeries();
-                timeSeries.setMaximumBarCount(1000);
 
-                for (int i = currencyKlineDTOS.size() -1; i >= 0; i--) {
-                    CurrencyKlineDTO currencyKlineDTO = currencyKlineDTOS.get(i);
-                      ZonedDateTime beginTime = ZonedDateTime.ofInstant(
-                            Instant.ofEpochMilli(dateFormat.parse(currencyKlineDTO.getTime()).getTime()), ZoneId.systemDefault());
+        Rule exitRule  = new OverIndicatorRule(longCci, plus100) // Bull trend
+                .and(new UnderIndicatorRule(shortCci, minus100)); // Signal
 
-                    timeSeries.addBar(beginTime, currencyKlineDTO.getOpen(), currencyKlineDTO.getHigh(),
-                            currencyKlineDTO.getLow(), currencyKlineDTO.getClose(), currencyKlineDTO.getVolume());
-                }
-                // Building the trading strategy
-                strategy = buildStrategy(timeSeries);
+        Rule  entryRule = new UnderIndicatorRule(longCci, minus100) // Bear trend
+                .and(new OverIndicatorRule(shortCci, plus100)); // Signal
 
-                // Initializing the trading history
-                tradingRecord = new BaseTradingRecord();
+        Rule exitSignal2 = new TrailingStopLossRule(closePrice, PrecisionNum.valueOf(this.takeProfitValue));
 
-            } else {
-                if (CollectionUtils.isNotEmpty(currencyKlineDTOS)) {
-                    for (int i = Math.min(currencyKlineDTOS.size() - 1, 4); i >= 0; i--) {
-                        CurrencyKlineDTO currencyKlineDTO = currencyKlineDTOS.get(0);
-
-                        ZonedDateTime beginTime = ZonedDateTime.ofInstant(
-                                Instant.ofEpochMilli(dateFormat.parse(currencyKlineDTO.getTime()).getTime()), ZoneId.systemDefault());
-                        Bar bar = new BaseBar(beginTime, PrecisionNum.valueOf(currencyKlineDTO.getOpen()), PrecisionNum.valueOf(currencyKlineDTO.getHigh()),
-                                PrecisionNum.valueOf(currencyKlineDTO.getLow()), PrecisionNum.valueOf(currencyKlineDTO.getClose()), PrecisionNum.valueOf(currencyKlineDTO.getVolume()), DoubleNum.valueOf(0));
-                        timeSeries.addBar(bar, true);
-                    }
-                }
-            }
-            //log.info("Current bar is {}", JSON.toJSONString(timeSeries.getBarData()));
-            int endIndex = timeSeries.getEndIndex();
-            Bar newBar = timeSeries.getLastBar();
-
-            //log.info("cci:{}", JSON.toJSONString(shortCci));
-            log.info("Current cci time:{}, short:{}, long:{}", newBar.getBeginTime(),
-                    shortCci.getValue(endIndex).doubleValue(),
-                    longCci.getValue(endIndex).doubleValue());
-
-            if (strategy.shouldEnter(endIndex)) {
-                StringBuilder stringBuilder = new StringBuilder();
-                stringBuilder.append("Buy").append(" ").append(newBar.getBeginTime())
-                        .append(" ").append(newBar.getClosePrice()).append("\r\n\n");
-                weiXinMessageService.sendMessage("buy-cci",  stringBuilder.toString());
-                // Our strategy should enter
-                log.info("Strategy should ENTER on {}, time:{}" , endIndex, newBar.getBeginTime());
-                boolean entered = tradingRecord.enter(endIndex, newBar.getClosePrice(), PrecisionNum.valueOf(10));
-                if (entered) {
-                    Order entry = tradingRecord.getLastEntry();
-                    log.info("Entered on " + entry.getIndex()
-                            + " (price=" + entry.getPrice().doubleValue()
-                            + ", amount=" + entry.getAmount().doubleValue() + ")");
-                }
-            } else if (strategy.shouldExit(endIndex)) {
-                StringBuilder stringBuilder = new StringBuilder();
-                stringBuilder.append("Sell").append(" ").append(newBar.getBeginTime())
-                        .append(" ").append(newBar.getClosePrice()).append("\r\n\n");
-                weiXinMessageService.sendMessage("sell-cci",  stringBuilder.toString());
-                // Our strategy should exit
-                log.info("Strategy should EXIT on {}, time:{}" , endIndex, newBar.getBeginTime());
-
-                boolean exited = tradingRecord.exit(endIndex, newBar.getClosePrice(), PrecisionNum.valueOf(10));
-                if (exited) {
-                    Order exit = tradingRecord.getLastExit();
-                    log.info("Exited on " + exit.getIndex()
-                            + " (price=" + exit.getPrice().doubleValue()
-                            + ", amount=" + exit.getAmount().doubleValue() + ")");
-                }
-            }
-        }catch (Exception e) {
-            log.error("Cci correction strategy error", e);
-        }
+        return new BaseStrategy(entryRule, isBackTest == false ? exitRule : exitRule.or(exitSignal2), longMmaCount);
     }
 }
