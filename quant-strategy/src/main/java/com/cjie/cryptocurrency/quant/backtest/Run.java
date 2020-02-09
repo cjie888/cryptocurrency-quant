@@ -2,6 +2,7 @@ package com.cjie.cryptocurrency.quant.backtest;
 
 
 import com.cjie.cryptocurrency.quant.strategy.CCICorrctionStrategy;
+import com.cjie.cryptocurrency.quant.strategy.KestnerCrossStrategy;
 import org.ta4j.core.TimeSeries;
 
 import java.math.BigDecimal;
@@ -15,7 +16,7 @@ public class Run {
 
         // load data as TimeSeries
         SwapLoader loader = new SwapLoader();
-        TimeSeries series = loader.getMinuteTimeSeries("/Users/hucj/cryptocurrency-quant/quant-strategy/src/main/data/eth_5minutes.csv", "btc");
+        TimeSeries series = loader.getMinuteTimeSeries("/Users/hucj/cryptocurrency-quant/quant-strategy/src/main/data/bch_5minutes.csv", "btc");
 
 //        ClosePriceIndicator closePriceIndicator = new ClosePriceIndicator(series);
 //        MMAIndicator mma7Indicator = new MMAIndicator(closePriceIndicator,7);
@@ -29,7 +30,7 @@ public class Run {
 
         // create and initialize a strategy
 
-        CCICorrctionStrategy simpleRangeScalper = new CCICorrctionStrategy(series, true, false);
+        KestnerCrossStrategy simpleRangeScalper = new KestnerCrossStrategy(series, true, false);
         simpleRangeScalper.initStrategy(series);
 
         // run strategy on time series and analyse results
@@ -37,7 +38,7 @@ public class Run {
 //        analyser.printAllResults(simpleRangeScalper);
 
         // change parameters of the strategy and run again
-        simpleRangeScalper.setParams(5, 100, BigDecimal.valueOf(1));
+        simpleRangeScalper.setParams(20, BigDecimal.valueOf(1));
         analyser.printAllResults(simpleRangeScalper);
     }
 }
