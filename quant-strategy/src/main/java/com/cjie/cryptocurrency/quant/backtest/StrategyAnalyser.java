@@ -2,8 +2,8 @@ package com.cjie.cryptocurrency.quant.backtest;
 
 
 import org.ta4j.core.Bar;
+import org.ta4j.core.BaseBarSeries;
 import org.ta4j.core.Order;
-import org.ta4j.core.TimeSeries;
 import org.ta4j.core.TradingRecord;
 import org.ta4j.core.analysis.criteria.*;
 import org.ta4j.core.num.Num;
@@ -41,7 +41,7 @@ public class StrategyAnalyser {
         if (record == null) {
             print("   -no long record found");
         } else {
-            TimeSeries series = sb.getTimeSeries();
+            BaseBarSeries series = sb.getTimeSeries();
 
             print(" -General:");
             print("     -Series Name:                       " + series.getName());
@@ -70,8 +70,8 @@ public class StrategyAnalyser {
 
                     profitSum += (entry.isBuy() ? exitTick.getClosePrice().doubleValue()  - entryTick.getClosePrice().doubleValue() : entryTick.getClosePrice().doubleValue() - exitTick.getClosePrice().doubleValue());
 
-                    print("     -Entry: "+entry.getIndex()+" "+ Date.from(entryTick.getBeginTime().toInstant())+" "+round(entry.getPrice(),4)
-                            +" Exit: "+exit.getIndex()+" "+Date.from(exitTick.getBeginTime().toInstant())+" "+round(exit.getPrice(),4) + " "
+                    print("     -Entry: "+entry.getIndex()+" "+ Date.from(entryTick.getBeginTime().toInstant())+" "+round(entry.getNetPrice(),4)
+                            +" Exit: "+exit.getIndex()+" "+Date.from(exitTick.getBeginTime().toInstant())+" "+round(exit.getNetPrice(),4) + " "
                             + "isProfit:" + (entry.isBuy() ? exitTick.getClosePrice().doubleValue()  - entryTick.getClosePrice().doubleValue() : entryTick.getClosePrice().doubleValue() - exitTick.getClosePrice().doubleValue()));
                 }
             }

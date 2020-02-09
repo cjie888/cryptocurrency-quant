@@ -46,15 +46,15 @@ public class SimpleRangeScalperStrategy extends BaseStrategyBuilder {
     }
 
 
-    public SimpleRangeScalperStrategy(TimeSeries series, boolean isBackTest, boolean isMock){
+    public SimpleRangeScalperStrategy(BaseBarSeries series, boolean isBackTest, boolean isMock){
         super(series, isBackTest, isMock);
         initStrategy(series);
     }
 
     @Override
-    public void initStrategy(TimeSeries series) {
-        this.minPrice = new MinPriceIndicator(this.series);
-        this.maxPrice = new MaxPriceIndicator(this.series);
+    public void initStrategy(BaseBarSeries series) {
+        this.minPrice = new LowPriceIndicator(this.series);
+        this.maxPrice = new HighPriceIndicator(this.series);
         setParams(14, BigDecimal.valueOf(0.5));
     }
 

@@ -41,13 +41,13 @@ public class MovingMomentumStrategy extends BaseStrategyBuilder {
 
     private int longMmaCount;
 
-    public MovingMomentumStrategy(TimeSeries series, boolean isBackTest, boolean isMock){
+    public MovingMomentumStrategy(BaseBarSeries series, boolean isBackTest, boolean isMock){
         super(series, isBackTest, isMock);
         initStrategy(series);
     }
 
     @Override
-    public void initStrategy(TimeSeries series) {
+    public void initStrategy(BaseBarSeries series) {
         setParams(7, 30, BigDecimal.valueOf(0.5));
     }
 

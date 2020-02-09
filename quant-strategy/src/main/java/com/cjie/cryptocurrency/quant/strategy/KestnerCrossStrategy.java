@@ -26,14 +26,14 @@ public class KestnerCrossStrategy extends BaseStrategyBuilder {
 
     private int longMmaCount;
 
-    public KestnerCrossStrategy(TimeSeries series, boolean isBackTest, boolean isMock){
+    public KestnerCrossStrategy(BaseBarSeries series, boolean isBackTest, boolean isMock){
         super(series, isBackTest, isMock);
         initStrategy(series);
     }
 
 
     @Override
-    public void initStrategy(TimeSeries series) {
+    public void initStrategy(BaseBarSeries series) {
         setParams(20, BigDecimal.valueOf(0.5));
     }
 
@@ -71,8 +71,8 @@ public class KestnerCrossStrategy extends BaseStrategyBuilder {
         this.takeProfitValue = takeProfitValue;
         this.longMmaCount = longMmaCount;
 
-        MaxPriceIndicator maxPriceIndicator = new MaxPriceIndicator(series);
-        MinPriceIndicator minPriceIndicator = new MinPriceIndicator(series);
+        HighPriceIndicator maxPriceIndicator = new HighPriceIndicator(series);
+        LowPriceIndicator minPriceIndicator = new LowPriceIndicator(series);
 
 
         highMma = new MMAIndicator(maxPriceIndicator, longMmaCount);

@@ -30,14 +30,14 @@ public class CCICorrctionStrategy extends BaseStrategyBuilder {
 
     private int longMmaCount;
 
-    public CCICorrctionStrategy(TimeSeries series, boolean isBackTest, boolean isMock){
+    public CCICorrctionStrategy(BaseBarSeries series, boolean isBackTest, boolean isMock){
         super(series, isBackTest, isMock);
         initStrategy(series);
     }
 
 
     @Override
-    public void initStrategy(TimeSeries series) {
+    public void initStrategy(BaseBarSeries series) {
         setParams(5, 200, BigDecimal.valueOf(0.5));
     }
 

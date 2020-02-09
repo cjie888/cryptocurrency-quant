@@ -18,7 +18,7 @@ public class PeriodMaxIndicator extends CachedIndicator<Num> {
 
     @Override
     protected Num calculate(int index) {
-        Num max = getTimeSeries().numOf(0);
+        Num max = getBarSeries().numOf(0);
         for (int i = Math.max(0, index - barCount + 1); i <= index; i++) {
             if (indicator.getValue(i).doubleValue() > max.doubleValue()) {
                 max = indicator.getValue(i);

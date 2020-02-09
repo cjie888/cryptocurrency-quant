@@ -4,7 +4,7 @@ package com.cjie.cryptocurrency.quant.backtest;
 
 import org.ta4j.core.Order;
 import org.ta4j.core.Strategy;
-import org.ta4j.core.TimeSeries;
+import org.ta4j.core.BaseBarSeries;
 import org.ta4j.core.TradingRecord;
 
 import java.util.List;
@@ -15,7 +15,7 @@ public interface StrategyBuilder{
      * initialize the strategy with default parameters
      * @param series the time serie to initilize the strategy with
      */
-    void initStrategy(TimeSeries series);
+    void initStrategy(BaseBarSeries series);
 
     /**
      * Create and get a long or short strategy
@@ -35,7 +35,7 @@ public interface StrategyBuilder{
      * Get the current time series the strategy is initilized with
      * @return current time series the strategy is initilized with
      */
-    TimeSeries getTimeSeries();
+    BaseBarSeries getTimeSeries();
 
     /**
      * Get the name of the strategy

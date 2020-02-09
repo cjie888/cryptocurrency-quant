@@ -17,6 +17,7 @@ import org.ta4j.core.num.PrecisionNum;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
+import java.time.Duration;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -29,7 +30,7 @@ import java.util.Map;
 @Slf4j(topic = "strategy")
 public abstract class BaseSwapStrategyJob  {
 
-    private Map<String,TimeSeries> timeSeriesMap = new HashMap<>();
+    private Map<String,BaseBarSeries> timeSeriesMap = new HashMap<>();
 
     private Map<String, StrategyBuilder> strategyMap = new HashMap<>();
 
@@ -46,14 +47,14 @@ public abstract class BaseSwapStrategyJob  {
     @Autowired
     private SwapOrderMapper swapOrderMapper;
 
-    public abstract StrategyBuilder buildStrategy(TimeSeries timeSeries, boolean isMock);
+    public abstract StrategyBuilder buildStrategy(BaseBarSeries timeSeries, boolean isMock);
 
 
     public void executeStrategy(String instrumentId, boolean isMock) {
 
         StrategyBuilder strategy = strategyMap.get(instrumentId);
         try {
-            TimeSeries timeSeries =  timeSeriesMap.get(instrumentId);
+            BaseBarSeries timeSeries =  timeSeriesMap.get(instrumentId);
 
             TradingRecord longTradingRecord = longTradingRecordMap.get(instrumentId);
             TradingRecord shortTradingRecord = shortTradingRecordMap.get(instrumentId);
@@ -62,7 +63,7 @@ public abstract class BaseSwapStrategyJob  {
             List<String[]> apiKlineVOs = JSON.parseObject(kline, new TypeReference<List<String[]>>(){});
             // Getting the time series
             if (timeSeries == null) {
-                timeSeries = new BaseTimeSeries();
+                timeSeries = new BaseBarSeries();
                 timeSeries.setMaximumBarCount(1000);
                 if (CollectionUtils.isNotEmpty(apiKlineVOs)) {
                     for (int i = apiKlineVOs.size() -1; i > 0; i--) {
@@ -106,7 +107,7 @@ public abstract class BaseSwapStrategyJob  {
                     double close = Double.valueOf(apiKlineVO[4]);
                     double low = Double.valueOf(apiKlineVO[3]);
                     double volume = Double.valueOf(apiKlineVO[5]);
-                    Bar bar = new BaseBar(beginTime, PrecisionNum.valueOf(open), PrecisionNum.valueOf(high),
+                    Bar bar = new BaseBar(Duration.ofMinutes(1), beginTime, PrecisionNum.valueOf(open), PrecisionNum.valueOf(high),
                             PrecisionNum.valueOf(low), PrecisionNum.valueOf(close), PrecisionNum.valueOf(volume),
                             PrecisionNum.valueOf(0));
                     timeSeries.addBar(bar);
@@ -157,7 +158,7 @@ public abstract class BaseSwapStrategyJob  {
     }
 
     private void enter(String instrumentId, TradingRecord tradingRecord, Order.OrderType orderType) {
-        TimeSeries timeSeries = timeSeriesMap.get(instrumentId);
+        BaseBarSeries timeSeries = timeSeriesMap.get(instrumentId);
         int endIndex = timeSeries.getEndIndex();
         Bar newBar = timeSeries.getLastBar();
         boolean shouldEnter = tradingRecord.getCurrentTrade().isNew() || tradingRecord.getCurrentTrade().isClosed();
@@ -185,7 +186,7 @@ public abstract class BaseSwapStrategyJob  {
                         + "(type = " + entry.getType().name()
                         + ", instrumentId=" + instrumentId
                         + ", time=" + timeSeries.getBar(entry.getIndex()).getBeginTime()
-                        + ", price=" + entry.getPrice().doubleValue()
+                        + ", price=" + entry.getNetPrice().doubleValue()
                         + ", amount=" + entry.getAmount().doubleValue() + ")");
             }
         }
@@ -194,7 +195,7 @@ public abstract class BaseSwapStrategyJob  {
     }
 
     private  void exit(String instrumentId, TradingRecord tradingRecord, Order.OrderType orderType) {
-        TimeSeries timeSeries = timeSeriesMap.get(instrumentId);
+        BaseBarSeries timeSeries = timeSeriesMap.get(instrumentId);
         int endIndex = timeSeries.getEndIndex();
         Bar newBar = timeSeries.getLastBar();
         boolean shouldExit = tradingRecord.getCurrentTrade().isOpened();
@@ -223,7 +224,7 @@ public abstract class BaseSwapStrategyJob  {
                         + "(type = " + exit.getType().name()
                         + ", instrumentId=" + instrumentId
                         + ", time=" + timeSeries.getBar(exit.getIndex()).getBeginTime()
-                        + ", price=" + exit.getPrice().doubleValue()
+                        + ", price=" + exit.getNetPrice().doubleValue()
                         + ", amount=" + exit.getAmount().doubleValue() + ")");
             }
         }

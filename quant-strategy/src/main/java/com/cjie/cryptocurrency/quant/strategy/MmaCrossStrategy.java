@@ -26,7 +26,7 @@ public class MmaCrossStrategy extends BaseStrategyBuilder {
 
     private int longMmaCount;
 
-    public MmaCrossStrategy(TimeSeries series, boolean isBackTest, boolean isMock){
+    public MmaCrossStrategy(BaseBarSeries series, boolean isBackTest, boolean isMock){
         super(series, isBackTest, isMock);
         initStrategy(series);
     }
@@ -41,7 +41,7 @@ public class MmaCrossStrategy extends BaseStrategyBuilder {
     }
 
     @Override
-    public void initStrategy(TimeSeries series) {
+    public void initStrategy(BaseBarSeries series) {
         setParams(7, 30, BigDecimal.valueOf(0.5));
     }
 

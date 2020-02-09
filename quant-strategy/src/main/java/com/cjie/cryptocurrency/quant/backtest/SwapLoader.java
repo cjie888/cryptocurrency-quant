@@ -4,13 +4,13 @@ package com.cjie.cryptocurrency.quant.backtest;
 import com.opencsv.CSVReader;
 import org.ta4j.core.Bar;
 import org.ta4j.core.BaseBar;
-import org.ta4j.core.BaseTimeSeries;
-import org.ta4j.core.TimeSeries;
+import org.ta4j.core.BaseBarSeries;;
 import org.ta4j.core.num.DoubleNum;
 import org.ta4j.core.num.PrecisionNum;
 
 import java.io.FileReader;
 import java.io.IOException;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -28,7 +28,7 @@ public class SwapLoader{
     private static final DateTimeFormatter DATE_FORMAT_Daily = DateTimeFormatter.ofPattern("yyyy-M-d");
 
 
-    public TimeSeries getHourlyTimeSeries(String pathToCsv, String name) throws Exception {
+    public BaseBarSeries getHourlyTimeSeries(int type, String pathToCsv, String name) throws Exception {
 
         List<Bar> ticks = new ArrayList<>();
         CSVReader reader = null;
@@ -44,18 +44,18 @@ public class SwapLoader{
                 double close = Double.parseDouble(line[4]);
                 double volume = Double.parseDouble(line[5]);
 
-                ticks.add(new BaseBar(date, PrecisionNum.valueOf(open), PrecisionNum.valueOf(high), PrecisionNum.valueOf(low), PrecisionNum.valueOf(close), PrecisionNum.valueOf(volume), PrecisionNum.valueOf(0)));
+                ticks.add(new BaseBar(Duration.ofMinutes(type), date, PrecisionNum.valueOf(open), PrecisionNum.valueOf(high), PrecisionNum.valueOf(low), PrecisionNum.valueOf(close), PrecisionNum.valueOf(volume), PrecisionNum.valueOf(0)));
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        return new BaseTimeSeries(name, ticks);
+        return new BaseBarSeries(name, ticks);
     }
 
-    public TimeSeries getMinuteTimeSeries(String pathToCsv, String name){
+    public BaseBarSeries getMinuteTimeSeries(int type, String pathToCsv, String name){
         try {
-            return getHourlyTimeSeries(pathToCsv, name);
+            return getHourlyTimeSeries(type, pathToCsv, name);
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -1,10 +1,7 @@
 package com.cjie.cryptocurrency.quant.strategy;
 
 import com.cjie.cryptocurrency.quant.backtest.StrategyBuilder;
-import org.ta4j.core.Order;
-import org.ta4j.core.TimeSeries;
-import org.ta4j.core.TimeSeriesManager;
-import org.ta4j.core.TradingRecord;
+import org.ta4j.core.*;
 import org.ta4j.core.indicators.helpers.ClosePriceIndicator;
 
 public abstract class BaseStrategyBuilder implements StrategyBuilder {
@@ -13,11 +10,11 @@ public abstract class BaseStrategyBuilder implements StrategyBuilder {
 
     protected boolean isBackTest = false;
 
-    protected TimeSeries series;
+    protected BaseBarSeries series;
 
     protected ClosePriceIndicator closePrice;
 
-    BaseStrategyBuilder(TimeSeries series, boolean isBackTest, boolean isMock) {
+    BaseStrategyBuilder(BaseBarSeries series, boolean isBackTest, boolean isMock) {
         this.series = series;
         this.isBackTest = isBackTest;
         this.isMock = isMock;
@@ -27,12 +24,12 @@ public abstract class BaseStrategyBuilder implements StrategyBuilder {
 
     @Override
     public TradingRecord getTradingRecord(Order.OrderType type) {
-        TimeSeriesManager seriesManager = new TimeSeriesManager(series);
+        BarSeriesManager seriesManager = new BarSeriesManager(series);
         return seriesManager.run(buildStrategy(type), type);
     }
 
     @Override
-    public TimeSeries getTimeSeries(){
+    public BaseBarSeries getTimeSeries(){
         return this.series;
     }
 

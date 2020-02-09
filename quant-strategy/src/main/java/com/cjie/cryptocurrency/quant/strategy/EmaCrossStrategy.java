@@ -24,13 +24,13 @@ public class EmaCrossStrategy extends BaseStrategyBuilder {
     private int longEmaCount;
 
 
-    public EmaCrossStrategy(TimeSeries series, boolean isBackTest, boolean isMock) {
+    public EmaCrossStrategy(BaseBarSeries series, boolean isBackTest, boolean isMock) {
         super(series, isBackTest, isMock);
         initStrategy(series);
     }
 
     @Override
-    public void initStrategy(TimeSeries series) {
+    public void initStrategy(BaseBarSeries series) {
         setParams(7, 30, BigDecimal.valueOf(0.5));
     }
 

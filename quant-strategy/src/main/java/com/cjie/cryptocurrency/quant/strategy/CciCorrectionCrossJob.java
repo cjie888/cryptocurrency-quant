@@ -34,7 +34,7 @@ public class CciCorrectionCrossJob extends BaseSwapStrategyJob {
 
 
     @Override
-    public StrategyBuilder buildStrategy(TimeSeries timeSeries, boolean isMock) {
+    public StrategyBuilder buildStrategy(BaseBarSeries timeSeries, boolean isMock) {
         CCICorrctionStrategy strategy = new CCICorrctionStrategy(timeSeries, true, isMock);
         strategy.setParams(5, 100, BigDecimal.valueOf(1));
         return strategy;
