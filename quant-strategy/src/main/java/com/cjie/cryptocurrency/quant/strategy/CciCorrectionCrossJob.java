@@ -19,7 +19,7 @@ import java.math.BigDecimal;
 public class CciCorrectionCrossJob extends BaseSwapStrategyJob {
 
 
-    @Scheduled(cron = "7 */1 * * * ?")
+    @Scheduled(cron = "11 */1 * * * ?")
     public void execute() {
         log.info("start cci correction job");
         executeStrategy("BTC-USD-SWAP", true);
