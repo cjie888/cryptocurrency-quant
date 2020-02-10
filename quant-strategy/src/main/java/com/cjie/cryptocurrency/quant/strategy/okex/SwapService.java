@@ -57,18 +57,20 @@ public class SwapService {
         String[] instrumentIds = new String[]{
                 "BTC-USD-SWAP",
                 "ETH-USD-SWAP",
-                //"BCH-USD-SWAP",
+                "BCH-USD-SWAP",
                 //"EOS-USD-SWAP",
                 "XRP-USD-SWAP",
-                "LTC-USD-SWAP"
+                "LTC-USD-SWAP",
+                "BTC-USDT-SWAP"
         };
         Map<String,BigDecimal> costs = new HashMap<>();
         costs.put("BTC-USD-SWAP", new BigDecimal("0.06"));
         costs.put("ETH-USD-SWAP", new BigDecimal("3.0"));
-        //costs.put("BCH-USD-SWAP",new BigDecimal("0.9"));
+        costs.put("BCH-USD-SWAP",new BigDecimal("1"));
         //costs.put("EOS-USD-SWAP",new BigDecimal("60"));
         costs.put("XRP-USD-SWAP",new BigDecimal("900"));
         costs.put("LTC-USD-SWAP",new BigDecimal("3"));
+        costs.put("BTC-USDT-SWAP", new BigDecimal("200"));
         //costs.put("ETH-USDT-SWAP", new BigDecimal("100"));
         String accounts = swapUserAPIServive.getAccounts();
         log.info("获取所有账户信息{}", JSON.toJSONString(accounts));
