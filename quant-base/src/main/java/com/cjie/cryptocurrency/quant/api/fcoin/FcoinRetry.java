@@ -17,7 +17,7 @@ public class FcoinRetry {
         FixedBackOffPolicy fixedBackOffPolicy = new FixedBackOffPolicy();
         
         //设置重试间隔时间
-        fixedBackOffPolicy.setBackOffPeriod(50);
+        fixedBackOffPolicy.setBackOffPeriod(100);
         
         retryTemplate.setRetryPolicy(policy);
         retryTemplate.setBackOffPolicy(fixedBackOffPolicy);
@@ -28,13 +28,13 @@ public class FcoinRetry {
     public static RetryTemplate getTradeRetryTemplate(){
         final RetryTemplate retryTemplate = new RetryTemplate();
 
-        final SimpleRetryPolicy policy = new SimpleRetryPolicy(10, Collections.<Class<? extends Throwable>, Boolean>
+        final SimpleRetryPolicy policy = new SimpleRetryPolicy(3, Collections.<Class<? extends Throwable>, Boolean>
                 singletonMap(Exception.class, true));
 
         FixedBackOffPolicy fixedBackOffPolicy = new FixedBackOffPolicy();
 
         //设置重试间隔时间
-        fixedBackOffPolicy.setBackOffPeriod(50);
+        fixedBackOffPolicy.setBackOffPeriod(100);
 
         retryTemplate.setRetryPolicy(policy);
         retryTemplate.setBackOffPolicy(fixedBackOffPolicy);
