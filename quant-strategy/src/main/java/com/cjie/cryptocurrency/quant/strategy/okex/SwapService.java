@@ -71,6 +71,7 @@ public class SwapService {
         costs.put("XRP-USD-SWAP",new BigDecimal("900"));
         costs.put("LTC-USD-SWAP",new BigDecimal("3"));
         costs.put("BTC-USDT-SWAP", new BigDecimal("200"));
+        costs.put("BCH-USDT-SWAP", new BigDecimal("200"));
         //costs.put("ETH-USDT-SWAP", new BigDecimal("100"));
         String accounts = swapUserAPIServive.getAccounts();
         log.info("获取所有账户信息{}", JSON.toJSONString(accounts));

@@ -28,6 +28,7 @@ public class SwapTask {
         swapService.transfer("LTC-USD-SWAP", 0.3);
 //        swapService.netGrid("ETH-USDT-SWAP", "140", 0.6, 5.0);
         swapService.transfer("BTC-USDT-SWAP", 10.0);
+        swapService.transfer("BCH-USDT-SWAP", 10.0);
 
 
     }
