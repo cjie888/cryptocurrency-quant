@@ -17,7 +17,7 @@ public class FcoinRetry {
         FixedBackOffPolicy fixedBackOffPolicy = new FixedBackOffPolicy();
         
         //设置重试间隔时间
-        fixedBackOffPolicy.setBackOffPeriod(500);
+        fixedBackOffPolicy.setBackOffPeriod(50);
         
         retryTemplate.setRetryPolicy(policy);
         retryTemplate.setBackOffPolicy(fixedBackOffPolicy);
