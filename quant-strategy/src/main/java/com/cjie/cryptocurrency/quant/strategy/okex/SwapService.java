@@ -61,7 +61,8 @@ public class SwapService {
                 //"EOS-USD-SWAP",
                 "XRP-USD-SWAP",
                 "LTC-USD-SWAP",
-                "BTC-USDT-SWAP"
+                "BTC-USDT-SWAP",
+                "BCH-USDT-SWAP"
         };
         Map<String,BigDecimal> costs = new HashMap<>();
         costs.put("BTC-USD-SWAP", new BigDecimal("0.06"));
