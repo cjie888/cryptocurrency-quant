@@ -17,7 +17,7 @@ import org.springframework.stereotype.Component;
 import java.math.BigDecimal;
 import java.util.Date;
 
-@Component
+//@Component
 @Slf4j
 public class FCoinTask {
 
