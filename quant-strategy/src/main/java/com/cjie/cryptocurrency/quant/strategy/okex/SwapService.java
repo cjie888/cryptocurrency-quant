@@ -285,6 +285,7 @@ public class SwapService {
             }
         } catch (Exception e) {
             log.info("update status error, instrumentId:{}", instrumentId, e);
+            return;
         }
 
 
@@ -316,7 +317,7 @@ public class SwapService {
 //            return;
 //        }
         List<Integer> unSettledStatuses = new ArrayList<>();
-        unProcessedStatuses.add(1);
+        unSettledStatuses.add(1);
         List<SwapOrder> unSettledOrders = swapOrderMapper.selectByStatus(instrumentId, "netGrid", unSettledStatuses);
         if (CollectionUtils.isNotEmpty(unSettledOrders)) {
             for (SwapOrder swapOrder : unSettledOrders) {
