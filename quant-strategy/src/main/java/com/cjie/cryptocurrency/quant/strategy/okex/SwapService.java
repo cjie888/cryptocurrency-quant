@@ -276,7 +276,7 @@ public class SwapService {
 
                     ApiOrderResultVO.PerOrderResult perOrderResult = JSON.parseObject(result, ApiOrderResultVO.PerOrderResult.class);
                     log.info("order status {}", JSON.toJSONString(perOrderResult));
-                    if (!(perOrderResult.getError_code().equals("0"))) {
+                    if (perOrderResult.getError_code() != null && !(perOrderResult.getError_code().equals("0"))) {
                         return;
                     }
                     Integer status = Integer.parseInt(perOrderResult.getState());
