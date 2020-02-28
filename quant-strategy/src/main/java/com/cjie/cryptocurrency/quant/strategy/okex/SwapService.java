@@ -262,45 +262,94 @@ public class SwapService {
             return;
         }
 
+        //获取等待提交订单
+        List<Integer> unProcessedStatuses = new ArrayList<>();
+        unProcessedStatuses.add(99);
+        unProcessedStatuses.add(0);
+        unProcessedStatuses.add(1);
+        try {
+            List<SwapOrder> swapOrders = swapOrderMapper.selectByStatus(instrumentId, "netGrid", unProcessedStatuses);
+            if (CollectionUtils.isNotEmpty(swapOrders)) {
+                for (SwapOrder swapOrder : swapOrders) {
+                    String result = swapUserAPIServive.selectOrder(instrumentId, swapOrder.getOrderId());
+
+                    ApiOrderResultVO.PerOrderResult perOrderResult = JSON.parseObject(result, ApiOrderResultVO.PerOrderResult.class);
+                    if (!(perOrderResult.getError_code().equals("0"))) {
+                        return;
+                    }
+                    Integer status = Integer.parseInt(perOrderResult.getState());
+                    if (!swapOrder.getStatus().equals(status)) {
+                        swapOrderMapper.updateStatus(swapOrder.getOrderId(), status);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            log.info("update status error, instrumentId:{}", instrumentId, e);
+        }
+
+
         //获取部分成交订单
-        String waitsell = swapUserAPIServive.selectOrders(instrumentId, "1", null, null, "10");
+        //String waitsell = swapUserAPIServive.selectOrders(instrumentId, "1", null, null, "10");
         //{"order_info":[{"client_oid":"","contract_val":"10","fee":"0.000000","filled_qty":"0","instrument_id":"ETH-USD-SWAP","order_id":"384556031446822912","order_type":"0","price":"100.00","price_avg":"0.00","size":"1","state":"0","status":"0","timestamp":"2019-12-08T10:23:11.315Z","trigger_price":"","type":"1"}]}
         //log.info("获取部分成交订单{}-{}", instrumentId, JSON.toJSONString(waitsell));
         //{"order_info":[]}
-        ApiOrderResultVO apiOrderWaitResultVO = JSON.parseObject(waitsell, ApiOrderResultVO.class);
+        //ApiOrderResultVO apiOrderWaitResultVO = JSON.parseObject(waitsell, ApiOrderResultVO.class);
         //取消未成交订单
-        if (apiOrderWaitResultVO != null && CollectionUtils.isNotEmpty(apiOrderWaitResultVO.getOrder_info())) {
-            log.info("当前持有部分成交订单{}-{}", instrumentId, JSON.toJSONString(waitsell));
-            for (ApiOrderResultVO.PerOrderResult perOrderResult : apiOrderWaitResultVO.getOrder_info()) {
-                try {
-                    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-                    dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
-                    Date orderDate = dateFormat.parse(perOrderResult.getTimestamp());
-                    if (System.currentTimeMillis() - 30 * 60 * 1000L > orderDate.getTime() ) {
-                        swapTradeAPIService.cancelOrder(instrumentId, perOrderResult.getOrder_id());
-                        log.info("取消部分成交订单{}-{}", instrumentId, perOrderResult.getOrder_id());
-                    }
-                } catch (Exception e) {
-                    log.error("取消部分成交订单失败{}-{}", instrumentId, perOrderResult.getClient_oid(), e);
-
+//        if (apiOrderWaitResultVO != null && CollectionUtils.isNotEmpty(apiOrderWaitResultVO.getOrder_info())) {
+//            log.info("当前持有部分成交订单{}-{}", instrumentId, JSON.toJSONString(waitsell));
+//            for (ApiOrderResultVO.PerOrderResult perOrderResult : apiOrderWaitResultVO.getOrder_info()) {
+//                try {
+//                    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+//                    dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
+//                    Date orderDate = dateFormat.parse(perOrderResult.getTimestamp());
+//                    if (System.currentTimeMillis() - 30 * 60 * 1000L > orderDate.getTime() ) {
+//                        swapTradeAPIService.cancelOrder(instrumentId, perOrderResult.getOrder_id());
+//                        log.info("取消部分成交订单{}-{}", instrumentId, perOrderResult.getOrder_id());
+//                    }
+//                } catch (Exception e) {
+//                    log.error("取消部分成交订单失败{}-{}", instrumentId, perOrderResult.getClient_oid(), e);
+//
+//                }
+//
+//
+//            }
+//            return;
+//        }
+        List<Integer> unSettledStatuses = new ArrayList<>();
+        unProcessedStatuses.add(1);
+        List<SwapOrder> unSettledOrders = swapOrderMapper.selectByStatus(instrumentId, "netGrid", unSettledStatuses);
+        if (CollectionUtils.isNotEmpty(unSettledOrders)) {
+            for (SwapOrder swapOrder : unSettledOrders) {
+                if (System.currentTimeMillis() - 30 * 60 * 1000L > swapOrder.getCreateTime().getTime() ) {
+                    swapTradeAPIService.cancelOrder(instrumentId, swapOrder.getOrderId());
+                    log.info("取消部分成交订单{}-{}", instrumentId, swapOrder.getOrderId());
                 }
-
-
             }
             return;
         }
+
         //获取未成交订单
-        String unsell = swapUserAPIServive.selectOrders(instrumentId, "0", null, null, "10");
+        //String unsell = swapUserAPIServive.selectOrders(instrumentId, "0", null, null, "10");
         //{"order_info":[{"client_oid":"","contract_val":"10","fee":"0.000000","filled_qty":"0","instrument_id":"ETH-USD-SWAP","order_id":"384556031446822912","order_type":"0","price":"100.00","price_avg":"0.00","size":"1","state":"0","status":"0","timestamp":"2019-12-08T10:23:11.315Z","trigger_price":"","type":"1"}]}
         //log.info("获取未成交订单{}-{}", instrumentId, JSON.toJSONString(unsell));
         //{"order_info":[]}
-        ApiOrderResultVO apiOrderResultVO = JSON.parseObject(unsell, ApiOrderResultVO.class);
+        //ApiOrderResultVO apiOrderResultVO = JSON.parseObject(unsell, ApiOrderResultVO.class);
         //取消未成交订单
-        if (apiOrderResultVO != null && CollectionUtils.isNotEmpty(apiOrderResultVO.getOrder_info())) {
-            for (ApiOrderResultVO.PerOrderResult perOrderResult : apiOrderResultVO.getOrder_info()) {
-                swapTradeAPIService.cancelOrder(instrumentId, perOrderResult.getOrder_id());
-                log.info("取消未成交订单{}-{}", instrumentId, perOrderResult.getClient_oid());
+//        if (apiOrderResultVO != null && CollectionUtils.isNotEmpty(apiOrderResultVO.getOrder_info())) {
+//            for (ApiOrderResultVO.PerOrderResult perOrderResult : apiOrderResultVO.getOrder_info()) {
+//                swapTradeAPIService.cancelOrder(instrumentId, perOrderResult.getOrder_id());
+//                log.info("取消未成交订单{}-{}", instrumentId, perOrderResult.getClient_oid());
+//
+//            }
+//        }
 
+        List<Integer> unSelledStatuses = new ArrayList<>();
+        unSelledStatuses.add(0);
+        List<SwapOrder> unSelledOrders = swapOrderMapper.selectByStatus(instrumentId, "netGrid", unSelledStatuses);
+        if (CollectionUtils.isNotEmpty(unSelledOrders)) {
+            for (SwapOrder swapOrder : unSettledOrders) {
+                swapTradeAPIService.cancelOrder(instrumentId, swapOrder.getOrderId());
+                log.info("取消未成交订单{}-{}", instrumentId, swapOrder.getOrderId());
             }
         }
 
@@ -363,7 +412,7 @@ public class SwapService {
             ppUpOrder.setSize(size);
             ppUpOrder.setInstrument_id(instrumentId);
             ppUpOrder.setMatch_price("1");
-            swapTradeAPIService.order(ppUpOrder);
+            swapTradeAPIService.order(ppUpOrder, "netGrid");
             log.info("开多{}-{}", instrumentId, JSON.toJSONString(ppUpOrder));
 
             PpOrder ppDownOrder = new PpOrder();
@@ -372,7 +421,7 @@ public class SwapService {
             ppDownOrder.setSize(size);
             ppDownOrder.setInstrument_id(instrumentId);
             ppDownOrder.setMatch_price("1");
-            swapTradeAPIService.order(ppDownOrder);
+            swapTradeAPIService.order(ppDownOrder, "netGrid");
             log.info("开空{}-{}", instrumentId, JSON.toJSONString(ppDownOrder));
             return;
 
@@ -389,7 +438,7 @@ public class SwapService {
                 ppUpOrder.setPrice(String.valueOf(currentPrice));
                 ppUpOrder.setSize(size);
                 ppUpOrder.setInstrument_id(instrumentId);
-                swapTradeAPIService.order(ppUpOrder);
+                swapTradeAPIService.order(ppUpOrder,"netGrid");
                 log.info("平多{}-{}", instrumentId, JSON.toJSONString(ppUpOrder));
 
             }
@@ -398,7 +447,7 @@ public class SwapService {
             ppDownOrder.setPrice(String.valueOf(currentPrice));
             ppDownOrder.setSize(size);
             ppDownOrder.setInstrument_id(instrumentId);
-            swapTradeAPIService.order(ppDownOrder);
+            swapTradeAPIService.order(ppDownOrder, "netGrid");
             log.info("开空{}-{}", instrumentId, JSON.toJSONString(ppDownOrder));
             return;
 
@@ -413,7 +462,7 @@ public class SwapService {
                 ppDownOrder.setPrice(String.valueOf(currentPrice));
                 ppDownOrder.setSize(size);
                 ppDownOrder.setInstrument_id(instrumentId);
-                swapTradeAPIService.order(ppDownOrder);
+                swapTradeAPIService.order(ppDownOrder, "netGrid");
                 log.info("平空{}-{}", instrumentId, JSON.toJSONString(ppDownOrder));
             }
 
@@ -422,7 +471,7 @@ public class SwapService {
             ppUpOrder.setPrice(String.valueOf(currentPrice));
             ppUpOrder.setSize(size);
             ppUpOrder.setInstrument_id(instrumentId);
-            swapTradeAPIService.order(ppUpOrder);
+            swapTradeAPIService.order(ppUpOrder, "netGrid");
             log.info("开多{}-{}", instrumentId, JSON.toJSONString(ppUpOrder));
         }
 

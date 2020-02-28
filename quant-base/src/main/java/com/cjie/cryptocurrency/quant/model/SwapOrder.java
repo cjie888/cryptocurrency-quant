@@ -27,4 +27,6 @@ public class SwapOrder {
     private String orderId;
 
     private String strategy;
+
+    private Integer status;
 }

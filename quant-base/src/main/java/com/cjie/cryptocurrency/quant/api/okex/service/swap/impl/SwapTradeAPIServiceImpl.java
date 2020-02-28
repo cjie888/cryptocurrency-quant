@@ -1,19 +1,25 @@
 package com.cjie.cryptocurrency.quant.api.okex.service.swap.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.cjie.cryptocurrency.quant.api.okex.bean.swap.param.PpCancelOrderVO;
 import com.cjie.cryptocurrency.quant.api.okex.bean.swap.param.PpOrder;
 import com.cjie.cryptocurrency.quant.api.okex.bean.swap.param.PpOrders;
+import com.cjie.cryptocurrency.quant.api.okex.bean.swap.result.ApiOrderVO;
 import com.cjie.cryptocurrency.quant.api.okex.client.APIClient;
 import com.cjie.cryptocurrency.quant.api.okex.config.APIConfiguration;
 import com.cjie.cryptocurrency.quant.api.okex.enums.I18nEnum;
 import com.cjie.cryptocurrency.quant.api.okex.service.swap.SwapTradeAPIService;
 import com.cjie.cryptocurrency.quant.api.okex.utils.JsonUtils;
 import com.cjie.cryptocurrency.quant.mapper.APIKeyMapper;
+import com.cjie.cryptocurrency.quant.mapper.SwapOrderMapper;
 import com.cjie.cryptocurrency.quant.model.APIKey;
+import com.cjie.cryptocurrency.quant.model.SwapOrder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
+import java.util.Date;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Component
@@ -21,6 +27,9 @@ import java.util.concurrent.ConcurrentHashMap;
 public class SwapTradeAPIServiceImpl implements SwapTradeAPIService {
     @Autowired
     private APIKeyMapper apiKeyMapper;
+
+    @Autowired
+    private SwapOrderMapper swapOrderMapper;
 
     private ConcurrentHashMap<String, APIClient> apiClients = new ConcurrentHashMap<>();
 
@@ -65,12 +74,28 @@ public class SwapTradeAPIServiceImpl implements SwapTradeAPIService {
      * @return
      */
     @Override
-    public String order(PpOrder ppOrder)  {
+    public String order(PpOrder ppOrder, String strategy)  {
         APIClient client = getFuturesAPIClient();
         SwapTradeAPI api = getFuturesMarketApi(client);
         System.out.println("下单参数：：：：：：");
         System.out.println(JsonUtils.convertObject(ppOrder, PpOrder.class));
-        return client.executeSync(api.order(JsonUtils.convertObject(ppOrder, PpOrder.class)));
+        String result =  client.executeSync(api.order(JsonUtils.convertObject(ppOrder, PpOrder.class)));
+
+        ApiOrderVO apiOrderVO = JSON.parseObject(result, ApiOrderVO.class);
+        if (apiOrderVO.getError_code().equals("0")) {
+            SwapOrder swapOrder = new SwapOrder();
+            swapOrder.setInstrumentId(ppOrder.getInstrument_id());
+            swapOrder.setCreateTime(new Date());
+            swapOrder.setStrategy(strategy);
+            swapOrder.setIsMock(Byte.valueOf("0"));
+            swapOrder.setType(Byte.valueOf(ppOrder.getType()));
+            swapOrder.setPrice(new BigDecimal(ppOrder.getPrice()));
+            swapOrder.setSize(new BigDecimal(ppOrder.getSize()));
+            swapOrder.setOrderId(apiOrderVO.getOrder_id());
+            swapOrder.setStatus(99);
+            swapOrderMapper.insert(swapOrder);
+        }
+        return result;
     }
 
     /**

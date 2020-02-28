@@ -11,7 +11,7 @@ public interface SwapTradeAPIService {
      * @param ppOrder
      * @return
      */
-    String order(PpOrder ppOrder);
+    String order(PpOrder ppOrder, String strategy);
 
     /**
      * 批量下单
