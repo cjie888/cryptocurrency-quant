@@ -350,7 +350,7 @@ public class SwapService {
         unSelledStatuses.add(0);
         List<SwapOrder> unSelledOrders = swapOrderMapper.selectByStatus(instrumentId, "netGrid", unSelledStatuses);
         if (CollectionUtils.isNotEmpty(unSelledOrders)) {
-            for (SwapOrder swapOrder : unSettledOrders) {
+            for (SwapOrder swapOrder : unSelledOrders) {
                 swapTradeAPIService.cancelOrder(instrumentId, swapOrder.getOrderId());
                 log.info("取消未成交订单{}-{}", instrumentId, swapOrder.getOrderId());
             }
