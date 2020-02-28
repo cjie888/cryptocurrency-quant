@@ -38,7 +38,7 @@
   <select id="selectByStatus" resultMap="BaseResultMap">
       select
      <include refid="Base_Column_List" />
-
+     from swap_order
      <where>
        instrument_id = #{instrumentId,jdbcType=BIGINT} and strategy = #{strategy,jdbcType=VARCHAR}
        and
