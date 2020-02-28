@@ -32,7 +32,7 @@ public class ApiOrderResultVO {
     }
 
 
-    public class PerOrderResult {
+    public static class PerOrderResult {
 
         String order_id;
         String state;
