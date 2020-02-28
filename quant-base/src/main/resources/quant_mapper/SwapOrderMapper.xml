@@ -47,7 +47,7 @@
          #{item, jdbcType=INTEGER}
        </foreach>
      </where>
-      order by create_time desc
+      order by create_time desc limit 100
    </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
     delete from swap_order
