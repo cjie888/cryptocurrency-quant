@@ -274,6 +274,7 @@ public class SwapService {
                     String result = swapUserAPIServive.selectOrder(instrumentId, swapOrder.getOrderId());
 
                     ApiOrderResultVO.PerOrderResult perOrderResult = JSON.parseObject(result, ApiOrderResultVO.PerOrderResult.class);
+                    log.info("order status {}", JSON.toJSONString(perOrderResult));
                     if (!(perOrderResult.getError_code().equals("0"))) {
                         return;
                     }
