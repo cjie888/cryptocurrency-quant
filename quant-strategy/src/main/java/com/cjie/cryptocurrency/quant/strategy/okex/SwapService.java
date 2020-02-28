@@ -270,6 +270,7 @@ public class SwapService {
         try {
             List<SwapOrder> swapOrders = swapOrderMapper.selectByStatus(instrumentId, "netGrid", unProcessedStatuses);
             if (CollectionUtils.isNotEmpty(swapOrders)) {
+                log.info("unprocessed orders {}", JSON.toJSONString(swapOrders));
                 for (SwapOrder swapOrder : swapOrders) {
                     String result = swapUserAPIServive.selectOrder(instrumentId, swapOrder.getOrderId());
 
