@@ -165,7 +165,7 @@
     where id = #{id,jdbcType=BIGINT}
   </update>
 
-  <update id="updateByPrimaryKey">
+  <update id="updateStatus">
     update swap_order
     set status = #{status,jdbcType=INTEGER}
     where order_id = #{orderId,jdbcType=VARCHAR}
