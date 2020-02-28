@@ -358,32 +358,57 @@ public class SwapService {
         log.info("当前价格{}-{}", instrumentId, apiTickerVO.getLast());
 
         //获取已成交订单
-        String sell = swapUserAPIServive.selectOrders(instrumentId, "2", null, null, "200");
+        //String sell = swapUserAPIServive.selectOrders(instrumentId, "2", null, null, "200");
         //log.info("获取已成交订单{}-{}", instrumentId, JSON.toJSONString(sell));
 
-        ApiOrderResultVO sellOrderResultVO = JSON.parseObject(sell, ApiOrderResultVO.class);
+        //ApiOrderResultVO sellOrderResultVO = JSON.parseObject(sell, ApiOrderResultVO.class);
         //过滤开空或开多的订单
-        ApiOrderResultVO.PerOrderResult lastOrder = null;
-        ApiOrderResultVO.PerOrderResult lastUpOrder = null;
-        ApiOrderResultVO.PerOrderResult lastDownOrder = null;
-        if (sellOrderResultVO != null && CollectionUtils.isNotEmpty(sellOrderResultVO.getOrder_info())) {
-            for (ApiOrderResultVO.PerOrderResult perOrderResult : sellOrderResultVO.getOrder_info()) {
-                if (perOrderResult.getType().equals("1") || perOrderResult.getType().equals("2")) {
+//        ApiOrderResultVO.PerOrderResult lastOrder = null;
+//        ApiOrderResultVO.PerOrderResult lastUpOrder = null;
+//        ApiOrderResultVO.PerOrderResult lastDownOrder = null;
+//        if (sellOrderResultVO != null && CollectionUtils.isNotEmpty(sellOrderResultVO.getOrder_info())) {
+//            for (ApiOrderResultVO.PerOrderResult perOrderResult : sellOrderResultVO.getOrder_info()) {
+//                if (perOrderResult.getType().equals("1") || perOrderResult.getType().equals("2")) {
+//                    if (lastOrder == null) {
+//                        lastOrder = perOrderResult;
+//                    }
+//                    if (perOrderResult.getType().equals("1")) {
+//                        lastUpOrder = perOrderResult;
+//                        continue;
+//                    }
+//                    if (perOrderResult.getType().equals("2")) {
+//                        lastDownOrder = perOrderResult;
+//                        continue;
+//                    }
+//                }
+//            }
+//
+//        }
+
+        SwapOrder lastOrder = null;
+        SwapOrder lastUpOrder = null;
+        SwapOrder lastDownOrder = null;
+        List<Integer> selledStatuses = new ArrayList<>();
+        selledStatuses.add(2);
+        List<SwapOrder> selledOrders = swapOrderMapper.selectByStatus(instrumentId, "netGrid", selledStatuses);
+        if (CollectionUtils.isNotEmpty(selledOrders)) {
+            for (SwapOrder swapOrder : selledOrders) {
+                if (swapOrder.getType() == 1 || swapOrder.getType() == 2) {
                     if (lastOrder == null) {
-                        lastOrder = perOrderResult;
+                        lastOrder = swapOrder;
                     }
-                    if (perOrderResult.getType().equals("1")) {
-                        lastUpOrder = perOrderResult;
+                    if (swapOrder.getType() == 1) {
+                        lastUpOrder = swapOrder;
                         continue;
                     }
-                    if (perOrderResult.getType().equals("2")) {
-                        lastDownOrder = perOrderResult;
+                    if (swapOrder.getType() == 2) {
+                        lastDownOrder = swapOrder;
                         continue;
                     }
                 }
             }
-
         }
+
         String position =  swapUserAPIServive.getPosition(instrumentId);
         //log.info("获取持仓{}-{}", instrumentId, JSON.toJSONString(position));
         ApiPositionsVO apiPositionsVO = JSON.parseObject(position, ApiPositionsVO.class);
@@ -404,7 +429,7 @@ public class SwapService {
 
         }
         Double currentPrice = Double.valueOf(apiTickerVO.getLast());
-        if (upPosition == null && downPosition == null) {
+        if (upPosition == null && downPosition == null || lastOrder == null) {
             //同时开多和空
             PpOrder ppUpOrder = new PpOrder();
             ppUpOrder.setType("1");
@@ -426,7 +451,7 @@ public class SwapService {
             return;
 
         }
-        Double lastPrice = Double.valueOf(lastOrder.getPrice());
+        Double lastPrice = lastOrder.getPrice().doubleValue();
         log.info("当前价格：{}, 上次价格:{}", currentPrice, lastPrice);
         if (currentPrice > lastPrice && currentPrice - lastPrice > increment ) {
             //价格上涨
