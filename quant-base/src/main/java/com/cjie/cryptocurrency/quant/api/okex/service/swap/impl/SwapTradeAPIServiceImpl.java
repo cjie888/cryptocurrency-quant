@@ -77,8 +77,7 @@ public class SwapTradeAPIServiceImpl implements SwapTradeAPIService {
     public String order(PpOrder ppOrder, String strategy)  {
         APIClient client = getFuturesAPIClient();
         SwapTradeAPI api = getFuturesMarketApi(client);
-        System.out.println("下单参数：：：：：：");
-        System.out.println(JsonUtils.convertObject(ppOrder, PpOrder.class));
+        log.info("下单参数：：：：：：{}", JsonUtils.convertObject(ppOrder, PpOrder.class));
         String result =  client.executeSync(api.order(JsonUtils.convertObject(ppOrder, PpOrder.class)));
 
         log.info("order result:{}", result);
