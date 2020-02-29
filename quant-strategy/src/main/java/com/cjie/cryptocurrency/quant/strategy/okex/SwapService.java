@@ -413,7 +413,7 @@ public class SwapService {
         }
 
         String position =  swapUserAPIServive.getPosition(instrumentId);
-        log.info("获取持仓{}-{}", instrumentId, JSON.toJSONString(position));
+        //log.info("获取持仓{}-{}", instrumentId, JSON.toJSONString(position));
         ApiPositionsVO apiPositionsVO = JSON.parseObject(position, ApiPositionsVO.class);
         if (apiPositionsVO != null && !apiPositionsVO.getMargin_mode().equals("crossed")) {//不是全仓
             return;

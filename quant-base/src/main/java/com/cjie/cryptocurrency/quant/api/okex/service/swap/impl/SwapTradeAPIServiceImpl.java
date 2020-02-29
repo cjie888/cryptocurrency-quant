@@ -59,7 +59,7 @@ public class SwapTradeAPIServiceImpl implements SwapTradeAPIService {
             config.setApiKey(apiKey.getApiKey());
             config.setSecretKey(apiKey.getApiSecret());
             config.setPassphrase(apiKey.getApiPassphrase());
-            config.setPrint(true);
+            //config.setPrint(true);
             config.setI18n(I18nEnum.SIMPLIFIED_CHINESE);
             apiClient = new APIClient(config);
             apiClients.put(site, apiClient);
@@ -77,10 +77,10 @@ public class SwapTradeAPIServiceImpl implements SwapTradeAPIService {
     public String order(PpOrder ppOrder, String strategy)  {
         APIClient client = getFuturesAPIClient();
         SwapTradeAPI api = getFuturesMarketApi(client);
-        log.info("下单参数：：：：：：{}", JsonUtils.convertObject(ppOrder, PpOrder.class));
+        //log.info("下单参数：：：：：：{}", JsonUtils.convertObject(ppOrder, PpOrder.class));
         String result =  client.executeSync(api.order(JsonUtils.convertObject(ppOrder, PpOrder.class)));
 
-        log.info("order result:{}", result);
+        //log.info("order result:{}", result);
         ApiOrderVO apiOrderVO = JSON.parseObject(result, ApiOrderVO.class);
         if (apiOrderVO.getError_code().equals("0")) {
             SwapOrder swapOrder = new SwapOrder();
