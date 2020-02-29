@@ -75,9 +75,6 @@ public class SwapTradeAPIServiceImpl implements SwapTradeAPIService {
      */
     @Override
     public String order(PpOrder ppOrder, String strategy)  {
-        if (ppOrder.getInstrument_id().contains("USDT")) {
-            ppOrder.setMatch_price(null);
-        }
         APIClient client = getFuturesAPIClient();
         SwapTradeAPI api = getFuturesMarketApi(client);
         log.info("下单参数：：：：：：{}", JsonUtils.convertObject(ppOrder, PpOrder.class));
