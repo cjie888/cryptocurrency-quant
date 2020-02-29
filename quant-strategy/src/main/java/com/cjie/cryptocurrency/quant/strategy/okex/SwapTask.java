@@ -30,7 +30,7 @@ public class SwapTask {
         swapService.netGrid("BTC-USDT-SWAP", "0.002", 80.0, 10.0, 0.09);
         //swapService.transfer("BTC-USDT-SWAP", 10.0);
         //swapService.transfer("BCH-USDT-SWAP", 10.0);
-        swapService.netGrid("BTC-USDT-SWAP", "0.05", 80.0, 0.1, 2.7);
+        swapService.netGrid("BCH-USDT-SWAP", "0.05", 1.5, 0.1, 2.7);
 
 
     }
