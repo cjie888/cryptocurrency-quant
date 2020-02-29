@@ -421,11 +421,12 @@ public class SwapService {
         ApiPositionVO upPosition = null;
         ApiPositionVO downPosition = null;
         for (ApiPositionVO apiPositionVO : apiPositionsVO.getHolding()) {
-            if (apiPositionVO.getSide().equals("long") && Double.valueOf(apiPositionVO.getAvail_position()) > 0 && Double.valueOf(apiPositionVO.getPosition()) > origin) {
+            if (apiPositionVO.getSide().equals("long") && Double.valueOf(apiPositionVO.getAvail_position()) >= Double.valueOf(size)
+                    && Double.valueOf(apiPositionVO.getPosition()) >= origin + Double.valueOf(size)) {
                 upPosition = apiPositionVO;
                 continue;
             }
-            if (apiPositionVO.getSide().equals("short") && Double.valueOf(apiPositionVO.getAvail_position()) > 0) {
+            if (apiPositionVO.getSide().equals("short") && Double.valueOf(apiPositionVO.getAvail_position()) >= Double.valueOf(size)) {
                 downPosition = apiPositionVO;
                 continue;
             }

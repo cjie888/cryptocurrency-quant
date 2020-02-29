@@ -81,6 +81,7 @@ public class SwapTradeAPIServiceImpl implements SwapTradeAPIService {
         System.out.println(JsonUtils.convertObject(ppOrder, PpOrder.class));
         String result =  client.executeSync(api.order(JsonUtils.convertObject(ppOrder, PpOrder.class)));
 
+        log.info("order result:{}", result);
         ApiOrderVO apiOrderVO = JSON.parseObject(result, ApiOrderVO.class);
         if (apiOrderVO.getError_code().equals("0")) {
             SwapOrder swapOrder = new SwapOrder();
