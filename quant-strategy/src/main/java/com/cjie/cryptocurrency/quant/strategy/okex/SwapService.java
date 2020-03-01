@@ -234,7 +234,7 @@ public class SwapService {
                         log.info("transfer {} {} from financial to swap", transferAmount, JSON.toJSONString(result));
                         weiXinMessageService.sendMessage("划转" + currency.toUpperCase(), "划转" + instrumentId + ", 数量：" + transferAmount);
                     } catch (Exception e) {
-                        log.info("transfer {} {} from financial to swap error", instrumentId, transferAmount);
+                        log.error("transfer {} {} from financial to swap error", instrumentId, transferAmount, e);
                     }
                 }
                 if (Double.valueOf(apiAccountVO.getMargin_ratio()) < 0.10) {
