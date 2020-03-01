@@ -39,7 +39,7 @@ public abstract class BaseServiceImpl {
             config.setApiKey(apiKey.getApiKey());
             config.setSecretKey(apiKey.getApiSecret());
             config.setPassphrase(apiKey.getApiPassphrase());
-            config.setPrint(false);
+            config.setPrint(true);
             config.setI18n(I18nEnum.SIMPLIFIED_CHINESE);
             apiClient = new APIClient(config);
             apiClients.put(site, apiClient);
