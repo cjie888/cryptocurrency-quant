@@ -235,12 +235,14 @@ public class SwapService {
                         weiXinMessageService.sendMessage("划转" + currency.toUpperCase(), "划转" + instrumentId + ", 数量：" + transferAmount);
                     } catch (Exception e) {
                         log.error("transfer {} {} from financial to swap error", instrumentId, transferAmount, e);
-                        transferIn.setFrom(5);
-                        transferIn.setInstrument_id(currency + "_usdt");
-                        JSONObject result = accountAPIService.transfer("okex", transferIn);
+
                         try {
+                            Thread.sleep(2000);
+                            transferIn.setFrom(5);
+                            transferIn.setInstrument_id(currency + "_usdt");
+                            JSONObject result = accountAPIService.transfer("okex", transferIn);
                             log.info("transfer {} {} from spot margin to swap", transferAmount, JSON.toJSONString(result));
-                            weiXinMessageService.sendMessage("划转" + currency.toUpperCase(), "划转" + instrumentId + ", 数量：" + transferAmount);
+                            weiXinMessageService.sendMessage("划转" + currency.toUpperCase() + "币币杠杆", "划转" + instrumentId + ", 数量：" + transferAmount);
                         } catch (Exception e1) {
                             log.error("transfer {} {} from spot margin to swap error", instrumentId, transferAmount, e1);
 
