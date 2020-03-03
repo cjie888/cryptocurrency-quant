@@ -14,7 +14,7 @@ import org.ta4j.core.*;
 
 import java.math.BigDecimal;
 
-@Component
+//@Component
 @Slf4j(topic = "strategy")
 public class CciCorrectionCrossJob extends BaseSwapStrategyJob {
 
