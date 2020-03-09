@@ -232,7 +232,7 @@ public class SwapService {
                     try {
                         JSONObject result = accountAPIService.transfer("okex", transferIn);
                         log.info("transfer {} {} from financial to swap", transferAmount, JSON.toJSONString(result));
-                        weiXinMessageService.sendMessage("划转" + currency.toUpperCase(), "划转" + instrumentId + ", 数量：" + transferAmount);
+                        //weiXinMessageService.sendMessage("划转" + currency.toUpperCase(), "划转" + instrumentId + ", 数量：" + transferAmount);
                     } catch (Exception e) {
                         log.error("transfer {} {} from financial to swap error", instrumentId, transferAmount, e);
 
@@ -242,7 +242,7 @@ public class SwapService {
                             transferIn.setInstrument_id(currency + "-usdt");
                             JSONObject result = accountAPIService.transfer("okex", transferIn);
                             log.info("transfer {} {} from spot margin to swap", transferAmount, JSON.toJSONString(result));
-                            weiXinMessageService.sendMessage("划转" + currency.toUpperCase() + "币币杠杆", "划转" + instrumentId + ", 数量：" + transferAmount);
+                           // weiXinMessageService.sendMessage("划转" + currency.toUpperCase() + "币币杠杆", "划转" + instrumentId + ", 数量：" + transferAmount);
                         } catch (Exception e1) {
                             log.error("transfer {} {} from spot margin to swap error", instrumentId, transferAmount, e1);
 
@@ -251,7 +251,7 @@ public class SwapService {
                 }
                 if (Double.valueOf(apiAccountVO.getMargin_ratio()) < 0.10) {
                     //停止交易，报警
-                    weiXinMessageService.sendMessage("保证金不足10%", "保证金不足10%，" + instrumentId);
+                    //weiXinMessageService.sendMessage("保证金不足10%", "保证金不足10%，" + instrumentId);
                     return false;
                 }
             }
