@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cjie.cryptocurrency.quant.mapper.SpotOrderMapper">
+  <resultMap id="BaseResultMap" type="com.cjie.cryptocurrency.quant.model.SpotOrder">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="symbol" jdbcType="VARCHAR" property="symbol" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="type" jdbcType="TINYINT" property="type" />
+    <result column="size" jdbcType="DECIMAL" property="size" />
+    <result column="price" jdbcType="DECIMAL" property="price" />
+    <result column="is_mock" jdbcType="TINYINT" property="isMock" />
+    <result column="order_id" jdbcType="VARCHAR" property="orderId" />
+    <result column="strategy" jdbcType="VARCHAR" property="strategy" />
+    <result column="status" jdbcType="INTEGER" property="status" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, symbol, create_time, type, size, price, is_mock, order_id, strategy,status
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from spot_order
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <select id="selectByOrderId" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from spot_order
+    where order_id = #{orderId,jdbcType=VARCHAR}
+  </select>
+  <select id="selectLatest" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from spot_order
+    where symbol = #{symbol,jdbcType=BIGINT} and strategy = #{strategy,jdbcType=VARCHAR} order by create_time desc limit 1
+  </select>
+
+  <select id="selectByStatus" resultMap="BaseResultMap">
+      select
+     <include refid="Base_Column_List" />
+     from spot_order
+     <where>
+       symbol = #{symbol,jdbcType=BIGINT} and strategy = #{strategy,jdbcType=VARCHAR}
+       and
+       status in
+       <foreach item="item" collection="statuses" separator="," open="(" close=")" index="">
+         #{item, jdbcType=INTEGER}
+       </foreach>
+     </where>
+      order by create_time desc limit 100
+   </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from spot_order
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.cjie.cryptocurrency.quant.model.SpotOrder">
+    insert into spot_order (id, symbol, create_time,
+      type, size, price, 
+      is_mock, order_id, strategy, status)
+    values (#{id,jdbcType=BIGINT}, #{symbol,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP},
+      #{type,jdbcType=TINYINT}, #{size,jdbcType=DECIMAL}, #{price,jdbcType=DECIMAL}, 
+      #{isMock,jdbcType=TINYINT}, #{orderId,jdbcType=VARCHAR}, #{strategy,jdbcType=VARCHAR},#{status,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.cjie.cryptocurrency.quant.model.SpotOrder">
+    insert into spot_order
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="symbol != null">
+        symbol,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="type != null">
+        type,
+      </if>
+      <if test="size != null">
+        size,
+      </if>
+      <if test="price != null">
+        price,
+      </if>
+      <if test="isMock != null">
+        is_mock,
+      </if>
+      <if test="orderId != null">
+        order_id,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="symbol != null">
+        #{symbol,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="type != null">
+        #{type,jdbcType=TINYINT},
+      </if>
+      <if test="size != null">
+        #{size,jdbcType=DECIMAL},
+      </if>
+      <if test="price != null">
+        #{price,jdbcType=DECIMAL},
+      </if>
+      <if test="isMock != null">
+        #{isMock,jdbcType=TINYINT},
+      </if>
+      <if test="orderId != null">
+        #{orderId,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.cjie.cryptocurrency.quant.model.SpotOrder">
+    update spot_order
+    <set>
+      <if test="symbol != null">
+        symbol = #{symbol,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="type != null">
+        type = #{type,jdbcType=TINYINT},
+      </if>
+      <if test="size != null">
+        size = #{size,jdbcType=DECIMAL},
+      </if>
+      <if test="price != null">
+        price = #{price,jdbcType=DECIMAL},
+      </if>
+      <if test="isMock != null">
+        is_mock = #{isMock,jdbcType=TINYINT},
+      </if>
+      <if test="orderId != null">
+        order_id = #{orderId,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        status = #{status,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.cjie.cryptocurrency.quant.model.SpotOrder">
+    update spot_order
+    set symbol = #{symbol,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      type = #{type,jdbcType=TINYINT},
+      size = #{size,jdbcType=DECIMAL},
+      price = #{price,jdbcType=DECIMAL},
+      is_mock = #{isMock,jdbcType=TINYINT},
+      order_id = #{orderId,jdbcType=VARCHAR},
+      status = #{status,jdbcType=INTEGER}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+
+  <update id="updateStatus">
+    update spot_order
+    set status = #{status,jdbcType=INTEGER}
+    where order_id = #{orderId,jdbcType=VARCHAR}
+  </update>
+</mapper>

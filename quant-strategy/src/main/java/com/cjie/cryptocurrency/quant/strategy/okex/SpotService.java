@@ -1,0 +1,237 @@
+package com.cjie.cryptocurrency.quant.strategy.okex;
+
+import com.alibaba.fastjson.JSON;
+import com.cjie.cryptocurrency.quant.api.okex.bean.spot.param.PlaceOrderParam;
+import com.cjie.cryptocurrency.quant.api.okex.bean.spot.result.OrderInfo;
+import com.cjie.cryptocurrency.quant.api.okex.bean.spot.result.OrderResult;
+import com.cjie.cryptocurrency.quant.api.okex.bean.spot.result.Ticker;
+import com.cjie.cryptocurrency.quant.api.okex.bean.swap.param.PpOrder;
+import com.cjie.cryptocurrency.quant.api.okex.bean.swap.result.ApiOrderResultVO;
+import com.cjie.cryptocurrency.quant.api.okex.bean.swap.result.ApiPositionVO;
+import com.cjie.cryptocurrency.quant.api.okex.bean.swap.result.ApiPositionsVO;
+import com.cjie.cryptocurrency.quant.api.okex.bean.swap.result.ApiTickerVO;
+import com.cjie.cryptocurrency.quant.api.okex.service.spot.SpotOrderAPIServive;
+import com.cjie.cryptocurrency.quant.mapper.SpotOrderMapper;
+import com.cjie.cryptocurrency.quant.model.APIKey;
+import com.cjie.cryptocurrency.quant.model.SpotOrder;
+import com.cjie.cryptocurrency.quant.model.SwapOrder;
+import com.cjie.cryptocurrency.quant.service.ApiKeyService;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
+import org.springframework.http.converter.StringHttpMessageConverter;
+import org.springframework.stereotype.Component;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.RestTemplate;
+
+import java.math.BigDecimal;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+@Component
+@Slf4j
+public class SpotService {
+
+
+    @Autowired
+    private SpotOrderAPIServive spotOrderAPIServive;
+
+    @Autowired
+    private SpotOrderMapper spotOrderMapper;
+
+    @Autowired
+    private ApiKeyService apiKeyService;
+
+
+    public void netGrid(String site, String symbol, String size, Double increment) {
+
+
+        //获取等待提交订单
+        List<Integer> unProcessedStatuses = new ArrayList<>();
+        unProcessedStatuses.add(99);
+        unProcessedStatuses.add(0);
+        unProcessedStatuses.add(1);
+        try {
+            List<SpotOrder> swapOrders = spotOrderMapper.selectByStatus(symbol, "netGrid", unProcessedStatuses);
+            if (CollectionUtils.isNotEmpty(swapOrders)) {
+                log.info("unprocessed spot orders {}", JSON.toJSONString(swapOrders));
+                for (SpotOrder swapOrder : swapOrders) {
+                    OrderInfo result = spotOrderAPIServive.getOrderByOrderId(site, symbol, Long.parseLong(swapOrder.getOrderId()));
+
+                    log.info("spot order status {}", JSON.toJSONString(result));
+                    if (result == null) {
+                        return;
+                    }
+                    Integer status = Integer.parseInt(result.getState());
+                    if (!swapOrder.getStatus().equals(status)) {
+                        spotOrderMapper.updateStatus(swapOrder.getOrderId(), status);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            log.info("update status error, symbol:{}", symbol, e);
+            return;
+        }
+
+        List<Integer> unSettledStatuses = new ArrayList<>();
+        unSettledStatuses.add(1);
+        List<SpotOrder> unSettledOrders = spotOrderMapper.selectByStatus(symbol, "netGrid", unSettledStatuses);
+        if (CollectionUtils.isNotEmpty(unSettledOrders)) {
+            for (SpotOrder spotOrder : unSettledOrders) {
+                if (System.currentTimeMillis() - 30 * 60 * 1000L > spotOrder.getCreateTime().getTime() ) {
+                    spotOrderAPIServive.cancleOrderByOrderId(site, symbol, Long.parseLong(spotOrder.getOrderId()));
+                    log.info("取消部分成交订单{}-{}", symbol, spotOrder.getOrderId());
+                }
+            }
+            return;
+        }
+
+        List<Integer> unSelledStatuses = new ArrayList<>();
+        unSelledStatuses.add(0);
+        List<SpotOrder> unSelledOrders = spotOrderMapper.selectByStatus(symbol, "netGrid", unSelledStatuses);
+        if (CollectionUtils.isNotEmpty(unSelledOrders)) {
+            for (SpotOrder spotOrder : unSelledOrders) {
+                spotOrderAPIServive.cancleOrderByOrderId(site, symbol, Long.parseLong(spotOrder.getOrderId()));
+                log.info("取消未成交订单{}-{}", symbol, spotOrder.getOrderId());
+            }
+        }
+
+        Ticker spotTicker = getTicker(site,symbol);
+        log.info("当前价格{}-{}", site, spotTicker.getLast());
+
+        SpotOrder lastOrder = null;
+        List<Integer> selledStatuses = new ArrayList<>();
+        selledStatuses.add(2);
+        List<SpotOrder> selledOrders = spotOrderMapper.selectByStatus(symbol, "netGrid", selledStatuses);
+        if (CollectionUtils.isNotEmpty(selledOrders)) {
+            for (SpotOrder spotOrder : selledOrders) {
+                if (lastOrder == null) {
+                    lastOrder = spotOrder;
+                    break;
+                }
+            }
+        }
+
+
+        if (lastOrder == null) {
+            //买入
+            PlaceOrderParam placeOrderParam = new PlaceOrderParam();
+            placeOrderParam.setProduct_id(symbol);
+            placeOrderParam.setPrice(spotTicker.getLast());
+            placeOrderParam.setSize(size);
+            placeOrderParam.setSide("buy");
+            placeOrderParam.setType("limit");
+
+            OrderResult orderResult = spotOrderAPIServive.addOrder(site,placeOrderParam);
+            log.info("买入{}-{}", symbol, JSON.toJSONString(placeOrderParam));
+            if (orderResult.isResult()) {
+
+                SpotOrder spotOrder = new SpotOrder();
+                spotOrder.setSymbol(symbol);
+                spotOrder.setCreateTime(new Date());
+                spotOrder.setStrategy("netGrid");
+                spotOrder.setIsMock(Byte.valueOf("0"));
+                spotOrder.setType(Byte.valueOf("1"));
+                spotOrder.setPrice(new BigDecimal(spotTicker.getLast()));
+                spotOrder.setSize(new BigDecimal(size));
+                spotOrder.setOrderId(String.valueOf(orderResult.getOrder_id()));
+                spotOrder.setStatus(99);
+                spotOrderMapper.insert(spotOrder);
+            }
+
+            return;
+
+        }
+        Double currentPrice = Double.valueOf(spotTicker.getLast());
+        Double lastPrice = lastOrder.getPrice().doubleValue();
+        log.info("当前价格：{}, 上次价格:{}", currentPrice, lastPrice);
+        if (currentPrice > lastPrice && (currentPrice - lastPrice)/lastPrice > 1 + increment ) {
+            //价格上涨
+            //获取最新成交多单
+            //卖出
+            PlaceOrderParam placeOrderParam = new PlaceOrderParam();
+            placeOrderParam.setProduct_id(symbol);
+            placeOrderParam.setPrice(spotTicker.getLast());
+            placeOrderParam.setSize(size);
+            placeOrderParam.setSide("sell");
+            placeOrderParam.setType("limit");
+
+            OrderResult orderResult = spotOrderAPIServive.addOrder(site,placeOrderParam);
+            log.info("卖出{}-{}", symbol, JSON.toJSONString(placeOrderParam));
+            if (orderResult.isResult()) {
+
+                SpotOrder spotOrder = new SpotOrder();
+                spotOrder.setSymbol(symbol);
+                spotOrder.setCreateTime(new Date());
+                spotOrder.setStrategy("netGrid");
+                spotOrder.setIsMock(Byte.valueOf("0"));
+                spotOrder.setType(Byte.valueOf("2"));
+                spotOrder.setPrice(new BigDecimal(spotTicker.getLast()));
+                spotOrder.setSize(new BigDecimal(size));
+                spotOrder.setOrderId(String.valueOf(orderResult.getOrder_id()));
+                spotOrder.setStatus(99);
+                spotOrderMapper.insert(spotOrder);
+            }
+            return;
+
+        }
+        if (currentPrice < lastPrice && (lastPrice - currentPrice)/lastPrice < 1 - increment ) {
+            //价格下跌
+            //获取最新成交空单
+            //买入
+            PlaceOrderParam placeOrderParam = new PlaceOrderParam();
+            placeOrderParam.setProduct_id(symbol);
+            placeOrderParam.setPrice(spotTicker.getLast());
+            placeOrderParam.setSize(size);
+            placeOrderParam.setSide("buy");
+            placeOrderParam.setType("limit");
+
+            OrderResult orderResult = spotOrderAPIServive.addOrder(site,placeOrderParam);
+            log.info("买入{}-{}", symbol, JSON.toJSONString(placeOrderParam));
+            if (orderResult.isResult()) {
+
+                SpotOrder spotOrder = new SpotOrder();
+                spotOrder.setSymbol(symbol);
+                spotOrder.setCreateTime(new Date());
+                spotOrder.setStrategy("netGrid");
+                spotOrder.setIsMock(Byte.valueOf("0"));
+                spotOrder.setType(Byte.valueOf("1"));
+                spotOrder.setPrice(new BigDecimal(spotTicker.getLast()));
+                spotOrder.setSize(new BigDecimal(size));
+                spotOrder.setOrderId(String.valueOf(orderResult.getOrder_id()));
+                spotOrder.setStatus(99);
+                spotOrderMapper.insert(spotOrder);
+            }
+        }
+
+    }
+
+    public Ticker getTicker(String site, String symbol) {
+        MultiValueMap<String, String> headers = new HttpHeaders();
+        APIKey apiKey = apiKeyService.getApiKey(site);
+        headers.add("Referer", apiKey.getDomain());
+        headers.add("user-agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.84 Safari/537.36");
+        HttpEntity requestEntity = new HttpEntity<>(headers);
+
+        String url =  apiKey.getDomain() + "/api/spot/v3/products/"+symbol+"/ticker";
+        SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
+        requestFactory.setConnectTimeout(10000);// 设置超时
+        requestFactory.setReadTimeout(10000);
+        RestTemplate client = new RestTemplate(requestFactory);
+        log.info(url);
+        client.getMessageConverters().set(1, new StringHttpMessageConverter(StandardCharsets.UTF_8));
+        ResponseEntity<String> response = client.exchange(url, HttpMethod.GET, requestEntity, String.class);
+        String body = response.getBody();
+        log.info(body);
+        return JSON.parseObject(body,Ticker.class);
+
+        //return spotProductAPIService.getTickerByProductId(baseCurrency.toUpperCase() + "-" + quotaCurrency.toUpperCase());
+    }
+}

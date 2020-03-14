@@ -588,9 +588,7 @@ public class MineService {
             return false;
         }
         for (OrderInfo orderInfo : orderIds) {
-            PlaceOrderParam placeOrderParam = new PlaceOrderParam();
-            placeOrderParam.setProduct_id(orderInfo.getProduct_id());
-            spotOrderAPIService.cancleOrderByOrderId(site, placeOrderParam, orderInfo.getOrder_id());
+            spotOrderAPIService.cancleOrderByOrderId(site, orderInfo.getProduct_id(), orderInfo.getOrder_id());
         }
         return true;
     }

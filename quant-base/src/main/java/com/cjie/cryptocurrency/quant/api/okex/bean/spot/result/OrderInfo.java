@@ -18,6 +18,8 @@ public class OrderInfo {
 
     private String status;
 
+    private String state;
+
     private String side;
 
     private String type;
@@ -94,6 +96,14 @@ public class OrderInfo {
 
     public void setType(final String type) {
         this.type = type;
+    }
+
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
     }
 
     public String getProduct_id() {

@@ -30,7 +30,7 @@ public interface SpotOrderAPIServive {
      *  @param order
      * @param orderId
      */
-    OrderResult cancleOrderByOrderId(String site, final PlaceOrderParam order, Long orderId);
+    OrderResult cancleOrderByOrderId(String site, String instrumentId, Long orderId);
 
     /**
      * 批量取消订单
