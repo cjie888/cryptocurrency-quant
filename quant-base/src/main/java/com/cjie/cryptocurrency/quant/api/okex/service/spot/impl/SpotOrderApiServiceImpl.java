@@ -56,7 +56,9 @@ public class SpotOrderApiServiceImpl extends BaseServiceImpl implements SpotOrde
     public OrderResult cancleOrderByOrderId(String site, final String instrumentId, final Long orderId) {
         APIClient apiClient = getSpotProductAPIClient(site);
         SpotOrderAPI spotOrderAPI = getSpotOrderApi(site, apiClient);
-        return apiClient.executeSync(spotOrderAPI.cancleOrderByOrderId(orderId, instrumentId));
+        PlaceOrderParam placeOrderParam = new PlaceOrderParam();
+        placeOrderParam.setInstrument_id(instrumentId);
+        return apiClient.executeSync(spotOrderAPI.cancleOrderByOrderId(orderId, placeOrderParam));
     }
 
     @Override

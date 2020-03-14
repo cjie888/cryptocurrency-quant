@@ -5,6 +5,8 @@ public class PlaceOrderParam {
      * 客户端下单 标示id 非必填
      */
     private String client_oid;
+
+    private String instrument_id;
     /**
      * 币对如 etc_eth
      */
@@ -111,4 +113,11 @@ public class PlaceOrderParam {
     }
 
 
+    public String getInstrument_id() {
+        return instrument_id;
+    }
+
+    public void setInstrument_id(String instrument_id) {
+        this.instrument_id = instrument_id;
+    }
 }

@@ -15,8 +15,8 @@ public interface SpotOrderAPI {
     @POST("api/spot/v3/orders")
     Call<OrderResult> addOrder(@Body PlaceOrderParam order);
 
-    @HTTP(method = "POST", path = "api/spot/v3/orders/{order_id}", hasBody = true)
-    Call<OrderResult> cancleOrderByOrderId(@Path("order_id") Long orderId, @Query("instrument_id") String instruemntId);
+    @HTTP(method = "DELETE", path = "api/spot/v3/orders/{order_id}", hasBody = true)
+    Call<OrderResult> cancleOrderByOrderId(@Path("order_id") Long orderId, @Body PlaceOrderParam order);
 
     @HTTP(method = "DELETE", path = "api/spot/v3/orders", hasBody = true)
     Call<JSONObject> cancleOrders(@Body PlaceOrderParam order);
