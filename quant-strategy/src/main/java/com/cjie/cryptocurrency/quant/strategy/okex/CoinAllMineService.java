@@ -492,9 +492,7 @@ public class CoinAllMineService {
             if (System.currentTimeMillis() - 8 * 3600 * 1000 - dateFormat.parse(orderInfo.getCreated_at()).getTime() < minutes * 60 * 1000) {
                 continue;
             }
-            PlaceOrderParam placeOrderParam = new PlaceOrderParam();
-            placeOrderParam.setProduct_id(orderInfo.getProduct_id());
-            spotOrderAPIService.cancleOrderByOrderId("coinall",placeOrderParam, orderInfo.getOrder_id());
+            spotOrderAPIService.cancleOrderByOrderId("coinall",orderInfo.getProduct_id(), orderInfo.getOrder_id());
         }
         return true;
     }
