@@ -214,9 +214,7 @@ public class OkexMineService {
             return false;
         }
         for (OrderInfo orderInfo : orderIds) {
-            PlaceOrderParam placeOrderParam = new PlaceOrderParam();
-            placeOrderParam.setProduct_id(orderInfo.getProduct_id());
-            spotOrderAPIService.cancleOrderByOrderId("okex",placeOrderParam, orderInfo.getOrder_id());
+            spotOrderAPIService.cancleOrderByOrderId("okex",orderInfo.getProduct_id(), orderInfo.getOrder_id());
         }
         return true;
     }
