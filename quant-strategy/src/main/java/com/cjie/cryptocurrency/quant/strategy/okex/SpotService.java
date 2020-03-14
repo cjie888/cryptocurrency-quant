@@ -152,7 +152,7 @@ public class SpotService {
         Double currentPrice = Double.valueOf(spotTicker.getLast());
         Double lastPrice = lastOrder.getPrice().doubleValue();
         log.info("当前价格：{}, 上次价格:{}", currentPrice, lastPrice);
-        if (currentPrice > lastPrice && (currentPrice - lastPrice)/lastPrice > 1 + increment ) {
+        if (currentPrice > lastPrice && (currentPrice - lastPrice)/lastPrice > increment ) {
             //价格上涨
             //获取最新成交多单
             //卖出
@@ -182,7 +182,7 @@ public class SpotService {
             return;
 
         }
-        if (currentPrice < lastPrice && (lastPrice - currentPrice)/lastPrice < 1 - increment ) {
+        if (currentPrice < lastPrice && (lastPrice - currentPrice)/lastPrice > increment ) {
             //价格下跌
             //获取最新成交空单
             //买入
