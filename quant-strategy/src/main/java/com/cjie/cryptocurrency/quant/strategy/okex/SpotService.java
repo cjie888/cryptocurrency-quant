@@ -1,7 +1,9 @@
 package com.cjie.cryptocurrency.quant.strategy.okex;
 
 import com.alibaba.fastjson.JSON;
+import com.cjie.cryptocurrency.quant.api.okex.bean.account.param.Transfer;
 import com.cjie.cryptocurrency.quant.api.okex.bean.spot.param.PlaceOrderParam;
+import com.cjie.cryptocurrency.quant.api.okex.bean.spot.result.Account;
 import com.cjie.cryptocurrency.quant.api.okex.bean.spot.result.OrderInfo;
 import com.cjie.cryptocurrency.quant.api.okex.bean.spot.result.OrderResult;
 import com.cjie.cryptocurrency.quant.api.okex.bean.spot.result.Ticker;
@@ -10,6 +12,8 @@ import com.cjie.cryptocurrency.quant.api.okex.bean.swap.result.ApiOrderResultVO;
 import com.cjie.cryptocurrency.quant.api.okex.bean.swap.result.ApiPositionVO;
 import com.cjie.cryptocurrency.quant.api.okex.bean.swap.result.ApiPositionsVO;
 import com.cjie.cryptocurrency.quant.api.okex.bean.swap.result.ApiTickerVO;
+import com.cjie.cryptocurrency.quant.api.okex.service.account.AccountAPIService;
+import com.cjie.cryptocurrency.quant.api.okex.service.spot.SpotAccountAPIService;
 import com.cjie.cryptocurrency.quant.api.okex.service.spot.SpotOrderAPIServive;
 import com.cjie.cryptocurrency.quant.mapper.SpotOrderMapper;
 import com.cjie.cryptocurrency.quant.model.APIKey;
@@ -34,6 +38,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 @Component
 @Slf4j
@@ -48,6 +53,12 @@ public class SpotService {
 
     @Autowired
     private ApiKeyService apiKeyService;
+
+    @Autowired
+    private SpotAccountAPIService spotAccountAPIService;
+
+    @Autowired
+    private AccountAPIService accountAPIService;
 
 
     public void netGrid(String site, String symbol, String size, Double increment) {
@@ -118,7 +129,38 @@ public class SpotService {
                 }
             }
         }
+        Double currentPrice = Double.valueOf(spotTicker.getLast());
+        Double lastPrice = lastOrder.getPrice().doubleValue();
 
+        String baseCurrency = symbol.substring(0, symbol.indexOf("-"));
+        String quotaCurrency = symbol.substring(symbol.indexOf("-")+1);
+
+
+        Account baseAccount = spotAccountAPIService.getAccountByCurrency(site, baseCurrency);
+        if (Objects.nonNull(baseAccount) && Double.parseDouble(baseAccount.getAvailable()) <  Double.parseDouble(size)) {
+
+            Transfer transferIn = new Transfer();
+            transferIn.setCurrency(baseCurrency);
+            transferIn.setFrom(8);
+            transferIn.setTo(1);
+            transferIn.setAmount(new BigDecimal(size));
+            accountAPIService.transfer(site, transferIn);
+            log.info("transfer {} {} from financial to spot", size, baseCurrency);
+
+        }
+
+        Account quotaAccount = spotAccountAPIService.getAccountByCurrency(site, quotaCurrency);
+        if (Objects.nonNull(quotaAccount) && Double.parseDouble(quotaAccount.getAvailable()) <  Double.parseDouble(size) * currentPrice) {
+
+            Transfer transferIn = new Transfer();
+            transferIn.setCurrency(quotaCurrency);
+            transferIn.setFrom(8);
+            transferIn.setTo(1);
+            transferIn.setAmount(new BigDecimal(size).multiply(new BigDecimal(spotTicker.getLast())));
+            accountAPIService.transfer(site, transferIn);
+            log.info("transfer {} {} from financial to spot", Double.parseDouble(size) * currentPrice , quotaCurrency);
+
+        }
 
         if (lastOrder == null) {
             //买入
@@ -149,8 +191,6 @@ public class SpotService {
             return;
 
         }
-        Double currentPrice = Double.valueOf(spotTicker.getLast());
-        Double lastPrice = lastOrder.getPrice().doubleValue();
         log.info("当前价格：{}, 上次价格:{}", currentPrice, lastPrice);
         if (currentPrice > lastPrice && (currentPrice - lastPrice)/lastPrice > increment ) {
             //价格上涨
