@@ -166,7 +166,7 @@ public class SpotService {
             PlaceOrderParam placeOrderParam = new PlaceOrderParam();
             placeOrderParam.setProduct_id(symbol);
             placeOrderParam.setPrice(spotTicker.getLast());
-            placeOrderParam.setSize(size);
+            placeOrderParam.setSize(new BigDecimal(size).multiply(new BigDecimal("1.01")).toPlainString());
             placeOrderParam.setSide("buy");
             placeOrderParam.setType("limit");
 
@@ -229,7 +229,7 @@ public class SpotService {
             PlaceOrderParam placeOrderParam = new PlaceOrderParam();
             placeOrderParam.setProduct_id(symbol);
             placeOrderParam.setPrice(spotTicker.getLast());
-            placeOrderParam.setSize(size);
+            placeOrderParam.setSize(new BigDecimal(size).multiply(new BigDecimal("1.01")).toPlainString());
             placeOrderParam.setSide("buy");
             placeOrderParam.setType("limit");
 
