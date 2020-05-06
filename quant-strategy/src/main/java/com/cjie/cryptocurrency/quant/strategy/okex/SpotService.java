@@ -181,7 +181,7 @@ public class SpotService {
                 spotOrder.setIsMock(Byte.valueOf("0"));
                 spotOrder.setType(Byte.valueOf("1"));
                 spotOrder.setPrice(new BigDecimal(spotTicker.getLast()));
-                spotOrder.setSize(new BigDecimal(size));
+                spotOrder.setSize(new BigDecimal(size).multiply(new BigDecimal("1.01")));
                 spotOrder.setOrderId(String.valueOf(orderResult.getOrder_id()));
                 spotOrder.setStatus(99);
                 spotOrderMapper.insert(spotOrder);
@@ -244,7 +244,7 @@ public class SpotService {
                 spotOrder.setIsMock(Byte.valueOf("0"));
                 spotOrder.setType(Byte.valueOf("1"));
                 spotOrder.setPrice(new BigDecimal(spotTicker.getLast()));
-                spotOrder.setSize(new BigDecimal(size));
+                spotOrder.setSize(new BigDecimal(size).multiply(new BigDecimal("1.01")));
                 spotOrder.setOrderId(String.valueOf(orderResult.getOrder_id()));
                 spotOrder.setStatus(99);
                 spotOrderMapper.insert(spotOrder);
