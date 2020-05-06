@@ -136,26 +136,26 @@ public class SpotService {
 
 
         Account baseAccount = spotAccountAPIService.getAccountByCurrency(site, baseCurrency);
-        if (Objects.nonNull(baseAccount) && Double.parseDouble(baseAccount.getAvailable()) <  Double.parseDouble(size)) {
+        if (Objects.nonNull(baseAccount) && Double.parseDouble(baseAccount.getAvailable()) <  Double.parseDouble(size) * 1.01) {
 
             Transfer transferIn = new Transfer();
             transferIn.setCurrency(baseCurrency);
             transferIn.setFrom(8);
             transferIn.setTo(1);
-            transferIn.setAmount(new BigDecimal(size));
+            transferIn.setAmount(new BigDecimal(size).multiply(new BigDecimal("1.01")));
             accountAPIService.transfer(site, transferIn);
             log.info("transfer {} {} from financial to spot", size, baseCurrency);
 
         }
 
         Account quotaAccount = spotAccountAPIService.getAccountByCurrency(site, quotaCurrency);
-        if (Objects.nonNull(quotaAccount) && Double.parseDouble(quotaAccount.getAvailable()) <  Double.parseDouble(size) * currentPrice) {
+        if (Objects.nonNull(quotaAccount) && Double.parseDouble(quotaAccount.getAvailable()) <  Double.parseDouble(size) * currentPrice * 1.01) {
 
             Transfer transferIn = new Transfer();
             transferIn.setCurrency(quotaCurrency);
             transferIn.setFrom(8);
             transferIn.setTo(1);
-            transferIn.setAmount(new BigDecimal(size).multiply(new BigDecimal(spotTicker.getLast())));
+            transferIn.setAmount(new BigDecimal(size).multiply(new BigDecimal(spotTicker.getLast())).multiply(new BigDecimal("1.01")));
             accountAPIService.transfer(site, transferIn);
             log.info("transfer {} {} from financial to spot", Double.parseDouble(size) * currentPrice , quotaCurrency);
 
