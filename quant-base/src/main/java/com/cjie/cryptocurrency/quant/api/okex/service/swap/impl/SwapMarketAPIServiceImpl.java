@@ -24,7 +24,7 @@ public class SwapMarketAPIServiceImpl implements SwapMarketAPIService {
     private ConcurrentHashMap<String, SwapMarketAPI> futuresMarketAPIs = new ConcurrentHashMap<>();
 
     private SwapMarketAPI getFuturesMarketApi(APIClient apiClient) {
-        String site = "okex";
+        String site = "okexsub1";
         SwapMarketAPI futuresMarketAPI = futuresMarketAPIs.get(site);
         if (futuresMarketAPI != null) {
             return  futuresMarketAPI;
@@ -35,7 +35,7 @@ public class SwapMarketAPIServiceImpl implements SwapMarketAPIService {
     }
 
     private APIClient getFuturesAPIClient() {
-        String site = "okex";
+        String site = "okexsub1";
         APIClient apiClient = apiClients.get(site);
         if (apiClient != null) {
             return apiClient;
