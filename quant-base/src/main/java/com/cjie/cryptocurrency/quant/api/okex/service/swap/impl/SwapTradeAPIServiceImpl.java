@@ -36,7 +36,7 @@ public class SwapTradeAPIServiceImpl implements SwapTradeAPIService {
     private ConcurrentHashMap<String, SwapTradeAPI> futuresMarketAPIs = new ConcurrentHashMap<>();
 
     private SwapTradeAPI getFuturesMarketApi(APIClient apiClient) {
-        String site = "okex";
+        String site = "okexsub1";
         SwapTradeAPI futuresMarketAPI = futuresMarketAPIs.get(site);
         if (futuresMarketAPI != null) {
             return  futuresMarketAPI;
@@ -47,7 +47,7 @@ public class SwapTradeAPIServiceImpl implements SwapTradeAPIService {
     }
 
     private APIClient getFuturesAPIClient() {
-        String site = "okex";
+        String site = "okexsub1";
         APIClient apiClient = apiClients.get(site);
         if (apiClient != null) {
             return apiClient;
@@ -77,10 +77,10 @@ public class SwapTradeAPIServiceImpl implements SwapTradeAPIService {
     public String order(PpOrder ppOrder, String strategy)  {
         APIClient client = getFuturesAPIClient();
         SwapTradeAPI api = getFuturesMarketApi(client);
-        //log.info("下单参数：：：：：：{}", JsonUtils.convertObject(ppOrder, PpOrder.class));
+        log.info("下单参数：：：：：：{}", JsonUtils.convertObject(ppOrder, PpOrder.class));
         String result =  client.executeSync(api.order(JsonUtils.convertObject(ppOrder, PpOrder.class)));
 
-        //log.info("order result:{}", result);
+        log.info("order result:{}", result);
         ApiOrderVO apiOrderVO = JSON.parseObject(result, ApiOrderVO.class);
         if (apiOrderVO.getError_code().equals("0")) {
             SwapOrder swapOrder = new SwapOrder();

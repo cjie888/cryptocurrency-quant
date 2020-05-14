@@ -27,7 +27,7 @@ public class PerpetualFuturesMarketAPIServiceImpl implements PerpetualFuturesMar
     private ConcurrentHashMap<String, PerpetualFuturesMarketAPI> futuresMarketAPIs = new ConcurrentHashMap<>();
 
     private PerpetualFuturesMarketAPI getFuturesMarketApi(APIClient apiClient) {
-        String site = "okex";
+        String site = "okexsub1";
         PerpetualFuturesMarketAPI futuresMarketAPI = futuresMarketAPIs.get(site);
         if (futuresMarketAPI != null) {
             return  futuresMarketAPI;
@@ -38,7 +38,7 @@ public class PerpetualFuturesMarketAPIServiceImpl implements PerpetualFuturesMar
     }
 
     private APIClient getFuturesMarketAPIClient() {
-        String site = "okex";
+        String site = "okexsub1";
         APIClient apiClient = apiClients.get(site);
         if (apiClient != null) {
             return apiClient;
