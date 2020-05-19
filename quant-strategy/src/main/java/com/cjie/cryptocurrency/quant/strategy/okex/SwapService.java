@@ -71,7 +71,7 @@ public class SwapService {
         //costs.put("EOS-USD-SWAP",new BigDecimal("60"));
         costs.put("XRP-USD-SWAP",new BigDecimal("900"));
         costs.put("LTC-USD-SWAP",new BigDecimal("3"));
-        costs.put("BTC-USDT-SWAP", new BigDecimal("200"));
+        costs.put("BTC-USDT-SWAP", new BigDecimal("300"));
         costs.put("BCH-USDT-SWAP", new BigDecimal("200"));
         //costs.put("ETH-USDT-SWAP", new BigDecimal("100"));
         String accounts = swapUserAPIServive.getAccounts();
@@ -217,7 +217,7 @@ public class SwapService {
         if (apiAccountsVO != null && CollectionUtils.isNotEmpty(apiAccountsVO.getInfo())) {
             for (ApiAccountVO apiAccountVO : apiAccountsVO.getInfo()) {
                 log.info("获取账户信息保证金率{}-{}", instrumentId, apiAccountVO.getMargin_ratio());
-                if (Double.valueOf(apiAccountVO.getMargin_ratio()) < 0.20) {
+                if (Double.valueOf(apiAccountVO.getMargin_ratio()) < 0.4) {
                     //转入
                     Transfer transferIn = new Transfer();
                     String currency = instrumentId.substring(0,3).toLowerCase();
