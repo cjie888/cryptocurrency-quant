@@ -230,7 +230,7 @@ public class SwapService {
                     transferIn.setTo(9);
                     transferIn.setAmount(BigDecimal.valueOf(transferAmount));
                     try {
-                        JSONObject result = accountAPIService.transfer("okex", transferIn);
+                        JSONObject result = accountAPIService.transfer("okexsub1", transferIn);
                         log.info("transfer {} {} from financial to swap", transferAmount, JSON.toJSONString(result));
                         //weiXinMessageService.sendMessage("划转" + currency.toUpperCase(), "划转" + instrumentId + ", 数量：" + transferAmount);
                     } catch (Exception e) {
@@ -240,7 +240,7 @@ public class SwapService {
                             Thread.sleep(2000);
                             transferIn.setFrom(5);
                             transferIn.setInstrument_id(currency + "-usdt");
-                            JSONObject result = accountAPIService.transfer("okex", transferIn);
+                            JSONObject result = accountAPIService.transfer("okexsub1", transferIn);
                             log.info("transfer {} {} from spot margin to swap", transferAmount, JSON.toJSONString(result));
                            // weiXinMessageService.sendMessage("划转" + currency.toUpperCase() + "币币杠杆", "划转" + instrumentId + ", 数量：" + transferAmount);
                         } catch (Exception e1) {
