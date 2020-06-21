@@ -22,6 +22,9 @@ public class SpotTask {
         spotService.netGrid("okexsub1", "OKB-USDT", "2", 0.03);
         spotService.netGrid("okexsub1", "EOS-USDT", "2", 0.03);
         spotService.netGrid("okexsub1", "XRP-USDT", "20", 0.04);
+        spotService.netGrid("okexsub1", "ETC-USDT", "1", 0.03);
+        spotService.netGrid("okexsub1", "BSV-USDT", "0.05000000", 0.03);
+
 
 //ltc 6  xrp 3 etc 5
     }
