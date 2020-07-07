@@ -143,8 +143,13 @@ public class SpotService {
             transferIn.setFrom(8);
             transferIn.setTo(1);
             transferIn.setAmount(new BigDecimal(size).multiply(new BigDecimal("1.01")));
-            accountAPIService.transfer(site, transferIn);
-            log.info("transfer {} {} from financial to spot", size, baseCurrency);
+            try {
+                accountAPIService.transfer(site, transferIn);
+                log.info("transfer {} {} from financial to spot", size, baseCurrency);
+            } catch (Exception e) {
+                log.info("transfer {} {} from financial to spot error", size, baseCurrency, e);
+                return;
+            }
 
         }
 
