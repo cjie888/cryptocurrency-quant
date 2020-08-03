@@ -12,7 +12,7 @@ public class SpotTask {
     @Autowired
     private SpotService spotService;
 
-    @Scheduled(cron = "7/20 * * * * ?")
+    @Scheduled(cron = "7/13 * * * * ?")
     public  void netGrid() {
 
         spotService.netGrid("okexsub1", "ETH-USDT", "0.05000000", 0.03);
