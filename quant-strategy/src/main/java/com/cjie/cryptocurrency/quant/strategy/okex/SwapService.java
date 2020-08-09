@@ -222,7 +222,7 @@ public class SwapService {
                 if (Double.valueOf(apiAccountVO.getMargin_ratio()) < 0.4) {
                     //转入
                     Transfer transferIn = new Transfer();
-                    String currency = instrumentId.substring(0,3).toLowerCase();
+                    String currency = instrumentId.substring(0,instrumentId.indexOf("-")).toLowerCase();
                     if (instrumentId.toUpperCase().indexOf("USDT") > 0) {
                         transferIn.setTo_instrument_id(currency + "-" + "usdt");
                         currency = "usdt";
