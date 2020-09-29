@@ -63,7 +63,8 @@ public class SwapService {
                 "LTC-USD-SWAP",
                 "BTC-USDT-SWAP",
                 "BCH-USDT-SWAP",
-                "ATOM-USDT-SWAP"
+                "ATOM-USDT-SWAP",
+                "XRP-USDT-SWAP"
         };
         Map<String,BigDecimal> costs = new HashMap<>();
         costs.put("BTC-USD-SWAP", new BigDecimal("0.06"));
@@ -74,7 +75,8 @@ public class SwapService {
         costs.put("LTC-USD-SWAP",new BigDecimal("3"));
         costs.put("BTC-USDT-SWAP", new BigDecimal("1000"));
         costs.put("BCH-USDT-SWAP", new BigDecimal("200"));
-        costs.put("ATOM-USDT-SWAP", new BigDecimal("150"));
+        costs.put("ATOM-USDT-SWAP", new BigDecimal("100"));
+        costs.put("XRP-USDT-SWAP", new BigDecimal("150"));
         //costs.put("ETH-USDT-SWAP", new BigDecimal("100"));
         String accounts = swapUserAPIServive.getAccounts();
         log.info("获取所有账户信息{}", JSON.toJSONString(accounts));
