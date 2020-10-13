@@ -150,9 +150,9 @@ public class SpotService {
             transferIn.setAmount(transferAmount);
             try {
                 accountAPIService.transfer(site, transferIn);
-                log.info("transfer {} {} from financial to spot", size, baseCurrency);
+                log.info("transfer {} {} from asset to spot", size, baseCurrency);
             } catch (Exception e) {
-                log.info("transfer {} {} from financial to spot error", size, baseCurrency, e);
+                log.info("transfer {} {} from asset to spot error", size, baseCurrency, e);
                 return;
             }
 
@@ -171,7 +171,7 @@ public class SpotService {
             transferIn.setTo(1);
             transferIn.setAmount(transferAmount);
             accountAPIService.transfer(site, transferIn);
-            log.info("transfer {} {} from financial to spot", Double.parseDouble(size) * currentPrice , quotaCurrency);
+            log.info("transfer {} {} from asset to spot", Double.parseDouble(size) * currentPrice , quotaCurrency);
 
         }
 
