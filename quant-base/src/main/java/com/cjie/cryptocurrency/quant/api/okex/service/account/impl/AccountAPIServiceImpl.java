@@ -121,6 +121,10 @@ public class AccountAPIServiceImpl extends BaseServiceImpl implements AccountAPI
     public JSONObject purchaseRedempt(String site, String currency, String amount, String side) {
         APIClient client = getSpotProductAPIClient(site);
         AccountAPI api = getAccountApi(site, client);
-        return client.executeSync(api.purchaseRedempt(currency, amount, side));
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("currency",currency);
+        jsonObject.put("amount",amount);
+        jsonObject.put("side",side);
+        return client.executeSync(api.purchaseRedempt(jsonObject));
     }
 }

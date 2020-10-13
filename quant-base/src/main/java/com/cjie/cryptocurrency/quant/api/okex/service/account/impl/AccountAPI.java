@@ -59,5 +59,5 @@ public interface AccountAPI {
 
 
     @POST("/api/account/v3/purchase_redempt")
-    Call<JSONObject>  purchaseRedempt(@Query("currency")String currency, @Query("amount")String amount, @Query("side")String side);
+    Call<JSONObject>  purchaseRedempt(@Body JSONObject jsonObject);
 }
