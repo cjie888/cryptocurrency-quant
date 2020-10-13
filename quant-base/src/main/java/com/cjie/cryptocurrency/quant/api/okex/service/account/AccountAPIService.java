@@ -36,4 +36,8 @@ public interface AccountAPIService {
 
     List<WithdrawFee> getWithdrawFee(String site, String currency);
 
+    //操作类型
+    //申购:purchase,赎回:redempt
+    JSONObject purchaseRedempt(String site, String currency, String amount, String side);
+
 }

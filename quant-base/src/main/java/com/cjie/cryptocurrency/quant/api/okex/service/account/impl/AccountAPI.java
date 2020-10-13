@@ -58,4 +58,6 @@ public interface AccountAPI {
     Call<List<WithdrawFee>> getWithdrawFee(@Query("currency") String currency);
 
 
+    @POST("/api/account/v3/purchase_redempt")
+    Call<JSONObject>  purchaseRedempt(@Query("currency")String currency, @Query("amount")String amount, @Query("side")String side);
 }

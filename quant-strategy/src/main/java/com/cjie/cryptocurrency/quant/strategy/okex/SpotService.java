@@ -1,6 +1,7 @@
 package com.cjie.cryptocurrency.quant.strategy.okex;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.cjie.cryptocurrency.quant.api.okex.bean.account.param.Transfer;
 import com.cjie.cryptocurrency.quant.api.okex.bean.spot.param.PlaceOrderParam;
 import com.cjie.cryptocurrency.quant.api.okex.bean.spot.result.Account;
@@ -138,11 +139,15 @@ public class SpotService {
         Account baseAccount = spotAccountAPIService.getAccountByCurrency(site, baseCurrency);
         if (Objects.nonNull(baseAccount) && Double.parseDouble(baseAccount.getAvailable()) <  Double.parseDouble(size) * 1.01) {
 
+            BigDecimal transferAmount = new BigDecimal(size).multiply(new BigDecimal("1.01"));
+            JSONObject result1 = accountAPIService.purchaseRedempt("okexsub1", baseCurrency, transferAmount.toPlainString(), "redempt");
+            log.info("transfer {} {} from financial to asset", transferAmount, JSON.toJSONString(result1));
+
             Transfer transferIn = new Transfer();
             transferIn.setCurrency(baseCurrency);
-            transferIn.setFrom(8);
+            transferIn.setFrom(6);
             transferIn.setTo(1);
-            transferIn.setAmount(new BigDecimal(size).multiply(new BigDecimal("1.01")));
+            transferIn.setAmount(transferAmount);
             try {
                 accountAPIService.transfer(site, transferIn);
                 log.info("transfer {} {} from financial to spot", size, baseCurrency);
@@ -156,11 +161,15 @@ public class SpotService {
         Account quotaAccount = spotAccountAPIService.getAccountByCurrency(site, quotaCurrency);
         if (Objects.nonNull(quotaAccount) && Double.parseDouble(quotaAccount.getAvailable()) <  Double.parseDouble(size) * currentPrice * 1.01) {
 
+            BigDecimal transferAmount = new BigDecimal(size).multiply(new BigDecimal(spotTicker.getLast())).multiply(new BigDecimal("1.01"));
+            JSONObject result1 = accountAPIService.purchaseRedempt("okexsub1", quotaCurrency, transferAmount.toPlainString(), "redempt");
+            log.info("transfer {} {} from financial to asset", transferAmount, JSON.toJSONString(result1));
+
             Transfer transferIn = new Transfer();
             transferIn.setCurrency(quotaCurrency);
             transferIn.setFrom(8);
             transferIn.setTo(1);
-            transferIn.setAmount(new BigDecimal(size).multiply(new BigDecimal(spotTicker.getLast())).multiply(new BigDecimal("1.01")));
+            transferIn.setAmount(transferAmount);
             accountAPIService.transfer(site, transferIn);
             log.info("transfer {} {} from financial to spot", Double.parseDouble(size) * currentPrice , quotaCurrency);
 

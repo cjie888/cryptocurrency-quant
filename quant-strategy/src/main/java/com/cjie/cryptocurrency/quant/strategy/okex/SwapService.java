@@ -224,7 +224,11 @@ public class SwapService {
             for (ApiAccountVO apiAccountVO : apiAccountsVO.getInfo()) {
                 log.info("获取账户信息保证金率{}-{}", instrumentId, apiAccountVO.getMargin_ratio());
                 if (Double.valueOf(apiAccountVO.getMargin_ratio()) < 0.4) {
-                    //转入
+
+
+
+
+
                     Transfer transferIn = new Transfer();
                     String currency = instrumentId.substring(0,instrumentId.indexOf("-")).toLowerCase();
                     if (instrumentId.toUpperCase().indexOf("USDT") > 0) {
@@ -232,12 +236,17 @@ public class SwapService {
                         currency = "usdt";
                     }
                     transferIn.setCurrency(currency);
-                    transferIn.setFrom(8);
+                    transferIn.setFrom(6);
                     transferIn.setTo(9);
                     transferIn.setAmount(BigDecimal.valueOf(transferAmount));
                     try {
+
+                        //赎回
+                        JSONObject result1 = accountAPIService.purchaseRedempt("okexsub1", currency, String.valueOf(transferAmount), "redempt");
+                        log.info("transfer {} {} from financial to asset", transferAmount, JSON.toJSONString(result1));
+                        //转入
                         JSONObject result = accountAPIService.transfer("okexsub1", transferIn);
-                        log.info("transfer {} {} from financial to swap", transferAmount, JSON.toJSONString(result));
+                        log.info("transfer {} {} from asset to swap", transferAmount, JSON.toJSONString(result));
                         //weiXinMessageService.sendMessage("划转" + currency.toUpperCase(), "划转" + instrumentId + ", 数量：" + transferAmount);
                     } catch (Exception e) {
                         log.error("transfer {} {} from financial to swap error", instrumentId, transferAmount, e);
