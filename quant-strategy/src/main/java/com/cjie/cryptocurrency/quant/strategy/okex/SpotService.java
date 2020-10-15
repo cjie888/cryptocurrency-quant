@@ -167,7 +167,7 @@ public class SpotService {
 
             Transfer transferIn = new Transfer();
             transferIn.setCurrency(quotaCurrency);
-            transferIn.setFrom(8);
+            transferIn.setFrom(6);
             transferIn.setTo(1);
             transferIn.setAmount(transferAmount);
             accountAPIService.transfer(site, transferIn);
