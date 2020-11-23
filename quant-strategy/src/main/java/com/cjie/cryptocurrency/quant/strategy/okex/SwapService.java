@@ -269,6 +269,11 @@ public class SwapService {
                     //weiXinMessageService.sendMessage("保证金不足10%", "保证金不足10%，" + instrumentId);
                     return false;
                 }
+                try {
+                Thread.sleep(2000);
+                } catch (Exception e) {
+
+                }
             }
         }
         return true;
