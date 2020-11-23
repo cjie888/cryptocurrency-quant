@@ -251,28 +251,23 @@ public class SwapService {
                     } catch (Exception e) {
                         log.error("transfer {} {} from financial to swap error", instrumentId, transferAmount, e);
 
-//                        try {
-//                            Thread.sleep(2000);
+                        try {
+                            Thread.sleep(2000);
 //                            transferIn.setFrom(5);
 //                            transferIn.setInstrument_id(currency + "-usdt");
 //                            JSONObject result = accountAPIService.transfer("okexsub1", transferIn);
 //                            log.info("transfer {} {} from spot margin to swap", transferAmount, JSON.toJSONString(result));
 //                           // weiXinMessageService.sendMessage("划转" + currency.toUpperCase() + "币币杠杆", "划转" + instrumentId + ", 数量：" + transferAmount);
-//                        } catch (Exception e1) {
+                        } catch (Exception e1) {
 //                            log.error("transfer {} {} from spot margin to swap error", instrumentId, transferAmount, e1);
 //
-//                        }
+                        }
                     }
                 }
                 if (Double.valueOf(apiAccountVO.getMargin_ratio()) < 0.10) {
                     //停止交易，报警
                     //weiXinMessageService.sendMessage("保证金不足10%", "保证金不足10%，" + instrumentId);
                     return false;
-                }
-                try {
-                Thread.sleep(2000);
-                } catch (Exception e) {
-
                 }
             }
         }
