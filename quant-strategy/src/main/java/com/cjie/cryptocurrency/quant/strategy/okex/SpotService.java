@@ -154,9 +154,15 @@ public class SpotService {
             } catch (Exception e) {
                 log.info("transfer {} {} from asset to spot error", size, baseCurrency, e);
             }
+            try {
+                Thread.sleep(2000);
+            }catch (Exception e){
+                //ignore
+            }
 
         }
 
+        baseAccount = spotAccountAPIService.getAccountByCurrency(site, baseCurrency);
         if (Objects.nonNull(baseAccount) && Double.parseDouble(baseAccount.getAvailable()) <  Double.parseDouble(size) * 1.01) {
             //3倍买入
             PlaceOrderParam placeOrderParam = new PlaceOrderParam();
