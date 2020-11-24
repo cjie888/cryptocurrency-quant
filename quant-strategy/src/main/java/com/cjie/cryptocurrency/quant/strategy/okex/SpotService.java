@@ -153,12 +153,40 @@ public class SpotService {
                 log.info("transfer {} {} from asset to spot", size, baseCurrency);
             } catch (Exception e) {
                 log.info("transfer {} {} from asset to spot error", size, baseCurrency, e);
-                return;
             }
 
         }
 
-        Account quotaAccount = spotAccountAPIService.getAccountByCurrency(site, quotaCurrency);
+        if (Objects.nonNull(baseAccount) && Double.parseDouble(baseAccount.getAvailable()) <  Double.parseDouble(size) * 1.01) {
+            //3倍买入
+            PlaceOrderParam placeOrderParam = new PlaceOrderParam();
+            placeOrderParam.setProduct_id(symbol);
+            placeOrderParam.setPrice(spotTicker.getLast());
+            placeOrderParam.setSize(new BigDecimal(size).multiply(new BigDecimal("3")).toPlainString());
+            placeOrderParam.setSide("buy");
+            placeOrderParam.setType("limit");
+
+            OrderResult orderResult = spotOrderAPIServive.addOrder(site,placeOrderParam);
+            log.info("买入{}-{}", symbol, JSON.toJSONString(placeOrderParam));
+            if (orderResult.isResult()) {
+
+                SpotOrder spotOrder = new SpotOrder();
+                spotOrder.setSymbol(symbol);
+                spotOrder.setCreateTime(new Date());
+                spotOrder.setStrategy("netGrid");
+                spotOrder.setIsMock(Byte.valueOf("0"));
+                spotOrder.setType(Byte.valueOf("1"));
+                spotOrder.setPrice(new BigDecimal(spotTicker.getLast()));
+                spotOrder.setSize(new BigDecimal(size).multiply(new BigDecimal("3")));
+                spotOrder.setOrderId(String.valueOf(orderResult.getOrder_id()));
+                spotOrder.setStatus(99);
+                spotOrderMapper.insert(spotOrder);
+            }
+
+            return;
+        }
+
+            Account quotaAccount = spotAccountAPIService.getAccountByCurrency(site, quotaCurrency);
         if (Objects.nonNull(quotaAccount) && Double.parseDouble(quotaAccount.getAvailable()) <  Double.parseDouble(size) * currentPrice * 1.01) {
 
             BigDecimal transferAmount = new BigDecimal(size).multiply(new BigDecimal(spotTicker.getLast())).multiply(new BigDecimal("1.01"));
