@@ -140,7 +140,7 @@ public class SpotService {
         if (Objects.nonNull(baseAccount) && Double.parseDouble(baseAccount.getAvailable()) <  Double.parseDouble(size) * 1.01) {
 
             BigDecimal transferAmount = new BigDecimal(size).multiply(new BigDecimal("1.01"));
-            JSONObject result1 = accountAPIService.purchaseRedempt("okexsub1", baseCurrency, transferAmount.toPlainString(), "redempt");
+            JSONObject result1 = accountAPIService.purchaseRedempt(site, baseCurrency, transferAmount.toPlainString(), "redempt");
             log.info("transfer {} {} from financial to asset", transferAmount, JSON.toJSONString(result1));
 
             Transfer transferIn = new Transfer();
@@ -196,7 +196,7 @@ public class SpotService {
         if (Objects.nonNull(quotaAccount) && Double.parseDouble(quotaAccount.getAvailable()) <  Double.parseDouble(size) * currentPrice * 1.01) {
 
             BigDecimal transferAmount = new BigDecimal(size).multiply(new BigDecimal(spotTicker.getLast())).multiply(new BigDecimal("1.01"));
-            JSONObject result1 = accountAPIService.purchaseRedempt("okexsub1", quotaCurrency, transferAmount.toPlainString(), "redempt");
+            JSONObject result1 = accountAPIService.purchaseRedempt(site, quotaCurrency, transferAmount.toPlainString(), "redempt");
             log.info("transfer {} {} from financial to asset", transferAmount, JSON.toJSONString(result1));
 
             Transfer transferIn = new Transfer();
