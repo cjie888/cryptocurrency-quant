@@ -15,11 +15,6 @@ public class SpotTask {
     @Scheduled(cron = "7/11 * * * * ?")
     public  void netGrid() {
 
-        spotService.netGrid("okexsub1", "ETH-USDT", "0.05000000", 0.03);
-        spotService.netGrid("okex", "BTC-USDT", "0.00100000", 0.03);
-        spotService.netGrid("okexsub1", "BCH-USDT", "0.04000000", 0.03);
-        spotService.netGrid("okexsub1", "LTC-USDT", "0.1", 0.03);
-        spotService.netGrid("okex", "OKB-USDT", "10", 0.03);
         spotService.netGrid("okex", "EOS-USDT", "2", 0.03);
         spotService.netGrid("okex", "OKT-USDT", "1", 0.03);
         spotService.netGrid("okexsub1", "XRP-USDT", "20", 0.03);
@@ -31,6 +26,19 @@ public class SpotTask {
         spotService.netGrid("okexsub1", "DOT-USDT", "1", 0.03);
 
 
+
+
+//ltc 6  xrp 3 etc 5
+    }
+
+    @Scheduled(cron = "3/7 * * * * ?")
+    public  void netGrid2() {
+
+        spotService.netGrid("okexsub1", "ETH-USDT", "0.05000000", 0.03);
+        spotService.netGrid("okex", "BTC-USDT", "0.00100000", 0.03);
+        spotService.netGrid("okexsub1", "BCH-USDT", "0.04000000", 0.03);
+        spotService.netGrid("okexsub1", "LTC-USDT", "0.1", 0.03);
+        spotService.netGrid("okex", "OKB-USDT", "10", 0.03);
 
 
 //ltc 6  xrp 3 etc 5
