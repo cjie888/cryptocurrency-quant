@@ -31,7 +31,7 @@ public class SwapTask {
         //swapService.transfer("BTC-USDT-SWAP", 10.0);
         //swapService.transfer("BCH-USDT-SWAP", 10.0);
         //swapService.netGrid("BCH-USDT-SWAP", "1", 1.5, 10.0, 27, 220);
-        swapService.netGrid("ATOM-USDT-SWAP", "1", 0.08, 50.0, 0, 1);
+        swapService.netGrid("okexsub1","ATOM-USDT-SWAP", "1", 0.08, 50.0, 0, 1);
         //swapService.netGrid("XRP-USDT-SWAP", "1", 0.0025, 10.0, 0, 0.01);
         //swapService.netGrid("UNI-USDT-SWAP", "1", 0.05, 5.0, 0, 1);
 
@@ -42,18 +42,18 @@ public class SwapTask {
 
     @Scheduled(cron = "*/17 * * * * ?")
     public void dualThrust() {
-        swapService.dualTrust("BTC-USD-SWAP", 0.7);
-        swapService.dualTrust("ETH-USD-SWAP", 0.7);
-        swapService.dualTrust("EOS-USD-SWAP", 0.7);
-        swapService.dualTrust("BCH-USD-SWAP", 0.7);
-        swapService.dualTrust("XRP-USD-SWAP", 0.7);
-        swapService.dualTrust("LTC-USD-SWAP", 0.7);
+        swapService.dualTrust("okexsub1","BTC-USD-SWAP", 0.7);
+        swapService.dualTrust("okexsub1","ETH-USD-SWAP", 0.7);
+        swapService.dualTrust("okexsub1","EOS-USD-SWAP", 0.7);
+        swapService.dualTrust("okexsub1","BCH-USD-SWAP", 0.7);
+        swapService.dualTrust("okexsub1","XRP-USD-SWAP", 0.7);
+        swapService.dualTrust("okexsub1","LTC-USD-SWAP", 0.7);
 
     }
 
     @Scheduled(cron = "7 */30 * * * ?")
     public  void benefit() {
-        swapService.computeBenefit();
+        swapService.computeBenefit("okexsub1");
 
     }
 }

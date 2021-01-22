@@ -53,7 +53,7 @@ public class SwapService {
 
     private Map<String,LocalDateTime>  lastDates = new ConcurrentHashMap<>();
 
-    public void computeBenefit() {
+    public void computeBenefit(String site) {
         String[] instrumentIds = new String[]{
                 "BTC-USD-SWAP",
                 "ETH-USD-SWAP",
@@ -80,7 +80,7 @@ public class SwapService {
         costs.put("XRP-USDT-SWAP", new BigDecimal("100"));
         costs.put("UNI-USDT-SWAP", new BigDecimal("100"));
         //costs.put("ETH-USDT-SWAP", new BigDecimal("100"));
-        String accounts = swapUserAPIServive.getAccounts();
+        String accounts = swapUserAPIServive.getAccounts(site);
         log.info("获取所有账户信息{}", JSON.toJSONString(accounts));
         ApiAccountsVO apiAccountsVO = JSON.parseObject(accounts, ApiAccountsVO.class);
         BigDecimal benefit = BigDecimal.ZERO;
@@ -102,7 +102,7 @@ public class SwapService {
                     sb.append("\r\n\n");
                     benefit = benefit.add(currentBenefit);
                 } else {
-                    String swapTicker = swapMarketAPIService.getTickerApi(apiAccountVO.getInstrument_id());
+                    String swapTicker = swapMarketAPIService.getTickerApi(site, apiAccountVO.getInstrument_id());
                     ApiTickerVO apiTickerVO = JSON.parseObject(swapTicker, ApiTickerVO.class);
                     log.info("当前价格{}-{}", apiAccountVO.getInstrument_id(), apiTickerVO.getLast());
                     BigDecimal asset = new BigDecimal(apiAccountVO.getEquity());
@@ -122,13 +122,13 @@ public class SwapService {
     }
 
 
-    public void dualTrust(String instrumentId, double ratio) {
+    public void dualTrust(String site, String instrumentId, double ratio) {
 
         LocalDateTime currentHour = LocalDateTime.now().withMinute(0).withSecond(0).withNano(0);
 
         LocalDateTime lastDate = lastDates.get(instrumentId);
         if (lastDate == null || lastDate.isBefore(currentHour) ) {
-            String kline = swapMarketAPIService.getCandlesApi(instrumentId, null, null, "3600");
+            String kline = swapMarketAPIService.getCandlesApi(site, instrumentId, null, null, "3600");
             //log.info("获取  {} k线 {} ", instrumentId, kline);
             double maxHigh = 0.0;
             double maxClose = 0.0 ;
@@ -176,7 +176,7 @@ public class SwapService {
         }
         Double range = ranges.get(instrumentId);
         Double open = opens.get(instrumentId);
-        String swapTicker = swapMarketAPIService.getTickerApi(instrumentId);
+        String swapTicker = swapMarketAPIService.getTickerApi(site, instrumentId);
         ApiTickerVO apiTickerVO = JSON.parseObject(swapTicker, ApiTickerVO.class);
         log.info("当前价格{}-{}-open:{}, range:{}", instrumentId, apiTickerVO.getLast(), open, range);
         Double currentPrice = Double.valueOf(apiTickerVO.getLast());
@@ -216,8 +216,8 @@ public class SwapService {
 
     }
 
-    public  boolean transfer(String instrumentId, Double transferAmount) {
-        String accounts = swapUserAPIServive.selectAccount(instrumentId);
+    public  boolean transfer(String site,String instrumentId, Double transferAmount) {
+        String accounts = swapUserAPIServive.selectAccount(site, instrumentId);
         //log.info("获取账户信息{}-{}", instrumentId, JSON.toJSONString(accounts));
         ApiAccountsVO apiAccountsVO = JSON.parseObject(accounts, ApiAccountsVO.class);
         if (apiAccountsVO != null && CollectionUtils.isNotEmpty(apiAccountsVO.getInfo())) {
@@ -242,10 +242,10 @@ public class SwapService {
                     try {
 
                         //赎回
-                        JSONObject result1 = accountAPIService.purchaseRedempt("okexsub1", currency, String.valueOf(transferAmount), "redempt");
+                        JSONObject result1 = accountAPIService.purchaseRedempt(site, currency, String.valueOf(transferAmount), "redempt");
                         log.info("transfer {} {} from financial to asset", transferAmount, JSON.toJSONString(result1));
                         //转入
-                        JSONObject result = accountAPIService.transfer("okexsub1", transferIn);
+                        JSONObject result = accountAPIService.transfer(site, transferIn);
                         log.info("transfer {} {} from asset to swap", transferAmount, JSON.toJSONString(result));
                         //weiXinMessageService.sendMessage("划转" + currency.toUpperCase(), "划转" + instrumentId + ", 数量：" + transferAmount);
                     } catch (Exception e) {
@@ -276,7 +276,7 @@ public class SwapService {
 
 
 
-    public void netGrid(String instrumentId, String size, Double increment, Double transferAmount, double origin, double min) {
+    public void netGrid(String site, String instrumentId, String size, Double increment, Double transferAmount, double origin, double min) {
 
         //System.out.println(swapMarketAPIService.getContractsApi());
         //[{"instrument_id":"BTC-USD-SWAP","underlying_index":"BTC","quote_currency":"USD","coin":"BTC","contract_val":"100","listing":"2018-08-28T02:43:23.000Z","delivery":"2019-12-09T08:00:00.000Z","size_increment":"1","tick_size":"0.1","base_currency":"BTC","underlying":"BTC-USD","settlement_currency":"BTC","is_inverse":true,"contract_val_currency":"USD"},{"instrument_id":"LTC-USD-SWAP","underlying_index":"LTC","quote_currency":"USD","coin":"LTC","contract_val":"10","listing":"2018-12-21T07:53:47.000Z","delivery":"2019-12-09T08:00:00.000Z","size_increment":"1","tick_size":"0.01","base_currency":"LTC","underlying":"LTC-USD","settlement_currency":"LTC","is_inverse":true,"contract_val_currency":"USD"},{"instrument_id":"ETH-USD-SWAP","underlying_index":"ETH","quote_currency":"USD","coin":"ETH","contract_val":"10","listing":"2018-12-21T07:53:47.000Z","delivery":"2019-12-09T08:00:00.000Z","size_increment":"1","tick_size":"0.01","base_currency":"ETH","underlying":"ETH-USD","settlement_currency":"ETH","is_inverse":true,"contract_val_currency":"USD"},{"instrument_id":"ETC-USD-SWAP","underlying_index":"ETC","quote_currency":"USD","coin":"ETC","contract_val":"10","listing":"2018-12-21T07:53:47.000Z","delivery":"2019-12-09T08:00:00.000Z","size_increment":"1","tick_size":"0.001","base_currency":"ETC","underlying":"ETC-USD","settlement_currency":"ETC","is_inverse":true,"contract_val_currency":"USD"},{"instrument_id":"XRP-USD-SWAP","underlying_index":"XRP","quote_currency":"USD","coin":"XRP","contract_val":"10","listing":"2018-12-21T07:53:47.000Z","delivery":"2019-12-09T08:00:00.000Z","size_increment":"1","tick_size":"0.00010","base_currency":"XRP","underlying":"XRP-USD","settlement_currency":"XRP","is_inverse":true,"contract_val_currency":"USD"},{"instrument_id":"EOS-USD-SWAP","underlying_index":"EOS","quote_currency":"USD","coin":"EOS","contract_val":"10","listing":"2018-12-10T11:55:31.000Z","delivery":"2019-12-09T08:00:00.000Z","size_increment":"1","tick_size":"0.001","base_currency":"EOS","underlying":"EOS-USD","settlement_currency":"EOS","is_inverse":true,"contract_val_currency":"USD"},{"instrument_id":"BCH-USD-SWAP","underlying_index":"BCH","quote_currency":"USD","coin":"BCH","contract_val":"10","listing":"2018-12-21T07:53:47.000Z","delivery":"2019-12-09T08:00:00.000Z","size_increment":"1","tick_size":"0.01","base_currency":"BCH","underlying":"BCH-USD","settlement_currency":"BCH","is_inverse":true,"contract_val_currency":"USD"},{"instrument_id":"BSV-USD-SWAP","underlying_index":"BSV","quote_currency":"USD","coin":"BSV","contract_val":"10","listing":"2018-12-21T07:53:47.000Z","delivery":"2019-12-09T08:00:00.000Z","size_increment":"1","tick_size":"0.01","base_currency":"BSV","underlying":"BSV-USD","settlement_currency":"BSV","is_inverse":true,"contract_val_currency":"USD"},{"instrument_id":"TRX-USD-SWAP","underlying_index":"TRX","quote_currency":"USD","coin":"TRX","contract_val":"10","listing":"2019-01-16T04:09:23.000Z","delivery":"2019-12-09T08:00:00.000Z","size_increment":"1","tick_size":"0.000010","base_currency":"TRX","underlying":"TRX-USD","settlement_currency":"TRX","is_inverse":true,"contract_val_currency":"USD"},{"instrument_id":"BTC-USDT-SWAP","underlying_index":"BTC","quote_currency":"USDT","coin":"USDT","contract_val":"0.0001","listing":"2019-11-12T11:16:48.000Z","delivery":"2019-12-09T08:00:00.000Z","size_increment":"1","tick_size":"0.1","base_currency":"BTC","underlying":"BTC-USDT","settlement_currency":"USDT","is_inverse":false,"contract_val_currency":"BTC"},{"instrument_id":"ETH-USDT-SWAP","underlying_index":"ETH","quote_currency":"USDT","coin":"USDT","contract_val":"0.001","listing":"2019-11-12T11:16:48.000Z","delivery":"2019-12-09T08:00:00.000Z","size_increment":"1","tick_size":"0.01","base_currency":"ETH","underlying":"ETH-USDT","settlement_currency":"USDT","is_inverse":false,"contract_val_currency":"ETH"},{"instrument_id":"EOS-USDT-SWAP","underlying_index":"EOS","quote_currency":"USDT","coin":"USDT","contract_val":"0.1","listing":"2019-11-12T11:16:48.000Z","delivery":"2019-12-09T08:00:00.000Z","size_increment":"1","tick_size":"0.001","base_currency":"EOS","underlying":"EOS-USDT","settlement_currency":"USDT","is_inverse":false,"contract_val_currency":"EOS"}]
@@ -285,7 +285,7 @@ public class SwapService {
         //String size = "1";
         //Double increment = 1.0;
         //获取账户信息
-        if (!transfer(instrumentId, transferAmount)) {
+        if (!transfer(site, instrumentId, transferAmount)) {
             return;
         }
 
@@ -299,7 +299,7 @@ public class SwapService {
             if (CollectionUtils.isNotEmpty(swapOrders)) {
                 log.info("unprocessed orders {}", JSON.toJSONString(swapOrders));
                 for (SwapOrder swapOrder : swapOrders) {
-                    String result = swapUserAPIServive.selectOrder(instrumentId, swapOrder.getOrderId());
+                    String result = swapUserAPIServive.selectOrder(site, instrumentId, swapOrder.getOrderId());
 
                     ApiOrderResultVO.PerOrderResult perOrderResult = JSON.parseObject(result, ApiOrderResultVO.PerOrderResult.class);
                     log.info("order status {}", JSON.toJSONString(perOrderResult));
@@ -351,7 +351,7 @@ public class SwapService {
         if (CollectionUtils.isNotEmpty(unSettledOrders)) {
             for (SwapOrder swapOrder : unSettledOrders) {
                 if (System.currentTimeMillis() - 30 * 60 * 1000L > swapOrder.getCreateTime().getTime() ) {
-                    swapTradeAPIService.cancelOrder(instrumentId, swapOrder.getOrderId());
+                    swapTradeAPIService.cancelOrder(site, instrumentId, swapOrder.getOrderId());
                     log.info("取消部分成交订单{}-{}", instrumentId, swapOrder.getOrderId());
                 }
             }
@@ -378,12 +378,12 @@ public class SwapService {
         List<SwapOrder> unSelledOrders = swapOrderMapper.selectByStatus(instrumentId, "netGrid", unSelledStatuses);
         if (CollectionUtils.isNotEmpty(unSelledOrders)) {
             for (SwapOrder swapOrder : unSelledOrders) {
-                swapTradeAPIService.cancelOrder(instrumentId, swapOrder.getOrderId());
+                swapTradeAPIService.cancelOrder(site, instrumentId, swapOrder.getOrderId());
                 log.info("取消未成交订单{}-{}", instrumentId, swapOrder.getOrderId());
             }
         }
 
-        String swapTicker = swapMarketAPIService.getTickerApi(instrumentId);
+        String swapTicker = swapMarketAPIService.getTickerApi(site, instrumentId);
         ApiTickerVO apiTickerVO = JSON.parseObject(swapTicker, ApiTickerVO.class);
         log.info("当前价格{}-{}", instrumentId, apiTickerVO.getLast());
 
@@ -439,7 +439,7 @@ public class SwapService {
             }
         }
 
-        String position =  swapUserAPIServive.getPosition(instrumentId);
+        String position =  swapUserAPIServive.getPosition(site, instrumentId);
         //log.info("获取持仓{}-{}", instrumentId, JSON.toJSONString(position));
         ApiPositionsVO apiPositionsVO = JSON.parseObject(position, ApiPositionsVO.class);
         if (apiPositionsVO != null && !apiPositionsVO.getMargin_mode().equals("crossed")) {//不是全仓
@@ -471,7 +471,7 @@ public class SwapService {
             ppUpOrder.setSize(size);
             ppUpOrder.setInstrument_id(instrumentId);
             ppUpOrder.setMatch_price("1");
-            swapTradeAPIService.order(ppUpOrder, "netGrid");
+            swapTradeAPIService.order(site, ppUpOrder, "netGrid");
             log.info("开多{}-{}", instrumentId, JSON.toJSONString(ppUpOrder));
 
             PpOrder ppDownOrder = new PpOrder();
@@ -480,7 +480,7 @@ public class SwapService {
             ppDownOrder.setSize(size);
             ppDownOrder.setInstrument_id(instrumentId);
             ppDownOrder.setMatch_price("1");
-            swapTradeAPIService.order(ppDownOrder, "netGrid");
+            swapTradeAPIService.order(site, ppDownOrder, "netGrid");
             log.info("开空{}-{}", instrumentId, JSON.toJSONString(ppDownOrder));
             return;
 
@@ -497,7 +497,7 @@ public class SwapService {
                 ppUpOrder.setPrice(String.valueOf(currentPrice));
                 ppUpOrder.setSize(size);
                 ppUpOrder.setInstrument_id(instrumentId);
-                swapTradeAPIService.order(ppUpOrder,"netGrid");
+                swapTradeAPIService.order(site, ppUpOrder,"netGrid");
                 log.info("平多{}-{}", instrumentId, JSON.toJSONString(ppUpOrder));
 
             }
@@ -506,7 +506,7 @@ public class SwapService {
             ppDownOrder.setPrice(String.valueOf(currentPrice));
             ppDownOrder.setSize(size);
             ppDownOrder.setInstrument_id(instrumentId);
-            swapTradeAPIService.order(ppDownOrder, "netGrid");
+            swapTradeAPIService.order(site, ppDownOrder, "netGrid");
             log.info("开空{}-{}", instrumentId, JSON.toJSONString(ppDownOrder));
             return;
 
@@ -521,7 +521,7 @@ public class SwapService {
                 ppDownOrder.setPrice(String.valueOf(currentPrice));
                 ppDownOrder.setSize(size);
                 ppDownOrder.setInstrument_id(instrumentId);
-                swapTradeAPIService.order(ppDownOrder, "netGrid");
+                swapTradeAPIService.order(site, ppDownOrder, "netGrid");
                 log.info("平空{}-{}", instrumentId, JSON.toJSONString(ppDownOrder));
             }
 
@@ -530,7 +530,7 @@ public class SwapService {
             ppUpOrder.setPrice(String.valueOf(currentPrice));
             ppUpOrder.setSize(size);
             ppUpOrder.setInstrument_id(instrumentId);
-            swapTradeAPIService.order(ppUpOrder, "netGrid");
+            swapTradeAPIService.order(site, ppUpOrder, "netGrid");
             log.info("开多{}-{}", instrumentId, JSON.toJSONString(ppUpOrder));
         }
 

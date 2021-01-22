@@ -23,8 +23,7 @@ public class SwapMarketAPIServiceImpl implements SwapMarketAPIService {
 
     private ConcurrentHashMap<String, SwapMarketAPI> futuresMarketAPIs = new ConcurrentHashMap<>();
 
-    private SwapMarketAPI getFuturesMarketApi(APIClient apiClient) {
-        String site = "okexsub1";
+    private SwapMarketAPI getFuturesMarketApi(String site, APIClient apiClient) {
         SwapMarketAPI futuresMarketAPI = futuresMarketAPIs.get(site);
         if (futuresMarketAPI != null) {
             return  futuresMarketAPI;
@@ -34,8 +33,7 @@ public class SwapMarketAPIServiceImpl implements SwapMarketAPIService {
         return futuresMarketAPI;
     }
 
-    private APIClient getFuturesAPIClient() {
-        String site = "okexsub1";
+    private APIClient getFuturesAPIClient(String site) {
         APIClient apiClient = apiClients.get(site);
         if (apiClient != null) {
             return apiClient;
@@ -61,10 +59,10 @@ public class SwapMarketAPIServiceImpl implements SwapMarketAPIService {
      * @return
      */
     @Override
-    public String getContractsApi() {
+    public String getContractsApi(String site) {
 
-        APIClient client = getFuturesAPIClient();
-        SwapMarketAPI api = getFuturesMarketApi(client);
+        APIClient client = getFuturesAPIClient(site);
+        SwapMarketAPI api = getFuturesMarketApi(site, client);
         return client.executeSync(api.getContractsApi());
     }
 
@@ -76,9 +74,9 @@ public class SwapMarketAPIServiceImpl implements SwapMarketAPIService {
      * @return
      */
     @Override
-    public String getDepthApi(String instrumentId, String size) {
-        APIClient client = getFuturesAPIClient();
-        SwapMarketAPI api = getFuturesMarketApi(client);
+    public String getDepthApi(String site, String instrumentId, String size) {
+        APIClient client = getFuturesAPIClient(site);
+        SwapMarketAPI api = getFuturesMarketApi(site, client);
         return client.executeSync(api.getDepthApi(instrumentId, size));
     }
 
@@ -88,9 +86,9 @@ public class SwapMarketAPIServiceImpl implements SwapMarketAPIService {
      * @return
      */
     @Override
-    public String getTickersApi() {
-        APIClient client = getFuturesAPIClient();
-        SwapMarketAPI api = getFuturesMarketApi(client);
+    public String getTickersApi(String site) {
+        APIClient client = getFuturesAPIClient(site);
+        SwapMarketAPI api = getFuturesMarketApi(site, client);
         return client.executeSync(api.getTickersApi());
     }
 
@@ -101,9 +99,9 @@ public class SwapMarketAPIServiceImpl implements SwapMarketAPIService {
      * @return
      */
     @Override
-    public String getTickerApi(String instrumentId) {
-        APIClient client = getFuturesAPIClient();
-        SwapMarketAPI api = getFuturesMarketApi(client);
+    public String getTickerApi(String site, String instrumentId) {
+        APIClient client = getFuturesAPIClient(site);
+        SwapMarketAPI api = getFuturesMarketApi(site, client);
         return client.executeSync(api.getTickerApi(instrumentId));
     }
 
@@ -117,9 +115,9 @@ public class SwapMarketAPIServiceImpl implements SwapMarketAPIService {
      * @return
      */
     @Override
-    public String getTradesApi(String instrumentId, String from, String to, String limit) {
-        APIClient client = getFuturesAPIClient();
-        SwapMarketAPI api = getFuturesMarketApi(client);
+    public String getTradesApi(String site, String instrumentId, String from, String to, String limit) {
+        APIClient client = getFuturesAPIClient(site);
+        SwapMarketAPI api = getFuturesMarketApi(site, client);
         return client.executeSync(api.getTradesApi(instrumentId, from, to, limit));
     }
 
@@ -133,9 +131,9 @@ public class SwapMarketAPIServiceImpl implements SwapMarketAPIService {
      * @return
      */
     @Override
-    public String getCandlesApi(String instrumentId, String start, String end, String granularity) {
-        APIClient client = getFuturesAPIClient();
-        SwapMarketAPI api = getFuturesMarketApi(client);
+    public String getCandlesApi(String site, String instrumentId, String start, String end, String granularity) {
+        APIClient client = getFuturesAPIClient(site);
+        SwapMarketAPI api = getFuturesMarketApi(site, client);
         return client.executeSync(api.getCandlesApi(instrumentId, start, end, granularity));
     }
 
@@ -146,9 +144,9 @@ public class SwapMarketAPIServiceImpl implements SwapMarketAPIService {
      * @return
      */
     @Override
-    public String getIndexApi(String instrumentId) {
-        APIClient client = getFuturesAPIClient();
-        SwapMarketAPI api = getFuturesMarketApi(client);
+    public String getIndexApi(String site, String instrumentId) {
+        APIClient client = getFuturesAPIClient(site);
+        SwapMarketAPI api = getFuturesMarketApi(site,client);
         return client.executeSync(api.getIndexApi(instrumentId));
     }
 
@@ -158,9 +156,9 @@ public class SwapMarketAPIServiceImpl implements SwapMarketAPIService {
      * @return
      */
     @Override
-    public String getRateApi() {
-        APIClient client = getFuturesAPIClient();
-        SwapMarketAPI api = getFuturesMarketApi(client);
+    public String getRateApi(String site) {
+        APIClient client = getFuturesAPIClient(site);
+        SwapMarketAPI api = getFuturesMarketApi(site, client);
         return client.executeSync(api.getRateApi());
     }
 
@@ -171,9 +169,9 @@ public class SwapMarketAPIServiceImpl implements SwapMarketAPIService {
      * @return
      */
     @Override
-    public String getOpenInterestApi(String instrumentId) {
-        APIClient client = getFuturesAPIClient();
-        SwapMarketAPI api = getFuturesMarketApi(client);
+    public String getOpenInterestApi(String site, String instrumentId) {
+        APIClient client = getFuturesAPIClient(site);
+        SwapMarketAPI api = getFuturesMarketApi(site, client);
         return client.executeSync(api.getOpenInterestApi(instrumentId));
     }
 
@@ -184,9 +182,9 @@ public class SwapMarketAPIServiceImpl implements SwapMarketAPIService {
      * @return
      */
     @Override
-    public String getPriceLimitApi(String instrumentId) {
-        APIClient client = getFuturesAPIClient();
-        SwapMarketAPI api = getFuturesMarketApi(client);
+    public String getPriceLimitApi(String site, String instrumentId) {
+        APIClient client = getFuturesAPIClient(site);
+        SwapMarketAPI api = getFuturesMarketApi(site, client);
         return client.executeSync(api.getPriceLimitApi(instrumentId));
     }
 
@@ -201,9 +199,9 @@ public class SwapMarketAPIServiceImpl implements SwapMarketAPIService {
      * @return
      */
     @Override
-    public String getLiquidationApi(String instrumentId, String status, String from, String to, String limit) {
-        APIClient client = getFuturesAPIClient();
-        SwapMarketAPI api = getFuturesMarketApi(client);
+    public String getLiquidationApi(String site, String instrumentId, String status, String from, String to, String limit) {
+        APIClient client = getFuturesAPIClient(site);
+        SwapMarketAPI api = getFuturesMarketApi(site, client);
         return client.executeSync(api.getLiquidationApi(instrumentId, status, from, to, limit));
     }
 
@@ -214,9 +212,9 @@ public class SwapMarketAPIServiceImpl implements SwapMarketAPIService {
      * @return
      */
     @Override
-    public String getFundingTimeApi(String instrumentId) {
-        APIClient client = getFuturesAPIClient();
-        SwapMarketAPI api = getFuturesMarketApi(client);
+    public String getFundingTimeApi(String site, String instrumentId) {
+        APIClient client = getFuturesAPIClient(site);
+        SwapMarketAPI api = getFuturesMarketApi(site, client);
         return client.executeSync(api.getFundingTimeApi(instrumentId));
     }
 
@@ -230,9 +228,9 @@ public class SwapMarketAPIServiceImpl implements SwapMarketAPIService {
      * @return
      */
     @Override
-    public String getHistoricalFundingRateApi(String instrumentId, String from, String to, String limit) {
-        APIClient client = getFuturesAPIClient();
-        SwapMarketAPI api = getFuturesMarketApi(client);
+    public String getHistoricalFundingRateApi(String site, String instrumentId, String from, String to, String limit) {
+        APIClient client = getFuturesAPIClient(site);
+        SwapMarketAPI api = getFuturesMarketApi(site, client);
         return client.executeSync(api.getHistoricalFundingRateApi(instrumentId, from, to, limit));
     }
 
@@ -243,9 +241,9 @@ public class SwapMarketAPIServiceImpl implements SwapMarketAPIService {
      * @return
      */
     @Override
-    public String getMarkPriceApi(String instrumentId) {
-        APIClient client = getFuturesAPIClient();
-        SwapMarketAPI api = getFuturesMarketApi(client);
+    public String getMarkPriceApi(String site, String instrumentId) {
+        APIClient client = getFuturesAPIClient(site);
+        SwapMarketAPI api = getFuturesMarketApi(site, client);
         return client.executeSync(api.getMarkPriceApi(instrumentId));
     }
 }

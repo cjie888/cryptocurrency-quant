@@ -11,14 +11,14 @@ public interface SwapTradeAPIService {
      * @param ppOrder
      * @return
      */
-    String order(PpOrder ppOrder, String strategy);
+    String order(String site, PpOrder ppOrder, String strategy);
 
     /**
      * 批量下单
      * @param ppOrders
      * @return
      */
-    String orders(PpOrders ppOrders);
+    String orders(String site, PpOrders ppOrders);
 
     /**
      * 撤单
@@ -26,7 +26,7 @@ public interface SwapTradeAPIService {
      * @param orderId
      * @return
      */
-    String cancelOrder(String instrumentId, String orderId);
+    String cancelOrder(String site, String instrumentId, String orderId);
 
     /**
      * 批量撤单
@@ -34,5 +34,5 @@ public interface SwapTradeAPIService {
      * @param ppCancelOrderVO
      * @return
      */
-    String cancelOrders(String instrumentId, PpCancelOrderVO ppCancelOrderVO);
+    String cancelOrders(String site, String instrumentId, PpCancelOrderVO ppCancelOrderVO);
 }

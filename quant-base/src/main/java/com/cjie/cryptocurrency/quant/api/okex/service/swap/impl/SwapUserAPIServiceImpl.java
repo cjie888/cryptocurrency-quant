@@ -24,8 +24,7 @@ public class SwapUserAPIServiceImpl implements SwapUserAPIServive {
 
     private ConcurrentHashMap<String, SwapUserAPI> futuresMarketAPIs = new ConcurrentHashMap<>();
 
-    private SwapUserAPI getFuturesMarketApi(APIClient apiClient) {
-        String site = "okexsub1";
+    private SwapUserAPI getFuturesMarketApi(String site, APIClient apiClient) {
         SwapUserAPI futuresMarketAPI = futuresMarketAPIs.get(site);
         if (futuresMarketAPI != null) {
             return  futuresMarketAPI;
@@ -35,8 +34,7 @@ public class SwapUserAPIServiceImpl implements SwapUserAPIServive {
         return futuresMarketAPI;
     }
 
-    private APIClient getFuturesAPIClient() {
-        String site = "okexsub1";
+    private APIClient getFuturesAPIClient(String site) {
         APIClient apiClient = apiClients.get(site);
         if (apiClient != null) {
             return apiClient;
@@ -63,9 +61,9 @@ public class SwapUserAPIServiceImpl implements SwapUserAPIServive {
      * @return
      */
     @Override
-    public String getPosition(String instrumentId) {
-        APIClient client = getFuturesAPIClient();
-        SwapUserAPI api = getFuturesMarketApi(client);
+    public String getPosition(String site, String instrumentId) {
+        APIClient client = getFuturesAPIClient(site);
+        SwapUserAPI api = getFuturesMarketApi(site, client);
         return client.executeSync(api.getPosition(instrumentId));
     }
 
@@ -75,9 +73,9 @@ public class SwapUserAPIServiceImpl implements SwapUserAPIServive {
      * @return
      */
     @Override
-    public String getAccounts() {
-        APIClient client = getFuturesAPIClient();
-        SwapUserAPI api = getFuturesMarketApi(client);
+    public String getAccounts(String site) {
+        APIClient client = getFuturesAPIClient(site);
+        SwapUserAPI api = getFuturesMarketApi(site, client);
         return client.executeSync(api.getAccounts());
     }
 
@@ -88,9 +86,9 @@ public class SwapUserAPIServiceImpl implements SwapUserAPIServive {
      * @return
      */
     @Override
-    public String selectAccount(String instrumentId) {
-        APIClient client = getFuturesAPIClient();
-        SwapUserAPI api = getFuturesMarketApi(client);
+    public String selectAccount(String site, String instrumentId) {
+        APIClient client = getFuturesAPIClient(site);
+        SwapUserAPI api = getFuturesMarketApi(site, client);
         return client.executeSync(api.selectAccount(instrumentId));
     }
 
@@ -101,9 +99,9 @@ public class SwapUserAPIServiceImpl implements SwapUserAPIServive {
      * @return
      */
     @Override
-    public String selectContractSettings(String instrumentId) {
-        APIClient client = getFuturesAPIClient();
-        SwapUserAPI api = getFuturesMarketApi(client);
+    public String selectContractSettings(String site, String instrumentId) {
+        APIClient client = getFuturesAPIClient(site);
+        SwapUserAPI api = getFuturesMarketApi(site, client);
         return client.executeSync(api.selectContractSettings(instrumentId));
     }
 
@@ -115,9 +113,9 @@ public class SwapUserAPIServiceImpl implements SwapUserAPIServive {
      * @return
      */
     @Override
-    public String updateLevelRate(String instrumentId, LevelRateParam levelRateParam) {
-        APIClient client = getFuturesAPIClient();
-        SwapUserAPI api = getFuturesMarketApi(client);
+    public String updateLevelRate(String site, String instrumentId, LevelRateParam levelRateParam) {
+        APIClient client = getFuturesAPIClient(site);
+        SwapUserAPI api = getFuturesMarketApi(site, client);
         return client.executeSync(api.updateLevelRate(instrumentId, JsonUtils.convertObject(levelRateParam, LevelRateParam.class)));
     }
 
@@ -132,9 +130,9 @@ public class SwapUserAPIServiceImpl implements SwapUserAPIServive {
      * @return
      */
     @Override
-    public String selectOrders(String instrumentId, String status, String from, String to, String limit) {
-        APIClient client = getFuturesAPIClient();
-        SwapUserAPI api = getFuturesMarketApi(client);
+    public String selectOrders(String site, String instrumentId, String status, String from, String to, String limit) {
+        APIClient client = getFuturesAPIClient(site);
+        SwapUserAPI api = getFuturesMarketApi(site, client);
         return client.executeSync(api.selectOrders(instrumentId, status, from, to, limit));
     }
 
@@ -146,9 +144,9 @@ public class SwapUserAPIServiceImpl implements SwapUserAPIServive {
      * @return
      */
     @Override
-    public String selectOrder(String instrumentId, String orderId) {
-        APIClient client = getFuturesAPIClient();
-        SwapUserAPI api = getFuturesMarketApi(client);
+    public String selectOrder(String site, String instrumentId, String orderId) {
+        APIClient client = getFuturesAPIClient(site);
+        SwapUserAPI api = getFuturesMarketApi(site, client);
         return client.executeSync(api.selectOrder(instrumentId, orderId));
     }
 
@@ -163,9 +161,9 @@ public class SwapUserAPIServiceImpl implements SwapUserAPIServive {
      * @return
      */
     @Override
-    public String selectDealDetail(String instrumentId, String orderId, String from, String to, String limit) {
-        APIClient client = getFuturesAPIClient();
-        SwapUserAPI api = getFuturesMarketApi(client);
+    public String selectDealDetail(String site, String instrumentId, String orderId, String from, String to, String limit) {
+        APIClient client = getFuturesAPIClient(site);
+        SwapUserAPI api = getFuturesMarketApi(site, client);
         return client.executeSync(api.selectDealDetail(instrumentId, orderId, from, to, limit));
     }
 
@@ -180,9 +178,9 @@ public class SwapUserAPIServiceImpl implements SwapUserAPIServive {
      * @return
      */
     @Override
-    public String getLedger(String instrumentId, String from, String to, String limit) {
-        APIClient client = getFuturesAPIClient();
-        SwapUserAPI api = getFuturesMarketApi(client);
+    public String getLedger(String site, String instrumentId, String from, String to, String limit) {
+        APIClient client = getFuturesAPIClient(site);
+        SwapUserAPI api = getFuturesMarketApi(site, client);
         return client.executeSync(api.getLedger(instrumentId, from, to, limit));
     }
 
@@ -193,9 +191,9 @@ public class SwapUserAPIServiceImpl implements SwapUserAPIServive {
      * @return
      */
     @Override
-    public String getHolds(String instrumentId) {
-        APIClient client = getFuturesAPIClient();
-        SwapUserAPI api = getFuturesMarketApi(client);
+    public String getHolds(String site, String instrumentId) {
+        APIClient client = getFuturesAPIClient(site);
+        SwapUserAPI api = getFuturesMarketApi(site, client);
         return client.executeSync(api.getHolds(instrumentId));
     }
 }

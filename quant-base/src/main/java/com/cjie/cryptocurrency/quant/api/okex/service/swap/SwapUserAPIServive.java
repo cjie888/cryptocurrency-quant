@@ -11,14 +11,14 @@ public interface SwapUserAPIServive {
      * @param instrumentId
      * @return
      */
-    String getPosition(String instrumentId);
+    String getPosition(String site, String instrumentId);
 
     /**
      * 获取所有币种合约的账户信息
      *
      * @return
      */
-    String getAccounts();
+    String getAccounts(String site);
 
     /**
      * 获取某个币种合约的账户信息
@@ -26,7 +26,7 @@ public interface SwapUserAPIServive {
      * @param instrumentId
      * @return
      */
-    String selectAccount(String instrumentId);
+    String selectAccount(String site, String instrumentId);
 
     /**
      * 获取某个合约的用户配置
@@ -34,7 +34,7 @@ public interface SwapUserAPIServive {
      * @param instrumentId
      * @return
      */
-    String selectContractSettings(String instrumentId);
+    String selectContractSettings(String site, String instrumentId);
 
     /**
      * 设定某个合约的杠杆
@@ -43,7 +43,7 @@ public interface SwapUserAPIServive {
      * @param levelRateParam
      * @return
      */
-    String updateLevelRate(String instrumentId, LevelRateParam levelRateParam);
+    String updateLevelRate(String site, String instrumentId, LevelRateParam levelRateParam);
 
     /**
      * 获取所有订单列表
@@ -55,7 +55,7 @@ public interface SwapUserAPIServive {
      * @param limit
      * @return
      */
-    String selectOrders(String instrumentId, String status, String from, String to, String limit);
+    String selectOrders(String site, String instrumentId, String status, String from, String to, String limit);
 
     /**
      * 通过订单id获取单个订单信息
@@ -64,7 +64,7 @@ public interface SwapUserAPIServive {
      * @param orderId
      * @return
      */
-    String selectOrder(String instrumentId, String orderId);
+    String selectOrder(String site, String instrumentId, String orderId);
 
     /**
      * 获取最近的成交明细列表
@@ -75,7 +75,7 @@ public interface SwapUserAPIServive {
      * @param limit
      * @return
      */
-    String selectDealDetail(String instrumentId, String orderId, String from, String to, String limit);
+    String selectDealDetail(String site, String instrumentId, String orderId, String from, String to, String limit);
 
     /**
      * 列出账户资产流水，账户资产流水是指导致账户余额增加或减少的行为。
@@ -87,7 +87,7 @@ public interface SwapUserAPIServive {
      * @param limit
      * @return
      */
-    String getLedger(String instrumentId, String from, String to, String limit);
+    String getLedger(String site, String instrumentId, String from, String to, String limit);
 
     /**
      * 获取合约挂单冻结数量
@@ -95,5 +95,5 @@ public interface SwapUserAPIServive {
      * @param instrumentId
      * @return
      */
-    String getHolds(String instrumentId);
+    String getHolds(String site, String instrumentId);
 }

@@ -35,8 +35,7 @@ public class SwapTradeAPIServiceImpl implements SwapTradeAPIService {
 
     private ConcurrentHashMap<String, SwapTradeAPI> futuresMarketAPIs = new ConcurrentHashMap<>();
 
-    private SwapTradeAPI getFuturesMarketApi(APIClient apiClient) {
-        String site = "okexsub1";
+    private SwapTradeAPI getFuturesMarketApi(String site, APIClient apiClient) {
         SwapTradeAPI futuresMarketAPI = futuresMarketAPIs.get(site);
         if (futuresMarketAPI != null) {
             return  futuresMarketAPI;
@@ -46,8 +45,7 @@ public class SwapTradeAPIServiceImpl implements SwapTradeAPIService {
         return futuresMarketAPI;
     }
 
-    private APIClient getFuturesAPIClient() {
-        String site = "okexsub1";
+    private APIClient getFuturesAPIClient(String site) {
         APIClient apiClient = apiClients.get(site);
         if (apiClient != null) {
             return apiClient;
@@ -74,9 +72,9 @@ public class SwapTradeAPIServiceImpl implements SwapTradeAPIService {
      * @return
      */
     @Override
-    public String order(PpOrder ppOrder, String strategy)  {
-        APIClient client = getFuturesAPIClient();
-        SwapTradeAPI api = getFuturesMarketApi(client);
+    public String order(String site, PpOrder ppOrder, String strategy)  {
+        APIClient client = getFuturesAPIClient(site);
+        SwapTradeAPI api = getFuturesMarketApi(site, client);
         log.info("下单参数：：：：：：{}", JsonUtils.convertObject(ppOrder, PpOrder.class));
         String result =  client.executeSync(api.order(JsonUtils.convertObject(ppOrder, PpOrder.class)));
 
@@ -105,9 +103,9 @@ public class SwapTradeAPIServiceImpl implements SwapTradeAPIService {
      * @return
      */
     @Override
-    public String orders(PpOrders ppOrders) {
-        APIClient client = getFuturesAPIClient();
-        SwapTradeAPI api = getFuturesMarketApi(client);
+    public String orders(String site, PpOrders ppOrders) {
+        APIClient client = getFuturesAPIClient(site);
+        SwapTradeAPI api = getFuturesMarketApi(site, client);
         return client.executeSync(api.orders(JsonUtils.convertObject(ppOrders, PpOrders.class)));
     }
 
@@ -119,9 +117,9 @@ public class SwapTradeAPIServiceImpl implements SwapTradeAPIService {
      * @return
      */
     @Override
-    public String cancelOrder(String instrumentId, String orderId) {
-        APIClient client = getFuturesAPIClient();
-        SwapTradeAPI api = getFuturesMarketApi(client);
+    public String cancelOrder(String site, String instrumentId, String orderId) {
+        APIClient client = getFuturesAPIClient(site);
+        SwapTradeAPI api = getFuturesMarketApi(site, client);
         return client.executeSync(api.cancelOrder(instrumentId,orderId));
     }
 
@@ -133,9 +131,9 @@ public class SwapTradeAPIServiceImpl implements SwapTradeAPIService {
      * @return
      */
     @Override
-    public String cancelOrders(String instrumentId, PpCancelOrderVO ppCancelOrderVO) {
-        APIClient client = getFuturesAPIClient();
-        SwapTradeAPI api = getFuturesMarketApi(client);
+    public String cancelOrders(String site, String instrumentId, PpCancelOrderVO ppCancelOrderVO) {
+        APIClient client = getFuturesAPIClient(site);
+        SwapTradeAPI api = getFuturesMarketApi(site, client);
         return client.executeSync(api.cancelOrders(instrumentId,JsonUtils.convertObject(ppCancelOrderVO, PpCancelOrderVO.class)));
     }
 }
