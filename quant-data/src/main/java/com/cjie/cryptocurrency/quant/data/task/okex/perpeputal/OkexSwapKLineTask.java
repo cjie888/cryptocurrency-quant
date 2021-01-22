@@ -118,7 +118,7 @@ public class OkexSwapKLineTask {
                 try {
                     String currSuffix = suffix;
                     int count = 0;
-                    String klineS = swapMarketAPIService.getCandlesApi(instrumentId, null, null, String.valueOf(getGranularity(type)));
+                    String klineS = swapMarketAPIService.getCandlesApi("okex", instrumentId, null, null, String.valueOf(getGranularity(type)));
                     List<String[]> apiKlineVOs = JSON.parseObject(klineS, new TypeReference<List<String[]>>(){});
                     for (String[] apiKlineVO : apiKlineVOs) {
                         String time = apiKlineVO[0];
