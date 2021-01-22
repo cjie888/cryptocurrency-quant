@@ -59,7 +59,7 @@ public abstract class BaseSwapStrategyJob  {
             TradingRecord longTradingRecord = longTradingRecordMap.get(instrumentId);
             TradingRecord shortTradingRecord = shortTradingRecordMap.get(instrumentId);
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-            String kline = swapMarketAPIService.getCandlesApi(instrumentId, null, null, "60");
+            String kline = swapMarketAPIService.getCandlesApi("okexsub1", instrumentId, null, null, "60");
             List<String[]> apiKlineVOs = JSON.parseObject(kline, new TypeReference<List<String[]>>(){});
             // Getting the time series
             if (timeSeries == null) {
