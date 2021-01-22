@@ -223,7 +223,7 @@ public class SwapService {
         if (apiAccountsVO != null && CollectionUtils.isNotEmpty(apiAccountsVO.getInfo())) {
             for (ApiAccountVO apiAccountVO : apiAccountsVO.getInfo()) {
                 log.info("获取账户信息保证金率{}-{}", instrumentId, apiAccountVO.getMargin_ratio());
-                if (Double.valueOf(apiAccountVO.getMargin_ratio()) < 0.4) {
+                if (Double.valueOf(apiAccountVO.getMargin_ratio()) < 1) {
 
 
 
