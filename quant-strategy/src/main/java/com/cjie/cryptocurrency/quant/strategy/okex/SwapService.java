@@ -504,7 +504,6 @@ public class SwapService {
             ppDownOrder.setPrice(String.valueOf(currentPrice));
             ppDownOrder.setSize(size);
             ppDownOrder.setInstrument_id(instrumentId);
-            ppDownOrder.setMatch_price("1");
             swapTradeAPIService.order(site, ppDownOrder, "netGrid");
             log.info("平空{}-{}", instrumentId, JSON.toJSONString(ppDownOrder));
             return;
