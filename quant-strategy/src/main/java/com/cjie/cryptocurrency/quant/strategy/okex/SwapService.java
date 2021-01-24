@@ -506,7 +506,6 @@ public class SwapService {
             ppDownOrder.setInstrument_id(instrumentId);
             swapTradeAPIService.order(site, ppDownOrder, "netGrid");
             log.info("平空{}-{}", instrumentId, JSON.toJSONString(ppDownOrder));
-            return;
         }
         Double lastPrice = lastOrder.getPrice().doubleValue();
         log.info("当前价格：{}, 上次价格:{}", currentPrice, lastPrice);
