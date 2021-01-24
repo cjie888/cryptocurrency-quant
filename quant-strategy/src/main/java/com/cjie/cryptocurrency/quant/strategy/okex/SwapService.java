@@ -489,7 +489,7 @@ public class SwapService {
             return;
 
         }
-        if (longPosition + shortPosition >= 8 && Math.abs(longPosition-shortPosition) <=1) {
+        if (longPosition + shortPosition >= 4 && Math.abs(longPosition-shortPosition) <=1) {
             //平多
             PpOrder ppUpOrder = new PpOrder();
             ppUpOrder.setType("3");
