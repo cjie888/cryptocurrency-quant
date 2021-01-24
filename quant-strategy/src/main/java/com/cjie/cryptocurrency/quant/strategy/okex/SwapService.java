@@ -447,14 +447,18 @@ public class SwapService {
         }
         ApiPositionVO upPosition = null;
         ApiPositionVO downPosition = null;
+        double longPosition = 0;
+        double shortPosition = 0;
         for (ApiPositionVO apiPositionVO : apiPositionsVO.getHolding()) {
             if (apiPositionVO.getSide().equals("long") && Double.valueOf(apiPositionVO.getAvail_position()) >= Double.valueOf(size)
                     && Double.valueOf(apiPositionVO.getPosition()) >= origin + Double.valueOf(size)) {
                 upPosition = apiPositionVO;
+                longPosition = Double.valueOf(apiPositionVO.getPosition());
                 continue;
             }
             if (apiPositionVO.getSide().equals("short") && Double.valueOf(apiPositionVO.getAvail_position()) >= Double.valueOf(size)) {
                 downPosition = apiPositionVO;
+                shortPosition = Double.valueOf(apiPositionVO.getPosition());
                 continue;
             }
 
@@ -484,6 +488,27 @@ public class SwapService {
             log.info("开空{}-{}", instrumentId, JSON.toJSONString(ppDownOrder));
             return;
 
+        }
+        if (longPosition + shortPosition >= 8 && Math.abs(longPosition-shortPosition) <=1) {
+            //平多
+            PpOrder ppUpOrder = new PpOrder();
+            ppUpOrder.setType("3");
+            ppUpOrder.setPrice(String.valueOf(currentPrice));
+            ppUpOrder.setSize(String.valueOf(longPosition));
+            ppUpOrder.setInstrument_id(instrumentId);
+            ppUpOrder.setMatch_price("1");
+            swapTradeAPIService.order(site, ppUpOrder,"netGrid");
+            log.info("平多{}-{}", instrumentId, JSON.toJSONString(ppUpOrder));
+            //平空
+            PpOrder ppDownOrder = new PpOrder();
+            ppDownOrder.setType("4");
+            ppDownOrder.setPrice(String.valueOf(shortPosition));
+            ppDownOrder.setSize(size);
+            ppDownOrder.setInstrument_id(instrumentId);
+            ppDownOrder.setMatch_price("1");
+            swapTradeAPIService.order(site, ppDownOrder, "netGrid");
+            log.info("平空{}-{}", instrumentId, JSON.toJSONString(ppDownOrder));
+            return;
         }
         Double lastPrice = lastOrder.getPrice().doubleValue();
         log.info("当前价格：{}, 上次价格:{}", currentPrice, lastPrice);
