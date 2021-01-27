@@ -494,7 +494,7 @@ public class SwapService {
             PpOrder ppUpOrder = new PpOrder();
             ppUpOrder.setType("3");
             ppUpOrder.setPrice(String.valueOf(currentPrice));
-            ppUpOrder.setSize(size);
+            ppUpOrder.setSize("3");
             ppUpOrder.setInstrument_id(instrumentId);
             swapTradeAPIService.order(site, ppUpOrder,"netGrid");
             log.info("平多{}-{}", instrumentId, JSON.toJSONString(ppUpOrder));
@@ -502,7 +502,7 @@ public class SwapService {
             PpOrder ppDownOrder = new PpOrder();
             ppDownOrder.setType("4");
             ppDownOrder.setPrice(String.valueOf(currentPrice));
-            ppDownOrder.setSize(size);
+            ppDownOrder.setSize("3");
             ppDownOrder.setInstrument_id(instrumentId);
             swapTradeAPIService.order(site, ppDownOrder, "netGrid");
             log.info("平空{}-{}", instrumentId, JSON.toJSONString(ppDownOrder));
