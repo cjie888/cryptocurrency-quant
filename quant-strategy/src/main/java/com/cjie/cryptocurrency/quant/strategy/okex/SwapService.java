@@ -490,22 +490,42 @@ public class SwapService {
 
         }
         if (longPosition + shortPosition >= 10 && Math.abs(longPosition-shortPosition) <=1) {
-            //平多
-            PpOrder ppUpOrder = new PpOrder();
-            ppUpOrder.setType("3");
-            ppUpOrder.setPrice(String.valueOf(currentPrice));
-            ppUpOrder.setSize("3");
-            ppUpOrder.setInstrument_id(instrumentId);
-            swapTradeAPIService.order(site, ppUpOrder,"netGrid");
-            log.info("平多{}-{}", instrumentId, JSON.toJSONString(ppUpOrder));
-            //平空
-            PpOrder ppDownOrder = new PpOrder();
-            ppDownOrder.setType("4");
-            ppDownOrder.setPrice(String.valueOf(currentPrice));
-            ppDownOrder.setSize("3");
-            ppDownOrder.setInstrument_id(instrumentId);
-            swapTradeAPIService.order(site, ppDownOrder, "netGrid");
-            log.info("平空{}-{}", instrumentId, JSON.toJSONString(ppDownOrder));
+            if (longPosition > shortPosition) {
+                //平多
+                PpOrder ppUpOrder = new PpOrder();
+                ppUpOrder.setType("3");
+                ppUpOrder.setPrice(String.valueOf(currentPrice));
+                ppUpOrder.setSize("3");
+                ppUpOrder.setInstrument_id(instrumentId);
+                swapTradeAPIService.order(site, ppUpOrder, "netGrid");
+                log.info("平多{}-{}", instrumentId, JSON.toJSONString(ppUpOrder));
+                //平空
+                PpOrder ppDownOrder = new PpOrder();
+                ppDownOrder.setType("4");
+                ppDownOrder.setPrice(String.valueOf(currentPrice));
+                ppDownOrder.setSize("3");
+                ppDownOrder.setInstrument_id(instrumentId);
+                swapTradeAPIService.order(site, ppDownOrder, "netGrid");
+                log.info("平空{}-{}", instrumentId, JSON.toJSONString(ppDownOrder));
+            } else {
+                //平空
+                PpOrder ppDownOrder = new PpOrder();
+                ppDownOrder.setType("4");
+                ppDownOrder.setPrice(String.valueOf(currentPrice));
+                ppDownOrder.setSize("3");
+                ppDownOrder.setInstrument_id(instrumentId);
+                swapTradeAPIService.order(site, ppDownOrder, "netGrid");
+                log.info("平空{}-{}", instrumentId, JSON.toJSONString(ppDownOrder));
+
+                //平多
+                PpOrder ppUpOrder = new PpOrder();
+                ppUpOrder.setType("3");
+                ppUpOrder.setPrice(String.valueOf(currentPrice));
+                ppUpOrder.setSize("3");
+                ppUpOrder.setInstrument_id(instrumentId);
+                swapTradeAPIService.order(site, ppUpOrder, "netGrid");
+                log.info("平多{}-{}", instrumentId, JSON.toJSONString(ppUpOrder));
+            }
         }
         Double lastPrice = lastOrder.getPrice().doubleValue();
         log.info("当前价格：{}, 上次价格:{}", currentPrice, lastPrice);
