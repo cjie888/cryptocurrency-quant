@@ -75,25 +75,31 @@ public class SwapTradeAPIServiceImpl implements SwapTradeAPIService {
     public String order(String site, PpOrder ppOrder, String strategy)  {
         APIClient client = getFuturesAPIClient(site);
         SwapTradeAPI api = getFuturesMarketApi(site, client);
-        log.info("下单参数：：：：：：{}", JsonUtils.convertObject(ppOrder, PpOrder.class));
-        String result =  client.executeSync(api.order(JsonUtils.convertObject(ppOrder, PpOrder.class)));
+        try {
+            log.info("下单参数：：：：：：{}", JsonUtils.convertObject(ppOrder, PpOrder.class));
+            String result = client.executeSync(api.order(JsonUtils.convertObject(ppOrder, PpOrder.class)));
 
-        log.info("order result:{}", result);
-        ApiOrderVO apiOrderVO = JSON.parseObject(result, ApiOrderVO.class);
-        if (apiOrderVO.getError_code().equals("0")) {
-            SwapOrder swapOrder = new SwapOrder();
-            swapOrder.setInstrumentId(ppOrder.getInstrument_id());
-            swapOrder.setCreateTime(new Date());
-            swapOrder.setStrategy(strategy);
-            swapOrder.setIsMock(Byte.valueOf("0"));
-            swapOrder.setType(Byte.valueOf(ppOrder.getType()));
-            swapOrder.setPrice(new BigDecimal(ppOrder.getPrice()));
-            swapOrder.setSize(new BigDecimal(ppOrder.getSize()));
-            swapOrder.setOrderId(apiOrderVO.getOrder_id());
-            swapOrder.setStatus(99);
-            swapOrderMapper.insert(swapOrder);
+            log.info("order result:{}", result);
+            ApiOrderVO apiOrderVO = JSON.parseObject(result, ApiOrderVO.class);
+            if (apiOrderVO.getError_code().equals("0")) {
+                SwapOrder swapOrder = new SwapOrder();
+                swapOrder.setInstrumentId(ppOrder.getInstrument_id());
+                swapOrder.setCreateTime(new Date());
+                swapOrder.setStrategy(strategy);
+                swapOrder.setIsMock(Byte.valueOf("0"));
+                swapOrder.setType(Byte.valueOf(ppOrder.getType()));
+                swapOrder.setPrice(new BigDecimal(ppOrder.getPrice()));
+                swapOrder.setSize(new BigDecimal(ppOrder.getSize()));
+                swapOrder.setOrderId(apiOrderVO.getOrder_id());
+                swapOrder.setStatus(99);
+                swapOrderMapper.insert(swapOrder);
+            }
+            return result;
+        } catch (Exception e) {
+            log.error("下单失败：：：：：：{}", JsonUtils.convertObject(ppOrder, PpOrder.class), e);
+
         }
-        return result;
+        return null;
     }
 
     /**
