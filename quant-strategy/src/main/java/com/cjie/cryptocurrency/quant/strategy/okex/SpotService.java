@@ -142,7 +142,11 @@ public class SpotService {
             BigDecimal transferAmount = new BigDecimal(size).multiply(new BigDecimal("1.01"));
             JSONObject result1 = accountAPIService.purchaseRedempt(site, baseCurrency, transferAmount.toPlainString(), "redempt");
             log.info("transfer {} {} from financial to asset", transferAmount, JSON.toJSONString(result1));
-
+            try {
+                Thread.sleep(1000);
+            }catch (Exception e){
+                //ignore
+            }
             Transfer transferIn = new Transfer();
             transferIn.setCurrency(baseCurrency);
             transferIn.setFrom(6);
@@ -155,7 +159,7 @@ public class SpotService {
                 log.info("transfer {} {} from asset to spot error", size, baseCurrency, e);
             }
             try {
-                Thread.sleep(2000);
+                Thread.sleep(1000);
             }catch (Exception e){
                 //ignore
             }
@@ -198,7 +202,11 @@ public class SpotService {
             BigDecimal transferAmount = new BigDecimal(size).multiply(new BigDecimal(spotTicker.getLast())).multiply(new BigDecimal("1.01"));
             JSONObject result1 = accountAPIService.purchaseRedempt(site, quotaCurrency, transferAmount.toPlainString(), "redempt");
             log.info("transfer {} {} from financial to asset", transferAmount, JSON.toJSONString(result1));
-
+            try {
+                Thread.sleep(1000);
+            }catch (Exception e){
+                //ignore
+            }
             Transfer transferIn = new Transfer();
             transferIn.setCurrency(quotaCurrency);
             transferIn.setFrom(6);
