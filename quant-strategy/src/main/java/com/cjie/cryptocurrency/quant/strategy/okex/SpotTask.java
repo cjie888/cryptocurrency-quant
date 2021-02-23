@@ -25,6 +25,11 @@ public class SpotTask {
         spotService.netGrid("okexsub1", "LINK-USDT", "0.50000000", 0.03);
         spotService.netGrid("okexsub1", "DOT-USDT", "1", 0.03);
         spotService.netGrid("okex", "UNI-USDT", "1", 0.03);
+        spotService.netGrid("okex", "XLM-USDT", "50", 0.03);
+        spotService.netGrid("okex", "XMR-USDT", "0.1", 0.03);
+        spotService.netGrid("okex", "ZEC-USDT", "0.2", 0.03);
+
+
 
 
 
