@@ -27,7 +27,7 @@ public class SpotTask {
         spotService.netGrid("okex", "UNI-USDT", "1", 0.03);
         spotService.netGrid("okex", "XLM-USDT", "50", 0.03);
         spotService.netGrid("okex", "IOTA-USDT", "30", 0.03);
-        spotService.netGrid("okex", "XTZ-USDT", "1", 0.03);
+        spotService.netGrid("okex", "XTZ-USDT", "10", 0.03);
 
 
 
