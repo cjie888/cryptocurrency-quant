@@ -346,7 +346,7 @@ public class SpotService {
             int buyCount = 0;
             int sellCount = 0;
             for (SpotOrder spotOrder : spotOrders) {
-                if (spotOrder.getIsMock() == 0) {
+                if (spotOrder.getIsMock() == Byte.valueOf("0")) {
                     continue;
                 }
                 if (spotOrder.getType() == Byte.valueOf("1")) {
