@@ -52,9 +52,9 @@ public class SwapTask {
 
     }
 
-    @Scheduled(cron = "7 */30 * * * ?")
-    public  void benefit() {
-        swapService.computeBenefit("okexsub1");
-
-    }
+//    @Scheduled(cron = "7 */30 * * * ?")
+//    public  void benefit() {
+//        swapService.computeBenefit("okexsub1");
+//
+//    }
 }

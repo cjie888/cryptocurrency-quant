@@ -170,4 +170,11 @@
     set status = #{status,jdbcType=INTEGER}
     where order_id = #{orderId,jdbcType=VARCHAR}
   </update>
+
+  <select id="groupBySymbol" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from spot_order
+    where create_time >= #{startTime} and create_time <![CDATA[ <= ]]> #{endTime}
+  </select>
 </mapper>

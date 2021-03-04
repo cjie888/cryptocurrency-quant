@@ -21,6 +21,7 @@ import com.cjie.cryptocurrency.quant.model.APIKey;
 import com.cjie.cryptocurrency.quant.model.SpotOrder;
 import com.cjie.cryptocurrency.quant.model.SwapOrder;
 import com.cjie.cryptocurrency.quant.service.ApiKeyService;
+import com.cjie.cryptocurrency.quant.service.WeiXinMessageService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +37,8 @@ import org.springframework.web.client.RestTemplate;
 
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
+import java.text.MessageFormat;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -60,6 +63,9 @@ public class SpotService {
 
     @Autowired
     private AccountAPIService accountAPIService;
+
+    @Autowired
+    private WeiXinMessageService weiXinMessageService;
 
 
     public void netGrid(String site, String symbol, String size, Double increment) {
@@ -329,5 +335,29 @@ public class SpotService {
         return JSON.parseObject(body,Ticker.class);
 
         //return spotProductAPIService.getTickerByProductId(baseCurrency.toUpperCase() + "-" + quotaCurrency.toUpperCase());
+    }
+
+    public void computeBenefit() {
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime startTime = now.withHour(0).withMinute(0).withSecond(0).withNano(0);
+        List<SpotOrder> spotOrders = spotOrderMapper.groupBySymbol(startTime, now);
+        if (CollectionUtils.isNotEmpty(spotOrders)) {
+            int buyCount = 0;
+            int sellCount = 0;
+            for (SpotOrder spotOrder : spotOrders) {
+                if (spotOrder.getIsMock() == 0) {
+                    continue;
+                }
+                if (spotOrder.getType() == 1) {
+                    buyCount++;
+                }
+                if (spotOrder.getType() == 2) {
+                    sellCount++;
+                }
+            }
+            String message = MessageFormat.format("买入次数：{0}\r\n\r\n,卖出次数:{1}", buyCount, sellCount) ;
+            weiXinMessageService.sendMessage("balance",  message);
+
+        }
     }
 }
