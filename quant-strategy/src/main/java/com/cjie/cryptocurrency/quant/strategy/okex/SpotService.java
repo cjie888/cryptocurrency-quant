@@ -39,10 +39,7 @@ import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @Component
 @Slf4j
@@ -341,6 +338,10 @@ public class SpotService {
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime startTime = now.withHour(0).withMinute(0).withSecond(0).withNano(0);
         List<SpotOrder> spotOrders = spotOrderMapper.groupBySymbol(startTime, now);
+        log.info("spot orders:{}", JSON.toJSONString(spotOrders));
+        Map<String, Integer> buyCounts =  new HashMap<>();
+        Map<String, Integer> sellCounts =  new HashMap<>();
+
         if (CollectionUtils.isNotEmpty(spotOrders)) {
             int buyCount = 0;
             int sellCount = 0;
@@ -348,11 +349,21 @@ public class SpotService {
                 if (spotOrder.getIsMock() == 0) {
                     continue;
                 }
-                if (spotOrder.getType() == 1) {
+                if (spotOrder.getType() == Byte.valueOf("1")) {
                     buyCount++;
+                    Integer symBuyCount = buyCounts.get(spotOrder.getSymbol());
+                    if (symBuyCount == null) {
+                        symBuyCount = 0;
+                    }
+                    buyCounts.put(spotOrder.getSymbol(), symBuyCount + 1);
                 }
-                if (spotOrder.getType() == 2) {
+                if (spotOrder.getType() ==  Byte.valueOf("2")) {
                     sellCount++;
+                    Integer symSellCount = sellCounts.get(spotOrder.getSymbol());
+                    if (symSellCount == null) {
+                        symSellCount = 0;
+                    }
+                    buyCounts.put(spotOrder.getSymbol(), symSellCount + 1);
                 }
             }
             String message = MessageFormat.format("买入次数：{0}\r\n\r\n,卖出次数:{1}", buyCount, sellCount) ;
