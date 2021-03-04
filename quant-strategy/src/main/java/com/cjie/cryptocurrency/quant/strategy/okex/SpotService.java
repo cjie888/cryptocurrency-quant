@@ -346,7 +346,7 @@ public class SpotService {
             int buyCount = 0;
             int sellCount = 0;
             for (SpotOrder spotOrder : spotOrders) {
-                if (spotOrder.getIsMock() == Byte.valueOf("0")) {
+                if (spotOrder.getIsMock() == Byte.valueOf("1")) {
                     continue;
                 }
                 if (spotOrder.getType() == Byte.valueOf("1")) {
@@ -366,7 +366,9 @@ public class SpotService {
                     buyCounts.put(spotOrder.getSymbol(), symSellCount + 1);
                 }
             }
-            String message = MessageFormat.format("买入次数：{0}\r\n\r\n,卖出次数:{1}", buyCount, sellCount) ;
+            StringBuilder stringBuilder = new StringBuilder();
+            String message = MessageFormat.format("买入次数:{0}\r\n\r\n,卖出次数:{1}", buyCount, sellCount) ;
+            stringBuilder.append(message);
             weiXinMessageService.sendMessage("balance",  message);
 
         }
