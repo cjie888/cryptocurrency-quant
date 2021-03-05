@@ -366,11 +366,11 @@ public class SpotService {
                     if (symSellCount == null) {
                         symSellCount = 0;
                     }
-                    buyCounts.put(spotOrder.getSymbol(), symSellCount + 1);
+                    sellCounts.put(spotOrder.getSymbol(), symSellCount + 1);
                 }
             }
             StringBuilder stringBuilder = new StringBuilder();
-            String message = MessageFormat.format("买入次数:{0},卖出次数:{1}", buyCount, sellCount) ;
+            String message = MessageFormat.format("买入次数:{0},卖出次数:{1}\r\n\r\n", buyCount, sellCount) ;
             stringBuilder.append(message);
             Set<String> allSymbols = new HashSet<>();
             allSymbols.addAll(buyCounts.keySet());
