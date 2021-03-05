@@ -349,6 +349,9 @@ public class SpotService {
                 if (spotOrder.getIsMock() == Byte.valueOf("1")) {
                     continue;
                 }
+                if (spotOrder.getStatus() != 2) {
+                    continue;
+                }
                 if (spotOrder.getType() == Byte.valueOf("1")) {
                     buyCount++;
                     Integer symBuyCount = buyCounts.get(spotOrder.getSymbol());
@@ -367,9 +370,24 @@ public class SpotService {
                 }
             }
             StringBuilder stringBuilder = new StringBuilder();
-            String message = MessageFormat.format("买入次数:{0}\r\n\r\n,卖出次数:{1}", buyCount, sellCount) ;
+            String message = MessageFormat.format("买入次数:{0},卖出次数:{1}", buyCount, sellCount) ;
             stringBuilder.append(message);
-            weiXinMessageService.sendMessage("balance",  message);
+            Set<String> allSymbols = new HashSet<>();
+            allSymbols.addAll(buyCounts.keySet());
+            allSymbols.addAll(sellCounts.keySet());
+            for (String symbol : allSymbols) {
+                Integer buyCountSymbol = buyCounts.get(symbol);
+                if (buyCountSymbol == null) {
+                    buyCountSymbol = 0;
+                }
+                Integer sellCountSymbol = sellCounts.get(symbol);
+                if (sellCountSymbol == null) {
+                    sellCountSymbol = 0;
+                }
+                stringBuilder.append(symbol + ":买入" + buyCountSymbol + "，卖出" + sellCountSymbol + "\r\n\r\n");
+
+            }
+            weiXinMessageService.sendMessage("balance",  stringBuilder.toString());
 
         }
     }
