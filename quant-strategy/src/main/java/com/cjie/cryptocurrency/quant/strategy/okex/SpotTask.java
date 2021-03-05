@@ -65,7 +65,7 @@ public class SpotTask {
 //ltc 6  xrp 3 etc 5
     }
 
-    @Scheduled(cron = "7 */30 * * * ?")
+    @Scheduled(cron = "7 */10 * * * ?")
     public  void benefit() {
         spotService.computeBenefit();
 
