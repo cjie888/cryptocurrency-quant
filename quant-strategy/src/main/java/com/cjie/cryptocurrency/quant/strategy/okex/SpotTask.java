@@ -5,6 +5,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
+
 @Component
 @Slf4j
 public class SpotTask {
@@ -67,7 +69,17 @@ public class SpotTask {
 
     @Scheduled(cron = "7 */30 * * * ?")
     public  void benefit() {
-        spotService.computeBenefit();
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime startTime = now.withHour(0).withMinute(0).withSecond(0).withNano(0);
+        spotService.computeBenefit("每日买卖", startTime, now);
+
+    }
+
+    @Scheduled(cron = "7 3 */2 * * ?")
+    public  void benefit2() {
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime startTime = now.withDayOfMonth(1).withHour(0).withMinute(0).withSecond(0).withNano(0);
+        spotService.computeBenefit("每月买卖", startTime, now);
 
     }
 }

@@ -334,10 +334,8 @@ public class SpotService {
         //return spotProductAPIService.getTickerByProductId(baseCurrency.toUpperCase() + "-" + quotaCurrency.toUpperCase());
     }
 
-    public void computeBenefit() {
-        LocalDateTime now = LocalDateTime.now();
-        LocalDateTime startTime = now.withHour(0).withMinute(0).withSecond(0).withNano(0);
-        List<SpotOrder> spotOrders = spotOrderMapper.groupBySymbol(startTime, now);
+    public void computeBenefit(String title, LocalDateTime startTime, LocalDateTime endTime) {
+        List<SpotOrder> spotOrders = spotOrderMapper.groupBySymbol(startTime, endTime);
         log.info("spot orders:{}", JSON.toJSONString(spotOrders));
         Map<String, Integer> buyCounts =  new HashMap<>();
         Map<String, Integer> sellCounts =  new HashMap<>();
@@ -387,7 +385,7 @@ public class SpotService {
                 stringBuilder.append(symbol + ":买入" + buyCountSymbol + "，卖出" + sellCountSymbol + "\r\n\r\n");
 
             }
-            weiXinMessageService.sendMessage("balance",  stringBuilder.toString());
+            weiXinMessageService.sendMessage(title,  stringBuilder.toString());
 
         }
     }
