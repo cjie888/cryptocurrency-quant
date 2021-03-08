@@ -22,6 +22,7 @@ import com.cjie.cryptocurrency.quant.model.SpotOrder;
 import com.cjie.cryptocurrency.quant.model.SwapOrder;
 import com.cjie.cryptocurrency.quant.service.ApiKeyService;
 import com.cjie.cryptocurrency.quant.service.WeiXinMessageService;
+import javafx.scene.layout.BackgroundImage;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +37,7 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
 import java.time.LocalDateTime;
@@ -340,6 +342,12 @@ public class SpotService {
         Map<String, Integer> buyCounts =  new HashMap<>();
         Map<String, Integer> sellCounts =  new HashMap<>();
 
+        Map<String, BigDecimal> buySums =  new HashMap<>();
+        Map<String, BigDecimal> sellSums =  new HashMap<>();
+
+        Map<String, BigDecimal> buyAmounts =  new HashMap<>();
+        Map<String, BigDecimal> sellAmounts =  new HashMap<>();
+
         if (CollectionUtils.isNotEmpty(spotOrders)) {
             int buyCount = 0;
             int sellCount = 0;
@@ -357,6 +365,18 @@ public class SpotService {
                         symBuyCount = 0;
                     }
                     buyCounts.put(spotOrder.getSymbol(), symBuyCount + 1);
+
+                    BigDecimal symBuyAmount = buyAmounts.get(spotOrder.getSymbol());
+                    if (symBuyAmount == null) {
+                        symBuyAmount = BigDecimal.ZERO;
+                    }
+                    buyAmounts.put(spotOrder.getSymbol(), symBuyAmount.add(spotOrder.getSize()));
+
+                    BigDecimal symBuySum = buySums.get(spotOrder.getSymbol());
+                    if (symBuySum == null) {
+                        symBuySum = BigDecimal.ZERO;
+                    }
+                    buySums.put(spotOrder.getSymbol(), symBuySum.add(spotOrder.getSize().multiply(spotOrder.getPrice())));
                 }
                 if (spotOrder.getType() ==  Byte.valueOf("2")) {
                     sellCount++;
@@ -365,6 +385,18 @@ public class SpotService {
                         symSellCount = 0;
                     }
                     sellCounts.put(spotOrder.getSymbol(), symSellCount + 1);
+
+                    BigDecimal symSellAmount = sellAmounts.get(spotOrder.getSymbol());
+                    if (symSellAmount == null) {
+                        symSellAmount = BigDecimal.ZERO;
+                    }
+                    sellAmounts.put(spotOrder.getSymbol(), symSellAmount.add(spotOrder.getSize()));
+
+                    BigDecimal symSellSum = sellSums.get(spotOrder.getSymbol());
+                    if (symSellSum == null) {
+                        symSellSum = BigDecimal.ZERO;
+                    }
+                    sellSums.put(spotOrder.getSymbol(), symSellSum.add(spotOrder.getSize().multiply(spotOrder.getPrice())));
                 }
             }
             StringBuilder stringBuilder = new StringBuilder();
@@ -382,7 +414,32 @@ public class SpotService {
                 if (sellCountSymbol == null) {
                     sellCountSymbol = 0;
                 }
-                stringBuilder.append(symbol + ":买入" + buyCountSymbol + "，卖出" + sellCountSymbol + "\r\n\r\n");
+                BigDecimal buyAmountSymbol = buyAmounts.get(symbol);
+                if (buyAmountSymbol == null) {
+                    buyAmountSymbol = BigDecimal.ZERO;
+                }
+                BigDecimal sellAmountSymbol = sellAmounts.get(symbol);
+                if (sellAmountSymbol == null) {
+                    sellAmountSymbol = BigDecimal.ZERO;
+                }
+
+                BigDecimal buySumSymbol = buySums.get(symbol);
+                if (buySumSymbol == null) {
+                    buySumSymbol = BigDecimal.ZERO;
+                } else {
+                    buySumSymbol = buySumSymbol.divide(buyAmountSymbol, 4, BigDecimal.ROUND_DOWN);
+                }
+                BigDecimal sellSumSymbol = sellSums.get(symbol);
+                if (sellSumSymbol == null) {
+                    sellSumSymbol = BigDecimal.ZERO;
+                } else {
+                    sellSumSymbol = sellSumSymbol.divide(sellAmountSymbol, 4, BigDecimal.ROUND_DOWN);
+                }
+                stringBuilder.append(symbol + ":买入次数" + buyCountSymbol + "，卖出次数" + sellCountSymbol
+                        + ":买入数量" + buyAmountSymbol.setScale(2, RoundingMode.DOWN)
+                        + "，卖出数量" + sellAmountSymbol.setScale(2, RoundingMode.DOWN)
+                        + ":买入价格" + buySumSymbol + "，卖出价格" + sellSumSymbol
+                        + "\r\n\r\n");
 
             }
             weiXinMessageService.sendMessage(title,  stringBuilder.toString());
