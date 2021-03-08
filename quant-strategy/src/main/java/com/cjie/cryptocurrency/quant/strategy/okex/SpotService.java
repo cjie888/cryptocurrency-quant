@@ -348,6 +348,11 @@ public class SpotService {
         Map<String, BigDecimal> buyAmounts =  new HashMap<>();
         Map<String, BigDecimal> sellAmounts =  new HashMap<>();
 
+        BigDecimal allProfit = BigDecimal.ZERO;
+
+        Map<String, BigDecimal> profits =  new HashMap<>();
+
+
         if (CollectionUtils.isNotEmpty(spotOrders)) {
             int buyCount = 0;
             int sellCount = 0;
@@ -435,13 +440,20 @@ public class SpotService {
                 } else {
                     sellSumSymbol = sellSumSymbol.divide(sellAmountSymbol, 4, BigDecimal.ROUND_DOWN);
                 }
+                BigDecimal profit = BigDecimal.ZERO;
+                if (buyAmountSymbol.doubleValue() > 0 && sellAmountSymbol.doubleValue() > 0) {
+                    BigDecimal amount = buyAmountSymbol.min(sellAmountSymbol);
+                    profit = amount.multiply(sellSumSymbol.subtract(buyAmountSymbol)).setScale(4, RoundingMode.DOWN);
+                    allProfit = allProfit.add(profit);
+                }
                 stringBuilder.append(symbol + ":买入(次数:" + buyCountSymbol + ",数量:" + buyAmountSymbol.setScale(2, RoundingMode.DOWN)
                         + ",价格:" + buySumSymbol + ")，卖出(次数:" + sellCountSymbol
                         + ",数量:" + sellAmountSymbol.setScale(2, RoundingMode.DOWN)
                         + ",价格:" + sellSumSymbol
-                        + ")\r\n\r\n");
+                        + "),收益:" + profit +  "\r\n\r\n");
 
             }
+            stringBuilder.append("总收益:" + allProfit);
             weiXinMessageService.sendMessage(title,  stringBuilder.toString());
 
         }
