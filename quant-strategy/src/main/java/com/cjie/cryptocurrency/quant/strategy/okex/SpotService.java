@@ -435,10 +435,10 @@ public class SpotService {
                 } else {
                     sellSumSymbol = sellSumSymbol.divide(sellAmountSymbol, 4, BigDecimal.ROUND_DOWN);
                 }
-                stringBuilder.append(symbol + ":买入(次数:" + buyCountSymbol + ":数量" + buyAmountSymbol.setScale(2, RoundingMode.DOWN)
-                        + ":价格" + buySumSymbol + ")，卖出(次数:" + sellCountSymbol
-                        + "，数量" + sellAmountSymbol.setScale(2, RoundingMode.DOWN)
-                        + "，价格" + sellSumSymbol
+                stringBuilder.append(symbol + ":买入(次数:" + buyCountSymbol + ",数量:" + buyAmountSymbol.setScale(2, RoundingMode.DOWN)
+                        + ",价格:" + buySumSymbol + ")，卖出(次数:" + sellCountSymbol
+                        + ",数量:" + sellAmountSymbol.setScale(2, RoundingMode.DOWN)
+                        + ",价格:" + sellSumSymbol
                         + ")\r\n\r\n");
 
             }
