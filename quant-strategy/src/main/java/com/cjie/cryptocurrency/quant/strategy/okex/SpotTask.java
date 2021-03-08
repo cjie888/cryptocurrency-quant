@@ -82,4 +82,13 @@ public class SpotTask {
         spotService.computeBenefit("每月买卖", startTime, now);
 
     }
+
+    @Scheduled(cron = "7 27 */6 * * ?")
+    public  void benefit3() {
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime startTime = now.withDayOfMonth(1).withHour(0).withMinute(0).withSecond(0).withNano(0)
+                .plusMonths(2);
+        spotService.computeBenefit("每季买卖", startTime, now);
+
+    }
 }
