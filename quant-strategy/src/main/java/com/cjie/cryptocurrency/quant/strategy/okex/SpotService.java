@@ -405,8 +405,6 @@ public class SpotService {
                 }
             }
             StringBuilder stringBuilder = new StringBuilder();
-            String message = MessageFormat.format("买入次数:{0},卖出次数:{1}\r\n\r\n", buyCount, sellCount) ;
-            stringBuilder.append(message);
             Set<String> allSymbols = new HashSet<>();
             allSymbols.addAll(buyCounts.keySet());
             allSymbols.addAll(sellCounts.keySet());
@@ -453,7 +451,8 @@ public class SpotService {
                         + "),收益:" + profit +  "\r\n\r\n");
 
             }
-            stringBuilder.append("总收益:" + allProfit);
+            String message = MessageFormat.format("买入次数:{0},卖出次数:{1},总收益:{2}\r\n\r\n", buyCount, sellCount, allProfit);
+            stringBuilder.insert(0, message);
             weiXinMessageService.sendMessage(title,  stringBuilder.toString());
 
         }
