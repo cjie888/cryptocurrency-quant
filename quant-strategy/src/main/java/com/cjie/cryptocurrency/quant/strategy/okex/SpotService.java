@@ -441,7 +441,7 @@ public class SpotService {
                 BigDecimal profit = BigDecimal.ZERO;
                 if (buyAmountSymbol.doubleValue() > 0 && sellAmountSymbol.doubleValue() > 0) {
                     BigDecimal amount = buyAmountSymbol.min(sellAmountSymbol);
-                    profit = amount.multiply(sellSumSymbol.subtract(buyAmountSymbol)).setScale(4, RoundingMode.DOWN);
+                    profit = amount.multiply(sellSumSymbol.subtract(buySumSymbol)).setScale(4, RoundingMode.DOWN);
                     allProfit = allProfit.add(profit);
                 }
                 stringBuilder.append(symbol + ":买入(次数:" + buyCountSymbol + ",数量:" + buyAmountSymbol.setScale(3, RoundingMode.DOWN)
