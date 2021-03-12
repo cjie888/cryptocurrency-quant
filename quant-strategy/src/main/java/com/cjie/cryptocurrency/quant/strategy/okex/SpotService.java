@@ -430,13 +430,13 @@ public class SpotService {
                 if (buySumSymbol == null) {
                     buySumSymbol = BigDecimal.ZERO;
                 } else {
-                    buySumSymbol = buySumSymbol.divide(buyAmountSymbol, 4, BigDecimal.ROUND_DOWN);
+                    buySumSymbol = buySumSymbol.divide(buyAmountSymbol, 6, BigDecimal.ROUND_DOWN);
                 }
                 BigDecimal sellSumSymbol = sellSums.get(symbol);
                 if (sellSumSymbol == null) {
                     sellSumSymbol = BigDecimal.ZERO;
                 } else {
-                    sellSumSymbol = sellSumSymbol.divide(sellAmountSymbol, 4, BigDecimal.ROUND_DOWN);
+                    sellSumSymbol = sellSumSymbol.divide(sellAmountSymbol, 6, BigDecimal.ROUND_DOWN);
                 }
                 BigDecimal profit = BigDecimal.ZERO;
                 if (buyAmountSymbol.doubleValue() > 0 && sellAmountSymbol.doubleValue() > 0) {
