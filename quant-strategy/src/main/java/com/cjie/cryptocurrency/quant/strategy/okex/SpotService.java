@@ -445,13 +445,13 @@ public class SpotService {
                     allProfit = allProfit.add(profit);
                 }
                 stringBuilder.append(symbol + ":买入(次数:" + buyCountSymbol + ",数量:" + buyAmountSymbol.setScale(3, RoundingMode.DOWN)
-                        + ",价格:" + buySumSymbol.setScale(4) + ")，卖出(次数:" + sellCountSymbol
+                        + ",价格:" + buySumSymbol.setScale(4, RoundingMode.DOWN) + ")，卖出(次数:" + sellCountSymbol
                         + ",数量:" + sellAmountSymbol.setScale(3, RoundingMode.DOWN)
-                        + ",价格:" + sellSumSymbol.setScale(4)
-                        + "),收益:" + profit.setScale(2) +  "\r\n\r\n");
+                        + ",价格:" + sellSumSymbol.setScale(4, RoundingMode.DOWN)
+                        + "),收益:" + profit.setScale(2, RoundingMode.DOWN) +  "\r\n\r\n");
 
             }
-            String message = MessageFormat.format("买入次数:{0},卖出次数:{1},总收益:{2}\r\n\r\n", buyCount, sellCount, allProfit.setScale(2));
+            String message = MessageFormat.format("买入次数:{0},卖出次数:{1},总收益:{2}\r\n\r\n", buyCount, sellCount, allProfit.setScale(2, RoundingMode.DOWN));
             stringBuilder.insert(0, message);
             weiXinMessageService.sendMessage(title,  stringBuilder.toString());
 
