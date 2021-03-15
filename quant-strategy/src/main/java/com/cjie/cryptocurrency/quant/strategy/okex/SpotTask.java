@@ -33,8 +33,7 @@ public class SpotTask {
         spotService.netGrid("okex", "AAVE-USDT", "0.1", 0.03);
         spotService.netGrid("okex", "AVAX-USDT", "1", 0.03);
         spotService.netGrid("okex", "ICX-USDT", "10", 0.03);
-
-
+        spotService.netGrid("okex", "THETA-USDT", "5", 0.03);
 
 
 
