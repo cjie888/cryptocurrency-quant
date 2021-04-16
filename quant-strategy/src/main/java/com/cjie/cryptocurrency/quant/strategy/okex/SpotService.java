@@ -201,8 +201,8 @@ public class SpotService {
             return;
         }
 
-            Account quotaAccount = spotAccountAPIService.getAccountByCurrency(site, quotaCurrency);
-        if (Objects.nonNull(quotaAccount) && Double.parseDouble(quotaAccount.getAvailable()) <  Double.parseDouble(size) * currentPrice * 1.01) {
+        Account quotaAccount = spotAccountAPIService.getAccountByCurrency(site, quotaCurrency);
+        if (Objects.nonNull(quotaAccount) && Double.parseDouble(quotaAccount.getAvailable()) <  Double.parseDouble(size) * currentPrice * 1.01 * 3) {
 
             BigDecimal transferAmount = new BigDecimal(size).multiply(new BigDecimal(spotTicker.getLast())).multiply(new BigDecimal("1.01"));
             JSONObject result1 = accountAPIService.purchaseRedempt(site, quotaCurrency, transferAmount.toPlainString(), "redempt");
