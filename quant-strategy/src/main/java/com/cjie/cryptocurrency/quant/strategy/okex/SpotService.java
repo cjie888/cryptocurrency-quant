@@ -144,8 +144,8 @@ public class SpotService {
         Account baseAccount = spotAccountAPIService.getAccountByCurrency(site, baseCurrency);
         if (Objects.nonNull(baseAccount) && Double.parseDouble(baseAccount.getAvailable()) <  Double.parseDouble(size) * 1.01) {
 
+            BigDecimal transferAmount = new BigDecimal(size).multiply(new BigDecimal("1.01"));
             try {
-                BigDecimal transferAmount = new BigDecimal(size).multiply(new BigDecimal("1.01"));
                 JSONObject result1 = accountAPIService.purchaseRedempt(site, baseCurrency, transferAmount.toPlainString(), "redempt");
                 log.info("transfer {} {} from financial to asset", transferAmount, JSON.toJSONString(result1));
                 Thread.sleep(1000);
