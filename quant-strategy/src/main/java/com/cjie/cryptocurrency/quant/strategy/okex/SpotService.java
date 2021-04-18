@@ -212,13 +212,18 @@ public class SpotService {
             }catch (Exception e){
                 //ignore
             }
-            Transfer transferIn = new Transfer();
-            transferIn.setCurrency(quotaCurrency);
-            transferIn.setFrom(6);
-            transferIn.setTo(1);
-            transferIn.setAmount(transferAmount);
-            accountAPIService.transfer(site, transferIn);
-            log.info("transfer {} {} from asset to spot", Double.parseDouble(size) * currentPrice , quotaCurrency);
+            try {
+                Transfer transferIn = new Transfer();
+                transferIn.setCurrency(quotaCurrency);
+                transferIn.setFrom(6);
+                transferIn.setTo(1);
+                transferIn.setAmount(transferAmount);
+                accountAPIService.transfer(site, transferIn);
+                log.info("transfer {} {} from asset to spot", Double.parseDouble(size) * currentPrice , quotaCurrency);
+            }catch (Exception e){
+                //ignore
+                log.error("transfer {} {} from asset to spot error", transferAmount, quotaCurrency, e);
+            }
 
         }
 
