@@ -450,16 +450,16 @@ public class SpotService {
                     allProfit = allProfit.add(profit);
                 }
                 symbol = symbol.substring(0, symbol.indexOf("-"));
-                stringBuilder.append(symbol + ":买入(次数:" + buyCountSymbol
-                        + ",数量:" + buyAmountSymbol.setScale(3, RoundingMode.DOWN).stripTrailingZeros().toPlainString()
-                        + ",价格:" + buySumSymbol.setScale(4, RoundingMode.DOWN).stripTrailingZeros().toPlainString()
-                        + ")，卖出(次数:" + sellCountSymbol
-                        + ",数量:" + sellAmountSymbol.setScale(3, RoundingMode.DOWN).stripTrailingZeros().toPlainString()
-                        + ",价格:" + sellSumSymbol.setScale(4, RoundingMode.DOWN).stripTrailingZeros().toPlainString()
-                        + "),收益:" + profit.setScale(2, RoundingMode.DOWN).stripTrailingZeros().toPlainString() +  "\r\n\r\n");
+                stringBuilder.append(symbol + ":买(数:" + buyCountSymbol
+                        + ",量:" + buyAmountSymbol.setScale(3, RoundingMode.DOWN).stripTrailingZeros().toPlainString()
+                        + ",格:" + buySumSymbol.setScale(4, RoundingMode.DOWN).stripTrailingZeros().toPlainString()
+                        + ")，卖(数:" + sellCountSymbol
+                        + ",量:" + sellAmountSymbol.setScale(3, RoundingMode.DOWN).stripTrailingZeros().toPlainString()
+                        + ",格:" + sellSumSymbol.setScale(4, RoundingMode.DOWN).stripTrailingZeros().toPlainString()
+                        + "),收:" + profit.setScale(2, RoundingMode.DOWN).stripTrailingZeros().toPlainString() +  "\r\n\r\n");
 
             }
-            String message = MessageFormat.format("买入次数:{0},卖出次数:{1},总收益:{2}\r\n\r\n", buyCount, sellCount, allProfit.setScale(2, RoundingMode.DOWN).toPlainString());
+            String message = MessageFormat.format("买数:{0},卖数:{1},总收益:{2}\r\n\r\n", buyCount, sellCount, allProfit.setScale(2, RoundingMode.DOWN).toPlainString());
             stringBuilder.insert(0, message);
             weiXinMessageService.sendMessage(title,  stringBuilder.toString());
 
