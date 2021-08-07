@@ -450,12 +450,12 @@ public class SpotService {
                     allProfit = allProfit.add(profit);
                 }
                 symbol = symbol.substring(0, symbol.indexOf("-"));
-                stringBuilder.append(symbol + ":买(数:" + buyCountSymbol
+                stringBuilder.append(symbol + ":买(次:" + buyCountSymbol
                         + ",量:" + buyAmountSymbol.setScale(3, RoundingMode.DOWN).stripTrailingZeros().toPlainString()
-                        + ",格:" + buySumSymbol.setScale(4, RoundingMode.DOWN).stripTrailingZeros().toPlainString()
-                        + ")，卖(数:" + sellCountSymbol
+                        + ",价:" + buySumSymbol.setScale(4, RoundingMode.DOWN).stripTrailingZeros().toPlainString()
+                        + ")，卖(次:" + sellCountSymbol
                         + ",量:" + sellAmountSymbol.setScale(3, RoundingMode.DOWN).stripTrailingZeros().toPlainString()
-                        + ",格:" + sellSumSymbol.setScale(4, RoundingMode.DOWN).stripTrailingZeros().toPlainString()
+                        + ",价:" + sellSumSymbol.setScale(4, RoundingMode.DOWN).stripTrailingZeros().toPlainString()
                         + "),收:" + profit.setScale(2, RoundingMode.DOWN).stripTrailingZeros().toPlainString() +  "\r\n\r\n");
 
             }
