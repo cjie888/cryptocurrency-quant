@@ -449,6 +449,7 @@ public class SpotService {
                     profit = amount.multiply(sellSumSymbol.subtract(buySumSymbol)).setScale(4, RoundingMode.DOWN);
                     allProfit = allProfit.add(profit);
                 }
+                symbol = symbol.substring(0, symbol.indexOf("-"));
                 stringBuilder.append(symbol + ":买入(次数:" + buyCountSymbol
                         + ",数量:" + buyAmountSymbol.setScale(3, RoundingMode.DOWN).stripTrailingZeros().toPlainString()
                         + ",价格:" + buySumSymbol.setScale(4, RoundingMode.DOWN).stripTrailingZeros().toPlainString()
