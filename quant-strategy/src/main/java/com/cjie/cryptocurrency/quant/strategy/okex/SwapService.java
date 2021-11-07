@@ -489,7 +489,7 @@ public class SwapService {
             return;
 
         }
-        if (longPosition + shortPosition >= 10 && Math.abs(longPosition-shortPosition) <=1) {
+        if (longPosition + shortPosition >= 50 && Math.abs(longPosition-shortPosition) <=1) {
             if (longPosition > shortPosition) {
                 //平多
                 PpOrder ppUpOrder = new PpOrder();
@@ -529,7 +529,7 @@ public class SwapService {
         }
         Double lastPrice = lastOrder.getPrice().doubleValue();
         log.info("当前价格：{}, 上次价格:{}", currentPrice, lastPrice);
-        if (currentPrice > lastPrice && currentPrice - lastPrice > increment ) {
+        if (currentPrice > lastPrice && currentPrice - lastPrice > lastPrice * increment ) {
             //价格上涨
             //获取最新成交多单
             //平多，开空
@@ -553,7 +553,7 @@ public class SwapService {
             return;
 
         }
-        if (currentPrice < lastPrice && lastPrice - currentPrice > increment ) {
+        if (currentPrice < lastPrice && lastPrice - currentPrice > lastPrice * increment ) {
             //价格下跌
             //获取最新成交空单
             //平空，开多
