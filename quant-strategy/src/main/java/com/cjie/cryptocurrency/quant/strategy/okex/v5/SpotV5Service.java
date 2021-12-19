@@ -241,7 +241,7 @@ public class SpotV5Service {
         HttpResult<List<AccountInfo>> quotaAccountResult = accountAPIService.getBalance(site, quotaCurrency);
         if (Objects.nonNull(quotaAccountResult) && "0".equals(quotaAccountResult.getCode())
                && (quotaAccountResult.getData().get(0).getDetails().size() == 0 ||
-                Double.parseDouble(quotaAccountResult.getData().get(0).getDetails().get(0).getAvailBal()) < Double.parseDouble(size) * currentPrice * 1.01 * 3))
+                Double.parseDouble(quotaAccountResult.getData().get(0).getDetails().get(0).getAvailBal()) < Double.parseDouble(size) * currentPrice * 1.01 * 5))
         {
 
             BigDecimal transferAmount = new BigDecimal(size).multiply(new BigDecimal(spotTicker.getLast())).multiply(new BigDecimal("1.01"));
