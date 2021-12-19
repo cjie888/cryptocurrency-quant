@@ -160,6 +160,7 @@ public class SpotV5Service {
 
 
         HttpResult<List<AccountInfo>> baseAccountResult = accountAPIService.getBalance(site, baseCurrency);
+        log.info("base account:{}", JSON.toJSONString(baseAccountResult));
         if (Objects.nonNull(baseAccountResult) && "0".equals(baseAccountResult.getCode())
                 && (baseAccountResult.getData().get(0).getDetails().size() == 0
                 || Double.parseDouble(baseAccountResult.getData().get(0).getDetails().get(0).getAvailBal()) < Double.parseDouble(size) * 1.01)) {
@@ -239,6 +240,7 @@ public class SpotV5Service {
         }
 
         HttpResult<List<AccountInfo>> quotaAccountResult = accountAPIService.getBalance(site, quotaCurrency);
+        log.info("quota account:{}", JSON.toJSONString(quotaAccountResult));
         if (Objects.nonNull(quotaAccountResult) && "0".equals(quotaAccountResult.getCode())
                && (quotaAccountResult.getData().get(0).getDetails().size() == 0 ||
                 Double.parseDouble(quotaAccountResult.getData().get(0).getDetails().get(0).getAvailBal()) < Double.parseDouble(size) * currentPrice * 1.01 * 5))
