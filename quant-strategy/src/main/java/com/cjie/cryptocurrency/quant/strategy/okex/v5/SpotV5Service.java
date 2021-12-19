@@ -183,7 +183,7 @@ public class SpotV5Service {
             transferIn.setAmt(transferAmount.toPlainString());
             try {
                 JSONObject transferResult = fundingAPIService.fundsTransfer(site, transferIn);
-                log.info("transfer {} {} from asset to spot,result:{}", size, baseCurrency, JSON.toJSONString(transferResult));
+                log.info("transfer {} {} from asset to spot,result:{}", transferAmount, baseCurrency, JSON.toJSONString(transferResult));
             } catch (Exception e) {
                 log.info("transfer {} {} from asset to spot error", size, baseCurrency, e);
             }
@@ -263,7 +263,7 @@ public class SpotV5Service {
                 transferIn.setTo("18");
                 transferIn.setAmt(transferAmount.toPlainString());
                 JSONObject transferResult = fundingAPIService.fundsTransfer(site, transferIn);
-                log.info("transfer {} {} from asset to spot,result:{}", size, baseCurrency, JSON.toJSONString(transferResult));
+                log.info("transfer {} {} from asset to spot,result:{}", transferAmount, quotaCurrency, JSON.toJSONString(transferResult));
             } catch (Exception e) {
                 //ignore
                 log.error("transfer {} {} from asset to spot error", transferAmount, quotaCurrency, e);
