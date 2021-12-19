@@ -163,7 +163,7 @@ public class SpotV5Service {
         log.info("base account:{}", JSON.toJSONString(baseAccountResult));
         if (Objects.nonNull(baseAccountResult) && "0".equals(baseAccountResult.getCode())
                 && (baseAccountResult.getData().get(0).getDetails().size() == 0
-                || Double.parseDouble(baseAccountResult.getData().get(0).getDetails().get(0).getAvailBal()) < Double.parseDouble(size) * 1.01)) {
+                || Double.parseDouble(baseAccountResult.getData().get(0).getDetails().get(0).getAvailEq()) < Double.parseDouble(size) * 1.01)) {
 
             BigDecimal transferAmount = new BigDecimal(size).multiply(new BigDecimal("1.01"));
             try {
@@ -199,7 +199,7 @@ public class SpotV5Service {
         baseAccountResult = accountAPIService.getBalance(site, baseCurrency);
         if (Objects.nonNull(baseAccountResult) && "0".equals(baseAccountResult.getCode()) &&
                 (baseAccountResult.getData().get(0).getDetails().size() == 0 ||
-                        Double.parseDouble(baseAccountResult.getData().get(0).getDetails().get(0).getAvailBal()) < Double.parseDouble(size) * 1.01)) {
+                        Double.parseDouble(baseAccountResult.getData().get(0).getDetails().get(0).getAvailEq()) < Double.parseDouble(size) * 1.01)) {
             //3倍买入
 
             //{
@@ -243,7 +243,7 @@ public class SpotV5Service {
         log.info("quota account:{}", JSON.toJSONString(quotaAccountResult));
         if (Objects.nonNull(quotaAccountResult) && "0".equals(quotaAccountResult.getCode())
                && (quotaAccountResult.getData().get(0).getDetails().size() == 0 ||
-                Double.parseDouble(quotaAccountResult.getData().get(0).getDetails().get(0).getAvailBal()) < Double.parseDouble(size) * currentPrice * 1.01 * 5))
+                Double.parseDouble(quotaAccountResult.getData().get(0).getDetails().get(0).getAvailEq()) < Double.parseDouble(size) * currentPrice * 1.01 * 5))
         {
 
             BigDecimal transferAmount = new BigDecimal(size).multiply(new BigDecimal(spotTicker.getLast())).multiply(new BigDecimal("1.01"));
