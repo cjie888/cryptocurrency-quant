@@ -259,7 +259,7 @@ public class SpotV5Service {
             try {
                 FundsTransfer transferIn = new FundsTransfer();
                 transferIn.setCcy(quotaCurrency);
-                transferIn.setFrom("9");
+                transferIn.setFrom("6");
                 transferIn.setTo("18");
                 transferIn.setAmt(transferAmount.toPlainString());
                 JSONObject transferResult = fundingAPIService.fundsTransfer(site, transferIn);
