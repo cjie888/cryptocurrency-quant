@@ -36,7 +36,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@Component
+//@Component
 public class FcoinUtils {
 
     private static final RetryTemplate retryTemplate = FcoinRetry.getRetryTemplate();
