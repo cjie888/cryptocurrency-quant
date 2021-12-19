@@ -8,6 +8,7 @@ import com.cjie.cryptocurrency.quant.api.okex.v5.bean.account.param.SetLeverage;
 import com.cjie.cryptocurrency.quant.api.okex.v5.bean.account.param.SetPositionMode;
 import com.cjie.cryptocurrency.quant.api.okex.v5.bean.account.param.SetTheDisplayTypeOfGreeks;
 import com.cjie.cryptocurrency.quant.api.okex.v5.bean.account.result.AccountInfo;
+import com.cjie.cryptocurrency.quant.api.okex.v5.bean.account.result.PositionInfo;
 import com.cjie.cryptocurrency.quant.api.okex.v5.client.APIClient;
 import com.cjie.cryptocurrency.quant.api.okex.v5.service.BaseServiceImpl;
 import com.cjie.cryptocurrency.quant.api.okex.v5.service.account.AccountAPIV5Service;
@@ -55,7 +56,7 @@ public class AccountAPIV5ServiceImpl extends BaseServiceImpl implements AccountA
 
     //查看持仓信息 Get Positions
     @Override
-    public JSONObject getPositions(String site, String instType, String instId,String posId) {
+    public HttpResult<List<PositionInfo>>  getPositions(String site, String instType, String instId, String posId) {
         APIClient client = getTradeAPIClient(site);
         AccountAPI api = getAccountApi(site, client);
         return client.executeSync(api.getPositions(instType,instId,posId));

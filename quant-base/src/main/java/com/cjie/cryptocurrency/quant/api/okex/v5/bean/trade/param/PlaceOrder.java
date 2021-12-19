@@ -1,6 +1,8 @@
 package com.cjie.cryptocurrency.quant.api.okex.v5.bean.trade.param;
 
 public class PlaceOrder {
+
+    private String type;
     private String instId;
     private String tdMode;
     private String ccy;
@@ -102,6 +104,13 @@ public class PlaceOrder {
         this.px = px;
     }
 
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
 
     @Override
     public String toString() {

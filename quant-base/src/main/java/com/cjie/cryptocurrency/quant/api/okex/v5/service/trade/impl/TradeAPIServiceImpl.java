@@ -2,14 +2,20 @@ package com.cjie.cryptocurrency.quant.api.okex.v5.service.trade.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.cjie.cryptocurrency.quant.api.okex.bean.swap.result.ApiOrderVO;
 import com.cjie.cryptocurrency.quant.api.okex.v5.bean.trade.param.*;
 import com.cjie.cryptocurrency.quant.api.okex.v5.client.APIClient;
 import com.cjie.cryptocurrency.quant.api.okex.v5.config.APIConfiguration;
 import com.cjie.cryptocurrency.quant.api.okex.v5.service.BaseServiceImpl;
 import com.cjie.cryptocurrency.quant.api.okex.v5.service.trade.TradeAPIService;
+import com.cjie.cryptocurrency.quant.mapper.SwapOrderMapper;
+import com.cjie.cryptocurrency.quant.model.SwapOrder;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -20,6 +26,9 @@ public class TradeAPIServiceImpl extends BaseServiceImpl implements TradeAPIServ
 
 
     private ConcurrentHashMap<String, TradeAPI> tradeAPIs = new ConcurrentHashMap<>();
+
+    @Autowired
+    private SwapOrderMapper swapOrderMapper;
 
 
     public TradeAPI getTradeApi(String site, APIClient apiClient) {
@@ -39,6 +48,32 @@ public class TradeAPIServiceImpl extends BaseServiceImpl implements TradeAPIServ
         APIClient client = getTradeAPIClient(site);
         TradeAPI tradeAPI = getTradeApi(site, client);
         return client.executeSync(tradeAPI.placeOrder(JSONObject.parseObject(JSON.toJSONString(placeOrder))));
+    }
+
+    //下单 Place Order
+    @Override
+    public JSONObject placeSwapOrder(String site, PlaceOrder placeOrder, String strategy) {
+        APIClient client = getTradeAPIClient(site);
+        TradeAPI tradeAPI = getTradeApi(site, client);
+        JSONObject orderResult =  client.executeSync(tradeAPI.placeOrder(JSONObject.parseObject(JSON.toJSONString(placeOrder))));
+
+
+        log.info("order result:{}", JSONObject.toJSONString(orderResult));
+        if (orderResult != null && orderResult.getString("code") != null && orderResult.getString("code").equals("0")) {
+            SwapOrder swapOrder = new SwapOrder();
+            swapOrder.setInstrumentId(placeOrder.getInstId());
+            swapOrder.setCreateTime(new Date());
+            swapOrder.setStrategy(strategy);
+            swapOrder.setIsMock(Byte.valueOf("0"));
+            swapOrder.setType(Byte.valueOf(placeOrder.getType()));
+            swapOrder.setPrice(new BigDecimal(placeOrder.getPx()));
+            swapOrder.setSize(new BigDecimal(placeOrder.getSz()));
+            swapOrder.setOrderId(String.valueOf(((JSONObject)orderResult.getJSONArray("data").get(0)).getString("ordId")));
+
+            swapOrder.setStatus(99);
+            swapOrderMapper.insert(swapOrder);
+        }
+        return orderResult;
     }
 
     //批量下单 Place Multiple Orders

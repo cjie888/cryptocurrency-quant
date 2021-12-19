@@ -4,7 +4,7 @@
 
     <!--Output full logs to file-->
     <appender name="FILE_ALL" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>/var/log/mine/info.log</file>
+        <file>/Users/huchengjie/mine/info.log</file>
         <encoder>
             <pattern>${FILE_LOG_PATTERN}</pattern>
             <charset>UTF-8</charset>
@@ -20,7 +20,7 @@
 
     <!--Output WARN, ERROR logs to file-->
     <appender name="FILE_ERROR" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>/var/log/mine/error.log</file>
+        <file>/Users/huchengjie/mine/error.log</file>
         <encoder>
             <pattern>${FILE_LOG_PATTERN}</pattern>
             <charset>UTF-8</charset>
@@ -38,7 +38,7 @@
     </appender>
 
     <appender name="FILE_STRATEGY" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>/var/log/mine/strategy.log</file>
+        <file>/Users/huchengjie/mine/strategy.log</file>
         <encoder>
             <pattern>${FILE_LOG_PATTERN}</pattern>
             <charset>UTF-8</charset>
@@ -53,7 +53,7 @@
     </appender>
 
     <appender name="FILE_TIME" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>/var/log/mine/time.log</file>
+        <file>/Users/huchengjie/mine/time.log</file>
         <encoder>
             <pattern>${FILE_LOG_PATTERN}</pattern>
             <charset>UTF-8</charset>

@@ -3,6 +3,7 @@ package com.cjie.cryptocurrency.quant.api.okex.v5.service.account.impl;
 import com.alibaba.fastjson.JSONObject;
 import com.cjie.cryptocurrency.quant.api.okex.v5.bean.HttpResult;
 import com.cjie.cryptocurrency.quant.api.okex.v5.bean.account.result.AccountInfo;
+import com.cjie.cryptocurrency.quant.api.okex.v5.bean.account.result.PositionInfo;
 import retrofit2.Call;
 import retrofit2.http.*;
 
@@ -23,7 +24,7 @@ public interface AccountAPI {
 
     //查看持仓信息 Get Positions
     @GET("/api/v5/account/positions")
-    Call<JSONObject> getPositions(@Query("instType") String instType, @Query("instId") String instId, @Query("posId") String posId);
+    Call<HttpResult<List<PositionInfo>> > getPositions(@Query("instType") String instType, @Query("instId") String instId, @Query("posId") String posId);
 
     //账单流水查询（近七天） Get Bills Details (last 7 days)
     @GET("/api/v5/account/bills")

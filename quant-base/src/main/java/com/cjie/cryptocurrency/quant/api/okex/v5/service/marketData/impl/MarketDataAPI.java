@@ -1,6 +1,8 @@
 package com.cjie.cryptocurrency.quant.api.okex.v5.service.marketData.impl;
 
 import com.alibaba.fastjson.JSONObject;
+import com.cjie.cryptocurrency.quant.api.okex.v5.bean.HttpResult;
+import com.cjie.cryptocurrency.quant.api.okex.v5.bean.market.result.Ticker;
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
@@ -16,7 +18,7 @@ interface MarketDataAPI {
 
     //获取单个产品行情信息 Get Ticker
     @GET("/api/v5/market/ticker")
-    Call<JSONObject> getTicker(@Query("instId") String instId);
+    Call<HttpResult<List<Ticker>>> getTicker(@Query("instId") String instId);
 
     //获取指数行情数据 Get Index Tickers
     @GET("/api/v5/market/index-tickers")

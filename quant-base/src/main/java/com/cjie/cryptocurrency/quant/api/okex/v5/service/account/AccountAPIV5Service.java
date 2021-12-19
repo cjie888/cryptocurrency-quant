@@ -7,6 +7,8 @@ import com.cjie.cryptocurrency.quant.api.okex.v5.bean.account.param.SetLeverage;
 import com.cjie.cryptocurrency.quant.api.okex.v5.bean.account.param.SetPositionMode;
 import com.cjie.cryptocurrency.quant.api.okex.v5.bean.account.param.SetTheDisplayTypeOfGreeks;
 import com.cjie.cryptocurrency.quant.api.okex.v5.bean.account.result.AccountInfo;
+import com.cjie.cryptocurrency.quant.api.okex.v5.bean.account.result.PositionInfo;
+import io.netty.handler.codec.http.HttpObject;
 import retrofit2.http.Query;
 
 import java.util.List;
@@ -21,7 +23,7 @@ public interface AccountAPIV5Service {
     HttpResult<List<AccountInfo>> getBalance(String site, String ccy);
 
     //查看持仓信息 Get Positions
-    JSONObject getPositions(String site, String instType, String instId, String posId);
+    HttpResult<List<PositionInfo>> getPositions(String site, String instType, String instId, String posId);
 
     //账单流水查询（近七天） Get Bills Details (last 7 days)
     JSONObject getBillsDetails7Days(String site, String instType, String ccy, String mgnMode, String ctType, String type, String subType, String after, String before, String limit);

@@ -10,6 +10,9 @@ public interface TradeAPIService {
     //下单 Place Order
     JSONObject placeOrder(String site, PlaceOrder placeOrder);
 
+    //下单 Place Order
+    JSONObject placeSwapOrder(String site, PlaceOrder placeOrder, String strategy);
+
     //批量下单 Place Multiple Orders
     JSONObject placeMultipleOrders(String site, List<PlaceOrder> placeOrders);
 
