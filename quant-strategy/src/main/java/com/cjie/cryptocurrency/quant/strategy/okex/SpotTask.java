@@ -40,7 +40,7 @@ public class SpotTask {
 //ltc 6  xrp 3 etc 5
     }
 
-    @Scheduled(cron = "3/7 * * * * ?")
+    @Scheduled(cron = "3/17 * * * * ?")
     public  void netGrid2() {
 
         spotService.netGrid("okexsub1", "ETH-USDT", "0.05000000", 0.03);
