@@ -12,8 +12,8 @@ import org.ta4j.core.*;
 
 import java.math.BigDecimal;
 
-@ElasticJobConf(name = "srsJob", cron = "3/30 * * * * ?",
-        description = "srs", eventTraceRdbDataSource = "logDatasource")
+//@ElasticJobConf(name = "srsJob", cron = "3/30 * * * * ?",
+//        description = "srs", eventTraceRdbDataSource = "logDatasource")
 @Slf4j(topic = "strategy")
 public class SimpleRangeScalperJob extends BaseSwapStrategyJob implements SimpleJob {
 

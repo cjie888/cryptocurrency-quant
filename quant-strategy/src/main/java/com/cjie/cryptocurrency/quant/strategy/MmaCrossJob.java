@@ -12,8 +12,8 @@ import org.ta4j.core.*;
 
 import java.math.BigDecimal;
 
-@ElasticJobConf(name = "mmaCrossJob", cron = "10 */1 * * * ?",
-        description = "mmaCross", eventTraceRdbDataSource = "logDatasource")
+//@ElasticJobConf(name = "mmaCrossJob", cron = "10 */1 * * * ?",
+//        description = "mmaCross", eventTraceRdbDataSource = "logDatasource")
 @Slf4j(topic = "strategy")
 public class MmaCrossJob extends BaseSwapStrategyJob implements SimpleJob {
 
