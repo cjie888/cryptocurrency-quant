@@ -41,7 +41,7 @@ public class SwapTask {
 
     }
 
-    @Scheduled(cron = "*/17 * * * * ?")
+    //@Scheduled(cron = "*/17 * * * * ?")
     public void dualThrust() {
         swapService.dualTrust("okexsub1","BTC-USD-SWAP", 0.7);
         swapService.dualTrust("okexsub1","ETH-USD-SWAP", 0.7);
