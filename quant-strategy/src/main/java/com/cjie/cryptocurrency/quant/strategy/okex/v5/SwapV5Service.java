@@ -130,7 +130,7 @@ public class SwapV5Service {
                         }
                     }
                 }
-                if (Double.valueOf(positionInfo.getMgnRatio()) < 1) {
+                if (StringUtils.isNotBlank(positionInfo.getMgnRatio()) && Double.valueOf(positionInfo.getMgnRatio()) < 1) {
                     //停止交易，报警
                     weiXinMessageService.sendMessage("保证金不足100%", "保证金不足100%，" + instrumentId);
                     return false;
