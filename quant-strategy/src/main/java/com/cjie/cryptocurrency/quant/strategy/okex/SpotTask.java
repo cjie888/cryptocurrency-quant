@@ -91,7 +91,7 @@ public class SpotTask {
 
     }
 
-    @Scheduled(cron = "17 47 */6 * * ?")
+    //@Scheduled(cron = "17 47 */6 * * ?")
     public  void benefit4() {
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime startTime = now.withDayOfMonth(1).withHour(0).withMinute(0).withSecond(0).withNano(0)
