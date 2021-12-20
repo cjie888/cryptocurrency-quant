@@ -26,6 +26,7 @@ import com.cjie.cryptocurrency.quant.model.SwapOrder;
 import com.cjie.cryptocurrency.quant.service.WeiXinMessageService;
 import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -86,7 +87,7 @@ public class SwapV5Service {
         if (positionsResult != null && "0".equals(positionsResult.getCode()) && CollectionUtils.isNotEmpty(positionsResult.getData())) {
             for (PositionInfo positionInfo : positionsResult.getData()) {
                 log.info("获取账户信息保证金率{}-{}", instrumentId, positionInfo.getMgnRatio());
-                if (Double.valueOf(positionInfo.getMgnRatio()) < 3) {
+                if (StringUtils.isNotBlank(positionInfo.getMgnRatio()) && Double.valueOf(positionInfo.getMgnRatio()) < 3) {
 
 
                     FundsTransfer transferIn = new FundsTransfer();
