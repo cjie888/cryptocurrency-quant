@@ -261,12 +261,12 @@ public class SwapV5Service {
         double longPosition = 0;
         double shortPosition = 0;
         for (PositionInfo apiPositionVO : positionsResult.getData()) {
-            if (apiPositionVO.getPosSide().equals("long") && Double.valueOf(apiPositionVO.getAvailPos()) >= Double.valueOf(size)) {
+            if (apiPositionVO.getPosSide().equals("long") && Double.valueOf(apiPositionVO.getPos()) >= Double.valueOf(size) && Double.valueOf(apiPositionVO.getAvailPos()) >= Double.valueOf(size)) {
                 upPosition = apiPositionVO;
                 longPosition = Double.valueOf(apiPositionVO.getPos());
                 continue;
             }
-            if (apiPositionVO.getPosSide().equals("short") && Double.valueOf(apiPositionVO.getAvailPos()) >= Double.valueOf(size)) {
+            if (apiPositionVO.getPosSide().equals("short")&& Double.valueOf(apiPositionVO.getPos()) >= Double.valueOf(size) && Double.valueOf(apiPositionVO.getAvailPos()) >= Double.valueOf(size)) {
                 downPosition = apiPositionVO;
                 shortPosition = Double.valueOf(apiPositionVO.getPos());
                 continue;
