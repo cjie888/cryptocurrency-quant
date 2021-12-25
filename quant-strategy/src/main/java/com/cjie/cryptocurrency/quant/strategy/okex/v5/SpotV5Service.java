@@ -377,7 +377,7 @@ public class SpotV5Service {
             }
         }
         try {
-            Thread.sleep(1000);
+            Thread.sleep(1500);
         } catch (Exception e) {
             e.printStackTrace();
         }

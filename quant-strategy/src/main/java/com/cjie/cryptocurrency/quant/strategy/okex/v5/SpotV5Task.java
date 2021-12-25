@@ -31,7 +31,7 @@ public class SpotV5Task {
     }
 
 
-    @Scheduled(cron = "3/7 * * * * ?")
+    @Scheduled(cron = "3/11 * * * * ?")
     public  void netGrid2() {
         spotService.netGrid("okexsub1", "SUSHI-USDT", "1", 0.03);
         spotService.netGrid("okexsub1", "ATOM-USDT", "1", 0.03);
