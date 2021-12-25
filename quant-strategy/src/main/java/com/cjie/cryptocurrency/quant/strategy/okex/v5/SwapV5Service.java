@@ -87,7 +87,7 @@ public class SwapV5Service {
         if (positionsResult != null && "0".equals(positionsResult.getCode()) && CollectionUtils.isNotEmpty(positionsResult.getData())) {
             for (PositionInfo positionInfo : positionsResult.getData()) {
                 log.info("获取账户信息保证金率{}-{}", instrumentId, positionInfo.getMgnRatio());
-                if (StringUtils.isNotBlank(positionInfo.getMgnRatio()) && Double.valueOf(positionInfo.getMgnRatio()) < 300) {
+                if (StringUtils.isNotBlank(positionInfo.getMgnRatio()) && Double.valueOf(positionInfo.getMgnRatio()) < 120) {
 
 
                     FundsTransfer transferIn = new FundsTransfer();
