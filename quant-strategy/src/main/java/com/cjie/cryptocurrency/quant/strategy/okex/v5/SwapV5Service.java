@@ -94,7 +94,7 @@ public class SwapV5Service {
 
                     String currency = instrumentId.substring(0,instrumentId.indexOf("-")).toLowerCase();
                     if (instrumentId.toUpperCase().indexOf("USDT") > 0) {
-                        //transferIn.setInstId(currency + "-" + "usdt");
+                        transferIn.setToInstId(currency + "-" + "usdt");
                         currency = "usdt";
                     }
                     transferIn.setCcy(currency);
