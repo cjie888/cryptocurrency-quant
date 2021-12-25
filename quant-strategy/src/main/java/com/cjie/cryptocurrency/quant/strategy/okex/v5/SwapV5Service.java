@@ -92,10 +92,10 @@ public class SwapV5Service {
 
                     FundsTransfer transferIn = new FundsTransfer();
 
-                    String currency = instrumentId.substring(0,instrumentId.indexOf("-")).toLowerCase();
+                    String currency = instrumentId.substring(0,instrumentId.indexOf("-"));
                     if (instrumentId.toUpperCase().indexOf("USDT") > 0) {
-                        transferIn.setToInstId(currency + "-" + "usdt");
-                        currency = "usdt";
+                        transferIn.setToInstId(currency + "-" + "USDT");
+                        currency = "USDT";
                     }
                     transferIn.setCcy(currency);
                     transferIn.setFrom("6");
