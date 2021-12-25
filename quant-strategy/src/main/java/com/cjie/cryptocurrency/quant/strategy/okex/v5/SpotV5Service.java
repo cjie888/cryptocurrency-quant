@@ -139,7 +139,7 @@ public class SpotV5Service {
         }
 
         Ticker spotTicker = getTicker(site, symbol);
-        log.info("当前价格{}-{}", site, spotTicker.getLast());
+        log.info("当前价格{}-{}-{}", site, spotTicker.getLast(), symbol);
 
         SpotOrder lastOrder = null;
         List<Integer> selledStatuses = new ArrayList<>();
