@@ -316,6 +316,11 @@ public class SpotService {
                 spotOrderMapper.insert(spotOrder);
             }
         }
+        try {
+            Thread.sleep(1000);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
     }
 
