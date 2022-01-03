@@ -7,14 +7,14 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 
-//@Component
+@Component
 @Slf4j
 public class SpotTask {
 
     @Autowired
     private SpotService spotService;
 
-    @Scheduled(cron = "7/17 * * * * ?")
+    //@Scheduled(cron = "7/17 * * * * ?")
     public  void netGrid() {
 
         spotService.netGrid("okex", "EOS-USDT", "2", 0.03);
@@ -45,7 +45,7 @@ public class SpotTask {
 //ltc 6  xrp 3 etc 5
     }
 
-    @Scheduled(cron = "3/19 * * * * ?")
+    //@Scheduled(cron = "3/19 * * * * ?")
     public  void netGrid2()  {
 
         spotService.netGrid("okex", "BTC-USDT", "0.00100000", 0.03);
