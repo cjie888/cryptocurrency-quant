@@ -104,12 +104,18 @@ public class SwapV5Service {
                     try {
 
                         //赎回
-//                        PiggyBankPurchaseRedemption piggyBankPurchaseRedemption = new PiggyBankPurchaseRedemption();
-//                        piggyBankPurchaseRedemption.setCcy(currency);
-//                        piggyBankPurchaseRedemption.setAmt(String.valueOf(transferAmount));
-//                        piggyBankPurchaseRedemption.setSide("redempt");
-//                        JSONObject result1 = fundingAPIService.piggyBankPurchaseRedemption(site, piggyBankPurchaseRedemption);
-//                        log.info("transfer {} {} from financial to asset", transferAmount, JSON.toJSONString(result1));
+                        try {
+                            PiggyBankPurchaseRedemption piggyBankPurchaseRedemption = new PiggyBankPurchaseRedemption();
+                            piggyBankPurchaseRedemption.setCcy(currency);
+                            piggyBankPurchaseRedemption.setAmt(String.valueOf(transferAmount));
+                            piggyBankPurchaseRedemption.setSide("redempt");
+                            JSONObject result1 = fundingAPIService.piggyBankPurchaseRedemption(site, piggyBankPurchaseRedemption);
+                            log.info("transfer {} {} from financial to asset", transferAmount, JSON.toJSONString(result1));
+                            Thread.sleep(1000);
+                        } catch (Exception e) {
+                            //ignore
+                            log.error("transfer {} {} from financial to asset error", instrumentId, transferAmount, e);
+                        }
                         //转入
                         JSONObject transferResult = fundingAPIService.fundsTransfer(site, transferIn);
                         log.info("transfer {} {} from asset to swap", transferAmount, JSON.toJSONString(transferResult));
