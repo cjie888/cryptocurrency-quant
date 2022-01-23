@@ -87,7 +87,7 @@ public class TransferService {
                         Double.parseDouble(assetBalanceResult.getData().get(0).getAvailBal()) < Double.parseDouble(size) * 5) {
                     //赎回
                     try {
-                        String transferAmount = String.valueOf(5 - Double.parseDouble(assetBalanceResult.getData().get(0).getAvailBal()));
+                        String transferAmount = String.valueOf(Double.parseDouble(size) * 5 - Double.parseDouble(assetBalanceResult.getData().get(0).getAvailBal()));
                         PiggyBankPurchaseRedemption piggyBankPurchaseRedemption = new PiggyBankPurchaseRedemption();
                         piggyBankPurchaseRedemption.setCcy(ccy);
                         piggyBankPurchaseRedemption.setAmt(transferAmount);
