@@ -104,7 +104,7 @@ public class TransferService {
                 if (Double.parseDouble(assetBalanceResult.getData().get(0).getAvailBal()) > Double.parseDouble(size) * (5 + ratio)) {
                     //申购
                     try {
-                        String transferAmount = String.valueOf(ratio);
+                        String transferAmount = String.valueOf(Double.parseDouble(size) * ratio);
                         PiggyBankPurchaseRedemption piggyBankPurchaseRedemption = new PiggyBankPurchaseRedemption();
                         piggyBankPurchaseRedemption.setCcy(ccy);
                         piggyBankPurchaseRedemption.setAmt(transferAmount);
