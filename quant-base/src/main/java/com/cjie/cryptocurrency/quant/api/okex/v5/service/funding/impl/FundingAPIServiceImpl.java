@@ -2,6 +2,8 @@ package com.cjie.cryptocurrency.quant.api.okex.v5.service.funding.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.cjie.cryptocurrency.quant.api.okex.v5.bean.HttpResult;
+import com.cjie.cryptocurrency.quant.api.okex.v5.bean.funding.AssetBalance;
 import com.cjie.cryptocurrency.quant.api.okex.v5.bean.funding.param.FundsTransfer;
 import com.cjie.cryptocurrency.quant.api.okex.v5.bean.funding.param.PiggyBankPurchaseRedemption;
 import com.cjie.cryptocurrency.quant.api.okex.v5.bean.funding.param.Withdrawal;
@@ -11,6 +13,7 @@ import com.cjie.cryptocurrency.quant.api.okex.v5.service.funding.FundingAPIServi
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Component
@@ -41,7 +44,7 @@ public class FundingAPIServiceImpl extends BaseServiceImpl implements FundingAPI
 
     //获取资金账户余额信息 Get Balance
     @Override
-    public JSONObject getBalance(String site,String ccy) {
+    public HttpResult<List<AssetBalance>> getBalance(String site, String ccy) {
         APIClient client = getTradeAPIClient(site);
         FundingAPI api = getFundingApi(site, client);
         return client.executeSync(api.getBalance(ccy));

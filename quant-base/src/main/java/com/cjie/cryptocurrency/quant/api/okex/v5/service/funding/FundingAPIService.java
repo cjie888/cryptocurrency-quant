@@ -1,9 +1,14 @@
 package com.cjie.cryptocurrency.quant.api.okex.v5.service.funding;
 
 import com.alibaba.fastjson.JSONObject;
+import com.cjie.cryptocurrency.quant.api.okex.v5.bean.HttpResult;
+import com.cjie.cryptocurrency.quant.api.okex.v5.bean.account.result.AccountInfo;
+import com.cjie.cryptocurrency.quant.api.okex.v5.bean.funding.AssetBalance;
 import com.cjie.cryptocurrency.quant.api.okex.v5.bean.funding.param.FundsTransfer;
 import com.cjie.cryptocurrency.quant.api.okex.v5.bean.funding.param.PiggyBankPurchaseRedemption;
 import com.cjie.cryptocurrency.quant.api.okex.v5.bean.funding.param.Withdrawal;
+
+import java.util.List;
 
 public interface FundingAPIService {
 
@@ -11,7 +16,7 @@ public interface FundingAPIService {
     JSONObject getDepositAddress(String site,String ccy);
 
     //获取资金账户余额信息
-    JSONObject getBalance(String site,String ccy);
+    HttpResult<List<AssetBalance>> getBalance(String site, String ccy);
 
     //资金划转  Funds Transfer
     JSONObject fundsTransfer(String site,FundsTransfer fundsTransfer);
