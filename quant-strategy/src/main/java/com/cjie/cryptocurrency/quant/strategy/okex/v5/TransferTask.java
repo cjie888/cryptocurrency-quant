@@ -33,6 +33,15 @@ public class TransferTask {
         transferService.transfer("okexsub1", "DOT", "1", 3.0);
         transferService.transfer("okexsub1", "BCH", "0.04", 3.0);
 
+        transferService.transfer("okex", "ADA", "20", 3.0);
+        transferService.transfer("okex", "AAVE", "0.1", 3.0);
+        transferService.transfer("okex", "THETA", "5", 3.0);
+        transferService.transfer("okex", "XMR", "0.1", 3.0);
+
+
+
+        transferService.transfer("okexsub1", "XRP", "20", 3.0);
+        transferService.transfer("okexsub1", "0.1", "20", 3.0);
 
 
 
