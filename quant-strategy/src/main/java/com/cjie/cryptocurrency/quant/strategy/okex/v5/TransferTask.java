@@ -41,7 +41,7 @@ public class TransferTask {
 
 
         transferService.transfer("okexsub1", "XRP", "20", 3.0);
-        transferService.transfer("okexsub1", "0.1", "20", 3.0);
+        transferService.transfer("okexsub1", "LTC", "0.1", 3.0);
 
 
 
