@@ -96,6 +96,8 @@ public class TransferService {
                         log.info("transfer {} {} from financial to asset, result:{}", transferAmount, ccy, JSON.toJSONString(result1));
                     } catch (Exception e) {
                         //ignore
+                        log.error("transfer {}  from financial  to asset error", ccy, e);
+
                     }
 
                 }
@@ -113,6 +115,7 @@ public class TransferService {
                         log.info("transfer {} {} from asset  to financial, result:{}", transferAmount, ccy, JSON.toJSONString(result1));
                     } catch (Exception e) {
                         //ignore
+                        log.error("transfer {} from asset to  financial error", ccy, e);
                     }
                 }
             }
