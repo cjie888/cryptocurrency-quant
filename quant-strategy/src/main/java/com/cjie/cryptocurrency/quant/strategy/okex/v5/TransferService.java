@@ -110,6 +110,7 @@ public class TransferService {
                         PiggyBankPurchaseRedemption piggyBankPurchaseRedemption = new PiggyBankPurchaseRedemption();
                         piggyBankPurchaseRedemption.setCcy(ccy);
                         piggyBankPurchaseRedemption.setAmt(transferAmount);
+                        piggyBankPurchaseRedemption.setRate("0.02");
                         piggyBankPurchaseRedemption.setSide("purchase");
                         JSONObject result1 = fundingAPIService.piggyBankPurchaseRedemption(site, piggyBankPurchaseRedemption);
                         log.info("transfer {} {} from asset  to financial, result:{}", transferAmount, ccy, JSON.toJSONString(result1));

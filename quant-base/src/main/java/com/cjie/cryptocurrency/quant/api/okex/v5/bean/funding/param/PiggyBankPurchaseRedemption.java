@@ -5,6 +5,8 @@ public class PiggyBankPurchaseRedemption {
     private String amt;
     private String side;
 
+    private String rate;
+
     public String getCcy() {
         return ccy;
     }
@@ -27,6 +29,14 @@ public class PiggyBankPurchaseRedemption {
 
     public void setSide(String side) {
         this.side = side;
+    }
+
+    public String getRate() {
+        return rate;
+    }
+
+    public void setRate(String rate) {
+        this.rate = rate;
     }
 
     @Override
