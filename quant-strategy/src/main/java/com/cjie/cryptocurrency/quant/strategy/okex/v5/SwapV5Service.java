@@ -372,7 +372,7 @@ public class SwapV5Service {
         }
         Double lastPrice = lastOrder.getPrice().doubleValue();
         log.info("当前价格：{}, 上次价格:{}", currentPrice, lastPrice);
-        if (currentPrice > lastPrice && currentPrice - lastPrice > lastPrice * increment ) {
+        if (currentPrice > lastPrice && currentPrice - lastPrice > lastPrice * increment * 1.05 ) {
             //价格上涨
             //获取最新成交多单
             //平多，开空
