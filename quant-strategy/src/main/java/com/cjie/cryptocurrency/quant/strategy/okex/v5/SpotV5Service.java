@@ -309,7 +309,7 @@ public class SpotV5Service {
         }
         Double lastPrice = lastOrder.getPrice().doubleValue();
         log.info("当前价格：{}, 上次价格:{}, symbol:{}", currentPrice, lastPrice, symbol);
-        if (currentPrice > lastPrice && (currentPrice - lastPrice) / lastPrice > increment * 1.01) {
+        if (currentPrice > lastPrice && (currentPrice - lastPrice) / lastPrice > increment * 1.05) {
             //价格上涨
             //获取最新成交多单
             //卖出
