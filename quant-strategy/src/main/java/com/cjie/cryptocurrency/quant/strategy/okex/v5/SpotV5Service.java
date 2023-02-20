@@ -165,7 +165,7 @@ public class SpotV5Service {
                 && (baseAccountResult.getData().get(0).getDetails().size() == 0
                 || Double.parseDouble(baseAccountResult.getData().get(0).getDetails().get(0).getAvailEq()) < Double.parseDouble(size) * 1.01)) {
 
-            BigDecimal transferAmount = new BigDecimal(size).multiply(new BigDecimal("1.01"));
+            BigDecimal transferAmount = new BigDecimal(size).multiply(new BigDecimal("1.015"));
             try {
                 PiggyBankPurchaseRedemption piggyBankPurchaseRedemption = new PiggyBankPurchaseRedemption();
                 piggyBankPurchaseRedemption.setCcy(baseCurrency);
@@ -246,7 +246,7 @@ public class SpotV5Service {
                 Double.parseDouble(quotaAccountResult.getData().get(0).getDetails().get(0).getAvailEq()) < Double.parseDouble(size) * currentPrice * 1.01 * 5))
         {
 
-            BigDecimal transferAmount = new BigDecimal(size).multiply(new BigDecimal(spotTicker.getLast())).multiply(new BigDecimal("1.01"));
+            BigDecimal transferAmount = new BigDecimal(size).multiply(new BigDecimal(spotTicker.getLast())).multiply(new BigDecimal("1.015"));
             PiggyBankPurchaseRedemption piggyBankPurchaseRedemption = new PiggyBankPurchaseRedemption();
             piggyBankPurchaseRedemption.setCcy(quotaCurrency);
             piggyBankPurchaseRedemption.setAmt(transferAmount.toPlainString());
@@ -282,7 +282,7 @@ public class SpotV5Service {
             //placeOrderParam.setPx(spotTicker.getLast());
             placeOrderParam.setPx(String.valueOf(Double.parseDouble(spotTicker.getLast())));
 
-            placeOrderParam.setSz(new BigDecimal(size).multiply(new BigDecimal("1.01")).toPlainString());
+            placeOrderParam.setSz(new BigDecimal(size).multiply(new BigDecimal("1.015")).toPlainString());
             placeOrderParam.setSide("buy");
             placeOrderParam.setOrdType("limit");
 
@@ -298,7 +298,7 @@ public class SpotV5Service {
                 spotOrder.setIsMock(Byte.valueOf("0"));
                 spotOrder.setType(Byte.valueOf("1"));
                 spotOrder.setPrice(new BigDecimal(spotTicker.getLast()));
-                spotOrder.setSize(new BigDecimal(size).multiply(new BigDecimal("1.01")));
+                spotOrder.setSize(new BigDecimal(size).multiply(new BigDecimal("1.015")));
                 spotOrder.setOrderId(String.valueOf(((JSONObject)orderResult.getJSONArray("data").get(0)).getString("ordId")));
                 spotOrder.setStatus(99);
                 spotOrderMapper.insert(spotOrder);
@@ -355,7 +355,7 @@ public class SpotV5Service {
             //placeOrderParam.setPx(spotTicker.getLast());
             placeOrderParam.setPx(String.valueOf(Double.parseDouble(spotTicker.getLast())));
 
-            placeOrderParam.setSz(new BigDecimal(size).multiply(new BigDecimal("1.01")).toPlainString());
+            placeOrderParam.setSz(new BigDecimal(size).multiply(new BigDecimal("1.015")).toPlainString());
             placeOrderParam.setSide("buy");
             placeOrderParam.setOrdType("limit");
 
@@ -370,7 +370,7 @@ public class SpotV5Service {
                 spotOrder.setIsMock(Byte.valueOf("0"));
                 spotOrder.setType(Byte.valueOf("1"));
                 spotOrder.setPrice(new BigDecimal(spotTicker.getLast()));
-                spotOrder.setSize(new BigDecimal(size).multiply(new BigDecimal("1.01")));
+                spotOrder.setSize(new BigDecimal(size).multiply(new BigDecimal("1.015")));
                 spotOrder.setOrderId(String.valueOf(((JSONObject)orderResult.getJSONArray("data").get(0)).getString("ordId")));
                 spotOrder.setStatus(99);
                 spotOrderMapper.insert(spotOrder);
