@@ -51,6 +51,7 @@ public class SpotV5Task {
             e.printStackTrace();
         }
         spotService.netGrid("okex", "THETA-USDT", "5", 0.03);
+        spotService.netGrid("okex", "APT-USDT", "1", 0.03);
 
 
 //ltc 6  xrp 3 etc 5
