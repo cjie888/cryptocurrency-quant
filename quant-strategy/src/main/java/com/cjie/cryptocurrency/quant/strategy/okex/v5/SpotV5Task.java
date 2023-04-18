@@ -24,7 +24,7 @@ public class SpotV5Task {
         spotService.netGrid("okexsub1", "BSV-USDT", "0.05000000", 0.03);
 
         try {
-            Thread.sleep(1000);
+            Thread.sleep(800);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -33,9 +33,12 @@ public class SpotV5Task {
         spotService.netGrid("okex", "DOGE-USDT", "1000", 0.03);
         spotService.netGrid("okex", "UNI-USDT", "1", 0.03);
         spotService.netGrid("okex", "XLM-USDT", "50", 0.03);
+        spotService.netGrid("okex", "XLM-USDT", "50", 0.03);
+        spotService.netGrid("okex", "DYDX-USDT", "5", 0.03);
+
 
         try {
-            Thread.sleep(1000);
+            Thread.sleep(800);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -44,8 +47,9 @@ public class SpotV5Task {
         spotService.netGrid("okex", "AAVE-USDT", "0.1", 0.03);
         spotService.netGrid("okex", "AVAX-USDT", "1", 0.03);
         spotService.netGrid("okex", "ICX-USDT", "10", 0.03);
+        spotService.netGrid("okex", "OP-USDT", "5", 0.03);
         try {
-            Thread.sleep(1000);
+            Thread.sleep(800);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -54,6 +58,7 @@ public class SpotV5Task {
         spotService.netGrid("okex", "BNB-USDT", "0.05", 0.03);
         spotService.netGrid("okex", "LEO-USDT", "5", 0.03);
         spotService.netGrid("okex", "TON-USDT", "10", 0.03);
+        spotService.netGrid("okex", "FTM-USDT", "10", 0.03);
 
 
 
