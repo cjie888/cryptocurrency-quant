@@ -72,6 +72,7 @@ public class SpotV5Task {
         spotService.netGrid("okexsub1", "ATOM-USDT", "1", 0.03);
         spotService.netGrid("okexsub1", "LINK-USDT", "0.50000000", 0.03);
         spotService.netGrid("okexsub1", "DOT-USDT", "1", 0.03);
+        spotService.netGrid("okexsub2", "SOL-USDT", "1", 0.03);
 
         try {
             Thread.sleep(1000);
@@ -94,5 +95,7 @@ public class SpotV5Task {
         spotService.netGrid("okex", "DASH-USDT", "0.1", 0.03);
         spotService.netGrid("okex", "GRT-USDT", "10", 0.03);
         spotService.netGrid("okex", "COMP-USDT", "0.05", 0.03);
+        spotService.netGrid("okexsub2", "MATIC-USDT", "10", 0.03);
+
     }
 }
