@@ -66,6 +66,7 @@ public class TransferTask {
         transferService.transfer("okexsub2", "SOL", "1", 3.0);
         transferService.transfer("okexsub2", "MATIC", "10", 3.0);
         transferService.transfer("okex", "ARB", "20", 3.0);
+        transferService.transfer("okex", "BLUR", "20", 3.0);
 
 
     }

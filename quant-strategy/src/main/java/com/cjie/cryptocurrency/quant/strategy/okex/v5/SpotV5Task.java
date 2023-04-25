@@ -74,6 +74,8 @@ public class SpotV5Task {
         spotService.netGrid("okexsub1", "LINK-USDT", "0.50000000", 0.03);
         spotService.netGrid("okexsub1", "DOT-USDT", "1", 0.03);
         spotService.netGrid("okexsub2", "SOL-USDT", "1", 0.03);
+        spotService.netGrid("okex", "BLUR-USDT", "20", 0.03);
+
 
         try {
             Thread.sleep(1000);
