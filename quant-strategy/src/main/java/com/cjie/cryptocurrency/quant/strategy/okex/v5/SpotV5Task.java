@@ -33,7 +33,6 @@ public class SpotV5Task {
         spotService.netGrid("okex", "DOGE-USDT", "1000", 0.03);
         spotService.netGrid("okex", "UNI-USDT", "1", 0.03);
         spotService.netGrid("okex", "XLM-USDT", "50", 0.03);
-        spotService.netGrid("okex", "XLM-USDT", "50", 0.03);
         spotService.netGrid("okex", "DYDX-USDT", "5", 0.03);
 
 
