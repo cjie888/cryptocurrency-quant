@@ -4,8 +4,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import sun.awt.Symbol;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Component
 @Slf4j
@@ -76,7 +79,22 @@ public class SpotTask {
     public  void benefit() {
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime startTime = now.withHour(0).withMinute(0).withSecond(0).withNano(0);
-        spotService.computeBenefit("每日买卖", startTime, now);
+
+        List<String> symbols1 = new ArrayList();
+        symbols1.add("ETH-USDT");
+        symbols1.add("BCH-USDT");
+        symbols1.add("LTC-USDT");
+        symbols1.add("XRP-USDT");
+        symbols1.add("ETC-USDT");
+        symbols1.add("BSV-USDT");
+        symbols1.add("SUSHI-USDT");
+        symbols1.add("ATOM-USDT");
+        symbols1.add("LINK-USDT");
+        symbols1.add("DOT-USDT");
+
+
+        //spotService.netGrid("okexsub2", "MANA-USDT", "1", 0.03);
+        spotService.computeBenefit("每日买卖cjie888", startTime, now, symbols1);
 
     }
 
@@ -84,7 +102,19 @@ public class SpotTask {
     public  void benefit2() {
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime startTime = now.withDayOfMonth(1).withHour(0).withMinute(0).withSecond(0).withNano(0);
-        spotService.computeBenefit("每月买卖", startTime, now);
+
+        List<String> symbols1 = new ArrayList();
+        symbols1.add("ETH-USDT");
+        symbols1.add("BCH-USDT");
+        symbols1.add("LTC-USDT");
+        symbols1.add("XRP-USDT");
+        symbols1.add("ETC-USDT");
+        symbols1.add("BSV-USDT");
+        symbols1.add("SUSHI-USDT");
+        symbols1.add("ATOM-USDT");
+        symbols1.add("LINK-USDT");
+        symbols1.add("DOT-USDT");
+        spotService.computeBenefit("每月买卖1", startTime, now, symbols1);
 
     }
 
@@ -93,7 +123,18 @@ public class SpotTask {
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime startTime = now.withDayOfMonth(1).withHour(0).withMinute(0).withSecond(0).withNano(0)
                 .minusMonths(2);
-        spotService.computeBenefit("每季买卖", startTime, now);
+        List<String> symbols1 = new ArrayList();
+        symbols1.add("ETH-USDT");
+        symbols1.add("BCH-USDT");
+        symbols1.add("LTC-USDT");
+        symbols1.add("XRP-USDT");
+        symbols1.add("ETC-USDT");
+        symbols1.add("BSV-USDT");
+        symbols1.add("SUSHI-USDT");
+        symbols1.add("ATOM-USDT");
+        symbols1.add("LINK-USDT");
+        symbols1.add("DOT-USDT");
+        spotService.computeBenefit("每季买卖1", startTime, now, symbols1);
 
     }
 
@@ -102,7 +143,19 @@ public class SpotTask {
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime startTime = now.withDayOfMonth(1).withHour(0).withMinute(0).withSecond(0).withNano(0)
                 .minusMonths(11);
-        spotService.computeBenefit("每年买卖", startTime, now);
+
+        List<String> symbols1 = new ArrayList();
+        symbols1.add("ETH-USDT");
+        symbols1.add("BCH-USDT");
+        symbols1.add("LTC-USDT");
+        symbols1.add("XRP-USDT");
+        symbols1.add("ETC-USDT");
+        symbols1.add("BSV-USDT");
+        symbols1.add("SUSHI-USDT");
+        symbols1.add("ATOM-USDT");
+        symbols1.add("LINK-USDT");
+        symbols1.add("DOT-USDT");
+        spotService.computeBenefit("每年买卖1", startTime, now, symbols1);
 
     }
 }

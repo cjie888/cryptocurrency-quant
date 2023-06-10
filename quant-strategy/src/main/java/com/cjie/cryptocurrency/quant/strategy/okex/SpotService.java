@@ -346,7 +346,7 @@ public class SpotService {
         //return spotProductAPIService.getTickerByProductId(baseCurrency.toUpperCase() + "-" + quotaCurrency.toUpperCase());
     }
 
-    public void computeBenefit(String title, LocalDateTime startTime, LocalDateTime endTime) {
+    public void computeBenefit(String title, LocalDateTime startTime, LocalDateTime endTime, List<String> symbols) {
         List<SpotOrder> spotOrders = spotOrderMapper.groupBySymbol(startTime, endTime);
         log.info("spot orders:{}", JSON.toJSONString(spotOrders));
         Map<String, Integer> buyCounts =  new HashMap<>();
@@ -419,6 +419,9 @@ public class SpotService {
             allSymbols.addAll(buyCounts.keySet());
             allSymbols.addAll(sellCounts.keySet());
             for (String symbol : allSymbols) {
+                if (!symbols.contains(symbol)) {
+                    continue;
+                }
                 Integer buyCountSymbol = buyCounts.get(symbol);
                 if (buyCountSymbol == null) {
                     buyCountSymbol = 0;
