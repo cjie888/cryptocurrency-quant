@@ -172,7 +172,7 @@ public class SpotTask {
         symbols2.add("SOL-USDT");
         symbols2.add("MATIC-USDT");
 
-        spotService.computeBenefit("每月买卖cjie8882", startTime, now, symbols1);
+        spotService.computeBenefit("每月买卖cjie8882", startTime, now, symbols2);
 
 
         List<String> symbols = new ArrayList();
@@ -245,7 +245,7 @@ public class SpotTask {
         symbols2.add("SOL-USDT");
         symbols2.add("MATIC-USDT");
 
-        spotService.computeBenefit("每季买卖cjie8882", startTime, now, symbols1);
+        spotService.computeBenefit("每季买卖cjie8882", startTime, now, symbols2);
 
 
 
@@ -319,7 +319,7 @@ public class SpotTask {
         symbols2.add("SOL-USDT");
         symbols2.add("MATIC-USDT");
 
-        spotService.computeBenefit("每年买卖cjie8882", startTime, now, symbols1);
+        spotService.computeBenefit("每年买卖cjie8882", startTime, now, symbols2);
 
 
 
