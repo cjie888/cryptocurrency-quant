@@ -92,7 +92,7 @@ public class SpotTask {
         symbols1.add("LINK-USDT");
         symbols1.add("DOT-USDT");
         //spotService.netGrid("okexsub2", "MANA-USDT", "1", 0.03);
-        spotService.computeBenefit("每日买卖cjie888", startTime, now, symbols1);
+        //spotService.computeBenefit("每日买卖cjie888", startTime, now, symbols1);
 
 
 
@@ -100,7 +100,8 @@ public class SpotTask {
         symbols2.add("MANA-USDT");
         symbols2.add("SOL-USDT");
         symbols2.add("MATIC-USDT");
-        spotService.computeBenefit("每日买卖cjie8882", startTime, now, symbols2);
+        symbols2.addAll(symbols1);
+        spotService.computeBenefit("每日买卖cjie888& cjie8882", startTime, now, symbols2);
 
 
         List<String> symbols = new ArrayList();
@@ -164,15 +165,16 @@ public class SpotTask {
         symbols1.add("ATOM-USDT");
         symbols1.add("LINK-USDT");
         symbols1.add("DOT-USDT");
-        spotService.computeBenefit("每月买卖cjie888", startTime, now, symbols1);
+        //spotService.computeBenefit("每月买卖cjie888", startTime, now, symbols1);
 
 
         List<String> symbols2 = new ArrayList();
         symbols2.add("MANA-USDT");
         symbols2.add("SOL-USDT");
         symbols2.add("MATIC-USDT");
+        symbols2.addAll(symbols1);
 
-        spotService.computeBenefit("每月买卖cjie8882", startTime, now, symbols2);
+        spotService.computeBenefit("每月买卖cjie888&cjie8882", startTime, now, symbols2);
 
 
         List<String> symbols = new ArrayList();
@@ -237,15 +239,16 @@ public class SpotTask {
         symbols1.add("ATOM-USDT");
         symbols1.add("LINK-USDT");
         symbols1.add("DOT-USDT");
-        spotService.computeBenefit("每季买卖cjie888", startTime, now, symbols1);
+        //spotService.computeBenefit("每季买卖cjie888", startTime, now, symbols1);
 
 
         List<String> symbols2 = new ArrayList();
         symbols2.add("MANA-USDT");
         symbols2.add("SOL-USDT");
         symbols2.add("MATIC-USDT");
+        symbols2.addAll(symbols1);
 
-        spotService.computeBenefit("每季买卖cjie8882", startTime, now, symbols2);
+        spotService.computeBenefit("每季买卖cjie888&cjie8882", startTime, now, symbols2);
 
 
 
