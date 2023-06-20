@@ -75,7 +75,7 @@ public class SpotTask {
 //ltc 6  xrp 3 etc 5
     }
 
-    @Scheduled(cron = "7 */30 * * * ?")
+    @Scheduled(cron = "7 3 */1 * * ?")
     public  void benefit() {
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime startTime = now.withHour(0).withMinute(0).withSecond(0).withNano(0);
