@@ -20,7 +20,7 @@ public class TransferTask {
 
         transferService.transfer("okexsub2", "MANA", "1", 3.0);
         transferService.transfer("okex", "DOGE", "1000", 3.0);
-        transferService.transfer("okex", "OKB", "10", 3.0);
+        //transferService.transfer("okex", "OKB", "10", 3.0);
         transferService.transfer("okexsub1", "ETH", "0.05", 3.0);
         transferService.transfer("okex", "AVAX", "1", 3.0);
         transferService.transfer("okex", "BTC", "0.001", 3.0);
