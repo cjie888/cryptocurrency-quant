@@ -51,12 +51,12 @@ public class TransferTask {
 //
 //        transferService.transfer("okex", "ZIL", "100", 3.0);
 //        transferService.transfer("okex", "GRT", "10", 3.0);
-//        transferService.transfer("okex", "EOS", "2", 3.0);
+        transferService.transfer("okex", "EOS", "2", 3.0);
 //        transferService.transfer("okex", "XEM", "30", 3.0);
 //
 //        transferService.transfer("okexsub1", "BSV", "0.05", 3.0);
 //        transferService.transfer("okex", "DYDX", "5", 3.0);
-//        transferService.transfer("okex", "FTM", "10", 3.0);
+        transferService.transfer("okex", "FTM", "10", 3.0);
 //        transferService.transfer("okex", "OP", "5", 3.0);
 //        transferService.transfer("okex", "APT", "1", 3.0);
 //        transferService.transfer("okex", "BNB", "0.05", 3.0);
