@@ -45,7 +45,7 @@ public class SpotV5Task {
 //        spotService.netGrid("okex", "XTZ-USDT", "10", 0.03);
 //        spotService.netGrid("okex", "AAVE-USDT", "0.1", 0.03);
 //        spotService.netGrid("okex", "AVAX-USDT", "1", 0.03);
-//        spotService.netGrid("okex", "ICX-USDT", "10", 0.03);
+        spotService.netGrid("okex", "ICX-USDT", "10", 0.03);
 //        spotService.netGrid("okex", "OP-USDT", "5", 0.03);
         try {
             Thread.sleep(800);
