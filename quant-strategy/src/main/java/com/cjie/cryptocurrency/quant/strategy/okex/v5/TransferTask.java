@@ -29,7 +29,7 @@ public class TransferTask {
 //        transferService.transfer("okex", "XTZ", "10", 3.0);
         transferService.transfer("okex", "IOTA", "30", 3.0);
 //        transferService.transfer("okex", "ZEC", "0.2", 3.0);
-//        transferService.transfer("okex", "FIL", "1", 3.0);
+        transferService.transfer("okex", "FIL", "1", 3.0);
 //        transferService.transfer("okexsub1", "DOT", "1", 3.0);
 //        transferService.transfer("okexsub1", "BCH", "0.04", 3.0);
 
