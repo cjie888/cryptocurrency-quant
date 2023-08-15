@@ -42,7 +42,7 @@ public class SpotV5Task {
             e.printStackTrace();
         }
         spotService.netGrid("okex", "IOTA-USDT", "30", 0.03);
-//        spotService.netGrid("okex", "XTZ-USDT", "10", 0.03);
+        spotService.netGrid("okex", "XTZ-USDT", "10", 0.03);
 //        spotService.netGrid("okex", "AAVE-USDT", "0.1", 0.03);
 //        spotService.netGrid("okex", "AVAX-USDT", "1", 0.03);
         spotService.netGrid("okex", "ICX-USDT", "10", 0.03);
@@ -67,7 +67,7 @@ public class SpotV5Task {
 
     @Scheduled(cron = "11/23 * * * * ?")
     public  void netGrid2() {
-//        spotService.netGrid("okex", "SUI-USDT", "10", 0.03);
+        spotService.netGrid("okex", "SUI-USDT", "10", 0.03);
 //        spotService.netGrid("okexsub1", "SUSHI-USDT", "1", 0.03);
 //        spotService.netGrid("okexsub1", "ATOM-USDT", "1", 0.03);
 //        spotService.netGrid("okexsub1", "LINK-USDT", "0.50000000", 0.03);
@@ -92,7 +92,7 @@ public class SpotV5Task {
         } catch (Exception e) {
             e.printStackTrace();
         }
-//        spotService.netGrid("okex", "ADA-USDT", "20", 0.03);
+        spotService.netGrid("okex", "ADA-USDT", "20", 0.03);
         spotService.netGrid("okex", "XEM-USDT", "30", 0.03);
 //        spotService.netGrid("okex", "DASH-USDT", "0.1", 0.03);
 //        spotService.netGrid("okex", "GRT-USDT", "10", 0.03);

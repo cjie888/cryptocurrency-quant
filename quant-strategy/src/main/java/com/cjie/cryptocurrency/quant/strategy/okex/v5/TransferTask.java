@@ -26,14 +26,14 @@ public class TransferTask {
 //        transferService.transfer("okex", "BTC", "0.001", 3.0);
 //        transferService.transfer("okexsub1", "ETC", "1", 3.0);
 //        transferService.transfer("okexsub1", "ATOM", "1", 3.0);
-//        transferService.transfer("okex", "XTZ", "10", 3.0);
+        transferService.transfer("okex", "XTZ", "10", 3.0);
         transferService.transfer("okex", "IOTA", "30", 3.0);
 //        transferService.transfer("okex", "ZEC", "0.2", 3.0);
         transferService.transfer("okex", "FIL", "1", 3.0);
 //        transferService.transfer("okexsub1", "DOT", "1", 3.0);
 //        transferService.transfer("okexsub1", "BCH", "0.04", 3.0);
 
-//        transferService.transfer("okex", "ADA", "20", 3.0);
+        transferService.transfer("okex", "ADA", "20", 3.0);
 //        transferService.transfer("okex", "AAVE", "0.1", 3.0);
 //        transferService.transfer("okex", "THETA", "5", 3.0);
 //        transferService.transfer("okex", "XMR", "0.1", 3.0);
@@ -67,7 +67,7 @@ public class TransferTask {
         transferService.transfer("okexsub2", "MATIC", "10", 3.0);
 //        transferService.transfer("okex", "ARB", "20", 3.0);
 //        transferService.transfer("okex", "BLUR", "20", 3.0);
-//        transferService.transfer("okex", "SUI", "10", 3.0);
+        transferService.transfer("okex", "SUI", "10", 3.0);
 
     }
 }
