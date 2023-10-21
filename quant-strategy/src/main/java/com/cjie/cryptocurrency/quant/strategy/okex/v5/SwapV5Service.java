@@ -228,10 +228,6 @@ public class SwapV5Service {
         if (!"0".equals(swapTicker.getCode()) || swapTicker.getData().size() == 0) {
             return;
         }
-        Ticker apiTickerVO = swapTicker.getData().get(0);
-
-        log.info("当前价格{}-{}", instrumentId, apiTickerVO.getLast());
-
 
         SwapOrder lastOrder = null;
         SwapOrder lastUpOrder = null;
@@ -264,6 +260,9 @@ public class SwapV5Service {
         ) {//不是全仓
             return;
         }
+        Ticker apiTickerVO = swapTicker.getData().get(0);
+
+        log.info("当前价格{}-{}", instrumentId, apiTickerVO.getLast());
         PositionInfo upPosition = null;
         PositionInfo downPosition = null;
         double longPosition = 0;
