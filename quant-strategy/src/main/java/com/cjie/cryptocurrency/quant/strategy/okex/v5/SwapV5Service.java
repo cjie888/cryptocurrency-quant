@@ -254,15 +254,14 @@ public class SwapV5Service {
         }
 
         HttpResult<List<PositionInfo>> positionsResult = accountAPIV5Service.getPositions(site, null, instrumentId, null);
+        Ticker apiTickerVO = swapTicker.getData().get(0);
 
+        log.info("当前价格{}-{},size:{}", instrumentId, apiTickerVO.getLast(), size);
         if (positionsResult == null || !positionsResult.getCode().equals("0")|| positionsResult.getData().size() > 0
                // && !positionsResult.getData().get(0).getMgnMode().equals("cross")
         ) {//不是全仓
             return;
         }
-        Ticker apiTickerVO = swapTicker.getData().get(0);
-
-        log.info("当前价格{}-{},size:{}", instrumentId, apiTickerVO.getLast(), size);
         PositionInfo upPosition = null;
         PositionInfo downPosition = null;
         double longPosition = 0;
