@@ -262,7 +262,7 @@ public class SwapV5Service {
         }
         Ticker apiTickerVO = swapTicker.getData().get(0);
 
-        log.info("当前价格{}-{}", instrumentId, apiTickerVO.getLast());
+        log.info("当前价格{}-{},size:{}", instrumentId, apiTickerVO.getLast(), size);
         PositionInfo upPosition = null;
         PositionInfo downPosition = null;
         double longPosition = 0;
@@ -279,7 +279,6 @@ public class SwapV5Service {
             if (apiPositionVO.getPosSide().equals("short")&& Double.valueOf(apiPositionVO.getPos()) >= Double.valueOf(size) && Double.valueOf(apiPositionVO.getAvailPos()) >= Double.valueOf(size)) {
                 downPosition = apiPositionVO;
                 shortPosition = Double.valueOf(apiPositionVO.getPos());
-                continue;
             }
 
         }
