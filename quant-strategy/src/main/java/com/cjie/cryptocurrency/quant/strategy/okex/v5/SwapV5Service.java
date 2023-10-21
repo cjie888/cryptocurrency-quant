@@ -257,8 +257,8 @@ public class SwapV5Service {
         Ticker apiTickerVO = swapTicker.getData().get(0);
 
         log.info("当前价格{}-{},size:{}", instrumentId, apiTickerVO.getLast(), size);
-        if (positionsResult == null || !positionsResult.getCode().equals("0")|| positionsResult.getData().size() > 0
-               // && !positionsResult.getData().get(0).getMgnMode().equals("cross")
+        if (positionsResult == null || !positionsResult.getCode().equals("0")
+               // || positionsResult.getData().size() > 0 && !positionsResult.getData().get(0).getMgnMode().equals("cross")
         ) {//不是全仓
             return;
         }
