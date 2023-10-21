@@ -283,6 +283,9 @@ public class SwapV5Service {
         if (currentPrice < min) {
             return;
         }
+
+        log.info("持仓{}多{}-空{}", instrumentId, longPosition, shortPosition);
+
         if (upPosition == null && downPosition == null || lastOrder == null) {
             //同时开多和空
 
