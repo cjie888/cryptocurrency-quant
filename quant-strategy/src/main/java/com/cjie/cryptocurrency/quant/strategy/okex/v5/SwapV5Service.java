@@ -269,6 +269,9 @@ public class SwapV5Service {
         double longPosition = 0;
         double shortPosition = 0;
         for (PositionInfo apiPositionVO : positionsResult.getData()) {
+            if (apiPositionVO.getAvailPos().equals("")) {
+                continue;
+            }
             if (apiPositionVO.getPosSide().equals("long") && Double.valueOf(apiPositionVO.getPos()) >= Double.valueOf(size) && Double.valueOf(apiPositionVO.getAvailPos()) >= Double.valueOf(size)) {
                 upPosition = apiPositionVO;
                 longPosition = Double.valueOf(apiPositionVO.getPos());
@@ -281,12 +284,11 @@ public class SwapV5Service {
             }
 
         }
+        log.info("持仓{}多{}-空{}", instrumentId, longPosition, shortPosition);
         Double currentPrice = Double.valueOf(apiTickerVO.getLast());
         if (currentPrice < min) {
             return;
         }
-
-        log.info("持仓{}多{}-空{}", instrumentId, longPosition, shortPosition);
 
         if (upPosition == null && downPosition == null || lastOrder == null) {
             //同时开多和空
