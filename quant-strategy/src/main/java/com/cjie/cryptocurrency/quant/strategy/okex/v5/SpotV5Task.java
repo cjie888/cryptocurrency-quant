@@ -15,8 +15,8 @@ public class SpotV5Task {
     @Scheduled(cron = "3/29 * * * * ?")
     public  void netGrid() {
 
-        spotService.netGrid("okexsub2", "MANA-USDT", "1", 0.03);
-//        spotService.netGrid("okexsub1", "ETH-USDT", "0.05000000", 0.03);
+        //spotService.netGrid("okexsub2", "MANA-USDT", "1", 0.03);
+        spotService.netGrid("okexsub2", "ETH-USDT", "0.05000000", 0.03);
 //        spotService.netGrid("okexsub1", "BCH-USDT", "0.04000000", 0.03);
 //        spotService.netGrid("okexsub1", "LTC-USDT", "0.1", 0.03);
 //        spotService.netGrid("okexsub1", "XRP-USDT", "20", 0.03);
