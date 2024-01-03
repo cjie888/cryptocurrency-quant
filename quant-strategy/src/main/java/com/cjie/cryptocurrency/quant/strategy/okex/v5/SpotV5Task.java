@@ -28,7 +28,7 @@ public class SpotV5Task {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        spotService.netGrid("okex", "EOS-USDT", "2", 0.03);
+       //spotService.netGrid("okex", "EOS-USDT", "2", 0.03);
 //        spotService.netGrid("okex", "OKT-USDT", "1", 0.03);
 //        spotService.netGrid("okex", "DOGE-USDT", "1000", 0.03);
 //        spotService.netGrid("okex", "UNI-USDT", "1", 0.03);
