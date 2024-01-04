@@ -376,11 +376,6 @@ public class SpotV5Service {
                 spotOrderMapper.insert(spotOrder);
             }
         }
-        try {
-            Thread.sleep(1500);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
 
     }
 
