@@ -41,7 +41,7 @@ interface FundingAPI {
 
 
     //余币宝申购/赎回 PiggyBank Purchase/Redemption
-    @POST("/api/v5/asset/purchase_redempt")
+    @POST("/api/v5/finance/savings/purchase-redempt")
     Call<JSONObject> piggyBankPurchaseRedemption(@Body JSONObject jsonObject);
 
     //资金流水查询 Asset Bills Details
