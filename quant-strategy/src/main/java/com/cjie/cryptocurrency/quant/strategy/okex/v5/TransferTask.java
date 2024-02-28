@@ -20,10 +20,10 @@ public class TransferTask {
 
         transferService.transfer("okexsub2", "MANA", "1", 3.0);
 //        transferService.transfer("okex", "DOGE", "1000", 3.0);
-        //transferService.transfer("okex", "OKB", "10", 3.0);
+//        transferService.transfer("okex", "OKB", "10", 3.0);
 //        transferService.transfer("okexsub1", "ETH", "0.05", 3.0);
 //        transferService.transfer("okex", "AVAX", "1", 3.0);
-//        transferService.transfer("okex", "BTC", "0.001", 3.0);
+        transferService.transfer("okex", "BTC", "0.0005", 3.0);
 //        transferService.transfer("okexsub1", "ETC", "1", 3.0);
 //        transferService.transfer("okexsub1", "ATOM", "1", 3.0);
         transferService.transfer("okex", "XTZ", "10", 3.0);
@@ -63,11 +63,13 @@ public class TransferTask {
 //        transferService.transfer("okex", "TON", "10", 3.0);
 
 
-        transferService.transfer("okexsub2", "SOL", "1", 3.0);
+        transferService.transfer("okexsub2", "SOL", "0.1", 3.0);
         transferService.transfer("okexsub2", "MATIC", "10", 3.0);
 //        transferService.transfer("okex", "ARB", "20", 3.0);
 //        transferService.transfer("okex", "BLUR", "20", 3.0);
         transferService.transfer("okex", "SUI", "10", 3.0);
+        transferService.transfer("okex", "ICX", "10", 3.0);
+
 
     }
 }
