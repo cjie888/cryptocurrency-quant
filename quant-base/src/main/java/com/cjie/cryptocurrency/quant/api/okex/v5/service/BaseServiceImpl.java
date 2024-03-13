@@ -29,6 +29,7 @@ public abstract class BaseServiceImpl {
             config.setApiKey(apiKey.getApiKey());
             config.setSecretKey(apiKey.getApiSecret());
             config.setPassphrase(apiKey.getApiPassphrase());
+            config.setPrint(true);
             if ("okexsub2".equals(site)) {
                 config.setPrint(true);
             } else {
