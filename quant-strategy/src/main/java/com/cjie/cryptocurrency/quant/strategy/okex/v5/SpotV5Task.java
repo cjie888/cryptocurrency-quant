@@ -12,7 +12,7 @@ public class SpotV5Task {
     @Autowired
     private SpotV5Service spotService;
 
-    @Scheduled(cron = "3/29 * * * * ?")
+    @Scheduled(cron = "3/17 * * * * ?")
     public  void netGrid() {
 
         //spotService.netGrid("okexsub2", "MANA-USDT", "1", 0.03);
@@ -47,7 +47,7 @@ public class SpotV5Task {
     }
 
 
-    @Scheduled(cron = "11/23 * * * * ?")
+    @Scheduled(cron = "11/13 * * * * ?")
     public  void netGrid2() {
         spotService.netGrid("okex", "SUI-USDT", "10", 0.03);
 //        spotService.netGrid("okexsub1", "SUSHI-USDT", "1", 0.03);
