@@ -24,7 +24,7 @@ public class SwapV5Task {
        // swapService.transfer("BCH-USD-SWAP", 0.1);
         //swapService.netGrid("XRP-USD-SWAP", "1", 0.0016,20.0, 200, 0.1970);
   //      swapService.transfer("XRP-USD-SWAP", 20.0);
-        swapService.netGrid("okexsub2","MANA-USDT-SWAP", "1", 0.03, 20.0, 0, 0);
+//        swapService.netGrid("okexsub2","MANA-USDT-SWAP", "1", 0.03, 20.0, 0, 0);
         //swapService.netGrid("okexsub1","LTC-USDT-SWAP", "1", 0.03, 200.0, 0, 0);
         //swapService.netGrid("okex","BTC-USDT-SWAP", "1", 0.03, 200.0, 0, 0);
         //swapService.netGrid("okexsub1","ETH-USDT-SWAP", "1", 0.03, 200.0, 0, 0);
