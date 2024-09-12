@@ -13,7 +13,7 @@ public class SwapV5Task {
     private SwapV5Service swapService;
 
 
-    @Scheduled(cron = "3/13 * * * * ?")
+    @Scheduled(cron = "3/11 * * * * ?")
     public  void netGrid() {
         //swapService.netGrid("BTC-USD-SWAP", "1", 80.0, 0.002, 45, 7800);
         //swapService.transfer("BTC-USD-SWAP",  0.002);
