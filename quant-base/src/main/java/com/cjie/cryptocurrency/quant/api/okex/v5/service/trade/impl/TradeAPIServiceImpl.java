@@ -81,7 +81,26 @@ public class TradeAPIServiceImpl extends BaseServiceImpl implements TradeAPIServ
     public JSONObject placeMultipleOrders(String site, List<PlaceOrder> placeOrders) {
         APIClient client = getTradeAPIClient(site);
         TradeAPI tradeAPI = getTradeApi(site, client);
-        return client.executeSync(tradeAPI.placeMultipleOrders(placeOrders));
+        JSONObject orderResult =   client.executeSync(tradeAPI.placeMultipleOrders(placeOrders));
+
+        log.info("order result:{}", JSONObject.toJSONString(orderResult));
+        if (orderResult != null && orderResult.getString("code") != null && orderResult.getString("code").equals("0")) {
+            for (PlaceOrder placeOrder : placeOrders) {
+                SwapOrder swapOrder = new SwapOrder();
+                swapOrder.setInstrumentId(placeOrder.getInstId());
+                swapOrder.setCreateTime(new Date());
+                swapOrder.setStrategy("netGrid");
+                swapOrder.setIsMock(Byte.valueOf("0"));
+                swapOrder.setType(Byte.valueOf(placeOrder.getType()));
+                swapOrder.setPrice(new BigDecimal(placeOrder.getPx()));
+                swapOrder.setSize(new BigDecimal(placeOrder.getSz()));
+                swapOrder.setOrderId(String.valueOf(((JSONObject) orderResult.getJSONArray("data").get(0)).getString("ordId")));
+
+                swapOrder.setStatus(99);
+                swapOrderMapper.insert(swapOrder);
+            }
+        }
+        return orderResult;
     }
 
     //撤单 Cancel Order
