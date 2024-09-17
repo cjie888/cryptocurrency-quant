@@ -396,7 +396,7 @@ public class SwapV5Service {
             //价格上涨
             //获取最新成交多单
             //平多，开空
-            List<PlaceOrder> orders = new ArrayList<>();
+//            List<PlaceOrder> orders = new ArrayList<>();
             if (upPosition != null && lastUpOrder != null) {
                 PlaceOrder placeOrderParam = new PlaceOrder();
                 placeOrderParam.setInstId(instrumentId);
@@ -407,9 +407,9 @@ public class SwapV5Service {
                 placeOrderParam.setOrdType("limit");
                 placeOrderParam.setPosSide("long");
                 placeOrderParam.setType("3");
-                orders.add(placeOrderParam);
-//                JSONObject orderResult = tradeAPIService.placeSwapOrder(site, placeOrderParam, "netGrid");
-//                log.info("平多{}-{},result:{}", instrumentId, JSON.toJSONString(placeOrderParam), JSON.toJSONString(orderResult));
+//                orders.add(placeOrderParam);
+                JSONObject orderResult = tradeAPIService.placeSwapOrder(site, placeOrderParam, "netGrid");
+                log.info("平多{}-{},result:{}", instrumentId, JSON.toJSONString(placeOrderParam), JSON.toJSONString(orderResult));
 
             }
             PlaceOrder placeOrderParam = new PlaceOrder();
@@ -421,11 +421,11 @@ public class SwapV5Service {
             placeOrderParam.setOrdType("limit");
             placeOrderParam.setPosSide("short");
             placeOrderParam.setType("2");
-            orders.add(placeOrderParam);
-//            JSONObject orderResult = tradeAPIService.placeSwapOrder(site, placeOrderParam, "netGrid");
-//            log.info("开空{}-{},result:{}", instrumentId, JSON.toJSONString(placeOrderParam), JSON.toJSONString(orderResult));
-            JSONObject orderResult = tradeAPIService.placeMultipleOrders(site, orders);
-            log.info("平多-开空 {}-{},result:{}", instrumentId, JSON.toJSONString(orders), JSONObject.toJSONString(orderResult));
+//            orders.add(placeOrderParam);
+            JSONObject orderResult = tradeAPIService.placeSwapOrder(site, placeOrderParam, "netGrid");
+            log.info("开空{}-{},result:{}", instrumentId, JSON.toJSONString(placeOrderParam), JSON.toJSONString(orderResult));
+//            JSONObject orderResult = tradeAPIService.placeMultipleOrders(site, orders);
+//            log.info("平多-开空 {}-{},result:{}", instrumentId, JSON.toJSONString(orders), JSONObject.toJSONString(orderResult));
 
             return;
 
@@ -434,7 +434,7 @@ public class SwapV5Service {
             //价格下跌
             //获取最新成交空单
             //平空，开多
-            List<PlaceOrder> orders = new ArrayList<>();
+//            List<PlaceOrder> orders = new ArrayList<>();
             if (downPosition != null && lastDownOrder != null) {
                 PlaceOrder placeOrderParam = new PlaceOrder();
                 placeOrderParam.setInstId(instrumentId);
@@ -445,10 +445,10 @@ public class SwapV5Service {
                 placeOrderParam.setOrdType("limit");
                 placeOrderParam.setPosSide("short");
                 placeOrderParam.setType("4");
-                orders.add(placeOrderParam);
-//                JSONObject orderResult = tradeAPIService.placeSwapOrder(site, placeOrderParam, "netGrid");
+//                orders.add(placeOrderParam);
+                JSONObject orderResult = tradeAPIService.placeSwapOrder(site, placeOrderParam, "netGrid");
 
-//                log.info("平空{}-{},result:{}", instrumentId, JSON.toJSONString(placeOrderParam), JSON.toJSONString(orderResult));
+                log.info("平空{}-{},result:{}", instrumentId, JSON.toJSONString(placeOrderParam), JSON.toJSONString(orderResult));
             }
 
             PlaceOrder placeOrderParam = new PlaceOrder();
@@ -460,11 +460,11 @@ public class SwapV5Service {
             placeOrderParam.setOrdType("limit");
             placeOrderParam.setPosSide("long");
             placeOrderParam.setType("1");
-            orders.add(placeOrderParam);
-//            JSONObject orderResult = tradeAPIService.placeSwapOrder(site, placeOrderParam, "netGrid");
-//            log.info("开多{}-{},result:{}", instrumentId, JSON.toJSONString(placeOrderParam), JSON.toJSONString(orderResult));
-            JSONObject orderResult = tradeAPIService.placeMultipleOrders(site, orders);
-            log.info("平空-开多 {}-{},result:{}", instrumentId, JSON.toJSONString(orders), JSONObject.toJSONString(orderResult));
+//            orders.add(placeOrderParam);
+            JSONObject orderResult = tradeAPIService.placeSwapOrder(site, placeOrderParam, "netGrid");
+            log.info("开多{}-{},result:{}", instrumentId, JSON.toJSONString(placeOrderParam), JSON.toJSONString(orderResult));
+//            JSONObject orderResult = tradeAPIService.placeMultipleOrders(site, orders);
+//            log.info("平空-开多 {}-{},result:{}", instrumentId, JSON.toJSONString(orders), JSONObject.toJSONString(orderResult));
 
         }
 
