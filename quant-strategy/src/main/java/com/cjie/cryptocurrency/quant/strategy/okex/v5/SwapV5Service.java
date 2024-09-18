@@ -330,7 +330,7 @@ public class SwapV5Service {
                 placeOrderParam.setInstId(instrumentId);
                 placeOrderParam.setTdMode("cross");
                 placeOrderParam.setPx(String.valueOf(Double.parseDouble(apiTickerVO.getLast())));
-                placeOrderParam.setSz("3");
+                placeOrderParam.setSz(String.valueOf(2* Long.parseLong(size)));
                 placeOrderParam.setSide("sell");
                 placeOrderParam.setOrdType("limit");
                 placeOrderParam.setPosSide("long");
@@ -344,7 +344,7 @@ public class SwapV5Service {
                 ppDownOrder.setInstId(instrumentId);
                 ppDownOrder.setTdMode("cross");
                 ppDownOrder.setPx(String.valueOf(Double.parseDouble(apiTickerVO.getLast())));
-                ppDownOrder.setSz("3");
+                ppDownOrder.setSz(String.valueOf(2* Long.parseLong(size)));
                 ppDownOrder.setSide("buy");
                 ppDownOrder.setOrdType("limit");
                 ppDownOrder.setPosSide("short");
@@ -363,7 +363,7 @@ public class SwapV5Service {
                 placeOrderParam.setInstId(instrumentId);
                 placeOrderParam.setTdMode("cross");
                 placeOrderParam.setPx(String.valueOf(Double.parseDouble(apiTickerVO.getLast())));
-                placeOrderParam.setSz("3");
+                placeOrderParam.setSz(String.valueOf(2* Long.parseLong(size)));
                 placeOrderParam.setSide("buy");
                 placeOrderParam.setOrdType("limit");
                 placeOrderParam.setPosSide("short");
@@ -374,14 +374,14 @@ public class SwapV5Service {
 
                 //平多
                 PlaceOrder ppUpOrder = new PlaceOrder();
-                placeOrderParam.setInstId(instrumentId);
-                placeOrderParam.setTdMode("cross");
-                placeOrderParam.setPx(String.valueOf(Double.parseDouble(apiTickerVO.getLast())));
-                placeOrderParam.setSz("3");
-                placeOrderParam.setSide("sell");
-                placeOrderParam.setOrdType("limit");
-                placeOrderParam.setPosSide("long");
-                placeOrderParam.setType("3");
+                ppUpOrder.setInstId(instrumentId);
+                ppUpOrder.setTdMode("cross");
+                ppUpOrder.setPx(String.valueOf(Double.parseDouble(apiTickerVO.getLast())));
+                ppUpOrder.setSz(String.valueOf(2* Long.parseLong(size)));
+                ppUpOrder.setSide("sell");
+                ppUpOrder.setOrdType("limit");
+                ppUpOrder.setPosSide("long");
+                ppUpOrder.setType("3");
                 orders.add(ppUpOrder);
 //                JSONObject orderResult2 = tradeAPIService.placeSwapOrder(site, placeOrderParam, "netGrid");
 //                log.info("平多{}-{},result:{}", instrumentId, JSON.toJSONString(ppUpOrder), JSON.toJSONString(orderResult2));
