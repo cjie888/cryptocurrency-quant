@@ -19,12 +19,12 @@ public class SpotV5Task {
         spotService.netGrid("okexsub2", "ETH-USDT", "0.01000000", 0.03);
 //        spotService.netGrid("okexsub1", "BCH-USDT", "0.04000000", 0.03);
 //        spotService.netGrid("okexsub1", "LTC-USDT", "0.1", 0.03);
-//        spotService.netGrid("okexsub1", "XRP-USDT", "20", 0.03);
+        spotService.netGrid("okexsub1", "XRP-USDT", "20", 0.03);
 //        spotService.netGrid("okexsub1", "ETC-USDT", "1", 0.03);
 //        spotService.netGrid("okexsub1", "BSV-USDT", "0.05000000", 0.03);
        //spotService.netGrid("okex", "EOS-USDT", "2", 0.03);
 //        spotService.netGrid("okex", "OKT-USDT", "1", 0.03);
-//        spotService.netGrid("okex", "DOGE-USDT", "1000", 0.03);
+        spotService.netGrid("okex", "DOGE-USDT", "100", 0.03);
 //        spotService.netGrid("okex", "UNI-USDT", "1", 0.03);
 //        spotService.netGrid("okex", "XLM-USDT", "50", 0.03);
 //        spotService.netGrid("okex", "DYDX-USDT", "5", 0.03);
@@ -37,7 +37,7 @@ public class SpotV5Task {
 //        spotService.netGrid("okex", "THETA-USDT", "5", 0.03);
 //        spotService.netGrid("okex", "APT-USDT", "1", 0.03);
         spotService.netGrid("okex", "BNB-USDT", "0.05", 0.03);
-//        spotService.netGrid("okex", "TON-USDT", "10", 0.03);
+        spotService.netGrid("okex", "TON-USDT", "2", 0.03);
         spotService.netGrid("okex", "FTM-USDT", "10", 0.03);
 //        spotService.netGrid("okex", "ARB-USDT", "20", 0.03);
 
