@@ -77,308 +77,310 @@ public class SpotV5Service {
 
     public void netGrid(String site, String symbol, String size, Double increment) {
 
-
-        //获取等待提交订单
-        List<Integer> unProcessedStatuses = new ArrayList<>();
-        unProcessedStatuses.add(99);
-        unProcessedStatuses.add(0);
-        unProcessedStatuses.add(1);
         try {
-            List<SpotOrder> spotOrders = spotOrderMapper.selectByStatus(symbol, "netGrid", unProcessedStatuses);
-            if (CollectionUtils.isNotEmpty(spotOrders)) {
-                log.info("unprocessed spot orders {}", JSON.toJSONString(spotOrders));
-                for (SpotOrder spotOrder : spotOrders) {
-                    JSONObject result = tradeAPIService.getOrderDetails(site, symbol, spotOrder.getOrderId(), null);
+            //获取等待提交订单
+            List<Integer> unProcessedStatuses = new ArrayList<>();
+            unProcessedStatuses.add(99);
+            unProcessedStatuses.add(0);
+            unProcessedStatuses.add(1);
+            try {
+                List<SpotOrder> spotOrders = spotOrderMapper.selectByStatus(symbol, "netGrid", unProcessedStatuses);
+                if (CollectionUtils.isNotEmpty(spotOrders)) {
+                    log.info("unprocessed spot orders {}", JSON.toJSONString(spotOrders));
+                    for (SpotOrder spotOrder : spotOrders) {
+                        JSONObject result = tradeAPIService.getOrderDetails(site, symbol, spotOrder.getOrderId(), null);
 
-                    log.info("spot order status {}", JSON.toJSONString(result));
-                    if (result == null) {
-                        return;
-                    }
-                    String state = ((JSONObject)result.getJSONArray("data").get(0)).getString("state");
-                    if ( state == null || STATES.get(state) == null) {
-                        return;
-                    }
-                    Integer status = STATES.get(state);
-                    if (!spotOrder.getStatus().equals(status)) {
-                        spotOrderMapper.updateStatus(spotOrder.getOrderId(), status);
+                        log.info("spot order status {}", JSON.toJSONString(result));
+                        if (result == null) {
+                            return;
+                        }
+                        String state = ((JSONObject) result.getJSONArray("data").get(0)).getString("state");
+                        if (state == null || STATES.get(state) == null) {
+                            return;
+                        }
+                        Integer status = STATES.get(state);
+                        if (!spotOrder.getStatus().equals(status)) {
+                            spotOrderMapper.updateStatus(spotOrder.getOrderId(), status);
+                        }
                     }
                 }
+            } catch (Exception e) {
+                log.info("update status error, symbol:{}", symbol, e);
+                return;
             }
-        } catch (Exception e) {
-            log.info("update status error, symbol:{}", symbol, e);
-            return;
-        }
 
-        List<Integer> unSettledStatuses = new ArrayList<>();
-        unSettledStatuses.add(1);
-        List<SpotOrder> unSettledOrders = spotOrderMapper.selectByStatus(symbol, "netGrid", unSettledStatuses);
-        if (CollectionUtils.isNotEmpty(unSettledOrders)) {
-            for (SpotOrder spotOrder : unSettledOrders) {
-                if (System.currentTimeMillis() - 30 * 60 * 1000L > spotOrder.getCreateTime().getTime()) {
+            List<Integer> unSettledStatuses = new ArrayList<>();
+            unSettledStatuses.add(1);
+            List<SpotOrder> unSettledOrders = spotOrderMapper.selectByStatus(symbol, "netGrid", unSettledStatuses);
+            if (CollectionUtils.isNotEmpty(unSettledOrders)) {
+                for (SpotOrder spotOrder : unSettledOrders) {
+                    if (System.currentTimeMillis() - 30 * 60 * 1000L > spotOrder.getCreateTime().getTime()) {
+                        CancelOrder cancelOrder = new CancelOrder();
+                        cancelOrder.setInstId(symbol);
+                        cancelOrder.setOrdId(spotOrder.getOrderId());
+                        tradeAPIService.cancelOrder(site, cancelOrder);
+                        log.info("取消部分成交订单{}-{}", symbol, spotOrder.getOrderId());
+                    }
+                }
+                return;
+            }
+
+            List<Integer> unSelledStatuses = new ArrayList<>();
+            unSelledStatuses.add(0);
+            List<SpotOrder> unSelledOrders = spotOrderMapper.selectByStatus(symbol, "netGrid", unSelledStatuses);
+            if (CollectionUtils.isNotEmpty(unSelledOrders)) {
+                for (SpotOrder spotOrder : unSelledOrders) {
                     CancelOrder cancelOrder = new CancelOrder();
                     cancelOrder.setInstId(symbol);
                     cancelOrder.setOrdId(spotOrder.getOrderId());
                     tradeAPIService.cancelOrder(site, cancelOrder);
-                    log.info("取消部分成交订单{}-{}", symbol, spotOrder.getOrderId());
+                    log.info("取消未成交订单{}-{}", symbol, spotOrder.getOrderId());
                 }
             }
-            return;
-        }
 
-        List<Integer> unSelledStatuses = new ArrayList<>();
-        unSelledStatuses.add(0);
-        List<SpotOrder> unSelledOrders = spotOrderMapper.selectByStatus(symbol, "netGrid", unSelledStatuses);
-        if (CollectionUtils.isNotEmpty(unSelledOrders)) {
-            for (SpotOrder spotOrder : unSelledOrders) {
-                CancelOrder cancelOrder = new CancelOrder();
-                cancelOrder.setInstId(symbol);
-                cancelOrder.setOrdId(spotOrder.getOrderId());
-                tradeAPIService.cancelOrder(site, cancelOrder);
-                log.info("取消未成交订单{}-{}", symbol, spotOrder.getOrderId());
-            }
-        }
+            Ticker spotTicker = getTicker(site, symbol);
+            log.info("当前价格{}-{}-{}", site, spotTicker.getLast(), symbol);
 
-        Ticker spotTicker = getTicker(site, symbol);
-        log.info("当前价格{}-{}-{}", site, spotTicker.getLast(), symbol);
-
-        SpotOrder lastOrder = null;
-        List<Integer> selledStatuses = new ArrayList<>();
-        selledStatuses.add(2);
-        List<SpotOrder> selledOrders = spotOrderMapper.selectByStatus(symbol, "netGrid", selledStatuses);
-        if (CollectionUtils.isNotEmpty(selledOrders)) {
-            for (SpotOrder spotOrder : selledOrders) {
-                if (lastOrder == null) {
-                    lastOrder = spotOrder;
-                    break;
+            SpotOrder lastOrder = null;
+            List<Integer> selledStatuses = new ArrayList<>();
+            selledStatuses.add(2);
+            List<SpotOrder> selledOrders = spotOrderMapper.selectByStatus(symbol, "netGrid", selledStatuses);
+            if (CollectionUtils.isNotEmpty(selledOrders)) {
+                for (SpotOrder spotOrder : selledOrders) {
+                    if (lastOrder == null) {
+                        lastOrder = spotOrder;
+                        break;
+                    }
                 }
             }
-        }
-        Double currentPrice = Double.valueOf(spotTicker.getLast());
+            Double currentPrice = Double.valueOf(spotTicker.getLast());
 
-        String baseCurrency = symbol.substring(0, symbol.indexOf("-"));
-        String quotaCurrency = symbol.substring(symbol.indexOf("-") + 1);
+            String baseCurrency = symbol.substring(0, symbol.indexOf("-"));
+            String quotaCurrency = symbol.substring(symbol.indexOf("-") + 1);
 
 
-        HttpResult<List<AccountInfo>> baseAccountResult = accountAPIService.getBalance(site, baseCurrency);
-        log.info("base account:{}", JSON.toJSONString(baseAccountResult));
-        if (Objects.nonNull(baseAccountResult) && "0".equals(baseAccountResult.getCode())
-                && (baseAccountResult.getData().get(0).getDetails().size() == 0
-                || Double.parseDouble(baseAccountResult.getData().get(0).getDetails().get(0).getAvailEq()) < Double.parseDouble(size) * 1.01)) {
+            HttpResult<List<AccountInfo>> baseAccountResult = accountAPIService.getBalance(site, baseCurrency);
+            log.info("base account:{}", JSON.toJSONString(baseAccountResult));
+            if (Objects.nonNull(baseAccountResult) && "0".equals(baseAccountResult.getCode())
+                    && (baseAccountResult.getData().get(0).getDetails().size() == 0
+                    || Double.parseDouble(baseAccountResult.getData().get(0).getDetails().get(0).getAvailEq()) < Double.parseDouble(size) * 1.01)) {
 
-            BigDecimal transferAmount = new BigDecimal(size).multiply(new BigDecimal("1.015"));
-            try {
+                BigDecimal transferAmount = new BigDecimal(size).multiply(new BigDecimal("1.015"));
+                try {
+                    PiggyBankPurchaseRedemption piggyBankPurchaseRedemption = new PiggyBankPurchaseRedemption();
+                    piggyBankPurchaseRedemption.setCcy(baseCurrency);
+                    piggyBankPurchaseRedemption.setAmt(transferAmount.toPlainString());
+                    piggyBankPurchaseRedemption.setSide("redempt");
+                    JSONObject result1 = fundingAPIService.piggyBankPurchaseRedemption(site, piggyBankPurchaseRedemption);
+                    log.info("transfer {} {} from financial to asset", transferAmount, JSON.toJSONString(result1));
+                    Thread.sleep(500);
+                } catch (Exception e) {
+                    //ignore
+                }
+                FundsTransfer transferIn = new FundsTransfer();
+                transferIn.setCcy(baseCurrency);
+                transferIn.setFrom("6");
+                transferIn.setTo("18");
+                transferIn.setAmt(transferAmount.toPlainString());
+                try {
+                    JSONObject transferResult = fundingAPIService.fundsTransfer(site, transferIn);
+                    log.info("transfer {} {} from asset to spot,result:{}", transferAmount, baseCurrency, JSON.toJSONString(transferResult));
+                } catch (Exception e) {
+                    log.info("transfer {} {} from asset to spot error", size, baseCurrency, e);
+                }
+                try {
+                    Thread.sleep(500);
+                } catch (Exception e) {
+                    //ignore
+                }
+
+            }
+
+            baseAccountResult = accountAPIService.getBalance(site, baseCurrency);
+            if (Objects.nonNull(baseAccountResult) && "0".equals(baseAccountResult.getCode()) &&
+                    (baseAccountResult.getData().get(0).getDetails().size() == 0 ||
+                            Double.parseDouble(baseAccountResult.getData().get(0).getDetails().get(0).getAvailEq()) < Double.parseDouble(size) * 1.01)) {
+                //3倍买入
+
+                //{
+                //    "instId":"BTC-USDT",
+                //    "tdMode":"cash",
+                //    "clOrdId":"b15",
+                //    "side":"buy",
+                //    "ordType":"limit",
+                //    "px":"2.15",
+                //    "sz":"2"
+                //}
+                PlaceOrder placeOrderParam = new PlaceOrder();
+                placeOrderParam.setInstId(symbol);
+                placeOrderParam.setTdMode("cash");
+                placeOrderParam.setPx(String.valueOf(Double.parseDouble(spotTicker.getLast())));
+                placeOrderParam.setSz(new BigDecimal(size).multiply(new BigDecimal("3")).toPlainString());
+                placeOrderParam.setSide("buy");
+                placeOrderParam.setOrdType("limit");
+
+                JSONObject orderResult = tradeAPIService.placeOrder(site, placeOrderParam);
+                log.info("买入{}-{},result:{}", symbol, JSON.toJSONString(placeOrderParam), JSONObject.toJSONString(orderResult));
+                if (orderResult.getString("code") != null && orderResult.getString("code").equals("0")) {
+
+                    SpotOrder spotOrder = new SpotOrder();
+                    spotOrder.setSymbol(symbol);
+                    spotOrder.setCreateTime(new Date());
+                    spotOrder.setStrategy("netGrid");
+                    spotOrder.setIsMock(Byte.valueOf("0"));
+                    spotOrder.setType(Byte.valueOf("1"));
+                    spotOrder.setPrice(new BigDecimal(spotTicker.getLast()));
+                    spotOrder.setSize(new BigDecimal(size).multiply(new BigDecimal("3")));
+                    spotOrder.setOrderId(String.valueOf(((JSONObject) orderResult.getJSONArray("data").get(0)).getString("ordId")));
+                    spotOrder.setStatus(99);
+                    spotOrderMapper.insert(spotOrder);
+                }
+
+                return;
+            }
+
+            HttpResult<List<AccountInfo>> quotaAccountResult = accountAPIService.getBalance(site, quotaCurrency);
+            log.info("quota account:{}", JSON.toJSONString(quotaAccountResult));
+            if (Objects.nonNull(quotaAccountResult) && "0".equals(quotaAccountResult.getCode())
+                    && (quotaAccountResult.getData().get(0).getDetails().size() == 0 ||
+                    Double.parseDouble(quotaAccountResult.getData().get(0).getDetails().get(0).getAvailEq()) < Double.parseDouble(size) * currentPrice * 1.01 * 3)) {
+
+                BigDecimal transferAmount = new BigDecimal(size).multiply(new BigDecimal(spotTicker.getLast())).multiply(new BigDecimal("1.015"));
                 PiggyBankPurchaseRedemption piggyBankPurchaseRedemption = new PiggyBankPurchaseRedemption();
-                piggyBankPurchaseRedemption.setCcy(baseCurrency);
+                piggyBankPurchaseRedemption.setCcy(quotaCurrency);
                 piggyBankPurchaseRedemption.setAmt(transferAmount.toPlainString());
                 piggyBankPurchaseRedemption.setSide("redempt");
                 JSONObject result1 = fundingAPIService.piggyBankPurchaseRedemption(site, piggyBankPurchaseRedemption);
                 log.info("transfer {} {} from financial to asset", transferAmount, JSON.toJSONString(result1));
+                try {
+                    Thread.sleep(500);
+                } catch (Exception e) {
+                    //ignore
+                }
+                try {
+                    FundsTransfer transferIn = new FundsTransfer();
+                    transferIn.setCcy(quotaCurrency);
+                    transferIn.setFrom("6");
+                    transferIn.setTo("18");
+                    transferIn.setAmt(transferAmount.toPlainString());
+                    JSONObject transferResult = fundingAPIService.fundsTransfer(site, transferIn);
+                    log.info("transfer {} {} from asset to spot,result:{}", transferAmount, quotaCurrency, JSON.toJSONString(transferResult));
+                } catch (Exception e) {
+                    //ignore
+                    log.error("transfer {} {} from asset to spot error", transferAmount, quotaCurrency, e);
+                }
+
+            }
+
+            if (lastOrder == null) {
+                //买入
+
+                PlaceOrder placeOrderParam = new PlaceOrder();
+                placeOrderParam.setInstId(symbol);
+                placeOrderParam.setTdMode("cash");
+                //placeOrderParam.setPx(spotTicker.getLast());
+                placeOrderParam.setPx(String.valueOf(Double.parseDouble(spotTicker.getLast())));
+
+                placeOrderParam.setSz(new BigDecimal(size).multiply(new BigDecimal("1.015")).toPlainString());
+                placeOrderParam.setSide("buy");
+                placeOrderParam.setOrdType("limit");
+
+
+                JSONObject orderResult = tradeAPIService.placeOrder(site, placeOrderParam);
+                log.info("买入{}-{},result:{}", symbol, JSON.toJSONString(placeOrderParam), JSONObject.toJSONString(orderResult));
+                if (orderResult.getString("code") != null && orderResult.getString("code").equals("0")) {
+
+                    SpotOrder spotOrder = new SpotOrder();
+                    spotOrder.setSymbol(symbol);
+                    spotOrder.setCreateTime(new Date());
+                    spotOrder.setStrategy("netGrid");
+                    spotOrder.setIsMock(Byte.valueOf("0"));
+                    spotOrder.setType(Byte.valueOf("1"));
+                    spotOrder.setPrice(new BigDecimal(spotTicker.getLast()));
+                    spotOrder.setSize(new BigDecimal(size).multiply(new BigDecimal("1.015")));
+                    spotOrder.setOrderId(String.valueOf(((JSONObject) orderResult.getJSONArray("data").get(0)).getString("ordId")));
+                    spotOrder.setStatus(99);
+                    spotOrderMapper.insert(spotOrder);
+                }
+
+                return;
+
+            }
+            Double lastPrice = lastOrder.getPrice().doubleValue();
+            log.info("当前价格：{}, 上次价格:{}, symbol:{}", currentPrice, lastPrice, symbol);
+            if (currentPrice > lastPrice && (currentPrice - lastPrice) / lastPrice > increment * 1.05) {
+                //价格上涨
+                //获取最新成交多单
+                //卖出
+
+                PlaceOrder placeOrderParam = new PlaceOrder();
+                placeOrderParam.setInstId(symbol);
+                placeOrderParam.setTdMode("cash");
+                //placeOrderParam.setPx(spotTicker.getLast());
+                placeOrderParam.setSz(size);
+                placeOrderParam.setPx(String.valueOf(Double.parseDouble(spotTicker.getLast())));
+
+                placeOrderParam.setSide("sell");
+                placeOrderParam.setOrdType("limit");
+
+                JSONObject orderResult = tradeAPIService.placeOrder(site, placeOrderParam);
+                log.info("卖出{}-{},result:{}", symbol, JSON.toJSONString(placeOrderParam), JSON.toJSONString(orderResult));
+                if (orderResult.getString("code") != null && orderResult.getString("code").equals("0")) {
+
+                    SpotOrder spotOrder = new SpotOrder();
+                    spotOrder.setSymbol(symbol);
+                    spotOrder.setCreateTime(new Date());
+                    spotOrder.setStrategy("netGrid");
+                    spotOrder.setIsMock(Byte.valueOf("0"));
+                    spotOrder.setType(Byte.valueOf("2"));
+                    spotOrder.setPrice(new BigDecimal(spotTicker.getLast()));
+                    spotOrder.setSize(new BigDecimal(size));
+                    spotOrder.setOrderId(String.valueOf(((JSONObject) orderResult.getJSONArray("data").get(0)).getString("ordId")));
+                    spotOrder.setStatus(99);
+                    spotOrderMapper.insert(spotOrder);
+                }
+                return;
+
+            }
+            if (currentPrice < lastPrice && (lastPrice - currentPrice) / lastPrice > increment) {
+                //价格下跌
+                //获取最新成交空单
+                //买入
+
+
+                PlaceOrder placeOrderParam = new PlaceOrder();
+                placeOrderParam.setInstId(symbol);
+                placeOrderParam.setTdMode("cash");
+                //placeOrderParam.setPx(spotTicker.getLast());
+                placeOrderParam.setPx(String.valueOf(Double.parseDouble(spotTicker.getLast())));
+
+                placeOrderParam.setSz(new BigDecimal(size).multiply(new BigDecimal("1.015")).toPlainString());
+                placeOrderParam.setSide("buy");
+                placeOrderParam.setOrdType("limit");
+
+                JSONObject orderResult = tradeAPIService.placeOrder(site, placeOrderParam);
+                log.info("买入{}-{},result:{}", symbol, JSON.toJSONString(placeOrderParam), JSON.toJSONString(orderResult));
+                if (orderResult.getString("code") != null && orderResult.getString("code").equals("0")) {
+
+                    SpotOrder spotOrder = new SpotOrder();
+                    spotOrder.setSymbol(symbol);
+                    spotOrder.setCreateTime(new Date());
+                    spotOrder.setStrategy("netGrid");
+                    spotOrder.setIsMock(Byte.valueOf("0"));
+                    spotOrder.setType(Byte.valueOf("1"));
+                    spotOrder.setPrice(new BigDecimal(spotTicker.getLast()));
+                    spotOrder.setSize(new BigDecimal(size).multiply(new BigDecimal("1.015")));
+                    spotOrder.setOrderId(String.valueOf(((JSONObject) orderResult.getJSONArray("data").get(0)).getString("ordId")));
+                    spotOrder.setStatus(99);
+                    spotOrderMapper.insert(spotOrder);
+                }
+            }
+            try {
                 Thread.sleep(500);
             } catch (Exception e) {
-                //ignore
+                e.printStackTrace();
             }
-            FundsTransfer transferIn = new FundsTransfer();
-            transferIn.setCcy(baseCurrency);
-            transferIn.setFrom("6");
-            transferIn.setTo("18");
-            transferIn.setAmt(transferAmount.toPlainString());
-            try {
-                JSONObject transferResult = fundingAPIService.fundsTransfer(site, transferIn);
-                log.info("transfer {} {} from asset to spot,result:{}", transferAmount, baseCurrency, JSON.toJSONString(transferResult));
-            } catch (Exception e) {
-                log.info("transfer {} {} from asset to spot error", size, baseCurrency, e);
-            }
-            try {
-                Thread.sleep(500);
-            } catch (Exception e) {
-                //ignore
-            }
-
-        }
-
-        baseAccountResult = accountAPIService.getBalance(site, baseCurrency);
-        if (Objects.nonNull(baseAccountResult) && "0".equals(baseAccountResult.getCode()) &&
-                (baseAccountResult.getData().get(0).getDetails().size() == 0 ||
-                        Double.parseDouble(baseAccountResult.getData().get(0).getDetails().get(0).getAvailEq()) < Double.parseDouble(size) * 1.01)) {
-            //3倍买入
-
-            //{
-            //    "instId":"BTC-USDT",
-            //    "tdMode":"cash",
-            //    "clOrdId":"b15",
-            //    "side":"buy",
-            //    "ordType":"limit",
-            //    "px":"2.15",
-            //    "sz":"2"
-            //}
-            PlaceOrder placeOrderParam = new PlaceOrder();
-            placeOrderParam.setInstId(symbol);
-            placeOrderParam.setTdMode("cash");
-            placeOrderParam.setPx(String.valueOf(Double.parseDouble(spotTicker.getLast())));
-            placeOrderParam.setSz(new BigDecimal(size).multiply(new BigDecimal("3")).toPlainString());
-            placeOrderParam.setSide("buy");
-            placeOrderParam.setOrdType("limit");
-
-            JSONObject orderResult = tradeAPIService.placeOrder(site, placeOrderParam);
-            log.info("买入{}-{},result:{}", symbol, JSON.toJSONString(placeOrderParam), JSONObject.toJSONString(orderResult));
-            if (orderResult.getString("code") != null && orderResult.getString("code").equals("0")) {
-
-                SpotOrder spotOrder = new SpotOrder();
-                spotOrder.setSymbol(symbol);
-                spotOrder.setCreateTime(new Date());
-                spotOrder.setStrategy("netGrid");
-                spotOrder.setIsMock(Byte.valueOf("0"));
-                spotOrder.setType(Byte.valueOf("1"));
-                spotOrder.setPrice(new BigDecimal(spotTicker.getLast()));
-                spotOrder.setSize(new BigDecimal(size).multiply(new BigDecimal("3")));
-                spotOrder.setOrderId(String.valueOf(((JSONObject)orderResult.getJSONArray("data").get(0)).getString("ordId")));
-                spotOrder.setStatus(99);
-                spotOrderMapper.insert(spotOrder);
-            }
-
-            return;
-        }
-
-        HttpResult<List<AccountInfo>> quotaAccountResult = accountAPIService.getBalance(site, quotaCurrency);
-        log.info("quota account:{}", JSON.toJSONString(quotaAccountResult));
-        if (Objects.nonNull(quotaAccountResult) && "0".equals(quotaAccountResult.getCode())
-               && (quotaAccountResult.getData().get(0).getDetails().size() == 0 ||
-                Double.parseDouble(quotaAccountResult.getData().get(0).getDetails().get(0).getAvailEq()) < Double.parseDouble(size) * currentPrice * 1.01 * 3))
-        {
-
-            BigDecimal transferAmount = new BigDecimal(size).multiply(new BigDecimal(spotTicker.getLast())).multiply(new BigDecimal("1.015"));
-            PiggyBankPurchaseRedemption piggyBankPurchaseRedemption = new PiggyBankPurchaseRedemption();
-            piggyBankPurchaseRedemption.setCcy(quotaCurrency);
-            piggyBankPurchaseRedemption.setAmt(transferAmount.toPlainString());
-            piggyBankPurchaseRedemption.setSide("redempt");
-            JSONObject result1 = fundingAPIService.piggyBankPurchaseRedemption(site, piggyBankPurchaseRedemption);
-            log.info("transfer {} {} from financial to asset", transferAmount, JSON.toJSONString(result1));
-            try {
-                Thread.sleep(500);
-            } catch (Exception e) {
-                //ignore
-            }
-            try {
-                FundsTransfer transferIn = new FundsTransfer();
-                transferIn.setCcy(quotaCurrency);
-                transferIn.setFrom("6");
-                transferIn.setTo("18");
-                transferIn.setAmt(transferAmount.toPlainString());
-                JSONObject transferResult = fundingAPIService.fundsTransfer(site, transferIn);
-                log.info("transfer {} {} from asset to spot,result:{}", transferAmount, quotaCurrency, JSON.toJSONString(transferResult));
-            } catch (Exception e) {
-                //ignore
-                log.error("transfer {} {} from asset to spot error", transferAmount, quotaCurrency, e);
-            }
-
-        }
-
-        if (lastOrder == null) {
-            //买入
-
-            PlaceOrder placeOrderParam = new PlaceOrder();
-            placeOrderParam.setInstId(symbol);
-            placeOrderParam.setTdMode("cash");
-            //placeOrderParam.setPx(spotTicker.getLast());
-            placeOrderParam.setPx(String.valueOf(Double.parseDouble(spotTicker.getLast())));
-
-            placeOrderParam.setSz(new BigDecimal(size).multiply(new BigDecimal("1.015")).toPlainString());
-            placeOrderParam.setSide("buy");
-            placeOrderParam.setOrdType("limit");
-
-
-            JSONObject orderResult = tradeAPIService.placeOrder(site, placeOrderParam);
-            log.info("买入{}-{},result:{}", symbol, JSON.toJSONString(placeOrderParam), JSONObject.toJSONString(orderResult));
-            if (orderResult.getString("code") != null && orderResult.getString("code").equals("0")) {
-
-                SpotOrder spotOrder = new SpotOrder();
-                spotOrder.setSymbol(symbol);
-                spotOrder.setCreateTime(new Date());
-                spotOrder.setStrategy("netGrid");
-                spotOrder.setIsMock(Byte.valueOf("0"));
-                spotOrder.setType(Byte.valueOf("1"));
-                spotOrder.setPrice(new BigDecimal(spotTicker.getLast()));
-                spotOrder.setSize(new BigDecimal(size).multiply(new BigDecimal("1.015")));
-                spotOrder.setOrderId(String.valueOf(((JSONObject)orderResult.getJSONArray("data").get(0)).getString("ordId")));
-                spotOrder.setStatus(99);
-                spotOrderMapper.insert(spotOrder);
-            }
-
-            return;
-
-        }
-        Double lastPrice = lastOrder.getPrice().doubleValue();
-        log.info("当前价格：{}, 上次价格:{}, symbol:{}", currentPrice, lastPrice, symbol);
-        if (currentPrice > lastPrice && (currentPrice - lastPrice) / lastPrice > increment * 1.05) {
-            //价格上涨
-            //获取最新成交多单
-            //卖出
-
-            PlaceOrder placeOrderParam = new PlaceOrder();
-            placeOrderParam.setInstId(symbol);
-            placeOrderParam.setTdMode("cash");
-            //placeOrderParam.setPx(spotTicker.getLast());
-            placeOrderParam.setSz(size);
-            placeOrderParam.setPx(String.valueOf(Double.parseDouble(spotTicker.getLast())));
-
-            placeOrderParam.setSide("sell");
-            placeOrderParam.setOrdType("limit");
-
-            JSONObject orderResult = tradeAPIService.placeOrder(site, placeOrderParam);
-            log.info("卖出{}-{},result:{}", symbol, JSON.toJSONString(placeOrderParam), JSON.toJSONString(orderResult));
-            if (orderResult.getString("code") != null && orderResult.getString("code").equals("0")) {
-
-                SpotOrder spotOrder = new SpotOrder();
-                spotOrder.setSymbol(symbol);
-                spotOrder.setCreateTime(new Date());
-                spotOrder.setStrategy("netGrid");
-                spotOrder.setIsMock(Byte.valueOf("0"));
-                spotOrder.setType(Byte.valueOf("2"));
-                spotOrder.setPrice(new BigDecimal(spotTicker.getLast()));
-                spotOrder.setSize(new BigDecimal(size));
-                spotOrder.setOrderId(String.valueOf(((JSONObject)orderResult.getJSONArray("data").get(0)).getString("ordId")));
-                spotOrder.setStatus(99);
-                spotOrderMapper.insert(spotOrder);
-            }
-            return;
-
-        }
-        if (currentPrice < lastPrice && (lastPrice - currentPrice) / lastPrice > increment) {
-            //价格下跌
-            //获取最新成交空单
-            //买入
-
-
-            PlaceOrder placeOrderParam = new PlaceOrder();
-            placeOrderParam.setInstId(symbol);
-            placeOrderParam.setTdMode("cash");
-            //placeOrderParam.setPx(spotTicker.getLast());
-            placeOrderParam.setPx(String.valueOf(Double.parseDouble(spotTicker.getLast())));
-
-            placeOrderParam.setSz(new BigDecimal(size).multiply(new BigDecimal("1.015")).toPlainString());
-            placeOrderParam.setSide("buy");
-            placeOrderParam.setOrdType("limit");
-
-            JSONObject orderResult = tradeAPIService.placeOrder(site, placeOrderParam);
-            log.info("买入{}-{},result:{}", symbol, JSON.toJSONString(placeOrderParam), JSON.toJSONString(orderResult));
-            if (orderResult.getString("code") != null && orderResult.getString("code").equals("0")) {
-
-                SpotOrder spotOrder = new SpotOrder();
-                spotOrder.setSymbol(symbol);
-                spotOrder.setCreateTime(new Date());
-                spotOrder.setStrategy("netGrid");
-                spotOrder.setIsMock(Byte.valueOf("0"));
-                spotOrder.setType(Byte.valueOf("1"));
-                spotOrder.setPrice(new BigDecimal(spotTicker.getLast()));
-                spotOrder.setSize(new BigDecimal(size).multiply(new BigDecimal("1.015")));
-                spotOrder.setOrderId(String.valueOf(((JSONObject)orderResult.getJSONArray("data").get(0)).getString("ordId")));
-                spotOrder.setStatus(99);
-                spotOrderMapper.insert(spotOrder);
-            }
-        }
-        try {
-            Thread.sleep(500);
-        } catch (Exception e) {
+        }catch (Exception e) {
             e.printStackTrace();
         }
 
