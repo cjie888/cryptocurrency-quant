@@ -173,7 +173,7 @@ public class SpotV5Service {
                 piggyBankPurchaseRedemption.setSide("redempt");
                 JSONObject result1 = fundingAPIService.piggyBankPurchaseRedemption(site, piggyBankPurchaseRedemption);
                 log.info("transfer {} {} from financial to asset", transferAmount, JSON.toJSONString(result1));
-                Thread.sleep(300);
+                Thread.sleep(500);
             } catch (Exception e) {
                 //ignore
             }
@@ -189,7 +189,7 @@ public class SpotV5Service {
                 log.info("transfer {} {} from asset to spot error", size, baseCurrency, e);
             }
             try {
-                Thread.sleep(300);
+                Thread.sleep(500);
             } catch (Exception e) {
                 //ignore
             }
@@ -254,7 +254,7 @@ public class SpotV5Service {
             JSONObject result1 = fundingAPIService.piggyBankPurchaseRedemption(site, piggyBankPurchaseRedemption);
             log.info("transfer {} {} from financial to asset", transferAmount, JSON.toJSONString(result1));
             try {
-                Thread.sleep(300);
+                Thread.sleep(500);
             } catch (Exception e) {
                 //ignore
             }
