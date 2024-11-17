@@ -18,9 +18,9 @@ public class TransferTask {
     @Scheduled(cron = "29 50 */1 * * ?")
     public void transfer() {
 
-        transferService.transfer("okexsub2", "MANA", "1", 3.0);
-//        transferService.transfer("okex", "DOGE", "1000", 3.0);
-//        transferService.transfer("okex", "OKB", "10", 3.0);
+//        transferService.transfer("okexsub2", "MANA", "1", 3.0);
+        transferService.transfer("okex", "DOGE", "100", 3.0);
+        transferService.transfer("okex", "OKB", "0.3", 3.0);
 //        transferService.transfer("okexsub1", "ETH", "0.05", 3.0);
 //        transferService.transfer("okex", "AVAX", "1", 3.0);
 //        transferService.transfer("okex", "BTC", "0.0005", 3.0);
@@ -51,8 +51,7 @@ public class TransferTask {
 //
 //        transferService.transfer("okex", "ZIL", "100", 3.0);
 //        transferService.transfer("okex", "GRT", "10", 3.0);
-        transferService.transfer("okex", "EOS", "2", 3.0);
-//        transferService.transfer("okex", "XEM", "30", 3.0);
+//        transferService.transfer("okex", "EOS", "2", 3.0);
 //
 //        transferService.transfer("okexsub1", "BSV", "0.05", 3.0);
 //        transferService.transfer("okex", "DYDX", "5", 3.0);
@@ -64,7 +63,7 @@ public class TransferTask {
 
 
         transferService.transfer("okexsub2", "SOL", "0.1", 3.0);
-        transferService.transfer("okexsub2", "MATIC", "10", 3.0);
+//        transferService.transfer("okexsub2", "MATIC", "10", 3.0);
 //        transferService.transfer("okex", "ARB", "20", 3.0);
 //        transferService.transfer("okex", "BLUR", "20", 3.0);
         transferService.transfer("okex", "SUI", "10", 3.0);
