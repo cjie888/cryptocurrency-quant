@@ -14,6 +14,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 
 @Slf4j
@@ -35,15 +36,12 @@ public class TelegramMessageServiceImpl implements MessageService {
         headers.add("Referer", "https://www.okx.com");
         headers.add("user-agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.84 Safari/537.36");
 
-        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-        params.add("chat_id", chatId);
-        params.add("text", content);
 
-        HttpEntity requestEntity = new HttpEntity<>(params, headers);
+        HttpEntity requestEntity = new HttpEntity<>(headers);
 
 
 
-        String url = "https://api.telegram.org/bot" + token + "/sendMessage";
+        String urlString = "https://api.telegram.org/bot" + token + "/sendMessage"+ "?chat_id=" + chatId + "&text=" + content;
 
         SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
         requestFactory.setConnectTimeout(10000);// 设置超时
@@ -51,7 +49,7 @@ public class TelegramMessageServiceImpl implements MessageService {
         RestTemplate client = new RestTemplate(requestFactory);
 
         client.getMessageConverters().set(1, new StringHttpMessageConverter(StandardCharsets.UTF_8));
-        ResponseEntity<String> response = client.exchange(url, HttpMethod.GET, requestEntity, String.class);
+        ResponseEntity<String> response = client.exchange(urlString, HttpMethod.GET, requestEntity, String.class);
         String body = response.getBody();
         log.info(body);
     }
