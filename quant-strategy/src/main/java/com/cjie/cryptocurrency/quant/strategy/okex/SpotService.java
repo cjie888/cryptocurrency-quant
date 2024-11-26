@@ -417,7 +417,6 @@ public class SpotService {
                 }
             }
             StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.append(title);
             Set<String> allSymbols = new HashSet<>();
             allSymbols.addAll(buyCounts.keySet());
             allSymbols.addAll(sellCounts.keySet());
@@ -472,6 +471,7 @@ public class SpotService {
             }
             String message = MessageFormat.format("买数:{0},卖数:{1},总收益:{2}\r\n\r\n", buyCount, sellCount, allProfit.setScale(2, RoundingMode.DOWN).toPlainString());
             stringBuilder.insert(0, message);
+            stringBuilder.insert(0, title + "\r\n\r\n");
             messageService.sendMessage(title,  stringBuilder.toString());
 
         }
