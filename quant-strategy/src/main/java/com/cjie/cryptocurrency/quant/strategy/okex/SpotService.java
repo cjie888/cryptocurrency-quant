@@ -466,12 +466,12 @@ public class SpotService {
                         + ")，卖(次:" + sellCountSymbol
                         + ",量:" + sellAmountSymbol.setScale(3, RoundingMode.DOWN).stripTrailingZeros().toPlainString()
                         + ",价:" + sellSumSymbol.setScale(4, RoundingMode.DOWN).stripTrailingZeros().toPlainString()
-                        + "),收:" + profit.setScale(2, RoundingMode.DOWN).stripTrailingZeros().toPlainString() +  "\r\n\r\n");
+                        + "),收:" + profit.setScale(2, RoundingMode.DOWN).stripTrailingZeros().toPlainString() +  "\r\n");
 
             }
-            String message = MessageFormat.format("买数:{0},卖数:{1},总收益:{2}\r\n\r\n", buyCount, sellCount, allProfit.setScale(2, RoundingMode.DOWN).toPlainString());
+            String message = MessageFormat.format("买数:{0},卖数:{1},总收益:{2}\r\n", buyCount, sellCount, allProfit.setScale(2, RoundingMode.DOWN).toPlainString());
             stringBuilder.insert(0, message);
-            stringBuilder.insert(0, title + "\r\n\r\n");
+            stringBuilder.insert(0, title + "\r\n");
             messageService.sendMessage(title,  stringBuilder.toString());
 
         }
