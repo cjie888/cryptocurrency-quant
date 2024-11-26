@@ -97,9 +97,9 @@ public class SpotTask {
         symbols.add("DOGE-USDT");
         symbols.add("XLM-USDT");
 
-        symbols1.add("XRP-USDT");
-        symbols1.add("LINK-USDT");
-        symbols1.add("DOT-USDT");
+        symbols.add("XRP-USDT");
+        symbols.add("LINK-USDT");
+        symbols.add("DOT-USDT");
 
         symbols.add("IOTA-USDT");
         symbols.add("XTZ-USDT");
@@ -135,7 +135,7 @@ public class SpotTask {
 
         List<String> symbols2 = new ArrayList();
         symbols2.add("SOL-USDT");
-        symbols1.add("ETH-USDT");
+        symbols2.add("ETH-USDT");
         symbols2.addAll(symbols1);
 
         spotService.computeBenefit("每月买卖cjie8882", startTime, now, symbols2);
@@ -145,9 +145,9 @@ public class SpotTask {
         symbols.add("DOGE-USDT");
         symbols.add("XLM-USDT");
 
-        symbols1.add("XRP-USDT");
-        symbols1.add("LINK-USDT");
-        symbols1.add("DOT-USDT");
+        symbols.add("XRP-USDT");
+        symbols.add("LINK-USDT");
+        symbols.add("DOT-USDT");
 
         symbols.add("IOTA-USDT");
         symbols.add("XTZ-USDT");
@@ -195,9 +195,9 @@ public class SpotTask {
         symbols.add("DOGE-USDT");
         symbols.add("XLM-USDT");
 
-        symbols1.add("XRP-USDT");
-        symbols1.add("LINK-USDT");
-        symbols1.add("DOT-USDT");
+        symbols.add("XRP-USDT");
+        symbols.add("LINK-USDT");
+        symbols.add("DOT-USDT");
 
         symbols.add("IOTA-USDT");
         symbols.add("XTZ-USDT");
@@ -244,9 +244,9 @@ public class SpotTask {
         symbols.add("DOGE-USDT");
         symbols.add("XLM-USDT");
 
-        symbols1.add("XRP-USDT");
-        symbols1.add("LINK-USDT");
-        symbols1.add("DOT-USDT");
+        symbols.add("XRP-USDT");
+        symbols.add("LINK-USDT");
+        symbols.add("DOT-USDT");
 
         symbols.add("IOTA-USDT");
         symbols.add("XTZ-USDT");
