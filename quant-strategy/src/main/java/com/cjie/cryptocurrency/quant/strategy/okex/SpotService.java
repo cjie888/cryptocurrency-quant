@@ -417,6 +417,7 @@ public class SpotService {
                 }
             }
             StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append(title);
             Set<String> allSymbols = new HashSet<>();
             allSymbols.addAll(buyCounts.keySet());
             allSymbols.addAll(sellCounts.keySet());
