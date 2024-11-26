@@ -19,9 +19,11 @@ import com.cjie.cryptocurrency.quant.model.APIKey;
 import com.cjie.cryptocurrency.quant.model.CurrencyRatio;
 import com.cjie.cryptocurrency.quant.model.MineConfig;
 import com.cjie.cryptocurrency.quant.service.ApiKeyService;
-import com.cjie.cryptocurrency.quant.service.WeiXinMessageService;
+import com.cjie.cryptocurrency.quant.service.MessageService;
+import com.cjie.cryptocurrency.quant.service.MessageService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -70,7 +72,8 @@ public class MineService {
     private static int numPrecision = 8;
 
     @Autowired
-    private WeiXinMessageService weiXinMessageService;
+    @Qualifier("telegramMessageServiceImpl")
+    private MessageService messageService;
 
     @Autowired
     private CurrencyRatioMapper currencyRatioMapper;
@@ -126,7 +129,7 @@ public class MineService {
 
         StringBuilder sb = new StringBuilder();
 
-        String[] sites = new String[]{"coinall", "okex", "oktop"};
+        String[] sites = new String[]{"okex"};
         BigDecimal sum = BigDecimal.ZERO;
         ValuationTicker valuationTicker = getValuationTicker();
         for (String site  : sites) {
@@ -151,7 +154,7 @@ public class MineService {
         BigDecimal usdtSum = sum.multiply(valuationTicker.getLast()).setScale(8, RoundingMode.DOWN);
         BigDecimal cnySum = usdtSum.multiply(valuationTicker.getUsdCnyRate()).setScale(8, RoundingMode.DOWN);
         sb.append("all").append(":").append(sum).append("usdt:").append(usdtSum).append("cny:").append(cnySum);
-        weiXinMessageService.sendMessage("balance",  sb.toString());
+        messageService.sendMessage("balance",  sb.toString());
 
     }
 

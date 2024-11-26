@@ -21,11 +21,12 @@ import com.cjie.cryptocurrency.quant.model.APIKey;
 import com.cjie.cryptocurrency.quant.model.SpotOrder;
 import com.cjie.cryptocurrency.quant.model.SwapOrder;
 import com.cjie.cryptocurrency.quant.service.ApiKeyService;
-import com.cjie.cryptocurrency.quant.service.WeiXinMessageService;
+import com.cjie.cryptocurrency.quant.service.MessageService;
 import javafx.scene.layout.BackgroundImage;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -64,7 +65,8 @@ public class SpotService {
     private AccountAPIService accountAPIService;
 
     @Autowired
-    private WeiXinMessageService weiXinMessageService;
+    @Qualifier("telegramMessageServiceImpl")
+    private MessageService messageService;
 
 
     public void netGrid(String site, String symbol, String size, Double increment) {
@@ -469,7 +471,7 @@ public class SpotService {
             }
             String message = MessageFormat.format("买数:{0},卖数:{1},总收益:{2}\r\n\r\n", buyCount, sellCount, allProfit.setScale(2, RoundingMode.DOWN).toPlainString());
             stringBuilder.insert(0, message);
-            weiXinMessageService.sendMessage(title,  stringBuilder.toString());
+            messageService.sendMessage(title,  stringBuilder.toString());
 
         }
     }

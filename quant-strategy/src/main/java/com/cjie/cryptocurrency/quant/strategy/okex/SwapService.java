@@ -13,10 +13,11 @@ import com.cjie.cryptocurrency.quant.api.okex.service.swap.SwapTradeAPIService;
 import com.cjie.cryptocurrency.quant.api.okex.service.swap.SwapUserAPIServive;
 import com.cjie.cryptocurrency.quant.mapper.SwapOrderMapper;
 import com.cjie.cryptocurrency.quant.model.SwapOrder;
-import com.cjie.cryptocurrency.quant.service.WeiXinMessageService;
+import com.cjie.cryptocurrency.quant.service.MessageService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -42,7 +43,8 @@ public class SwapService {
     private AccountAPIService accountAPIService;
 
     @Autowired
-    private WeiXinMessageService weiXinMessageService;
+    @Qualifier("telegramMessageServiceImpl")
+    private MessageService messageService;
 
     @Autowired
     private SwapOrderMapper swapOrderMapper;
@@ -118,7 +120,7 @@ public class SwapService {
         }
         sb.append("总资产" + allAsset + ", 总收益" + benefit);
         log.info("swap asset:{}", sb.toString());
-        weiXinMessageService.sendMessage("收益", sb.toString());
+        messageService.sendMessage("收益", sb.toString());
     }
 
 
@@ -185,7 +187,7 @@ public class SwapService {
             if (lastOrder != null && lastOrder.getType() == 1) {
                 return;
             }
-            weiXinMessageService.sendMessage("平空开多", "平空开多" + instrumentId  + ",价格：" + currentPrice);
+            messageService.sendMessage("平空开多", "平空开多" + instrumentId  + ",价格：" + currentPrice);
             SwapOrder swapOrder = SwapOrder.builder()
                     .createTime(new Date())
                     .instrumentId(instrumentId)
@@ -201,7 +203,7 @@ public class SwapService {
             if (lastOrder != null && lastOrder.getType() == 2) {
                 return;
             }
-            weiXinMessageService.sendMessage("平多开空", "平多开空" + instrumentId  + ",价格：" + currentPrice);
+            messageService.sendMessage("平多开空", "平多开空" + instrumentId  + ",价格：" + currentPrice);
             SwapOrder swapOrder = SwapOrder.builder()
                     .createTime(new Date())
                     .instrumentId(instrumentId)

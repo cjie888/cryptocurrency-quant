@@ -23,12 +23,13 @@ import com.cjie.cryptocurrency.quant.api.okex.v5.service.marketData.MarketDataAP
 import com.cjie.cryptocurrency.quant.api.okex.v5.service.trade.TradeAPIService;
 import com.cjie.cryptocurrency.quant.mapper.SwapOrderMapper;
 import com.cjie.cryptocurrency.quant.model.SwapOrder;
-import com.cjie.cryptocurrency.quant.service.WeiXinMessageService;
+import com.cjie.cryptocurrency.quant.service.MessageService;
 import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -53,7 +54,8 @@ public class SwapV5Service {
     private FundingAPIService fundingAPIService;
 
     @Autowired
-    private WeiXinMessageService weiXinMessageService;
+    @Qualifier("telegramMessageServiceImpl")
+    private MessageService messageService;
 
     @Autowired
     private SwapOrderMapper swapOrderMapper;
@@ -138,7 +140,7 @@ public class SwapV5Service {
                 }
                 if (StringUtils.isNotBlank(positionInfo.getMgnRatio()) && Double.valueOf(positionInfo.getMgnRatio()) < 1) {
                     //停止交易，报警
-                    weiXinMessageService.sendMessage("保证金不足100%", "保证金不足100%，" + instrumentId);
+                    messageService.sendMessage("保证金不足100%", "保证金不足100%，" + instrumentId);
                     return false;
                 }
             }

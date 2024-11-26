@@ -6,11 +6,12 @@ import com.cjie.cryptocurrency.quant.api.okex.service.swap.SwapMarketAPIService;
 import com.cjie.cryptocurrency.quant.backtest.StrategyBuilder;
 import com.cjie.cryptocurrency.quant.mapper.SwapOrderMapper;
 import com.cjie.cryptocurrency.quant.model.SwapOrder;
-import com.cjie.cryptocurrency.quant.service.WeiXinMessageService;
+import com.cjie.cryptocurrency.quant.service.MessageService;
 import com.dangdang.ddframe.job.api.simple.SimpleJob;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.ta4j.core.*;
 import org.ta4j.core.num.PrecisionNum;
@@ -39,7 +40,8 @@ public abstract class BaseSwapStrategyJob  {
     private Map<String,TradingRecord> shortTradingRecordMap = new HashMap<>();
 
     @Autowired
-    private WeiXinMessageService weiXinMessageService;
+    @Qualifier("telegramMessageServiceImpl")
+    private MessageService messageService;
 
     @Autowired
     private SwapMarketAPIService swapMarketAPIService;

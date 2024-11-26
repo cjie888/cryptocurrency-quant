@@ -17,11 +17,12 @@ import com.cjie.cryptocurrency.quant.mapper.SpotOrderMapper;
 import com.cjie.cryptocurrency.quant.model.APIKey;
 import com.cjie.cryptocurrency.quant.model.SpotOrder;
 import com.cjie.cryptocurrency.quant.service.ApiKeyService;
-import com.cjie.cryptocurrency.quant.service.WeiXinMessageService;
+import com.cjie.cryptocurrency.quant.service.MessageService;
 import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -57,7 +58,8 @@ public class SpotV5Service {
     private AccountAPIV5Service accountAPIService;
 
     @Autowired
-    private WeiXinMessageService weiXinMessageService;
+    @Qualifier("telegramMessageServiceImpl")
+    private MessageService messageService;
 
 
     private static Map<String, Integer> STATES = Maps.newHashMap();

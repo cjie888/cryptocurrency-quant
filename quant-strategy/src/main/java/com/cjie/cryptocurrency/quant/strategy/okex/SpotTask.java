@@ -81,68 +81,43 @@ public class SpotTask {
         LocalDateTime startTime = now.withHour(0).withMinute(0).withSecond(0).withNano(0);
 
         List<String> symbols1 = new ArrayList();
-        symbols1.add("ETH-USDT");
-        symbols1.add("BCH-USDT");
-        symbols1.add("LTC-USDT");
-        symbols1.add("XRP-USDT");
-        symbols1.add("ETC-USDT");
-        symbols1.add("BSV-USDT");
-        symbols1.add("SUSHI-USDT");
-        symbols1.add("ATOM-USDT");
-        symbols1.add("LINK-USDT");
-        symbols1.add("DOT-USDT");
         //spotService.netGrid("okexsub2", "MANA-USDT", "1", 0.03);
         //spotService.computeBenefit("每日买卖cjie888", startTime, now, symbols1);
 
 
 
         List<String> symbols2 = new ArrayList();
-        symbols2.add("MANA-USDT");
         symbols2.add("SOL-USDT");
-        symbols2.add("MATIC-USDT");
+        symbols2.add("ETH-USDT");
         symbols2.addAll(symbols1);
         spotService.computeBenefit("每日买卖cjie888& cjie8882", startTime, now, symbols2);
 
 
         List<String> symbols = new ArrayList();
-        symbols.add("EOS-USDT");
-        symbols.add("OKT-USDT");
-        symbols.add("UNI-USDT");
         symbols.add("DOGE-USDT");
         symbols.add("XLM-USDT");
-        symbols.add("DYDX-USDT");
+
+        symbols1.add("XRP-USDT");
+        symbols1.add("LINK-USDT");
+        symbols1.add("DOT-USDT");
 
         symbols.add("IOTA-USDT");
         symbols.add("XTZ-USDT");
-        symbols.add("AAVE-USDT");
         symbols.add("AVAX-USDT");
         symbols.add("ICX-USDT");
-        symbols.add("OP-USDT");
 
 
-        symbols.add("THETA-USDT");
-        symbols.add("APT-USDT");
         symbols.add("BNB-USDT");
         symbols.add("TON-USDT");
         symbols.add("FTM-USDT");
-        symbols.add("ARB-USDT");
 
 
         symbols.add("SUI-USDT");
-        symbols.add("BLUR-USDT");
         symbols.add("BTC-USDT");
         symbols.add("OKB-USDT");
-        symbols.add("XMR-USDT");
-        symbols.add("ZEC-USDT");
         symbols.add("FIL-USDT");
-        symbols.add("ZIL-USDT");
-
 
         symbols.add("ADA-USDT");
-        symbols.add("XEM-USDT");
-        symbols.add("DASH-USDT");
-        symbols.add("GRT-USDT");
-        symbols.add("COMP-USDT");
 
         spotService.computeBenefit("每日买卖main", startTime, now, symbols);
 
@@ -155,67 +130,42 @@ public class SpotTask {
         LocalDateTime startTime = now.withDayOfMonth(1).withHour(0).withMinute(0).withSecond(0).withNano(0);
 
         List<String> symbols1 = new ArrayList();
-        symbols1.add("ETH-USDT");
-        symbols1.add("BCH-USDT");
-        symbols1.add("LTC-USDT");
-        symbols1.add("XRP-USDT");
-        symbols1.add("ETC-USDT");
-        symbols1.add("BSV-USDT");
-        symbols1.add("SUSHI-USDT");
-        symbols1.add("ATOM-USDT");
-        symbols1.add("LINK-USDT");
-        symbols1.add("DOT-USDT");
         //spotService.computeBenefit("每月买卖cjie888", startTime, now, symbols1);
 
 
         List<String> symbols2 = new ArrayList();
-        symbols2.add("MANA-USDT");
         symbols2.add("SOL-USDT");
-        symbols2.add("MATIC-USDT");
+        symbols1.add("ETH-USDT");
         symbols2.addAll(symbols1);
 
         spotService.computeBenefit("每月买卖cjie888&cjie8882", startTime, now, symbols2);
 
 
         List<String> symbols = new ArrayList();
-        symbols.add("EOS-USDT");
-        symbols.add("OKT-USDT");
-        symbols.add("UNI-USDT");
         symbols.add("DOGE-USDT");
         symbols.add("XLM-USDT");
-        symbols.add("DYDX-USDT");
+
+        symbols1.add("XRP-USDT");
+        symbols1.add("LINK-USDT");
+        symbols1.add("DOT-USDT");
 
         symbols.add("IOTA-USDT");
         symbols.add("XTZ-USDT");
-        symbols.add("AAVE-USDT");
         symbols.add("AVAX-USDT");
         symbols.add("ICX-USDT");
-        symbols.add("OP-USDT");
 
 
-        symbols.add("THETA-USDT");
-        symbols.add("APT-USDT");
         symbols.add("BNB-USDT");
         symbols.add("TON-USDT");
         symbols.add("FTM-USDT");
-        symbols.add("ARB-USDT");
 
 
         symbols.add("SUI-USDT");
-        symbols.add("BLUR-USDT");
         symbols.add("BTC-USDT");
         symbols.add("OKB-USDT");
-        symbols.add("XMR-USDT");
-        symbols.add("ZEC-USDT");
         symbols.add("FIL-USDT");
-        symbols.add("ZIL-USDT");
-
 
         symbols.add("ADA-USDT");
-        symbols.add("XEM-USDT");
-        symbols.add("DASH-USDT");
-        symbols.add("GRT-USDT");
-        symbols.add("COMP-USDT");
 
         spotService.computeBenefit("每月买卖main", startTime, now, symbols);
 
@@ -229,23 +179,12 @@ public class SpotTask {
         LocalDateTime startTime = now.withDayOfMonth(1).withHour(0).withMinute(0).withSecond(0).withNano(0)
                 .minusMonths(2);
         List<String> symbols1 = new ArrayList();
-        symbols1.add("ETH-USDT");
-        symbols1.add("BCH-USDT");
-        symbols1.add("LTC-USDT");
-        symbols1.add("XRP-USDT");
-        symbols1.add("ETC-USDT");
-        symbols1.add("BSV-USDT");
-        symbols1.add("SUSHI-USDT");
-        symbols1.add("ATOM-USDT");
-        symbols1.add("LINK-USDT");
-        symbols1.add("DOT-USDT");
         //spotService.computeBenefit("每季买卖cjie888", startTime, now, symbols1);
 
 
         List<String> symbols2 = new ArrayList();
-        symbols2.add("MANA-USDT");
         symbols2.add("SOL-USDT");
-        symbols2.add("MATIC-USDT");
+        symbols2.add("ETH-USDT");
         symbols2.addAll(symbols1);
 
         spotService.computeBenefit("每季买卖cjie888&cjie8882", startTime, now, symbols2);
@@ -253,44 +192,30 @@ public class SpotTask {
 
 
         List<String> symbols = new ArrayList();
-        symbols.add("EOS-USDT");
-        symbols.add("OKT-USDT");
-        symbols.add("UNI-USDT");
         symbols.add("DOGE-USDT");
         symbols.add("XLM-USDT");
-        symbols.add("DYDX-USDT");
+
+        symbols1.add("XRP-USDT");
+        symbols1.add("LINK-USDT");
+        symbols1.add("DOT-USDT");
 
         symbols.add("IOTA-USDT");
         symbols.add("XTZ-USDT");
-        symbols.add("AAVE-USDT");
         symbols.add("AVAX-USDT");
         symbols.add("ICX-USDT");
-        symbols.add("OP-USDT");
 
 
-        symbols.add("THETA-USDT");
-        symbols.add("APT-USDT");
         symbols.add("BNB-USDT");
         symbols.add("TON-USDT");
         symbols.add("FTM-USDT");
-        symbols.add("ARB-USDT");
 
 
         symbols.add("SUI-USDT");
-        symbols.add("BLUR-USDT");
         symbols.add("BTC-USDT");
         symbols.add("OKB-USDT");
-        symbols.add("XMR-USDT");
-        symbols.add("ZEC-USDT");
         symbols.add("FIL-USDT");
-        symbols.add("ZIL-USDT");
-
 
         symbols.add("ADA-USDT");
-        symbols.add("XEM-USDT");
-        symbols.add("DASH-USDT");
-        symbols.add("GRT-USDT");
-        symbols.add("COMP-USDT");
 
         spotService.computeBenefit("每季买卖main", startTime, now, symbols);
 
@@ -304,67 +229,42 @@ public class SpotTask {
                 .minusMonths(11);
 
         List<String> symbols1 = new ArrayList();
-        symbols1.add("ETH-USDT");
-        symbols1.add("BCH-USDT");
-        symbols1.add("LTC-USDT");
-        symbols1.add("XRP-USDT");
-        symbols1.add("ETC-USDT");
-        symbols1.add("BSV-USDT");
-        symbols1.add("SUSHI-USDT");
-        symbols1.add("ATOM-USDT");
-        symbols1.add("LINK-USDT");
-        symbols1.add("DOT-USDT");
-        spotService.computeBenefit("每年买卖cjie888", startTime, now, symbols1);
+        //spotService.computeBenefit("每年买卖cjie888", startTime, now, symbols1);
 
 
         List<String> symbols2 = new ArrayList();
-        symbols2.add("MANA-USDT");
         symbols2.add("SOL-USDT");
-        symbols2.add("MATIC-USDT");
+        symbols2.add("ETH-USDT");
 
         spotService.computeBenefit("每年买卖cjie8882", startTime, now, symbols2);
 
 
 
         List<String> symbols = new ArrayList();
-        symbols.add("EOS-USDT");
-        symbols.add("OKT-USDT");
-        symbols.add("UNI-USDT");
         symbols.add("DOGE-USDT");
         symbols.add("XLM-USDT");
-        symbols.add("DYDX-USDT");
+
+        symbols1.add("XRP-USDT");
+        symbols1.add("LINK-USDT");
+        symbols1.add("DOT-USDT");
 
         symbols.add("IOTA-USDT");
         symbols.add("XTZ-USDT");
-        symbols.add("AAVE-USDT");
         symbols.add("AVAX-USDT");
         symbols.add("ICX-USDT");
-        symbols.add("OP-USDT");
 
 
-        symbols.add("THETA-USDT");
-        symbols.add("APT-USDT");
         symbols.add("BNB-USDT");
         symbols.add("TON-USDT");
         symbols.add("FTM-USDT");
-        symbols.add("ARB-USDT");
 
 
         symbols.add("SUI-USDT");
-        symbols.add("BLUR-USDT");
         symbols.add("BTC-USDT");
         symbols.add("OKB-USDT");
-        symbols.add("XMR-USDT");
-        symbols.add("ZEC-USDT");
         symbols.add("FIL-USDT");
-        symbols.add("ZIL-USDT");
-
 
         symbols.add("ADA-USDT");
-        symbols.add("XEM-USDT");
-        symbols.add("DASH-USDT");
-        symbols.add("GRT-USDT");
-        symbols.add("COMP-USDT");
 
         spotService.computeBenefit("每年买卖main", startTime, now, symbols);
 

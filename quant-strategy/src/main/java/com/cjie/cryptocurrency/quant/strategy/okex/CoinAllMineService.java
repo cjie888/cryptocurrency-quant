@@ -17,9 +17,10 @@ import com.cjie.cryptocurrency.quant.mapper.CurrencyRatioMapper;
 import com.cjie.cryptocurrency.quant.mapper.MineConfigMapper;
 import com.cjie.cryptocurrency.quant.model.CurrencyRatio;
 import com.cjie.cryptocurrency.quant.model.MineConfig;
-import com.cjie.cryptocurrency.quant.service.WeiXinMessageService;
+import com.cjie.cryptocurrency.quant.service.MessageService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -56,7 +57,8 @@ public class CoinAllMineService {
     private AccountAPIService accountAPIService;
 
     @Autowired
-    private WeiXinMessageService weiXinMessageService;
+    @Qualifier("telegramMessageServiceImpl")
+    private MessageService messageService;
 
     @Autowired
     private CurrencyRatioMapper currencyRatioMapper;
@@ -153,7 +155,7 @@ public class CoinAllMineService {
             log.info("close {} -{} mine, current price is {}", baseName, quotaName, marketPrice);
             mineConfig.setStatus(0);
             mineConfigMapper.updateByPrimaryKey(mineConfig);
-            weiXinMessageService.sendMessage("Mine Close", "price:" + marketPrice);
+            messageService.sendMessage("Mine Close", "price:" + marketPrice);
         }
 
         //ft:usdt=1:0.6
@@ -349,7 +351,7 @@ public class CoinAllMineService {
             sb.append(",");
             sb.append(currentRatio.getCurrentPrice());
 
-            weiXinMessageService.sendMessage("ratio changed", sb.toString());
+            messageService.sendMessage("ratio changed", sb.toString());
             return;
         }
 
@@ -662,7 +664,7 @@ public class CoinAllMineService {
                     sb.append(account.getCurrency() + ":" + account.getBalance() + "\r\n\r\n");
                 }
             }
-            weiXinMessageService.sendMessage("balance",  sb.toString());
+            messageService.sendMessage("balance",  sb.toString());
         }
     }
 }
