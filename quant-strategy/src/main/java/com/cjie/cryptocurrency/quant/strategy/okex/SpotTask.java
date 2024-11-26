@@ -90,7 +90,7 @@ public class SpotTask {
         symbols2.add("SOL-USDT");
         symbols2.add("ETH-USDT");
         symbols2.addAll(symbols1);
-        spotService.computeBenefit("每日买卖cjie888& cjie8882", startTime, now, symbols2);
+        spotService.computeBenefit("每日买卖cjie8882", startTime, now, symbols2);
 
 
         List<String> symbols = new ArrayList();
@@ -138,7 +138,7 @@ public class SpotTask {
         symbols1.add("ETH-USDT");
         symbols2.addAll(symbols1);
 
-        spotService.computeBenefit("每月买卖cjie888&cjie8882", startTime, now, symbols2);
+        spotService.computeBenefit("每月买卖cjie8882", startTime, now, symbols2);
 
 
         List<String> symbols = new ArrayList();
@@ -187,7 +187,7 @@ public class SpotTask {
         symbols2.add("ETH-USDT");
         symbols2.addAll(symbols1);
 
-        spotService.computeBenefit("每季买卖cjie888&cjie8882", startTime, now, symbols2);
+        spotService.computeBenefit("每季买卖cjie8882", startTime, now, symbols2);
 
 
 
