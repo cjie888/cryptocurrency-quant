@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cjie.cryptocurrency.quant.mapper.DexOrderMapper">
+  <resultMap id="BaseResultMap" type="com.cjie.cryptocurrency.quant.model.DexOrder">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="chain_id" jdbcType="VARCHAR" property="chainId" />
+    <result column="from_address" jdbcType="VARCHAR" property="fromAddress" />
+    <result column="to_address" jdbcType="VARCHAR" property="toAddress" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="size" jdbcType="DECIMAL" property="size" />
+    <result column="price" jdbcType="DECIMAL" property="price" />
+    <result column="is_mock" jdbcType="TINYINT" property="isMock" />
+    <result column="tx_id" jdbcType="VARCHAR" property="txId" />
+    <result column="status" jdbcType="INTEGER" property="status" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, chain_id, from_address, to_address, create_time, size, price, is_mock, tx_id,status
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from dex_order
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from dex_order
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.cjie.cryptocurrency.quant.model.DexOrder">
+    insert into dex_order (id, chain_id, from_address, to_address, create_time,
+    size, price, is_mock, tx_id,status )
+    values (#{id,jdbcType=BIGINT}, #{chainId,jdbcType=VARCHAR},
+    #{fromAddress,jdbcType=VARCHAR},#{toAddress,jdbcType=VARCHAR},
+    #{createTime,jdbcType=TIMESTAMP}, #{size,jdbcType=DECIMAL}, #{price,jdbcType=DECIMAL},
+      #{isMock,jdbcType=TINYINT}, #{txId,jdbcType=VARCHAR},#{status,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.cjie.cryptocurrency.quant.model.DexOrder">
+    insert into dex_order
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="chainId != null">
+        chain_id,
+      </if>
+      <if test="fromAddress != null">
+        from_address,
+      </if>
+      <if test="toAddress != null">
+        to_address,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="size != null">
+        size,
+      </if>
+      <if test="price != null">
+        price,
+      </if>
+      <if test="isMock != null">
+        is_mock,
+      </if>
+      <if test="txId != null">
+        tx_id,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="chainId != null">
+        #{chainId,jdbcType=VARCHAR},
+      </if>
+      <if test="fromAddress != null">
+        #{fromAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="toAddress != null">
+        #{toAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="size != null">
+        #{size,jdbcType=DECIMAL},
+      </if>
+      <if test="price != null">
+        #{price,jdbcType=DECIMAL},
+      </if>
+      <if test="isMock != null">
+        #{isMock,jdbcType=TINYINT},
+      </if>
+      <if test="txId != null">
+        #{txId,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.cjie.cryptocurrency.quant.model.DexOrder">
+    update dex_order
+    <set>
+      <if test="chainId != null">
+        chain_id = #{chainId,jdbcType=VARCHAR},
+      </if>
+      <if test="fromAddress != null">
+        from_address = #{fromAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="toAddress != null">
+        to_address = #{toAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="size != null">
+        size = #{size,jdbcType=DECIMAL},
+      </if>
+      <if test="price != null">
+        price = #{price,jdbcType=DECIMAL},
+      </if>
+      <if test="isMock != null">
+        is_mock = #{isMock,jdbcType=TINYINT},
+      </if>
+      <if test="txId != null">
+        tx_id = #{txId,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        status = #{status,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.cjie.cryptocurrency.quant.model.DexOrder">
+    update dex_order
+    set chain_id = #{chainId,jdbcType=VARCHAR},
+      from_address = #{fromAddress,jdbcType=VARCHAR},
+      to_address = #{toAddress,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      size = #{size,jdbcType=DECIMAL},
+      price = #{price,jdbcType=DECIMAL},
+      is_mock = #{isMock,jdbcType=TINYINT},
+      tx_id = #{txId,jdbcType=VARCHAR},
+      status = #{status,jdbcType=INTEGER},
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+
+  <select id="selectByFromAddress" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from dex_order
+    where chain_id = #{chainId} and from_address = #{fromAddress}
+    limit 1
+  </select>
+  <select id="selectByToAddress" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from dex_order
+    where chain_id = #{chainId} and to_address = #{toAddress}
+    limit 1
+  </select>
+<!--  <update id="updateStatus">-->
+<!--    update dex_order-->
+<!--    set status = #{status,jdbcType=INTEGER}-->
+<!--    where tx_id = #{txId,jdbcType=VARCHAR}-->
+<!--  </update>-->
+
+</mapper>
