@@ -83,6 +83,8 @@ public class DexService {
             BigDecimal tradeAmount = amount.multiply(new BigDecimal("10").pow(tokenDeciamls));
             log.info("Token price exceed expect price, selling, token:{}, amount:{}", tokenAddress, tradeAmount);
             dexApiService.buy(chainId, tokenAddress, tradeAmount.toPlainString());
+            messageService.sendMessage("Buy", "Buy " + tokenDetail.getString("symbol") + " , amout:" + amount.toPlainString());
+
         }
 
     }

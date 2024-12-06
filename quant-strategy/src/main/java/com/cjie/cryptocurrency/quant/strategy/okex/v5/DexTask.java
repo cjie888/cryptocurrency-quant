@@ -18,5 +18,7 @@ public class DexTask {
     public  void netGrid() {
 //        dexService.sell("501", "85cQsFgbi8mBZxiPppbpPXuV7j1hA8tBwhjF4gKW6mHg", new BigDecimal("0.00004"),new BigDecimal("1000000"));
         dexService.sell("501", "721VwRWjDbEDMvaKr3y1TQhX6YV3zj4cQKTxh7typump", new BigDecimal("0.0004"),new BigDecimal("120000"));
+        dexService.sell("501", "5U5vTXQnpoFY8waWZhVkBGbMin2p5mfd6tuRScK2pump", new BigDecimal("0.0005"),new BigDecimal("100000"));
+
     }
 }
