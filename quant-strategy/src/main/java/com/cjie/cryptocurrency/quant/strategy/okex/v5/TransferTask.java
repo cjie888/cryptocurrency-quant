@@ -21,8 +21,8 @@ public class TransferTask {
 //        transferService.transfer("okexsub2", "MANA", "1", 3.0);
         transferService.transfer("okex", "DOGE", "100", 3.0);
         transferService.transfer("okex", "OKB", "0.3", 3.0);
-//        transferService.transfer("okexsub1", "ETH", "0.05", 3.0);
-//        transferService.transfer("okex", "AVAX", "1", 3.0);
+        transferService.transfer("okexsub1", "ETH", "0.05", 3.0);
+        transferService.transfer("okex", "AVAX", "0.5", 3.0);
 //        transferService.transfer("okex", "BTC", "0.0005", 3.0);
 //        transferService.transfer("okexsub1", "ETC", "1", 3.0);
 //        transferService.transfer("okexsub1", "ATOM", "1", 3.0);
@@ -38,7 +38,7 @@ public class TransferTask {
 //        transferService.transfer("okex", "THETA", "5", 3.0);
 //        transferService.transfer("okex", "XMR", "0.1", 3.0);
 //
-//        transferService.transfer("okexsub1", "XRP", "20", 3.0);
+        transferService.transfer("okexsub1", "XRP", "20", 3.0);
 //        transferService.transfer("okexsub1", "LTC", "0.1", 3.0);
 
 //        transferService.transfer("okex", "UNI", "1", 3.0);
@@ -46,7 +46,7 @@ public class TransferTask {
         transferService.transfer("okex", "XLM", "30", 3.0);
 //        transferService.transfer("okex", "COMP", "0.05", 3.0);
 //
-//        transferService.transfer("okexsub1", "LINK", "0.5", 3.0);
+        transferService.transfer("okexsub1", "LINK", "1", 3.0);
 //        transferService.transfer("okexsub1", "SUSHI", "1", 3.0);
 //
 //        transferService.transfer("okex", "ZIL", "100", 3.0);
@@ -58,8 +58,8 @@ public class TransferTask {
         transferService.transfer("okex", "FTM", "10", 3.0);
 //        transferService.transfer("okex", "OP", "5", 3.0);
 //        transferService.transfer("okex", "APT", "1", 3.0);
-//        transferService.transfer("okex", "BNB", "0.05", 3.0);
-//        transferService.transfer("okex", "TON", "10", 3.0);
+        transferService.transfer("okex", "BNB", "0.05", 3.0);
+        transferService.transfer("okex", "TON", "10", 3.0);
 
 
         transferService.transfer("okexsub2", "SOL", "0.1", 3.0);
