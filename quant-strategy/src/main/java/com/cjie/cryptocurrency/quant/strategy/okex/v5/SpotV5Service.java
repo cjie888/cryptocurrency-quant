@@ -216,7 +216,7 @@ public class SpotV5Service {
                 PlaceOrder placeOrderParam = new PlaceOrder();
                 placeOrderParam.setInstId(symbol);
                 placeOrderParam.setTdMode("cash");
-                placeOrderParam.setPx(String.valueOf(Double.parseDouble(spotTicker.getLast())));
+                placeOrderParam.setPx(new BigDecimal(spotTicker.getLast()).toPlainString());
                 placeOrderParam.setSz(new BigDecimal(size).multiply(new BigDecimal("3")).toPlainString());
                 placeOrderParam.setSide("buy");
                 placeOrderParam.setOrdType("limit");
@@ -320,7 +320,7 @@ public class SpotV5Service {
                 placeOrderParam.setTdMode("cash");
                 //placeOrderParam.setPx(spotTicker.getLast());
                 placeOrderParam.setSz(size);
-                placeOrderParam.setPx(String.valueOf(Double.parseDouble(spotTicker.getLast())));
+                placeOrderParam.setPx(new BigDecimal(spotTicker.getLast()).toPlainString());
 
                 placeOrderParam.setSide("sell");
                 placeOrderParam.setOrdType("limit");
@@ -354,7 +354,7 @@ public class SpotV5Service {
                 placeOrderParam.setInstId(symbol);
                 placeOrderParam.setTdMode("cash");
                 //placeOrderParam.setPx(spotTicker.getLast());
-                placeOrderParam.setPx(String.valueOf(Double.parseDouble(spotTicker.getLast())));
+                placeOrderParam.setPx(new BigDecimal(spotTicker.getLast()).toPlainString());
 
                 placeOrderParam.setSz(new BigDecimal(size).multiply(new BigDecimal("1.015")).toPlainString());
                 placeOrderParam.setSide("buy");
@@ -384,6 +384,11 @@ public class SpotV5Service {
             }
         }catch (Exception e) {
             e.printStackTrace();
+            try {
+                Thread.sleep(500);
+            } catch (Exception e1) {
+                e1.printStackTrace();
+            }
         }
 
     }
