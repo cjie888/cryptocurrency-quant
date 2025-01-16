@@ -112,7 +112,7 @@ public class SpotTask {
 
         symbols.add("BNB-USDT");
         symbols.add("TON-USDT");
-        symbols.add("FTM-USDT");
+//        symbols.add("FTM-USDT");
 
 
         symbols.add("SUI-USDT");
@@ -162,7 +162,7 @@ public class SpotTask {
 
         symbols.add("BNB-USDT");
         symbols.add("TON-USDT");
-        symbols.add("FTM-USDT");
+//        symbols.add("FTM-USDT");
 
 
         symbols.add("SUI-USDT");
@@ -214,7 +214,7 @@ public class SpotTask {
 
         symbols.add("BNB-USDT");
         symbols.add("TON-USDT");
-        symbols.add("FTM-USDT");
+//        symbols.add("FTM-USDT");
 
 
         symbols.add("SUI-USDT");
@@ -264,7 +264,7 @@ public class SpotTask {
 
         symbols.add("BNB-USDT");
         symbols.add("TON-USDT");
-        symbols.add("FTM-USDT");
+//        symbols.add("FTM-USDT");
 
 
         symbols.add("SUI-USDT");
