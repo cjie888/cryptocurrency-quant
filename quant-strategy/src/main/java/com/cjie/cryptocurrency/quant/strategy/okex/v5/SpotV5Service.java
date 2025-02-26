@@ -273,6 +273,11 @@ public class SpotV5Service {
                 }
 
             }
+            if (Objects.nonNull(quotaAccountResult) && "0".equals(quotaAccountResult.getCode())
+                    && (quotaAccountResult.getData().get(0).getDetails().size() == 0 ||
+                    Double.parseDouble(quotaAccountResult.getData().get(0).getDetails().get(0).getAvailEq()) < Double.parseDouble(size) * currentPrice * 1.01)) {
+                return;
+            }
 
             if (lastOrder == null) {
                 //买入
