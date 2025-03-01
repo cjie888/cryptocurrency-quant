@@ -201,7 +201,7 @@ public class SpotV5Service {
             baseAccountResult = accountAPIService.getBalance(site, baseCurrency);
             if (Objects.nonNull(baseAccountResult) && "0".equals(baseAccountResult.getCode()) &&
                     (baseAccountResult.getData().get(0).getDetails().size() == 0 ||
-                            Double.parseDouble(baseAccountResult.getData().get(0).getDetails().get(0).getAvailEq()) < Double.parseDouble(size) * 1.01)) {
+                            Double.parseDouble(baseAccountResult.getData().get(0).getDetails().get(0).getAvailEq()) < Double.parseDouble(size) * 1.015)) {
                 //3倍买入
 
                 //{
@@ -273,13 +273,13 @@ public class SpotV5Service {
                 }
 
             }
-            if (Objects.nonNull(quotaAccountResult) && "0".equals(quotaAccountResult.getCode())
-                    && (quotaAccountResult.getData().get(0).getDetails().size() == 0 ||
-                    Double.parseDouble(quotaAccountResult.getData().get(0).getDetails().get(0).getAvailEq()) < Double.parseDouble(size) * currentPrice * 1.01)) {
-                return;
-            }
 
             if (lastOrder == null) {
+                if (Objects.nonNull(quotaAccountResult) && "0".equals(quotaAccountResult.getCode())
+                        && (quotaAccountResult.getData().get(0).getDetails().size() == 0 ||
+                        Double.parseDouble(quotaAccountResult.getData().get(0).getDetails().get(0).getAvailEq()) < Double.parseDouble(size) * currentPrice * 1.015)) {
+                    return;
+                }
                 //买入
 
                 PlaceOrder placeOrderParam = new PlaceOrder();
@@ -353,7 +353,11 @@ public class SpotV5Service {
                 //价格下跌
                 //获取最新成交空单
                 //买入
-
+                if (Objects.nonNull(quotaAccountResult) && "0".equals(quotaAccountResult.getCode())
+                        && (quotaAccountResult.getData().get(0).getDetails().size() == 0 ||
+                        Double.parseDouble(quotaAccountResult.getData().get(0).getDetails().get(0).getAvailEq()) < Double.parseDouble(size) * currentPrice * 1.015)) {
+                    return;
+                }
 
                 PlaceOrder placeOrderParam = new PlaceOrder();
                 placeOrderParam.setInstId(symbol);
