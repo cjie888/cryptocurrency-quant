@@ -21,7 +21,7 @@ public class TransferTask {
 //        transferService.transfer("okexsub2", "MANA", "1", 3.0);
         transferService.transfer("okex", "DOGE", "100", 3.0);
         transferService.transfer("okex", "OKB", "0.5", 3.0);
-        transferService.transfer("okexsub1", "ETH", "0.05", 3.0);
+        transferService.transfer("okex", "ETH", "0.01", 3.0);
         transferService.transfer("okex", "AVAX", "0.5", 3.0);
         transferService.transfer("okex", "BTC", "0.0005", 3.0);
 //        transferService.transfer("okexsub1", "ETC", "1", 3.0);
@@ -30,7 +30,7 @@ public class TransferTask {
         transferService.transfer("okex", "IOTA", "30", 3.0);
 //        transferService.transfer("okex", "ZEC", "0.2", 3.0);
         transferService.transfer("okex", "FIL", "1", 3.0);
-        transferService.transfer("okexsub1", "DOT", "2", 3.0);
+        transferService.transfer("okex", "DOT", "2", 3.0);
 //        transferService.transfer("okexsub1", "BCH", "0.04", 3.0);
 
         transferService.transfer("okex", "ADA", "20", 3.0);
@@ -38,7 +38,7 @@ public class TransferTask {
 //        transferService.transfer("okex", "THETA", "5", 3.0);
 //        transferService.transfer("okex", "XMR", "0.1", 3.0);
 //
-        transferService.transfer("okexsub1", "XRP", "20", 3.0);
+        transferService.transfer("okex", "XRP", "20", 3.0);
 //        transferService.transfer("okexsub1", "LTC", "0.1", 3.0);
 
 //        transferService.transfer("okex", "UNI", "1", 3.0);
@@ -46,7 +46,7 @@ public class TransferTask {
         transferService.transfer("okex", "XLM", "30", 3.0);
 //        transferService.transfer("okex", "COMP", "0.05", 3.0);
 //
-        transferService.transfer("okexsub1", "LINK", "1", 3.0);
+        transferService.transfer("okex", "LINK", "1", 3.0);
 //        transferService.transfer("okexsub1", "SUSHI", "1", 3.0);
 //
 //        transferService.transfer("okex", "ZIL", "100", 3.0);
@@ -69,6 +69,10 @@ public class TransferTask {
         transferService.transfer("okex", "SUI", "10", 3.0);
         transferService.transfer("okex", "ICX", "10", 3.0);
 
+
+        transferService.transfer("okexsub2", "SHIB", "400000", 3.0);
+        transferService.transfer("okexsub2", "TRX", "40", 3.0);
+        transferService.transfer("okexsub2", "HBAR", "50", 3.0);
 
     }
 }
