@@ -120,7 +120,7 @@ public class TransferService {
                     }
                 }
             }
-            Thread.sleep(1000);
+            Thread.sleep(2000);
         } catch (Exception e) {
             log.error("Transfer base account:{} error", ccy, e);
 
