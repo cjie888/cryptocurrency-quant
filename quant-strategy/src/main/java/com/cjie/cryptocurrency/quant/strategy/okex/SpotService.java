@@ -369,6 +369,9 @@ public class SpotService {
             int buyCount = 0;
             int sellCount = 0;
             for (SpotOrder spotOrder : spotOrders) {
+                if (!symbols.contains(spotOrder.getSymbol())) {
+                    continue;
+                }
                 if (spotOrder.getIsMock() == Byte.valueOf("1")) {
                     continue;
                 }
@@ -469,7 +472,7 @@ public class SpotService {
                         + "),收:" + profit.setScale(2, RoundingMode.DOWN).stripTrailingZeros().toPlainString() +  "\r\n");
 
             }
-            String message = MessageFormat.format("买数:{0},卖数:{1},总收益:{2}\r\n", buyCount, sellCount, allProfit.setScale(2, RoundingMode.DOWN).toPlainString());
+            String message = MessageFormat.format("买数:{0},卖数:{1},总收益:{2}\r\n", buyCount, sellCount, allProfit.setScale(6, RoundingMode.DOWN).toPlainString());
             stringBuilder.insert(0, message);
             stringBuilder.insert(0, title + "\r\n");
             messageService.sendMessage(title,  stringBuilder.toString());
