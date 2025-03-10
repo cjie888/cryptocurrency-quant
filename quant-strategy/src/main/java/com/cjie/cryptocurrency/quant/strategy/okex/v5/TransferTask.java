@@ -59,7 +59,7 @@ public class TransferTask {
 //        transferService.transfer("okex", "OP", "5", 3.0);
 //        transferService.transfer("okex", "APT", "1", 3.0);
         transferService.transfer("okex", "BNB", "0.05", 3.0);
-        transferService.transfer("okex", "TON", "10", 3.0);
+        transferService.transfer("okex", "TON", "2", 3.0);
 
 
         transferService.transfer("okexsub2", "SOL", "0.1", 3.0);
