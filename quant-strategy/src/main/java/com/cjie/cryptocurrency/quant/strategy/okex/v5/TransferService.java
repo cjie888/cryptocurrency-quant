@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
 
@@ -42,7 +43,7 @@ public class TransferService {
                         Double.parseDouble(baseAccountResult.getData().get(0).getDetails().get(0).getAvailEq()) < Double.parseDouble(size) * 5) {
 
                     //从资金账号转入
-                    String transferAmount = String.valueOf(Double.parseDouble(size) * ratio);
+                    String transferAmount = new BigDecimal(size).multiply(new BigDecimal(ratio)).toPlainString();
 
                     FundsTransfer transferIn = new FundsTransfer();
                     transferIn.setCcy(ccy);
@@ -61,7 +62,9 @@ public class TransferService {
 
                 if (Double.parseDouble(baseAccountResult.getData().get(0).getDetails().get(0).getAvailEq()) > Double.parseDouble(size) * (5 + ratio)) {
                     //转出资金账号
-                    String transferAmount = String.valueOf(Double.parseDouble(size) * ratio);
+//                    String transferAmount = String.valueOf(Double.parseDouble(size) * ratio);
+                    String transferAmount = new BigDecimal(size).multiply(new BigDecimal(ratio)).toPlainString();
+
                     FundsTransfer transferIn = new FundsTransfer();
                     transferIn.setCcy(ccy);
                     transferIn.setFrom("18");
@@ -87,7 +90,10 @@ public class TransferService {
                         Double.parseDouble(assetBalanceResult.getData().get(0).getAvailBal()) < Double.parseDouble(size) * 5) {
                     //赎回
                     try {
-                        String transferAmount = String.valueOf(Double.parseDouble(size) * 5 - Double.parseDouble(assetBalanceResult.getData().get(0).getAvailBal()));
+//                        String transferAmount = String.valueOf(Double.parseDouble(size) * 5 - Double.parseDouble(assetBalanceResult.getData().get(0).getAvailBal()));
+                        String transferAmount = new BigDecimal(size).multiply(new BigDecimal(5))
+                                .subtract(new BigDecimal(assetBalanceResult.getData().get(0).getAvailBal())).toPlainString();
+
                         PiggyBankPurchaseRedemption piggyBankPurchaseRedemption = new PiggyBankPurchaseRedemption();
                         piggyBankPurchaseRedemption.setCcy(ccy);
                         piggyBankPurchaseRedemption.setAmt(transferAmount);
@@ -106,7 +112,8 @@ public class TransferService {
                 if (Double.parseDouble(assetBalanceResult.getData().get(0).getAvailBal()) >= Double.parseDouble(size) * (5 + ratio)) {
                     //申购
                     try {
-                        String transferAmount = String.valueOf(Double.parseDouble(size) * ratio);
+//                        String transferAmount = String.valueOf(Double.parseDouble(size) * ratio);
+                        String transferAmount = new BigDecimal(size).multiply(new BigDecimal(ratio)).toPlainString();
                         PiggyBankPurchaseRedemption piggyBankPurchaseRedemption = new PiggyBankPurchaseRedemption();
                         piggyBankPurchaseRedemption.setCcy(ccy);
                         piggyBankPurchaseRedemption.setAmt(transferAmount);
