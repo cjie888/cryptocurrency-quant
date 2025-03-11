@@ -419,7 +419,7 @@ public class SpotService {
                     }
                     sellSums.put(spotOrder.getSymbol(), symSellSum.add(spotOrder.getSize().multiply(spotOrder.getPrice())));
                 }
-                allAmount.add(spotOrder.getSize().multiply(spotOrder.getPrice()));
+                allAmount = allAmount.add(spotOrder.getSize().multiply(spotOrder.getPrice()));
             }
             StringBuilder stringBuilder = new StringBuilder();
             Set<String> allSymbols = new HashSet<>();
