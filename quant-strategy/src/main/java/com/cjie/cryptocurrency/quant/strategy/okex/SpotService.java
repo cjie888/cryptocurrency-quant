@@ -356,6 +356,7 @@ public class SpotService {
 
         Map<String, BigDecimal> buySums =  new HashMap<>();
         Map<String, BigDecimal> sellSums =  new HashMap<>();
+        BigDecimal allAmount = BigDecimal.ZERO;
 
         Map<String, BigDecimal> buyAmounts =  new HashMap<>();
         Map<String, BigDecimal> sellAmounts =  new HashMap<>();
@@ -418,6 +419,7 @@ public class SpotService {
                     }
                     sellSums.put(spotOrder.getSymbol(), symSellSum.add(spotOrder.getSize().multiply(spotOrder.getPrice())));
                 }
+                allAmount.add(spotOrder.getSize().multiply(spotOrder.getPrice()));
             }
             StringBuilder stringBuilder = new StringBuilder();
             Set<String> allSymbols = new HashSet<>();
@@ -472,7 +474,9 @@ public class SpotService {
                         + "),收:" + profit.setScale(2, RoundingMode.DOWN).stripTrailingZeros().toPlainString() +  "\r\n");
 
             }
-            String message = MessageFormat.format("买数:{0},卖数:{1},总收益:{2}\r\n", buyCount, sellCount, allProfit.setScale(6, RoundingMode.DOWN).toPlainString());
+            String message = MessageFormat.format("买数:{0},卖数:{1},总收益:{2},交易量:{3}\r\n", buyCount, sellCount,
+                    allProfit.setScale(6, RoundingMode.DOWN).toPlainString(),
+                    allAmount.setScale(6, RoundingMode.DOWN).toPlainString());
             stringBuilder.insert(0, message);
             stringBuilder.insert(0, title + "\r\n");
             messageService.sendMessage(title,  stringBuilder.toString());
