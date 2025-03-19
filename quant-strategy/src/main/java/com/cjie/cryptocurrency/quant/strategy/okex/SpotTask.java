@@ -125,6 +125,8 @@ public class SpotTask {
         symbols.add("BCH-USDT");
         symbols.add("UNI-USDT");
         symbols.add("AAVE-USDT");
+        symbols.add("OM-USDT");
+        symbols.add("XMR-USDT");
         spotService.computeBenefit("每日买卖main", startTime, now, symbols);
 
 
@@ -179,6 +181,8 @@ public class SpotTask {
         symbols.add("BCH-USDT");
         symbols.add("UNI-USDT");
         symbols.add("AAVE-USDT");
+        symbols.add("OM-USDT");
+        symbols.add("XMR-USDT");
         spotService.computeBenefit("每月买卖main", startTime, now, symbols);
 
 
@@ -235,6 +239,8 @@ public class SpotTask {
         symbols.add("BCH-USDT");
         symbols.add("UNI-USDT");
         symbols.add("AAVE-USDT");
+        symbols.add("OM-USDT");
+        symbols.add("XMR-USDT");
         spotService.computeBenefit("每季买卖main", startTime, now, symbols);
 
 
@@ -290,6 +296,8 @@ public class SpotTask {
 
         symbols.add("UNI-USDT");
         symbols.add("AAVE-USDT");
+        symbols.add("OM-USDT");
+        symbols.add("XMR-USDT");
         spotService.computeBenefit("每年买卖main", startTime, now, symbols);
 
     }
