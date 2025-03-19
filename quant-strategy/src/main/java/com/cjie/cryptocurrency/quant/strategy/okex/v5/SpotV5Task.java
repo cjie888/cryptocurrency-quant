@@ -42,7 +42,7 @@ public class SpotV5Task {
         spotService.netGrid("okexsub2", "HBAR-USDT", "50", 0.03);
 //        spotService.netGrid("okexsub2", "LTC-USDT", "0.2", 0.03);
 
-        spotService.netGrid("okex", "XMR-USDT", "0.1", 0.03);
+        spotService.netGrid("okex", "APT-USDT", "3", 0.03);
 
 
 
