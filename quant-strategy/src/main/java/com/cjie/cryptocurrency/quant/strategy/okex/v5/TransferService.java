@@ -92,7 +92,7 @@ public class TransferService {
                     try {
 //                        String transferAmount = String.valueOf(Double.parseDouble(size) * 5 - Double.parseDouble(assetBalanceResult.getData().get(0).getAvailBal()));
                         String transferAmount = new BigDecimal(size).multiply(new BigDecimal(5))
-                                .subtract(new BigDecimal(assetBalanceResult.getData().get(0).getAvailBal()).setScale(4)).toPlainString();
+                                .subtract(new BigDecimal(assetBalanceResult.getData().get(0).getAvailBal()).setScale(4, BigDecimal.ROUND_DOWN)).toPlainString();
 
                         PiggyBankPurchaseRedemption piggyBankPurchaseRedemption = new PiggyBankPurchaseRedemption();
                         piggyBankPurchaseRedemption.setCcy(ccy);
