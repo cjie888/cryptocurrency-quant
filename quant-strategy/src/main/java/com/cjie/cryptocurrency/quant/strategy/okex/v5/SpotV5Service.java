@@ -168,7 +168,7 @@ public class SpotV5Service {
                     baseAccountDetail = baseAccountResult.getData().get(0).getDetails().get(0);
                 }
             }
-
+            log.info("base account detail:{}", JSON.toJSONString(baseAccountDetail));
             if (baseAccountDetail == null
                     || Double.parseDouble(baseAccountDetail.getAvailEq()) < Double.parseDouble(size) * 1.01) {
 
