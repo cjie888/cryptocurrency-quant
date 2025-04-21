@@ -1,9 +1,18 @@
 package com.cjie.cryptocurrency.quant.strategy.okex.v5;
 
+import com.alibaba.fastjson.JSON;
+import com.cjie.cryptocurrency.quant.api.okex.v5.bean.HttpResult;
+import com.cjie.cryptocurrency.quant.api.okex.v5.bean.account.result.AccountDetail;
+import com.cjie.cryptocurrency.quant.api.okex.v5.bean.account.result.AccountInfo;
+import com.cjie.cryptocurrency.quant.api.okex.v5.service.account.AccountAPIV5Service;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Component
 @Slf4j
@@ -12,8 +21,28 @@ public class SpotV5Task {
     @Autowired
     private SpotV5Service spotService;
 
+    @Autowired
+    private AccountAPIV5Service accountAPIService;
+
     @Scheduled(cron = "3/17 * * * * ?")
     public  void netGrid() {
+
+        //获取账户余额
+        String site = "okexsub2";
+        String baseCurrency = "ETH,TRX,SHIB,HBAR,SOL";
+        HttpResult<List<AccountInfo>> baseAccountResult = accountAPIService.getBalance(site, baseCurrency);
+        log.info("base account:{}", JSON.toJSONString(baseAccountResult));
+        Map<String, AccountDetail> balances = new HashMap<>();
+        try {
+            if (baseAccountResult.getData().get(0).getDetails().size() > 0) {
+                for (AccountDetail accountDetail : baseAccountResult.getData().get(0).getDetails()) {
+                    balances.put(accountDetail.getCcy(), accountDetail);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        log.info("base account balance map :{}", JSON.toJSONString(balances));
 
         //spotService.netGrid("okexsub2", "MANA-USDT", "1", 0.03);
         spotService.netGrid("okexsub2", "ETH-USDT", "0.01000000", 0.03);
@@ -44,6 +73,7 @@ public class SpotV5Task {
 
         spotService.netGrid("okex", "APT-USDT", "3", 0.03);
 
+        spotService.netGrid("okexsub2", "SOL-USDT", "0.1", 0.03);
 
 
 //ltc 6  xrp 3 etc 5
@@ -57,7 +87,6 @@ public class SpotV5Task {
 //        spotService.netGrid("okexsub1", "ATOM-USDT", "1", 0.03);
         spotService.netGrid("okex", "LINK-USDT", "1", 0.03);
         spotService.netGrid("okex", "DOT-USDT", "2", 0.03);
-        spotService.netGrid("okexsub2", "SOL-USDT", "0.1", 0.03);
 //        spotService.netGrid("okex", "BLUR-USDT", "20", 0.03);
 
         spotService.netGrid("okex", "BTC-USDT", "0.00050000", 0.02);
