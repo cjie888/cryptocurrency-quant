@@ -30,10 +30,10 @@ public class SpotV5Task {
         //获取账户余额
         String site = "okexsub2";
         String baseCurrency = "ETH,TRX,SHIB,HBAR,SOL";
-        HttpResult<List<AccountInfo>> baseAccountResult = accountAPIService.getBalance(site, baseCurrency);
-        log.info("base account:{}", JSON.toJSONString(baseAccountResult));
         Map<String, AccountDetail> balances = new HashMap<>();
         try {
+            HttpResult<List<AccountInfo>> baseAccountResult = accountAPIService.getBalance(site, baseCurrency);
+            log.info("base account:{}", JSON.toJSONString(baseAccountResult));
             if (baseAccountResult.getData().get(0).getDetails().size() > 0) {
                 for (AccountDetail accountDetail : baseAccountResult.getData().get(0).getDetails()) {
                     balances.put(accountDetail.getCcy(), accountDetail);
@@ -51,7 +51,19 @@ public class SpotV5Task {
         spotService.netGrid("okexsub2", "SOL-USDT", "0.1", 0.03, balances.get("SOL"));
         spotService.netGrid("okexsub2", "HBAR-USDT", "50", 0.03, balances.get("HBAR"));
 
-
+        try {
+            String mainSite = "okex";
+            String mainBaseCurrency = "BCH,LTC,XRP,OM,DOGE,UNI,XLM,AAVE,BNB,TON,APT";
+            HttpResult<List<AccountInfo>> baseAccountResult = accountAPIService.getBalance(mainSite, mainBaseCurrency);
+            if (baseAccountResult.getData().get(0).getDetails().size() > 0) {
+                for (AccountDetail accountDetail : baseAccountResult.getData().get(0).getDetails()) {
+                    balances.put(accountDetail.getCcy(), accountDetail);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        log.info("base account balance map :{}", JSON.toJSONString(balances));
 
         spotService.netGrid("okex", "BCH-USDT", "0.05", 0.03, balances.get("BCH"));
         spotService.netGrid("okex", "LTC-USDT", "0.2", 0.03, balances.get("LTC"));
