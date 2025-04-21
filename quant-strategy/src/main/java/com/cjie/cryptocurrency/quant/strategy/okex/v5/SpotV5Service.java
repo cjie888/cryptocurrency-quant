@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.cjie.cryptocurrency.quant.api.okex.bean.spot.result.Ticker;
 import com.cjie.cryptocurrency.quant.api.okex.v5.bean.HttpResult;
+import com.cjie.cryptocurrency.quant.api.okex.v5.bean.account.result.AccountDetail;
 import com.cjie.cryptocurrency.quant.api.okex.v5.bean.account.result.AccountInfo;
 import com.cjie.cryptocurrency.quant.api.okex.v5.bean.funding.param.FundsTransfer;
 import com.cjie.cryptocurrency.quant.api.okex.v5.bean.funding.param.PiggyBankPurchaseRedemption;
@@ -77,7 +78,7 @@ public class SpotV5Service {
     }
 
 
-    public void netGrid(String site, String symbol, String size, Double increment) {
+    public void netGrid(String site, String symbol, String size, Double increment, AccountDetail baseAccountDetail) {
 
         try {
             //获取等待提交订单
@@ -160,12 +161,16 @@ public class SpotV5Service {
             String baseCurrency = symbol.substring(0, symbol.indexOf("-"));
             String quotaCurrency = symbol.substring(symbol.indexOf("-") + 1);
 
+            if (baseAccountDetail == null) {
+                HttpResult<List<AccountInfo>> baseAccountResult = accountAPIService.getBalance(site, baseCurrency);
+                log.info("base account:{}", JSON.toJSONString(baseAccountResult));
+                if (Objects.nonNull(baseAccountResult) && "0".equals(baseAccountResult.getCode()) && baseAccountResult.getData().get(0).getDetails().size() > 0) {
+                    baseAccountDetail = baseAccountResult.getData().get(0).getDetails().get(0);
+                }
+            }
 
-            HttpResult<List<AccountInfo>> baseAccountResult = accountAPIService.getBalance(site, baseCurrency);
-            log.info("base account:{}", JSON.toJSONString(baseAccountResult));
-            if (Objects.nonNull(baseAccountResult) && "0".equals(baseAccountResult.getCode())
-                    && (baseAccountResult.getData().get(0).getDetails().size() == 0
-                    || Double.parseDouble(baseAccountResult.getData().get(0).getDetails().get(0).getAvailEq()) < Double.parseDouble(size) * 1.01)) {
+            if (baseAccountDetail == null
+                    || Double.parseDouble(baseAccountDetail.getAvailEq()) < Double.parseDouble(size) * 1.01) {
 
                 BigDecimal transferAmount = new BigDecimal(size).multiply(new BigDecimal("1.015"));
                 try {
@@ -198,10 +203,8 @@ public class SpotV5Service {
 
             }
 
-            baseAccountResult = accountAPIService.getBalance(site, baseCurrency);
-            if (Objects.nonNull(baseAccountResult) && "0".equals(baseAccountResult.getCode()) &&
-                    (baseAccountResult.getData().get(0).getDetails().size() == 0 ||
-                            Double.parseDouble(baseAccountResult.getData().get(0).getDetails().get(0).getAvailEq()) < Double.parseDouble(size) * 1.015)) {
+            if (baseAccountDetail == null ||
+                            Double.parseDouble(baseAccountDetail.getAvailEq()) < Double.parseDouble(size) * 1.015) {
                 //3倍买入
 
                 //{
