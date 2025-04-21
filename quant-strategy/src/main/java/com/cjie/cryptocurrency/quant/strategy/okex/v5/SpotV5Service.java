@@ -241,45 +241,45 @@ public class SpotV5Service {
                 return;
             }
 
-            HttpResult<List<AccountInfo>> quotaAccountResult = accountAPIService.getBalance(site, quotaCurrency);
-            log.info("quota account:{}", JSON.toJSONString(quotaAccountResult));
-            if (Objects.nonNull(quotaAccountResult) && "0".equals(quotaAccountResult.getCode())
-                    && (quotaAccountResult.getData().get(0).getDetails().size() == 0 ||
-                    Double.parseDouble(quotaAccountResult.getData().get(0).getDetails().get(0).getAvailEq()) < Double.parseDouble(size) * currentPrice * 1.01 * 3)) {
-
-                BigDecimal transferAmount = new BigDecimal(size).multiply(new BigDecimal(spotTicker.getLast())).multiply(new BigDecimal("1.015"));
-                PiggyBankPurchaseRedemption piggyBankPurchaseRedemption = new PiggyBankPurchaseRedemption();
-                piggyBankPurchaseRedemption.setCcy(quotaCurrency);
-                piggyBankPurchaseRedemption.setAmt(transferAmount.toPlainString());
-                piggyBankPurchaseRedemption.setSide("redempt");
-                JSONObject result1 = fundingAPIService.piggyBankPurchaseRedemption(site, piggyBankPurchaseRedemption);
-                log.info("transfer {} {} from financial to asset", transferAmount, JSON.toJSONString(result1));
-                try {
-                    Thread.sleep(300);
-                } catch (Exception e) {
-                    //ignore
-                }
-                try {
-                    FundsTransfer transferIn = new FundsTransfer();
-                    transferIn.setCcy(quotaCurrency);
-                    transferIn.setFrom("6");
-                    transferIn.setTo("18");
-                    transferIn.setAmt(transferAmount.toPlainString());
-                    JSONObject transferResult = fundingAPIService.fundsTransfer(site, transferIn);
-                    log.info("transfer {} {} from asset to spot,result:{}", transferAmount, quotaCurrency, JSON.toJSONString(transferResult));
-                } catch (Exception e) {
-                    //ignore
-                    log.error("transfer {} {} from asset to spot error", transferAmount, quotaCurrency, e);
-                }
-
-            }
+//            HttpResult<List<AccountInfo>> quotaAccountResult = accountAPIService.getBalance(site, quotaCurrency);
+//            log.info("quota account:{}", JSON.toJSONString(quotaAccountResult));
+//            if (Objects.nonNull(quotaAccountResult) && "0".equals(quotaAccountResult.getCode())
+//                    && (quotaAccountResult.getData().get(0).getDetails().size() == 0 ||
+//                    Double.parseDouble(quotaAccountResult.getData().get(0).getDetails().get(0).getAvailEq()) < Double.parseDouble(size) * currentPrice * 1.01 * 3)) {
+//
+//                BigDecimal transferAmount = new BigDecimal(size).multiply(new BigDecimal(spotTicker.getLast())).multiply(new BigDecimal("1.015"));
+//                PiggyBankPurchaseRedemption piggyBankPurchaseRedemption = new PiggyBankPurchaseRedemption();
+//                piggyBankPurchaseRedemption.setCcy(quotaCurrency);
+//                piggyBankPurchaseRedemption.setAmt(transferAmount.toPlainString());
+//                piggyBankPurchaseRedemption.setSide("redempt");
+//                JSONObject result1 = fundingAPIService.piggyBankPurchaseRedemption(site, piggyBankPurchaseRedemption);
+//                log.info("transfer {} {} from financial to asset", transferAmount, JSON.toJSONString(result1));
+//                try {
+//                    Thread.sleep(300);
+//                } catch (Exception e) {
+//                    //ignore
+//                }
+//                try {
+//                    FundsTransfer transferIn = new FundsTransfer();
+//                    transferIn.setCcy(quotaCurrency);
+//                    transferIn.setFrom("6");
+//                    transferIn.setTo("18");
+//                    transferIn.setAmt(transferAmount.toPlainString());
+//                    JSONObject transferResult = fundingAPIService.fundsTransfer(site, transferIn);
+//                    log.info("transfer {} {} from asset to spot,result:{}", transferAmount, quotaCurrency, JSON.toJSONString(transferResult));
+//                } catch (Exception e) {
+//                    //ignore
+//                    log.error("transfer {} {} from asset to spot error", transferAmount, quotaCurrency, e);
+//                }
+//
+//            }
 
             if (lastOrder == null) {
-                if (Objects.nonNull(quotaAccountResult) && "0".equals(quotaAccountResult.getCode())
-                        && (quotaAccountResult.getData().get(0).getDetails().size() == 0 ||
-                        Double.parseDouble(quotaAccountResult.getData().get(0).getDetails().get(0).getAvailEq()) < Double.parseDouble(size) * currentPrice * 1.015)) {
-                    return;
-                }
+//                if (Objects.nonNull(quotaAccountResult) && "0".equals(quotaAccountResult.getCode())
+//                        && (quotaAccountResult.getData().get(0).getDetails().size() == 0 ||
+//                        Double.parseDouble(quotaAccountResult.getData().get(0).getDetails().get(0).getAvailEq()) < Double.parseDouble(size) * currentPrice * 1.015)) {
+//                    return;
+//                }
                 //买入
 
                 PlaceOrder placeOrderParam = new PlaceOrder();
@@ -353,11 +353,11 @@ public class SpotV5Service {
                 //价格下跌
                 //获取最新成交空单
                 //买入
-                if (Objects.nonNull(quotaAccountResult) && "0".equals(quotaAccountResult.getCode())
-                        && (quotaAccountResult.getData().get(0).getDetails().size() == 0 ||
-                        Double.parseDouble(quotaAccountResult.getData().get(0).getDetails().get(0).getAvailEq()) < Double.parseDouble(size) * currentPrice * 1.015)) {
-                    return;
-                }
+//                if (Objects.nonNull(quotaAccountResult) && "0".equals(quotaAccountResult.getCode())
+//                        && (quotaAccountResult.getData().get(0).getDetails().size() == 0 ||
+//                        Double.parseDouble(quotaAccountResult.getData().get(0).getDetails().get(0).getAvailEq()) < Double.parseDouble(size) * currentPrice * 1.015)) {
+//                    return;
+//                }
 
                 PlaceOrder placeOrderParam = new PlaceOrder();
                 placeOrderParam.setInstId(symbol);
