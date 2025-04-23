@@ -203,7 +203,7 @@ public class SpotV5Service {
 
             }
 
-            if (baseAccountDetail == null ||
+            if (baseAccountDetail != null &&
                             Double.parseDouble(baseAccountDetail.getAvailEq()) < Double.parseDouble(size) * 1.015) {
                 //3倍买入
 
