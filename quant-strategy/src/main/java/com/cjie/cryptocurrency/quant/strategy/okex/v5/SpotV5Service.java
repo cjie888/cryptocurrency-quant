@@ -289,7 +289,8 @@ public class SpotV5Service {
                 placeOrderParam.setInstId(symbol);
                 placeOrderParam.setTdMode("cash");
                 //placeOrderParam.setPx(spotTicker.getLast());
-                placeOrderParam.setPx(String.valueOf(Double.parseDouble(spotTicker.getLast())));
+//                placeOrderParam.setPx(String.valueOf(Double.parseDouble(spotTicker.getLast())));
+                placeOrderParam.setPx(new BigDecimal(spotTicker.getLast()).toPlainString());
 
                 placeOrderParam.setSz(new BigDecimal(size).multiply(new BigDecimal("1.015")).toPlainString());
                 placeOrderParam.setSide("buy");
