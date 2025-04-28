@@ -87,7 +87,7 @@ public class SpotV5Task {
 
         spotService.netGrid("okex", "APT-USDT", "3", 0.03, balances.get("APT"));
 
-        spotService.netGrid("okex", "TAO-USDT", "1000000", 0.03, balances.get("PEPE"));
+        spotService.netGrid("okex", "PEPE-USDT", "1000000", 0.03, balances.get("PEPE"));
 
 
 //ltc 6  xrp 3 etc 5
