@@ -53,7 +53,7 @@ public class SpotV5Task {
 
         try {
             String mainSite = "okex";
-            String mainBaseCurrency = "BCH,LTC,XRP,OM,DOGE,UNI,XLM,AAVE,BNB,TON,APT";
+            String mainBaseCurrency = "BCH,LTC,XRP,OM,DOGE,UNI,XLM,AAVE,BNB,TON,APT,TAO";
             HttpResult<List<AccountInfo>> baseAccountResult = accountAPIService.getBalance(mainSite, mainBaseCurrency);
             if (baseAccountResult.getData().get(0).getDetails().size() > 0) {
                 for (AccountDetail accountDetail : baseAccountResult.getData().get(0).getDetails()) {
@@ -87,6 +87,7 @@ public class SpotV5Task {
 
         spotService.netGrid("okex", "APT-USDT", "3", 0.03, balances.get("APT"));
 
+        spotService.netGrid("okex", "TAO-USDT", "0.05", 0.03, balances.get("TAO"));
 
 
 //ltc 6  xrp 3 etc 5
@@ -96,7 +97,7 @@ public class SpotV5Task {
     @Scheduled(cron = "11/13 * * * * ?")
     public  void netGrid2() {
         String site = "okex";
-        String baseCurrency = "SUI,LINK,DOT,BTC,OKB,FIL,ADA,AVAX,ICX,IOTA,XTZ";
+        String baseCurrency = "SUI,LINK,DOT,BTC,OKB,FIL,ADA,AVAX,ICX,IOTA,XTZ,NEAR,ONDO";
         HttpResult<List<AccountInfo>> baseAccountResult = accountAPIService.getBalance(site, baseCurrency);
         log.info("base account:{}", JSON.toJSONString(baseAccountResult));
         Map<String, AccountDetail> balances = new HashMap<>();
@@ -130,6 +131,8 @@ public class SpotV5Task {
         spotService.netGrid("okex", "ICX-USDT", "10", 0.03, balances.get("ICX"));
         spotService.netGrid("okex", "IOTA-USDT", "30", 0.03, balances.get("IOTA"));
         spotService.netGrid("okex", "XTZ-USDT", "10", 0.03, balances.get("XTZ"));
+        spotService.netGrid("okex", "NEAR-USDT", "5", 0.03, balances.get("NEAR"));
+        spotService.netGrid("okex", "ONDO-USDT", "10", 0.03, balances.get("ONDO"));
 
     }
 }
