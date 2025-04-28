@@ -127,7 +127,7 @@ public class SpotTask {
         symbols.add("AAVE-USDT");
         symbols.add("OM-USDT");
         symbols.add("APT-USDT");
-        symbols.add("TAO-USDT");
+        symbols.add("PEPE-USDT");
         symbols.add("NEAR-USDT");
         symbols.add("ONDO-USDT");
 
@@ -188,7 +188,7 @@ public class SpotTask {
         symbols.add("OM-USDT");
         symbols.add("APT-USDT");
 
-        symbols.add("TAO-USDT");
+        symbols.add("PEPE-USDT");
         symbols.add("NEAR-USDT");
         symbols.add("ONDO-USDT");
         spotService.computeBenefit("每月买卖main", startTime, now, symbols);
@@ -250,7 +250,7 @@ public class SpotTask {
         symbols.add("OM-USDT");
         symbols.add("APT-USDT");
 
-        symbols.add("TAO-USDT");
+        symbols.add("PEPE-USDT");
         symbols.add("NEAR-USDT");
         symbols.add("ONDO-USDT");
         spotService.computeBenefit("每季买卖main", startTime, now, symbols);
@@ -311,7 +311,7 @@ public class SpotTask {
         symbols.add("OM-USDT");
         symbols.add("APT-USDT");
 
-        symbols.add("TAO-USDT");
+        symbols.add("PEPE-USDT");
         symbols.add("NEAR-USDT");
         symbols.add("ONDO-USDT");
         spotService.computeBenefit("每年买卖main", startTime, now, symbols);

@@ -53,7 +53,7 @@ public class SpotV5Task {
 
         try {
             String mainSite = "okex";
-            String mainBaseCurrency = "BCH,LTC,XRP,OM,DOGE,UNI,XLM,AAVE,BNB,TON,APT,TAO";
+            String mainBaseCurrency = "BCH,LTC,XRP,OM,DOGE,UNI,XLM,AAVE,BNB,TON,APT,PEPE";
             HttpResult<List<AccountInfo>> baseAccountResult = accountAPIService.getBalance(mainSite, mainBaseCurrency);
             if (baseAccountResult.getData().get(0).getDetails().size() > 0) {
                 for (AccountDetail accountDetail : baseAccountResult.getData().get(0).getDetails()) {
@@ -87,7 +87,7 @@ public class SpotV5Task {
 
         spotService.netGrid("okex", "APT-USDT", "3", 0.03, balances.get("APT"));
 
-        spotService.netGrid("okex", "TAO-USDT", "0.05", 0.03, balances.get("TAO"));
+        spotService.netGrid("okex", "TAO-USDT", "1000000", 0.03, balances.get("PEPE"));
 
 
 //ltc 6  xrp 3 etc 5
