@@ -461,16 +461,16 @@ public class SpotService {
                 BigDecimal profit = BigDecimal.ZERO;
                 if (buyAmountSymbol.doubleValue() > 0 && sellAmountSymbol.doubleValue() > 0) {
                     BigDecimal amount = buyAmountSymbol.min(sellAmountSymbol);
-                    profit = amount.multiply(sellSumSymbol.subtract(buySumSymbol)).setScale(4, RoundingMode.DOWN);
+                    profit = amount.multiply(sellSumSymbol.subtract(buySumSymbol)).setScale(6, RoundingMode.DOWN);
                     allProfit = allProfit.add(profit);
                 }
                 symbol = symbol.substring(0, symbol.indexOf("-"));
                 stringBuilder.append(symbol + ":买(次:" + buyCountSymbol
                         + ",量:" + buyAmountSymbol.setScale(3, RoundingMode.DOWN).stripTrailingZeros().toPlainString()
-                        + ",价:" + buySumSymbol.setScale(4, RoundingMode.DOWN).stripTrailingZeros().toPlainString()
+                        + ",价:" + buySumSymbol.setScale(6, RoundingMode.DOWN).stripTrailingZeros().toPlainString()
                         + ")，卖(次:" + sellCountSymbol
                         + ",量:" + sellAmountSymbol.setScale(3, RoundingMode.DOWN).stripTrailingZeros().toPlainString()
-                        + ",价:" + sellSumSymbol.setScale(4, RoundingMode.DOWN).stripTrailingZeros().toPlainString()
+                        + ",价:" + sellSumSymbol.setScale(6, RoundingMode.DOWN).stripTrailingZeros().toPlainString()
                         + "),收:" + profit.setScale(2, RoundingMode.DOWN).stripTrailingZeros().toPlainString() +  "\r\n");
 
             }
