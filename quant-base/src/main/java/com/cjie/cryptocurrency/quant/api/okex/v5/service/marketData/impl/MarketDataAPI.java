@@ -31,7 +31,7 @@ interface MarketDataAPI {
 
     //获取所有交易产品K线数据 Get Candlesticks
     @GET("/api/v5/market/candles")
-    Call<JSONObject> getCandlesticks(@Query("instId") String instId, @Query("after") String after, @Query("before") String before, @Query("bar") String bar, @Query("limit") String limit);
+    Call<HttpResult<List<String[]>>> getCandlesticks(@Query("instId") String instId, @Query("after") String after, @Query("before") String before, @Query("bar") String bar, @Query("limit") String limit);
 
     //获取交易产品历史K线数据（仅主流币） Get Candlesticks History（top currencies only）
     @GET("/api/v5/market/history-candles")

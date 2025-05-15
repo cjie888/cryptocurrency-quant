@@ -1,16 +1,20 @@
 package com.cjie.cryptocurrency.quant.api.okex.v5.service.publicData.impl;
 
 import com.alibaba.fastjson.JSONObject;
+import com.cjie.cryptocurrency.quant.api.okex.v5.bean.HttpResult;
+import com.cjie.cryptocurrency.quant.api.okex.v5.bean.market.result.InstrumentInfo;
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 
+import java.util.List;
+
 public interface PublicDataAPI {
 
     //获取交易产品基础信息 Get Instruments
     @GET("/api/v5/public/instruments")
-    Call<JSONObject> getInstruments(@Query("instType") String instType, @Query("uly") String uly);
+    Call<HttpResult<List<InstrumentInfo>>> getInstruments(@Query("instType") String instType, @Query("uly") String uly);
 
 
     //获取交割和行权记录 Get Delivery/Exercise History

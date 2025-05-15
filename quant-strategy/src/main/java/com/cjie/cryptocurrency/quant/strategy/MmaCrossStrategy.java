@@ -42,7 +42,7 @@ public class MmaCrossStrategy extends BaseStrategyBuilder {
 
     @Override
     public void initStrategy(BaseBarSeries series) {
-        setParams(7, 30, BigDecimal.valueOf(0.5));
+        setParams(5, 20, BigDecimal.valueOf(0.5));
     }
 
     @Override

@@ -66,7 +66,7 @@ public class MarketDataAPIServiceImpl extends BaseServiceImpl implements MarketD
 
     //获取所有交易产品K线数据 Get Candlesticks
     @Override
-    public JSONObject getCandlesticks(String site, String instId, String after, String before, String bar, String limit) {
+    public HttpResult<List<String[]>> getCandlesticks(String site, String instId, String after, String before, String bar, String limit) {
         APIClient client = getTradeAPIClient(site);
         MarketDataAPI marketDataAPI = getMarketDataApi(site, client);
         return client.executeSync(marketDataAPI.getCandlesticks(instId,after,before,bar,limit));

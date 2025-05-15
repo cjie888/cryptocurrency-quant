@@ -24,7 +24,7 @@ public interface MarketDataAPIService {
     JSONObject getOrderBook(String site, String instId, String sz);
 
     //获取所有交易产品K线数据 Get Candlesticks
-    JSONObject getCandlesticks(String site, String instId, String after, String before, String bar, String limit);
+    HttpResult<List<String[]>> getCandlesticks(String site, String instId, String after, String before, String bar, String limit);
 
     //获取交易产品历史K线数据（仅主流币） Get Candlesticks History（top currencies only）
     JSONObject getCandlesticksHistory(String site, String instId, String after, String before, String bar, String limit);

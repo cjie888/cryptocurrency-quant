@@ -3,6 +3,8 @@ package com.cjie.cryptocurrency.quant.strategy;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 import com.cjie.cryptocurrency.quant.api.okex.service.swap.SwapMarketAPIService;
+import com.cjie.cryptocurrency.quant.api.okex.v5.bean.HttpResult;
+import com.cjie.cryptocurrency.quant.api.okex.v5.service.marketData.MarketDataAPIService;
 import com.cjie.cryptocurrency.quant.backtest.StrategyBuilder;
 import com.cjie.cryptocurrency.quant.mapper.SwapOrderMapper;
 import com.cjie.cryptocurrency.quant.model.SwapOrder;
@@ -47,6 +49,9 @@ public abstract class BaseSwapStrategyJob  {
     private SwapMarketAPIService swapMarketAPIService;
 
     @Autowired
+    private MarketDataAPIService marketDataAPIService;
+
+    @Autowired
     private SwapOrderMapper swapOrderMapper;
 
     public abstract StrategyBuilder buildStrategy(BaseBarSeries timeSeries, boolean isMock);
@@ -61,25 +66,32 @@ public abstract class BaseSwapStrategyJob  {
             TradingRecord longTradingRecord = longTradingRecordMap.get(instrumentId);
             TradingRecord shortTradingRecord = shortTradingRecordMap.get(instrumentId);
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-            String kline = swapMarketAPIService.getCandlesApi("okexsub1", instrumentId, null, null, "60");
-            List<String[]> apiKlineVOs = JSON.parseObject(kline, new TypeReference<List<String[]>>(){});
+//            String kline = swapMarketAPIService.getCandlesApi("okexsub1", instrumentId, null, null, "60");
+//            List<String[]> apiKlineVOs = JSON.parseObject(kline, new TypeReference<List<String[]>>(){});
+            HttpResult<List<String[]>> klineResult = marketDataAPIService.getCandlesticks("okex", instrumentId, null, null, "1H", "300");
+            if (!"0".equals(klineResult.getCode())) {
+                return;
+            }
+            List<String[]> apiKlineVOs = klineResult.getData();
             // Getting the time series
             if (timeSeries == null) {
                 timeSeries = new BaseBarSeries();
                 timeSeries.setMaximumBarCount(1000);
                 if (CollectionUtils.isNotEmpty(apiKlineVOs)) {
-                    for (int i = apiKlineVOs.size() -1; i > 0; i--) {
+                    for (int i = apiKlineVOs.size() -1; i >= 0; i--) {
                         String[] apiKlineVO = apiKlineVOs.get(i);
-                        ZonedDateTime beginTime = ZonedDateTime.ofInstant(
-                                Instant.ofEpochMilli(dateFormat.parse(apiKlineVO[0]).getTime()), ZoneId.systemDefault());
+                        ZonedDateTime endTime = ZonedDateTime.ofInstant(
+                                Instant.ofEpochMilli(new Date(Long.parseLong(apiKlineVO[0])).getTime()), ZoneId.systemDefault()).plusHours(1);
                         double open = Double.valueOf(apiKlineVO[1]);
                         double high = Double.valueOf(apiKlineVO[2]);
                         double close = Double.valueOf(apiKlineVO[4]);
                         double low = Double.valueOf(apiKlineVO[3]);
                         double volume = Double.valueOf(apiKlineVO[5]);
 
-                        timeSeries.addBar(beginTime, open, high,
-                                low, close, volume);
+                        Bar bar = new BaseBar(Duration.ofHours(1), endTime, PrecisionNum.valueOf(open), PrecisionNum.valueOf(high),
+                                PrecisionNum.valueOf(low), PrecisionNum.valueOf(close), PrecisionNum.valueOf(volume),
+                                PrecisionNum.valueOf(0));
+                        timeSeries.addBar(bar);
 
                     }
                 }
@@ -98,21 +110,22 @@ public abstract class BaseSwapStrategyJob  {
 
                 if (CollectionUtils.isNotEmpty(apiKlineVOs)) {
                     ZonedDateTime seriesBeginTime = timeSeries.getLastBar().getBeginTime();
-                    String[] apiKlineVO = apiKlineVOs.get(1);
+                    String[] apiKlineVO = apiKlineVOs.get(0);
                     ZonedDateTime beginTime = ZonedDateTime.ofInstant(
-                            Instant.ofEpochMilli(dateFormat.parse(apiKlineVO[0]).getTime()), ZoneId.systemDefault());
+                            Instant.ofEpochMilli(new Date(Long.parseLong(apiKlineVO[0])).getTime()), ZoneId.systemDefault());
+                    boolean replace = false;
                     if (!beginTime.isAfter(seriesBeginTime)) {
-                        return;
+                        replace = true;
                     }
                     double open = Double.valueOf(apiKlineVO[1]);
                     double high = Double.valueOf(apiKlineVO[2]);
                     double close = Double.valueOf(apiKlineVO[4]);
                     double low = Double.valueOf(apiKlineVO[3]);
                     double volume = Double.valueOf(apiKlineVO[5]);
-                    Bar bar = new BaseBar(Duration.ofMinutes(1), beginTime, PrecisionNum.valueOf(open), PrecisionNum.valueOf(high),
+                    Bar bar = new BaseBar(Duration.ofHours(1), beginTime.plusHours(1), PrecisionNum.valueOf(open), PrecisionNum.valueOf(high),
                             PrecisionNum.valueOf(low), PrecisionNum.valueOf(close), PrecisionNum.valueOf(volume),
                             PrecisionNum.valueOf(0));
-                    timeSeries.addBar(bar);
+                    timeSeries.addBar(bar, replace);
 
                 }
 
@@ -156,6 +169,7 @@ public abstract class BaseSwapStrategyJob  {
             }
         } catch (Exception e) {
             log.error("Strategy {} error", strategy.getName(), e);
+            e.printStackTrace();
         }
     }
 
@@ -184,12 +198,14 @@ public abstract class BaseSwapStrategyJob  {
             boolean entered = tradingRecord.enter(endIndex, newBar.getClosePrice(), PrecisionNum.valueOf(10));
             if (entered) {
                 Order entry = tradingRecord.getLastEntry();
-                log.info("Entered on " + entry.getIndex()
+                String message = "Entered on " + entry.getIndex()
                         + "(type = " + entry.getType().name()
                         + ", instrumentId=" + instrumentId
                         + ", time=" + timeSeries.getBar(entry.getIndex()).getBeginTime()
                         + ", price=" + entry.getNetPrice().doubleValue()
-                        + ", amount=" + entry.getAmount().doubleValue() + ")");
+                        + ", amount=" + entry.getAmount().doubleValue() + ")";
+                log.info(message);
+                messageService.sendMessage("Enter", message);
             }
         }
 
@@ -222,12 +238,15 @@ public abstract class BaseSwapStrategyJob  {
             boolean exited = tradingRecord.exit(endIndex, newBar.getClosePrice(), PrecisionNum.valueOf(10));
             if (exited) {
                 Order exit = tradingRecord.getLastExit();
-                log.info("Exited on " + exit.getIndex()
+                String message = "Exited on " + exit.getIndex()
                         + "(type = " + exit.getType().name()
                         + ", instrumentId=" + instrumentId
                         + ", time=" + timeSeries.getBar(exit.getIndex()).getBeginTime()
                         + ", price=" + exit.getNetPrice().doubleValue()
-                        + ", amount=" + exit.getAmount().doubleValue() + ")");
+                        + ", amount=" + exit.getAmount().doubleValue() + ")";
+                log.info(message);
+                messageService.sendMessage("Enter", message);
+
             }
         }
         createOrder(instrumentId, type, BigDecimal.valueOf(newBar.getClosePrice().doubleValue()), new BigDecimal(100));
