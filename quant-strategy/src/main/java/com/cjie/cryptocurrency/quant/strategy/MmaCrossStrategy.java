@@ -1,8 +1,8 @@
 package com.cjie.cryptocurrency.quant.strategy;
 
 import com.cjie.cryptocurrency.quant.backtest.StrategyBuilder;
-import com.cjie.cryptocurrency.quant.indicator.MMAIndicator;
 import org.ta4j.core.*;
+import org.ta4j.core.indicators.MMAIndicator;
 import org.ta4j.core.indicators.helpers.*;
 import org.ta4j.core.num.DoubleNum;
 import org.ta4j.core.num.PrecisionNum;
