@@ -33,4 +33,9 @@ public class SwapV5Task {
 
     }
 
+    @Scheduled(cron = "1/13 * * * * ?")
+    public  void swapAndSpotHedging() {
+        swapService.swapAndSpotHedging("okexsub1", "SOL-USDT-SWAP", "SOL-USDT", 0.03, 1);
+    }
+
 }

@@ -14,6 +14,16 @@ public class PlaceOrder {
     private String sz;
     private String px;
 
+    private String tgtCcy;
+
+    public String getTgtCcy() {
+        return tgtCcy;
+    }
+
+    public void setTgtCcy(String tgtCcy) {
+        this.tgtCcy = tgtCcy;
+    }
+
     public Boolean getReduceOnly() {
         return reduceOnly;
     }

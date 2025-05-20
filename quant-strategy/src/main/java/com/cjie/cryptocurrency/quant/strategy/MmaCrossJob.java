@@ -24,8 +24,8 @@ public class MmaCrossJob extends BaseSwapStrategyJob {
     @Scheduled(cron = "3 */1 * * * ?")
     public void execute() {
         log.info("start mma cross job");
-        executeStrategy("BTC-USD-SWAP", true);
-        executeStrategy("ETH-USD-SWAP", true);
+//        executeStrategy("BTC-USD-SWAP", true);
+//        executeStrategy("ETH-USD-SWAP", true);
 //        executeStrategy("EOS-USD-SWAP", true);
 //        executeStrategy("LTC-USD-SWAP", true);
 //        executeStrategy("XRP-USD-SWAP", true);

@@ -24,15 +24,17 @@ public class TelegramMessageServiceImpl implements MessageService {
     @Value("${quant.message.telegram.token}")
     private String token;
 
+    @Value("${quant.message.telegram.strategyToken}")
+    private String strategyToken;
+
 
     @Value("${quant.message.telegram.chatId}")
     private String chatId;
 
 
-
-    @Override
-    public void sendMessage(String title, String content) {
+    private void sendCommonMessage(String token, String title, String content) {
         MultiValueMap<String, String> headers = new HttpHeaders();
+
         headers.add("Referer", "https://www.okx.com");
         headers.add("user-agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.84 Safari/537.36");
 
@@ -52,5 +54,23 @@ public class TelegramMessageServiceImpl implements MessageService {
         ResponseEntity<String> response = client.exchange(urlString, HttpMethod.GET, requestEntity, String.class);
         String body = response.getBody();
         log.info(body);
+    }
+
+    @Override
+    public void sendMessage(String title, String content) {
+        try {
+            sendCommonMessage(token, title, content);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void sendStrategyMessage(String title, String content) {
+        try {
+            sendCommonMessage(strategyToken, title, content);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

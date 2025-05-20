@@ -11,6 +11,8 @@ import com.cjie.cryptocurrency.quant.api.okex.service.swap.SwapMarketAPIService;
 import com.cjie.cryptocurrency.quant.api.okex.service.swap.SwapTradeAPIService;
 import com.cjie.cryptocurrency.quant.api.okex.service.swap.SwapUserAPIServive;
 import com.cjie.cryptocurrency.quant.api.okex.v5.bean.HttpResult;
+import com.cjie.cryptocurrency.quant.api.okex.v5.bean.account.result.AccountDetail;
+import com.cjie.cryptocurrency.quant.api.okex.v5.bean.account.result.AccountInfo;
 import com.cjie.cryptocurrency.quant.api.okex.v5.bean.account.result.PositionInfo;
 import com.cjie.cryptocurrency.quant.api.okex.v5.bean.funding.param.FundsTransfer;
 import com.cjie.cryptocurrency.quant.api.okex.v5.bean.funding.param.PiggyBankPurchaseRedemption;
@@ -21,7 +23,9 @@ import com.cjie.cryptocurrency.quant.api.okex.v5.service.account.AccountAPIV5Ser
 import com.cjie.cryptocurrency.quant.api.okex.v5.service.funding.FundingAPIService;
 import com.cjie.cryptocurrency.quant.api.okex.v5.service.marketData.MarketDataAPIService;
 import com.cjie.cryptocurrency.quant.api.okex.v5.service.trade.TradeAPIService;
+import com.cjie.cryptocurrency.quant.mapper.SpotOrderMapper;
 import com.cjie.cryptocurrency.quant.mapper.SwapOrderMapper;
+import com.cjie.cryptocurrency.quant.model.SpotOrder;
 import com.cjie.cryptocurrency.quant.model.SwapOrder;
 import com.cjie.cryptocurrency.quant.service.MessageService;
 import com.google.common.collect.Maps;
@@ -60,6 +64,12 @@ public class SwapV5Service {
     @Autowired
     private SwapOrderMapper swapOrderMapper;
 
+    @Autowired
+    private SpotOrderMapper spotOrderMapper;
+
+    @Autowired
+    private AccountAPIV5Service accountAPIService;
+
     private Map<String,Double> ranges = new ConcurrentHashMap<>();
 
     private Map<String,Double> opens = new ConcurrentHashMap<>();
@@ -67,6 +77,8 @@ public class SwapV5Service {
     private Map<String,LocalDateTime>  lastDates = new ConcurrentHashMap<>();
 
     private static Map<String, Integer> STATES = Maps.newHashMap();
+
+    private static Map<String, BigDecimal> swapCtVal = Maps.newHashMap();
 
     static {
 //        canceled：撤单成功
@@ -78,6 +90,10 @@ public class SwapV5Service {
         STATES.put("partially_filled", 1);
         STATES.put("filled", 2);
         STATES.put("canceled", -1);
+
+        swapCtVal.put("SOL-USDT-SWAP", new BigDecimal("1"));
+        swapCtVal.put("BTC-USDT-SWAP", new BigDecimal("0.01"));
+
     }
 
 
@@ -148,6 +164,334 @@ public class SwapV5Service {
         return true;
     }
 
+
+    public void swapAndSpotHedging(String site, String instrumentId, String symbol, Double increment, int size) {
+        //获取等待提交订单
+        List<Integer> unProcessedStatuses = new ArrayList<>();
+        unProcessedStatuses.add(99);
+        unProcessedStatuses.add(0);
+        unProcessedStatuses.add(1);
+        try {
+            List<SwapOrder> swapOrders = swapOrderMapper.selectByStatus(instrumentId, "swapAndSpotHedging", unProcessedStatuses);
+            if (CollectionUtils.isNotEmpty(swapOrders)) {
+                log.info("unprocessed orders {}", JSON.toJSONString(swapOrders));
+                for (SwapOrder swapOrder : swapOrders) {
+                    JSONObject result = tradeAPIService.getOrderDetails(site, instrumentId, swapOrder.getOrderId(), null);
+
+                    log.info("spot order status {}", JSON.toJSONString(result));
+                    if (result == null) {
+                        return;
+                    }
+                    String state = ((JSONObject)result.getJSONArray("data").get(0)).getString("state");
+                    if ( state == null || STATES.get(state) == null) {
+                        return;
+                    }
+                    Integer status = STATES.get(state);
+                    if (!swapOrder.getStatus().equals(status)) {
+                        swapOrderMapper.updateStatus(swapOrder.getOrderId(), status);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            log.info("update status error, instrumentId:{}", instrumentId, e);
+            return;
+        }
+
+        List<Integer> unSettledStatuses = new ArrayList<>();
+        unSettledStatuses.add(1);
+        List<SwapOrder> unSettledOrders = swapOrderMapper.selectByStatus(instrumentId, "swapAndSpotHedging", unSettledStatuses);
+        if (CollectionUtils.isNotEmpty(unSettledOrders)) {
+            for (SwapOrder swapOrder : unSettledOrders) {
+                if (System.currentTimeMillis() - 30 * 60 * 1000L > swapOrder.getCreateTime().getTime() ) {
+                    CancelOrder cancelOrder = new CancelOrder();
+                    cancelOrder.setInstId(instrumentId);
+                    cancelOrder.setOrdId(swapOrder.getOrderId());
+                    tradeAPIService.cancelOrder(site, cancelOrder);
+                    log.info("取消部分成交订单{}-{}", instrumentId, swapOrder.getOrderId());
+                }
+            }
+            return;
+        }
+
+
+        List<Integer> unSelledStatuses = new ArrayList<>();
+        unSelledStatuses.add(0);
+        List<SwapOrder> unSelledOrders = swapOrderMapper.selectByStatus(instrumentId, "swapAndSpotHedging", unSelledStatuses);
+        if (CollectionUtils.isNotEmpty(unSelledOrders)) {
+            for (SwapOrder swapOrder : unSelledOrders) {
+                CancelOrder cancelOrder = new CancelOrder();
+                cancelOrder.setInstId(instrumentId);
+                cancelOrder.setOrdId(swapOrder.getOrderId());
+                tradeAPIService.cancelOrder(site, cancelOrder);
+                log.info("取消未成交订单{}-{}", instrumentId, swapOrder.getOrderId());
+            }
+        }
+
+        try {
+            List<SpotOrder> spotOrders = spotOrderMapper.selectByStatus(symbol, "swapAndSpotHedging", unProcessedStatuses);
+            if (CollectionUtils.isNotEmpty(spotOrders)) {
+                log.info("unprocessed spot orders {}", JSON.toJSONString(spotOrders));
+                for (SpotOrder spotOrder : spotOrders) {
+                    JSONObject result = tradeAPIService.getOrderDetails(site, symbol, spotOrder.getOrderId(), null);
+
+                    log.info("spot order status {}", JSON.toJSONString(result));
+                    if (result == null) {
+                        return;
+                    }
+                    String state = ((JSONObject) result.getJSONArray("data").get(0)).getString("state");
+                    if (state == null || STATES.get(state) == null) {
+                        return;
+                    }
+                    Integer status = STATES.get(state);
+                    if (!spotOrder.getStatus().equals(status)) {
+                        spotOrderMapper.updateStatus(spotOrder.getOrderId(), status);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            log.info("update status error, symbol:{}", symbol, e);
+            return;
+        }
+
+        unSettledStatuses.clear();
+        unSettledStatuses.add(1);
+        List<SpotOrder> unSettledSpotOrders = spotOrderMapper.selectByStatus(symbol, "swapAndSpotHedging", unSettledStatuses);
+        if (CollectionUtils.isNotEmpty(unSettledSpotOrders)) {
+            for (SpotOrder spotOrder : unSettledSpotOrders) {
+                if (System.currentTimeMillis() - 30 * 60 * 1000L > spotOrder.getCreateTime().getTime()) {
+                    CancelOrder cancelOrder = new CancelOrder();
+                    cancelOrder.setInstId(symbol);
+                    cancelOrder.setOrdId(spotOrder.getOrderId());
+                    tradeAPIService.cancelOrder(site, cancelOrder);
+                    log.info("取消部分成交订单{}-{}", symbol, spotOrder.getOrderId());
+                }
+            }
+            return;
+        }
+        unSelledStatuses.clear();
+        unSelledStatuses.add(0);
+        List<SpotOrder> unSelledSpotOrders = spotOrderMapper.selectByStatus(symbol, "swapAndSpotHedging", unSelledStatuses);
+        if (CollectionUtils.isNotEmpty(unSelledSpotOrders)) {
+            for (SpotOrder spotOrder : unSelledSpotOrders) {
+                CancelOrder cancelOrder = new CancelOrder();
+                cancelOrder.setInstId(symbol);
+                cancelOrder.setOrdId(spotOrder.getOrderId());
+                tradeAPIService.cancelOrder(site, cancelOrder);
+                log.info("取消未成交订单{}-{}", symbol, spotOrder.getOrderId());
+            }
+        }
+
+
+        HttpResult<List<Ticker>> swapTicker = marketDataAPIService.getTicker(site, instrumentId);
+
+        if (!"0".equals(swapTicker.getCode()) || swapTicker.getData().size() == 0) {
+            return;
+        }
+
+        SwapOrder lastOrder = null;
+        List<Integer> selledStatuses = new ArrayList<>();
+        selledStatuses.add(2);
+        List<SwapOrder> selledOrders = swapOrderMapper.selectByStatus(instrumentId, "swapAndSpotHedging", selledStatuses);
+        if (CollectionUtils.isNotEmpty(selledOrders)) {
+            for (SwapOrder swapOrder : selledOrders) {
+                if (swapOrder.getType() == 2) {
+                    if (lastOrder == null) {
+                        lastOrder = swapOrder;
+                    }
+                }
+            }
+        }
+
+
+        SpotOrder lastSportOrder = null;
+        List<SpotOrder> selledSpotOrders = spotOrderMapper.selectByStatus(symbol, "swapAndSpotHedging", selledStatuses);
+        if (CollectionUtils.isNotEmpty(selledSpotOrders)) {
+            for (SpotOrder spotOrder : selledSpotOrders) {
+                if (lastSportOrder == null) {
+                    lastSportOrder = spotOrder;
+                    break;
+                }
+            }
+        }
+        Ticker apiTickerVO = swapTicker.getData().get(0);
+        Double currentPrice = Double.valueOf(apiTickerVO.getLast());
+
+
+        if (lastOrder == null || lastSportOrder == null) {
+            //合约开空 现货买入
+            PlaceOrder ppDownOrder = new PlaceOrder();
+            ppDownOrder.setInstId(instrumentId);
+            ppDownOrder.setTdMode("cross");
+            ppDownOrder.setPx(new BigDecimal(apiTickerVO.getLast()).toPlainString());
+            ppDownOrder.setSz(String.valueOf(size));
+            ppDownOrder.setSide("sell");
+            ppDownOrder.setOrdType("market");
+            ppDownOrder.setPosSide("short");
+            ppDownOrder.setType("2");
+            JSONObject orderResult = tradeAPIService.placeSwapOrder(site, ppDownOrder, "swapAndSpotHedging");
+            messageService.sendStrategyMessage("swapAndSpotHedging合约开空", "swapAndSpotHedging合约开空-instId:" + instrumentId+ ",price:" + currentPrice);
+            log.info("合约开空 {}-{},result:{}", instrumentId, JSON.toJSONString(ppDownOrder), JSONObject.toJSONString(orderResult));
+            BigDecimal spotSize = new BigDecimal("1.01").multiply(new BigDecimal(size)).multiply(swapCtVal.get(instrumentId));
+
+            PlaceOrder placeOrderParam = new PlaceOrder();
+            placeOrderParam.setInstId(symbol);
+            placeOrderParam.setTdMode("cash");
+            placeOrderParam.setPx(new BigDecimal(apiTickerVO.getLast()).toPlainString());
+            placeOrderParam.setSz(spotSize.toPlainString());
+            placeOrderParam.setSide("buy");
+            placeOrderParam.setTgtCcy("base_ccy");
+            placeOrderParam.setOrdType("market");
+            orderResult = tradeAPIService.placeOrder(site, placeOrderParam);
+            log.info("买入{}-{},result:{}", symbol, JSON.toJSONString(placeOrderParam), JSONObject.toJSONString(orderResult));
+            messageService.sendStrategyMessage("swapAndSpotHedging现货买入", "swapAndSpotHedging现货买入-instId:" + symbol + ",price:" + currentPrice);
+            if (orderResult.getString("code") != null && orderResult.getString("code").equals("0")) {
+
+                SpotOrder spotOrder = new SpotOrder();
+                spotOrder.setSymbol(symbol);
+                spotOrder.setCreateTime(new Date());
+                spotOrder.setStrategy("swapAndSpotHedging");
+                spotOrder.setIsMock(Byte.valueOf("0"));
+                spotOrder.setType(Byte.valueOf("1"));
+                spotOrder.setPrice(new BigDecimal(apiTickerVO.getLast()));
+                spotOrder.setSize(spotSize);
+                spotOrder.setOrderId(String.valueOf(((JSONObject) orderResult.getJSONArray("data").get(0)).getString("ordId")));
+                spotOrder.setStatus(99);
+                spotOrderMapper.insert(spotOrder);
+            }
+            return;
+        }
+        Double lastPrice = lastOrder.getPrice().doubleValue();
+        if (lastSportOrder.getCreateTime().after(lastOrder.getCreateTime())) {
+            lastPrice = lastSportOrder.getPrice().doubleValue();
+        }
+        log.info("当前价格{}:{},上次价格:{}", instrumentId, apiTickerVO.getLast(), lastPrice);
+        String baseCurrency = symbol.substring(0, symbol.indexOf("-"));
+
+
+        //价格上涨
+        if (currentPrice > lastPrice && currentPrice - lastPrice > lastPrice * increment * 1.05 ) {
+            //合约做空，现货卖出
+            PlaceOrder ppDownOrder = new PlaceOrder();
+            ppDownOrder.setInstId(instrumentId);
+            ppDownOrder.setTdMode("cross");
+            ppDownOrder.setPx(new BigDecimal(apiTickerVO.getLast()).toPlainString());
+            ppDownOrder.setSz(String.valueOf(size));
+            ppDownOrder.setSide("sell");
+            ppDownOrder.setOrdType("market");
+            ppDownOrder.setPosSide("short");
+            ppDownOrder.setType("2");
+            JSONObject orderResult = tradeAPIService.placeSwapOrder(site, ppDownOrder, "swapAndSpotHedging");
+
+            log.info("合约开空 {}-{},result:{}", instrumentId, JSON.toJSONString(ppDownOrder), JSONObject.toJSONString(orderResult));
+            messageService.sendStrategyMessage("swapAndSpotHedging合约开空", "swapAndSpotHedging合约开空-instId:" + instrumentId+ ",price:" + currentPrice);
+
+            BigDecimal spotSize = new BigDecimal(size).multiply(swapCtVal.get(instrumentId));
+
+            HttpResult<List<AccountInfo>> baseAccountResult = accountAPIService.getBalance(site, baseCurrency);
+            log.info("base account:{}", JSON.toJSONString(baseAccountResult));
+            if (Objects.nonNull(baseAccountResult) && "0".equals(baseAccountResult.getCode()) && baseAccountResult.getData().get(0).getDetails().size() > 0) {
+                AccountDetail baseAccountDetail = baseAccountResult.getData().get(0).getDetails().get(0);
+
+                if (Double.parseDouble(baseAccountDetail.getAvailEq()) >= spotSize.doubleValue()) {
+                    PlaceOrder placeOrderParam = new PlaceOrder();
+                    placeOrderParam.setInstId(symbol);
+                    placeOrderParam.setTdMode("cash");
+                    //placeOrderParam.setPx(spotTicker.getLast());
+                    placeOrderParam.setSz(spotSize.toPlainString());
+                    placeOrderParam.setPx(new BigDecimal(apiTickerVO.getLast()).toPlainString());
+
+                    placeOrderParam.setSide("sell");
+                    placeOrderParam.setOrdType("market");
+                    placeOrderParam.setTgtCcy("base_ccy");
+                    orderResult = tradeAPIService.placeOrder(site, placeOrderParam);
+                    log.info("卖出{}-{},result:{}", symbol, JSON.toJSONString(placeOrderParam), JSON.toJSONString(orderResult));
+                    messageService.sendStrategyMessage("swapAndSpotHedging现货卖出", "swapAndSpotHedging现货卖出-instId:" + symbol+ ",price:" + currentPrice);
+                    if (orderResult.getString("code") != null && orderResult.getString("code").equals("0")) {
+
+                        SpotOrder spotOrder = new SpotOrder();
+                        spotOrder.setSymbol(symbol);
+                        spotOrder.setCreateTime(new Date());
+                        spotOrder.setStrategy("swapAndSpotHedging");
+                        spotOrder.setIsMock(Byte.valueOf("0"));
+                        spotOrder.setType(Byte.valueOf("2"));
+                        spotOrder.setPrice(new BigDecimal(apiTickerVO.getLast()));
+                        spotOrder.setSize(spotSize);
+                        spotOrder.setOrderId(String.valueOf(((JSONObject) orderResult.getJSONArray("data").get(0)).getString("ordId")));
+                        spotOrder.setStatus(99);
+                        spotOrderMapper.insert(spotOrder);
+                    }
+                }
+            }
+            return;
+
+        }
+
+        if (currentPrice < lastPrice && lastPrice - currentPrice > lastPrice * increment ) {
+            //合约平空，现货买入
+            HttpResult<List<PositionInfo>> positionsResult = accountAPIV5Service.getPositions(site, null, instrumentId, null);
+            if (positionsResult == null || !positionsResult.getCode().equals("0")) {
+                return;
+            }
+            PositionInfo downPosition = null;
+            double shortPosition = 0;
+            for (PositionInfo apiPositionVO : positionsResult.getData()) {
+                if (apiPositionVO.getAvailPos().equals("")) {
+                    continue;
+                }
+                if (apiPositionVO.getPosSide().equals("short")&& Double.valueOf(apiPositionVO.getPos()) >= Double.valueOf(size) && Double.valueOf(apiPositionVO.getAvailPos()) >= Double.valueOf(size)) {
+                    downPosition = apiPositionVO;
+                    shortPosition = Double.valueOf(apiPositionVO.getPos());
+                }
+
+            }
+            log.info("持仓{}-空{}", instrumentId, shortPosition);
+            if (downPosition != null && shortPosition >= size) {
+                PlaceOrder placeOrderParam = new PlaceOrder();
+                placeOrderParam.setInstId(instrumentId);
+                placeOrderParam.setTdMode("cross");
+                placeOrderParam.setPx(String.valueOf(Double.parseDouble(apiTickerVO.getLast())));
+                placeOrderParam.setSz(String.valueOf(size));
+                placeOrderParam.setSide("buy");
+                placeOrderParam.setOrdType("market");
+                placeOrderParam.setPosSide("short");
+                placeOrderParam.setType("4");
+//                placeOrderParam.setTgtCcy("base_ccy");
+//                orders.add(placeOrderParam);
+                JSONObject orderResult = tradeAPIService.placeSwapOrder(site, placeOrderParam, "swapAndSpotHedging");
+
+                log.info("平空{}-{},result:{}", instrumentId, JSON.toJSONString(placeOrderParam), JSON.toJSONString(orderResult));
+                messageService.sendStrategyMessage("swapAndSpotHedging合约平空", "swapAndSpotHedging合约平空-instId:" + instrumentId+ ",price:" + currentPrice);
+
+            }
+
+            BigDecimal spotSize = new BigDecimal("1.01").multiply(new BigDecimal(size)).multiply(swapCtVal.get(instrumentId));
+            PlaceOrder placeOrderParam = new PlaceOrder();
+            placeOrderParam.setInstId(symbol);
+            placeOrderParam.setTdMode("cash");
+            placeOrderParam.setPx(new BigDecimal(apiTickerVO.getLast()).toPlainString());
+            placeOrderParam.setSz(spotSize.toPlainString());
+            placeOrderParam.setSide("buy");
+            placeOrderParam.setTgtCcy("base_ccy");
+            placeOrderParam.setOrdType("market");
+            JSONObject orderResult = tradeAPIService.placeOrder(site, placeOrderParam);
+            log.info("买入{}-{},result:{}", symbol, JSON.toJSONString(placeOrderParam), JSONObject.toJSONString(orderResult));
+            messageService.sendStrategyMessage("swapAndSpotHedging现货买入", "swapAndSpotHedging现货买入-instId:" + symbol+ ",price:" + currentPrice);
+            if (orderResult.getString("code") != null && orderResult.getString("code").equals("0")) {
+
+                SpotOrder spotOrder = new SpotOrder();
+                spotOrder.setSymbol(symbol);
+                spotOrder.setCreateTime(new Date());
+                spotOrder.setStrategy("swapAndSpotHedging");
+                spotOrder.setIsMock(Byte.valueOf("0"));
+                spotOrder.setType(Byte.valueOf("1"));
+                spotOrder.setPrice(new BigDecimal(apiTickerVO.getLast()));
+                spotOrder.setSize(spotSize);
+                spotOrder.setOrderId(String.valueOf(((JSONObject) orderResult.getJSONArray("data").get(0)).getString("ordId")));
+                spotOrder.setStatus(99);
+                spotOrderMapper.insert(spotOrder);
+            }
+        }
+    }
 
 
     public void netGrid(String site, String instrumentId, String size, Double increment, Double transferAmount, double origin, double min) {

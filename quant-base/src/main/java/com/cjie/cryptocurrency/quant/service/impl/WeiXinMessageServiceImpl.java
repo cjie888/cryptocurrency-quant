@@ -38,4 +38,9 @@ public class WeiXinMessageServiceImpl implements MessageService {
         String body = response.getBody();
         log.info(body);
     }
+
+    @Override
+    public void sendStrategyMessage(String title, String content) {
+
+    }
 }
