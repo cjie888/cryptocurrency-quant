@@ -339,7 +339,7 @@ public class SwapV5Service {
             JSONObject orderResult = tradeAPIService.placeSwapOrder(site, ppDownOrder, "swapAndSpotHedging");
             messageService.sendStrategyMessage("swapAndSpotHedging合约开空", "swapAndSpotHedging合约开空-instId:" + instrumentId+ ",price:" + currentPrice);
             log.info("合约开空 {}-{},result:{}", instrumentId, JSON.toJSONString(ppDownOrder), JSONObject.toJSONString(orderResult));
-            BigDecimal spotSize = new BigDecimal("1.01").multiply(new BigDecimal(size)).multiply(swapCtVal.get(instrumentId));
+            BigDecimal spotSize = new BigDecimal("1.005").multiply(new BigDecimal(size)).multiply(swapCtVal.get(instrumentId));
 
             PlaceOrder placeOrderParam = new PlaceOrder();
             placeOrderParam.setInstId(symbol);
@@ -472,7 +472,7 @@ public class SwapV5Service {
 
             }
 
-            BigDecimal spotSize = new BigDecimal("1.01").multiply(new BigDecimal(size)).multiply(swapCtVal.get(instrumentId));
+            BigDecimal spotSize = new BigDecimal("1.005").multiply(new BigDecimal(size)).multiply(swapCtVal.get(instrumentId));
             PlaceOrder placeOrderParam = new PlaceOrder();
             placeOrderParam.setInstId(symbol);
             placeOrderParam.setTdMode("cash");
