@@ -379,27 +379,12 @@ public class SwapV5Service {
         //价格上涨
         if (currentPrice > lastPrice && currentPrice - lastPrice > lastPrice * increment * 1.05 ) {
             //合约做空，现货卖出
-            PlaceOrder ppDownOrder = new PlaceOrder();
-            ppDownOrder.setInstId(instrumentId);
-            ppDownOrder.setTdMode("cross");
-            ppDownOrder.setPx(new BigDecimal(apiTickerVO.getLast()).toPlainString());
-            ppDownOrder.setSz(String.valueOf(size));
-            ppDownOrder.setSide("sell");
-            ppDownOrder.setOrdType("market");
-            ppDownOrder.setPosSide("short");
-            ppDownOrder.setType("2");
-            JSONObject orderResult = tradeAPIService.placeSwapOrder(site, ppDownOrder, "swapAndSpotHedging");
-
-            log.info("合约开空 {}-{},result:{}", instrumentId, JSON.toJSONString(ppDownOrder), JSONObject.toJSONString(orderResult));
-            messageService.sendStrategyMessage("swapAndSpotHedging合约开空", "swapAndSpotHedging合约开空-instId:" + instrumentId+ ",price:" + currentPrice);
-
             BigDecimal spotSize = new BigDecimal(size).multiply(swapCtVal.get(instrumentId));
 
             HttpResult<List<AccountInfo>> baseAccountResult = accountAPIService.getBalance(site, baseCurrency);
             log.info("base account:{}", JSON.toJSONString(baseAccountResult));
             if (Objects.nonNull(baseAccountResult) && "0".equals(baseAccountResult.getCode()) && baseAccountResult.getData().get(0).getDetails().size() > 0) {
                 AccountDetail baseAccountDetail = baseAccountResult.getData().get(0).getDetails().get(0);
-
                 if (Double.parseDouble(baseAccountDetail.getAvailEq()) >= spotSize.doubleValue()) {
                     PlaceOrder placeOrderParam = new PlaceOrder();
                     placeOrderParam.setInstId(symbol);
@@ -411,7 +396,7 @@ public class SwapV5Service {
                     placeOrderParam.setSide("sell");
                     placeOrderParam.setOrdType("market");
                     placeOrderParam.setTgtCcy("base_ccy");
-                    orderResult = tradeAPIService.placeOrder(site, placeOrderParam);
+                    JSONObject orderResult = tradeAPIService.placeOrder(site, placeOrderParam);
                     log.info("卖出{}-{},result:{}", symbol, JSON.toJSONString(placeOrderParam), JSON.toJSONString(orderResult));
                     messageService.sendStrategyMessage("swapAndSpotHedging现货卖出", "swapAndSpotHedging现货卖出-instId:" + symbol+ ",price:" + currentPrice);
                     if (orderResult.getString("code") != null && orderResult.getString("code").equals("0")) {
@@ -430,6 +415,21 @@ public class SwapV5Service {
                     }
                 }
             }
+
+            PlaceOrder ppDownOrder = new PlaceOrder();
+            ppDownOrder.setInstId(instrumentId);
+            ppDownOrder.setTdMode("cross");
+            ppDownOrder.setPx(new BigDecimal(apiTickerVO.getLast()).toPlainString());
+            ppDownOrder.setSz(String.valueOf(size));
+            ppDownOrder.setSide("sell");
+            ppDownOrder.setOrdType("market");
+            ppDownOrder.setPosSide("short");
+            ppDownOrder.setType("2");
+            JSONObject orderResult = tradeAPIService.placeSwapOrder(site, ppDownOrder, "swapAndSpotHedging");
+
+            log.info("合约开空 {}-{},result:{}", instrumentId, JSON.toJSONString(ppDownOrder), JSONObject.toJSONString(orderResult));
+            messageService.sendStrategyMessage("swapAndSpotHedging合约开空", "swapAndSpotHedging合约开空-instId:" + instrumentId+ ",price:" + currentPrice);
+
             return;
 
         }
