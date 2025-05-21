@@ -18,11 +18,15 @@ public class APICredentials {
     private String passphrase;
 
 
+    private boolean mock = false;
+
+
     public APICredentials(APIConfiguration config) {
         super();
         this.apiKey = config.getApiKey();
         this.secretKey = config.getSecretKey();
         this.passphrase = config.getPassphrase();
+        this.mock = config.isMock();
     }
 
     public String getApiKey() {
@@ -47,5 +51,13 @@ public class APICredentials {
 
     public void setPassphrase(String passphrase) {
         this.passphrase = passphrase;
+    }
+
+    public boolean isMock() {
+        return mock;
+    }
+
+    public void setMock(boolean mock) {
+        this.mock = mock;
     }
 }

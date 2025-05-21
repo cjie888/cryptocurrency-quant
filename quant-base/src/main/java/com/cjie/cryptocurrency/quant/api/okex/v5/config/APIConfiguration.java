@@ -24,6 +24,7 @@ public class APIConfiguration {
     private String endpoint;
 
 
+    private boolean mock;
 
 
 
@@ -69,6 +70,7 @@ public class APIConfiguration {
         this.writeTimeout = APIConstants.TIMEOUT;
         this.retryOnConnectionFailure = true;
         this.print = false;
+        this.mock = false;
         this.i18n = I18nEnum.ENGLISH;
     }
 
@@ -150,5 +152,13 @@ public class APIConfiguration {
 
     public void setI18n(I18nEnum i18n) {
         this.i18n = i18n;
+    }
+
+    public boolean isMock() {
+        return mock;
+    }
+
+    public void setMock(boolean mock) {
+        this.mock = mock;
     }
 }

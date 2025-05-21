@@ -93,6 +93,14 @@ public class SwapV5Service {
 
         swapCtVal.put("SOL-USDT-SWAP", new BigDecimal("1"));
         swapCtVal.put("BTC-USDT-SWAP", new BigDecimal("0.01"));
+        swapCtVal.put("ETH-USDT-SWAP", new BigDecimal("0.1"));
+        swapCtVal.put("XRP-USDT-SWAP", new BigDecimal("100"));
+        swapCtVal.put("DOGE-USDT-SWAP", new BigDecimal("1000"));
+        swapCtVal.put("ADA-USDT-SWAP", new BigDecimal("100"));
+        swapCtVal.put("SUI-USDT-SWAP", new BigDecimal("1"));
+        swapCtVal.put("LINK-USDT-SWAP", new BigDecimal("1"));
+        swapCtVal.put("AVAX-USDT-SWAP", new BigDecimal("1"));
+        swapCtVal.put("XLM-USDT-SWAP", new BigDecimal("100"));
 
     }
 
