@@ -453,13 +453,13 @@ public class SpotService {
                 if (buySumSymbol == null) {
                     buySumSymbol = BigDecimal.ZERO;
                 } else {
-                    buySumSymbol = buySumSymbol.divide(buyAmountSymbol, 6, BigDecimal.ROUND_DOWN);
+                    buySumSymbol = buySumSymbol.divide(buyAmountSymbol, 8, BigDecimal.ROUND_DOWN);
                 }
                 BigDecimal sellSumSymbol = sellSums.get(symbol);
                 if (sellSumSymbol == null) {
                     sellSumSymbol = BigDecimal.ZERO;
                 } else {
-                    sellSumSymbol = sellSumSymbol.divide(sellAmountSymbol, 6, BigDecimal.ROUND_DOWN);
+                    sellSumSymbol = sellSumSymbol.divide(sellAmountSymbol, 8, BigDecimal.ROUND_DOWN);
                 }
                 BigDecimal profit = BigDecimal.ZERO;
                 if (buyAmountSymbol.doubleValue() > 0 && sellAmountSymbol.doubleValue() > 0) {
@@ -470,10 +470,10 @@ public class SpotService {
                 symbol = symbol.substring(0, symbol.indexOf("-"));
                 stringBuilder.append(symbol + ":买(次:" + buyCountSymbol
                         + ",量:" + buyAmountSymbol.setScale(3, RoundingMode.DOWN).stripTrailingZeros().toPlainString()
-                        + ",价:" + buySumSymbol.setScale(6, RoundingMode.DOWN).stripTrailingZeros().toPlainString()
+                        + ",价:" + buySumSymbol.setScale(8, RoundingMode.DOWN).stripTrailingZeros().toPlainString()
                         + ")，卖(次:" + sellCountSymbol
                         + ",量:" + sellAmountSymbol.setScale(3, RoundingMode.DOWN).stripTrailingZeros().toPlainString()
-                        + ",价:" + sellSumSymbol.setScale(6, RoundingMode.DOWN).stripTrailingZeros().toPlainString()
+                        + ",价:" + sellSumSymbol.setScale(8, RoundingMode.DOWN).stripTrailingZeros().toPlainString()
                         + "),收:" + profit.setScale(2, RoundingMode.DOWN).stripTrailingZeros().toPlainString() +  "\r\n");
 
             }
