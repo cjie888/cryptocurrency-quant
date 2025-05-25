@@ -388,7 +388,7 @@ public class SwapV5Service {
                 if (Double.parseDouble(baseAccountDetail.getAvailEq()) >= spotSize.doubleValue()) {
                     PlaceOrder placeOrderParam = new PlaceOrder();
                     placeOrderParam.setInstId(symbol);
-                    placeOrderParam.setTdMode("cash");
+                    placeOrderParam.setTdMode("cross");
                     //placeOrderParam.setPx(spotTicker.getLast());
                     placeOrderParam.setSz(spotSize.toPlainString());
                     placeOrderParam.setPx(new BigDecimal(apiTickerVO.getLast()).toPlainString());
@@ -475,7 +475,7 @@ public class SwapV5Service {
             BigDecimal spotSize = new BigDecimal("1.005").multiply(new BigDecimal(size)).multiply(swapCtVal.get(instrumentId));
             PlaceOrder placeOrderParam = new PlaceOrder();
             placeOrderParam.setInstId(symbol);
-            placeOrderParam.setTdMode("cash");
+            placeOrderParam.setTdMode("cross");
             placeOrderParam.setPx(new BigDecimal(apiTickerVO.getLast()).toPlainString());
             placeOrderParam.setSz(spotSize.toPlainString());
             placeOrderParam.setSide("buy");
