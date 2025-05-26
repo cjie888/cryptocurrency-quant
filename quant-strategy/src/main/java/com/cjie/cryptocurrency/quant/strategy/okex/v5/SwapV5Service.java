@@ -343,7 +343,7 @@ public class SwapV5Service {
 
             PlaceOrder placeOrderParam = new PlaceOrder();
             placeOrderParam.setInstId(symbol);
-            placeOrderParam.setTdMode("cash");
+            placeOrderParam.setTdMode("cross");
             placeOrderParam.setPx(new BigDecimal(apiTickerVO.getLast()).toPlainString());
             placeOrderParam.setSz(spotSize.toPlainString());
             placeOrderParam.setSide("buy");
