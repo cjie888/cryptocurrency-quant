@@ -8,7 +8,9 @@ import com.cjie.cryptocurrency.quant.api.okex.v5.client.APIClient;
 import com.cjie.cryptocurrency.quant.api.okex.v5.config.APIConfiguration;
 import com.cjie.cryptocurrency.quant.api.okex.v5.service.BaseServiceImpl;
 import com.cjie.cryptocurrency.quant.api.okex.v5.service.trade.TradeAPIService;
+import com.cjie.cryptocurrency.quant.mapper.OptionsOrderMapper;
 import com.cjie.cryptocurrency.quant.mapper.SwapOrderMapper;
+import com.cjie.cryptocurrency.quant.model.OptionsOrder;
 import com.cjie.cryptocurrency.quant.model.SwapOrder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +32,9 @@ public class TradeAPIServiceImpl extends BaseServiceImpl implements TradeAPIServ
     @Autowired
     private SwapOrderMapper swapOrderMapper;
 
+
+    @Autowired
+    private OptionsOrderMapper optionsOrderMapper;
 
     public TradeAPI getTradeApi(String site, APIClient apiClient) {
         TradeAPI tradeAPI = tradeAPIs.get(site);
@@ -74,6 +79,25 @@ public class TradeAPIServiceImpl extends BaseServiceImpl implements TradeAPIServ
             swapOrderMapper.insert(swapOrder);
         }
         return orderResult;
+    }
+
+    @Override
+    public String placeOptionsOrder(String site, PlaceOrder placeOrder, OptionsOrder optionsOrder) {
+        APIClient client = getTradeAPIClient(site);
+        TradeAPI tradeAPI = getTradeApi(site, client);
+        JSONObject orderResult =  client.executeSync(tradeAPI.placeOrder(JSONObject.parseObject(JSON.toJSONString(placeOrder))));
+
+
+        log.info("order result:{}", JSONObject.toJSONString(orderResult));
+        if (orderResult != null && orderResult.getString("code") != null && orderResult.getString("code").equals("0")) {
+            String orderId = String.valueOf(((JSONObject)orderResult.getJSONArray("data").get(0)).getString("ordId"));
+            optionsOrder.setOrderId(orderId);
+
+            optionsOrder.setStatus(99);
+            optionsOrderMapper.insert(optionsOrder);
+            return orderId;
+        }
+        return null;
     }
 
     //批量下单 Place Multiple Orders

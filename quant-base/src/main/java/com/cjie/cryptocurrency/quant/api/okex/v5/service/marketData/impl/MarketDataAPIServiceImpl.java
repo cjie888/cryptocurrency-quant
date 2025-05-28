@@ -2,6 +2,7 @@ package com.cjie.cryptocurrency.quant.api.okex.v5.service.marketData.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.cjie.cryptocurrency.quant.api.okex.v5.bean.HttpResult;
+import com.cjie.cryptocurrency.quant.api.okex.v5.bean.market.result.OrderBook;
 import com.cjie.cryptocurrency.quant.api.okex.v5.bean.market.result.Ticker;
 import com.cjie.cryptocurrency.quant.api.okex.v5.client.APIClient;
 import com.cjie.cryptocurrency.quant.api.okex.v5.config.APIConfiguration;
@@ -58,7 +59,7 @@ public class MarketDataAPIServiceImpl extends BaseServiceImpl implements MarketD
 
     //获取产品深度 Get Order Book
     @Override
-    public JSONObject getOrderBook(String site, String instId, String sz) {
+    public HttpResult<List<OrderBook>> getOrderBook(String site, String instId, String sz) {
         APIClient client = getTradeAPIClient(site);
         MarketDataAPI marketDataAPI = getMarketDataApi(site, client);
         return client.executeSync(marketDataAPI.getOrderBook(instId,sz));

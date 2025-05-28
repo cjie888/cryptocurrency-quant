@@ -19,6 +19,10 @@ public class PositionInfo {
 
     private String ccy;
 
+    private Long cTime;
+
+    private String instId;
+
     public String getInstType() {
         return instType;
     }
@@ -89,5 +93,21 @@ public class PositionInfo {
 
     public void setCcy(String ccy) {
         this.ccy = ccy;
+    }
+
+    public Long getcTime() {
+        return cTime;
+    }
+
+    public void setcTime(Long cTime) {
+        this.cTime = cTime;
+    }
+
+    public String getInstId() {
+        return instId;
+    }
+
+    public void setInstId(String instId) {
+        this.instId = instId;
     }
 }

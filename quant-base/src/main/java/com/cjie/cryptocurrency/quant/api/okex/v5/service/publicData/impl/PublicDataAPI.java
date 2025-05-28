@@ -3,6 +3,8 @@ package com.cjie.cryptocurrency.quant.api.okex.v5.service.publicData.impl;
 import com.alibaba.fastjson.JSONObject;
 import com.cjie.cryptocurrency.quant.api.okex.v5.bean.HttpResult;
 import com.cjie.cryptocurrency.quant.api.okex.v5.bean.market.result.InstrumentInfo;
+import com.cjie.cryptocurrency.quant.api.okex.v5.bean.market.result.OptionMarketData;
+import com.cjie.cryptocurrency.quant.api.okex.v5.bean.market.result.PriceLimitData;
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
@@ -35,11 +37,11 @@ public interface PublicDataAPI {
 
     //获取限价 Get Limit Price
     @GET("/api/v5/public/price-limit")
-    Call<JSONObject> getLimitPrice(@Query("instId") String instId);
+    Call<HttpResult<List<PriceLimitData>> > getLimitPrice(@Query("instId") String instId);
 
     //获取期权定价 Get Option Market Data
     @GET("/api/v5/public/opt-summary")
-    Call<JSONObject> getOptionMarketData(@Query("uly") String uly, @Query("expTime") String expTime);
+    Call<HttpResult<List<OptionMarketData>>> getOptionMarketData(@Query("uly") String uly, @Query("expTime") String expTime);
 
 
     //获取预估交割/行权价格 Get Estimated Delivery/Excercise Price

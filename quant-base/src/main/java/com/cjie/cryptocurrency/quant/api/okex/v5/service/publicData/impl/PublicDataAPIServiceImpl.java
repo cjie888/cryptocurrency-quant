@@ -4,6 +4,8 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.cjie.cryptocurrency.quant.api.okex.v5.bean.HttpResult;
 import com.cjie.cryptocurrency.quant.api.okex.v5.bean.market.result.InstrumentInfo;
+import com.cjie.cryptocurrency.quant.api.okex.v5.bean.market.result.OptionMarketData;
+import com.cjie.cryptocurrency.quant.api.okex.v5.bean.market.result.PriceLimitData;
 import com.cjie.cryptocurrency.quant.api.okex.v5.client.APIClient;
 import com.cjie.cryptocurrency.quant.api.okex.v5.config.APIConfiguration;
 import com.cjie.cryptocurrency.quant.api.okex.v5.service.BaseServiceImpl;
@@ -74,7 +76,7 @@ public class PublicDataAPIServiceImpl  extends BaseServiceImpl implements Public
 
     //获取限价 Get Limit Price
     @Override
-    public JSONObject getLimitPrice(String site,String instId) {
+    public HttpResult<List<PriceLimitData>>  getLimitPrice(String site, String instId) {
         APIClient client = getTradeAPIClient(site);
         PublicDataAPI api = getPublicDataApi(site, client);
         return client.executeSync(api.getLimitPrice(instId));
@@ -82,7 +84,7 @@ public class PublicDataAPIServiceImpl  extends BaseServiceImpl implements Public
 
     //获取期权定价 Get Option Market Data
     @Override
-    public JSONObject getOptionMarketData(String site, String uly, String expTime) {
+    public HttpResult<List<OptionMarketData>> getOptionMarketData(String site, String uly, String expTime) {
         APIClient client = getTradeAPIClient(site);
         PublicDataAPI api = getPublicDataApi(site, client);
         return client.executeSync(api.getOptionMarketData(uly,expTime));

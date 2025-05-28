@@ -2,6 +2,7 @@ package com.cjie.cryptocurrency.quant.api.okex.v5.service.marketData.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.cjie.cryptocurrency.quant.api.okex.v5.bean.HttpResult;
+import com.cjie.cryptocurrency.quant.api.okex.v5.bean.market.result.OrderBook;
 import com.cjie.cryptocurrency.quant.api.okex.v5.bean.market.result.Ticker;
 import retrofit2.Call;
 import retrofit2.http.GET;
@@ -27,7 +28,7 @@ interface MarketDataAPI {
 
     //获取产品深度 Get Order Book
     @GET("/api/v5/market/books")
-    Call<JSONObject> getOrderBook(@Query("instId") String instId, @Query("sz") String sz);
+    Call<HttpResult<List<OrderBook>>> getOrderBook(@Query("instId") String instId, @Query("sz") String sz);
 
     //获取所有交易产品K线数据 Get Candlesticks
     @GET("/api/v5/market/candles")

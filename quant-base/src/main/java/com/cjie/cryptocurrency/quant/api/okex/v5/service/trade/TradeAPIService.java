@@ -2,6 +2,7 @@ package com.cjie.cryptocurrency.quant.api.okex.v5.service.trade;
 
 import com.alibaba.fastjson.JSONObject;
 import com.cjie.cryptocurrency.quant.api.okex.v5.bean.trade.param.*;
+import com.cjie.cryptocurrency.quant.model.OptionsOrder;
 
 import java.util.List;
 
@@ -12,6 +13,8 @@ public interface TradeAPIService {
 
     //下单 Place Order
     JSONObject placeSwapOrder(String site, PlaceOrder placeOrder, String strategy);
+
+    String placeOptionsOrder(String site, PlaceOrder placeOrder, OptionsOrder optionsOrder);
 
     //批量下单 Place Multiple Orders
     JSONObject placeMultipleOrders(String site, List<PlaceOrder> placeOrders);

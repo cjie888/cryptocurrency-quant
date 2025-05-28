@@ -4,6 +4,8 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.cjie.cryptocurrency.quant.api.okex.v5.bean.HttpResult;
 import com.cjie.cryptocurrency.quant.api.okex.v5.bean.market.result.InstrumentInfo;
+import com.cjie.cryptocurrency.quant.api.okex.v5.bean.market.result.OptionMarketData;
+import com.cjie.cryptocurrency.quant.api.okex.v5.bean.market.result.PriceLimitData;
 import retrofit2.http.Query;
 
 import java.util.List;
@@ -26,10 +28,10 @@ public interface PublicDataAPIService {
     JSONObject getFundingRateHistory(String site,String instId, String after, String before, String limit);
 
     //获取限价 Get Limit Price
-    JSONObject getLimitPrice(String site,String instId);
+    HttpResult<List<PriceLimitData>>  getLimitPrice(String site, String instId);
 
     //获取期权定价 Get Option Market Data
-    JSONObject getOptionMarketData(String site,String uly, String expTime);
+    HttpResult<List<OptionMarketData>> getOptionMarketData(String site, String uly, String expTime);
 
     //获取预估交割/行权价格 Get Estimated Delivery/Excercise Price
     JSONObject getEstimatedDeliveryExcercisePrice(String site,String instId);
