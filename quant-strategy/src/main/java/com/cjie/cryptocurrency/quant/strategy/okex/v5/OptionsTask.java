@@ -20,11 +20,11 @@ public class OptionsTask {
 
     }
 
-//    @Scheduled(cron = "20 59 15 * * ?")  // 15:59:20 执行
-//    @Scheduled(cron = "45 59 15 * * ?")
+    @Scheduled(cron = "45 59 15 * * ?")  // 15:59:20 执行
+    @Scheduled(cron = "55 59 15 * * ?")
 //    @Scheduled(cron = "3/11 * * * * ?")
-//    public void netGrid() {
-//        optionsService.netGrid("okexmock1", "BTC-USDT-SWAP", "BTC", 10, 0.01);
-//        optionsService.netGrid("okexmock1", "ETH-USDT-SWAP", "ETH", 10, 0.013);
-//    }
+    public void netGrid() {
+        optionsService.netGrid("okexmock1", "BTC-USDT-SWAP", "BTC", 5, 0.01);
+        optionsService.netGrid("okexmock1", "ETH-USDT-SWAP", "ETH", 5, 0.013);
+    }
 }

@@ -29,4 +29,6 @@ public class SpotOrder {
     private String strategy;
 
     private Integer status;
+
+    private String referSymbol;
 }

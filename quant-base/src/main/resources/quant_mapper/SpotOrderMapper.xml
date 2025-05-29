@@ -12,9 +12,11 @@
     <result column="order_id" jdbcType="VARCHAR" property="orderId" />
     <result column="strategy" jdbcType="VARCHAR" property="strategy" />
     <result column="status" jdbcType="INTEGER" property="status" />
+    <result column="refer_symbol" jdbcType="VARCHAR" property="referSymbol" />
+
   </resultMap>
   <sql id="Base_Column_List">
-    id, symbol, create_time, type, size, price, is_mock, order_id, strategy,status
+    id, symbol, create_time, type, size, price, is_mock, order_id, strategy,status, refer_symbol
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select 
@@ -56,10 +58,10 @@
   <insert id="insert" parameterType="com.cjie.cryptocurrency.quant.model.SpotOrder">
     insert into spot_order (id, symbol, create_time,
       type, size, price, 
-      is_mock, order_id, strategy, status)
+      is_mock, order_id, strategy, status, refer_symbol)
     values (#{id,jdbcType=BIGINT}, #{symbol,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP},
       #{type,jdbcType=TINYINT}, #{size,jdbcType=DECIMAL}, #{price,jdbcType=DECIMAL}, 
-      #{isMock,jdbcType=TINYINT}, #{orderId,jdbcType=VARCHAR}, #{strategy,jdbcType=VARCHAR},#{status,jdbcType=INTEGER})
+      #{isMock,jdbcType=TINYINT}, #{orderId,jdbcType=VARCHAR}, #{strategy,jdbcType=VARCHAR},#{status,jdbcType=INTEGER}, #{referSymbol,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.cjie.cryptocurrency.quant.model.SpotOrder">
     insert into spot_order
@@ -91,6 +93,9 @@
       <if test="status != null">
         status,
       </if>
+      <if test="refSymbol != null">
+        refSymbol,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="id != null">
@@ -119,6 +124,9 @@
       </if>
       <if test="status != null">
         #{status,jdbcType=INTEGER},
+      </if>
+      <if test="refSymbol != null">
+        #{refSymbol,jdbcType=INTEGER},
       </if>
     </trim>
   </insert>
@@ -149,6 +157,9 @@
       <if test="status != null">
         status = #{status,jdbcType=INTEGER},
       </if>
+      <if test="refSymbol != null">
+        #{refSymbol,jdbcType=INTEGER},
+      </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
@@ -161,7 +172,8 @@
       price = #{price,jdbcType=DECIMAL},
       is_mock = #{isMock,jdbcType=TINYINT},
       order_id = #{orderId,jdbcType=VARCHAR},
-      status = #{status,jdbcType=INTEGER}
+      status = #{status,jdbcType=INTEGER},
+      refer_symbol = #{refSymbol,jdbcType=INTEGER}
     where id = #{id,jdbcType=BIGINT}
   </update>
 
