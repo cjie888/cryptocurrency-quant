@@ -13,9 +13,18 @@ public class OptionsTask {
     private OptionsService optionsService;
 
     @Scheduled(cron = "3/11 * * * * ?")
-    public  void netGrid() {
+    public  void swapAndOptionHedging() {
 //        optionsService.swapAndOptionHedging("okexmock1", "ETH-USDT-SWAP", "ETH", 0.01, 1);
 //        optionsService.swapAndOptionHedging("okexmock1", "BTC-USDT-SWAP", "BTC", 0.01, 1);
-        optionsService.swapAndOptionHedging("okexsub3", "ETH-USDT-SWAP", "ETH", 0.02, 1);
+        optionsService.swapAndOptionHedging("okexsub3", "ETH-USDT-SWAP", "ETH", 0.025, 1);
+
     }
+
+//    @Scheduled(cron = "20 59 15 * * ?")  // 15:59:20 执行
+//    @Scheduled(cron = "45 59 15 * * ?")
+//    @Scheduled(cron = "3/11 * * * * ?")
+//    public void netGrid() {
+//        optionsService.netGrid("okexmock1", "BTC-USDT-SWAP", "BTC", 10, 0.01);
+//        optionsService.netGrid("okexmock1", "ETH-USDT-SWAP", "ETH", 10, 0.013);
+//    }
 }
