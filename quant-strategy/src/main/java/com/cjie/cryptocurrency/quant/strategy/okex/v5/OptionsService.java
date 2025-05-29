@@ -743,7 +743,7 @@ public class OptionsService {
 
                             PlaceOrder ppUpOrder = new PlaceOrder();
                             ppUpOrder.setInstId(optionInstId);
-                            ppUpOrder.setTdMode("isolated");
+                            ppUpOrder.setTdMode("cross");
                             ppUpOrder.setPx(new BigDecimal(optionBidPrice).toPlainString());
                             ppUpOrder.setSz(String.valueOf(size));
                             ppUpOrder.setSide("sell");
@@ -810,7 +810,7 @@ public class OptionsService {
 
                             PlaceOrder ppUpOrder = new PlaceOrder();
                             ppUpOrder.setInstId(optionInstId);
-                            ppUpOrder.setTdMode("isolated");
+                            ppUpOrder.setTdMode("cross");
                             ppUpOrder.setPx(new BigDecimal(optionBidPrice).toPlainString());
                             ppUpOrder.setSz(String.valueOf(size));
                             ppUpOrder.setSide("sell");
