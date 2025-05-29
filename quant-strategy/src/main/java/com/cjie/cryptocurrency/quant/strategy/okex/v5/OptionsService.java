@@ -676,9 +676,13 @@ public class OptionsService {
 
             }
         }
+        try {
+            Thread.sleep(5);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
-
-        for (int i = 1; i <= 3; i++) {
+        for (int i = 1; i <= 4; i++) {
             String expireTime = getNextNDay(i);
             double callStrikePrice = currentPrice * (1 + i * increment) * 1.005;
             double putStrikePrice =  currentPrice * (1 - i * increment);
@@ -722,17 +726,17 @@ public class OptionsService {
                     boolean exists = false;
                     if (optionsOrders != null && optionsOrders.size() > 0)  {
                         for (OptionsOrder optionsOrder : optionsOrders) {
-                            if (!optionInstId.equals(optionsOrder.getInstrumentId())) {
-                                continue;
+                            if (optionInstId.split("-")[0].equals(optionsOrder.getInstrumentId().split("-")[0])
+                                    && optionInstId.split("-")[2].equals(optionsOrder.getInstrumentId().split("-")[2])
+                                    && optionInstId.split("-")[4].equals(optionsOrder.getInstrumentId().split("-")[4])
+                                    && optionsOrder.getCreateTime().after(new Date(System.currentTimeMillis() - 3600L * 3000))) {
+                                exists = true;
+                                break;
                             }
-                            if (optionsOrder.getCreateTime().before(new Date(System.currentTimeMillis() - 3600L * 3000))) {
-                                continue;
-                            }
-                            exists = true;
-                            break;
                         }
 
                     }
+                    exists = true;
                     if (!exists) {
                         HttpResult<List<OrderBook>> optionOrderBookDatas = marketDataAPIService.getOrderBook(site, optionInstId, null);
                         log.info("期权深度数据{}:{}", optionInstId, JSON.toJSONString(optionOrderBookDatas));
@@ -792,14 +796,13 @@ public class OptionsService {
                     boolean exists = false;
                     if (optionsOrders != null && optionsOrders.size() > 0)  {
                         for (OptionsOrder optionsOrder : optionsOrders) {
-                            if (!optionInstId.equals(optionsOrder.getInstrumentId())) {
-                                continue;
+                            if (optionInstId.split("-")[0].equals(optionsOrder.getInstrumentId().split("-")[0])
+                                    && optionInstId.split("-")[2].equals(optionsOrder.getInstrumentId().split("-")[2])
+                                    && optionInstId.split("-")[4].equals(optionsOrder.getInstrumentId().split("-")[4])
+                                    && optionsOrder.getCreateTime().after(new Date(System.currentTimeMillis() - 3600L * 3000))) {
+                                exists = true;
+                                break;
                             }
-                            if (optionsOrder.getCreateTime().before(new Date(System.currentTimeMillis() - 3600L * 3000))) {
-                                continue;
-                            }
-                            exists = true;
-                            break;
                         }
 
                     }
