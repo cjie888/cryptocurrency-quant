@@ -654,6 +654,7 @@ public class OptionsService {
                         placeOrderParam.setOrdType("market");
                         JSONObject orderResult = tradeAPIService.placeOrder(site, placeOrderParam);
                         log.info("买入{}-{},result:{}", symbol, JSON.toJSONString(placeOrderParam), JSONObject.toJSONString(orderResult));
+                        messageService.sendStrategyMessage("optionNetGrid买入现货", "optionNetGrid买入现货-symbol:" + symbol + ",size:" + buySize + ",price:" + currentPrice);
                         if (orderResult.getString("code") != null && orderResult.getString("code").equals("0")) {
 
                             SpotOrder spotOrder = new SpotOrder();
