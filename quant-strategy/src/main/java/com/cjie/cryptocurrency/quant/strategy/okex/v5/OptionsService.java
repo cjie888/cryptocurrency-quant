@@ -643,7 +643,7 @@ public class OptionsService {
                             continue;
                         }
                         log.info("当前价格低于看跌期权行权价{}-当前价{}, 行权价:{}", optionInstId, currentPrice, optionInstArr[4]);
-                        BigDecimal buySize = new BigDecimal((strikePrice-currentPrice) * Double.valueOf(apiPositionVO.getPos())/currentPrice).multiply(optionsCtVal.get(symbol+"-USD")).abs().setScale(4, RoundingMode.CEILING);
+                        BigDecimal buySize = new BigDecimal((strikePrice-currentPrice) * Double.valueOf(apiPositionVO.getPos())/currentPrice).multiply(optionsCtVal.get(symbol+"-USD")).abs().setScale(5, RoundingMode.CEILING);
                         PlaceOrder placeOrderParam = new PlaceOrder();
                         placeOrderParam.setInstId(symbol + "-USDT");
                         placeOrderParam.setTdMode("cross");
@@ -652,7 +652,6 @@ public class OptionsService {
                         placeOrderParam.setSide("buy");
                         placeOrderParam.setTgtCcy("base_ccy");
                         placeOrderParam.setOrdType("market");
-
                         JSONObject orderResult = tradeAPIService.placeOrder(site, placeOrderParam);
                         log.info("买入{}-{},result:{}", symbol, JSON.toJSONString(placeOrderParam), JSONObject.toJSONString(orderResult));
                         if (orderResult.getString("code") != null && orderResult.getString("code").equals("0")) {
