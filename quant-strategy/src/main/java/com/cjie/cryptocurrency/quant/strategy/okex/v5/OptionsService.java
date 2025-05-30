@@ -586,7 +586,7 @@ public class OptionsService {
     }
 
 
-    void  netGrid(String site, String instrumentId, String symbol, int size, double callIncrement, double putDecrement) {
+    void  netGrid1(String site, String instrumentId, String symbol, int size, double callIncrement, double putDecrement) {
 
         HttpResult<List<Ticker>> swapTicker = marketDataAPIService.getTicker(site, symbol + "-USDT");
         if (!"0".equals(swapTicker.getCode()) || swapTicker.getData().size() == 0) {
@@ -729,12 +729,19 @@ public class OptionsService {
                 }
             }
         }
-        try {
-            Thread.sleep(5);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    }
 
+    void  netGrid2(String site, String instrumentId, String symbol, int size, double callIncrement, double putDecrement) {
+
+        HttpResult<List<Ticker>> swapTicker = marketDataAPIService.getTicker(site, symbol + "-USDT");
+        if (!"0".equals(swapTicker.getCode()) || swapTicker.getData().size() == 0) {
+            messageService.sendStrategyMessage("netGrid获取不到价格", "netGrid获取不到价格,请手动检查");
+            return;
+        }
+        Ticker apiTickerVO = swapTicker.getData().get(0);
+        Double currentPrice = Double.valueOf(apiTickerVO.getLast());
+
+        log.info("当前价格{}-{}-{}", site, currentPrice, symbol);
         for (int i = 1; i <= 4; i++) {
             String expireTime = getNextNDay(i);
             double callStrikePrice = currentPrice * (1 + 0.005 + i * callIncrement);
@@ -907,5 +914,4 @@ public class OptionsService {
             }
         }
     }
-
 }
