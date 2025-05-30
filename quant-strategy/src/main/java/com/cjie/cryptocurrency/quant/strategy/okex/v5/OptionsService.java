@@ -586,7 +586,7 @@ public class OptionsService {
     }
 
 
-    void  netGrid(String site, String instrumentId, String symbol, int size, double increment) {
+    void  netGrid(String site, String instrumentId, String symbol, int size, double callIncrement, double putDecrement) {
 
         HttpResult<List<Ticker>> swapTicker = marketDataAPIService.getTicker(site, symbol + "-USDT");
         if (!"0".equals(swapTicker.getCode()) || swapTicker.getData().size() == 0) {
@@ -684,8 +684,8 @@ public class OptionsService {
 
         for (int i = 1; i <= 4; i++) {
             String expireTime = getNextNDay(i);
-            double callStrikePrice = currentPrice * (1 + i * increment) * 1.005;
-            double putStrikePrice =  currentPrice * (1 - i * increment);
+            double callStrikePrice = currentPrice * (1 + i * callIncrement);
+            double putStrikePrice =  currentPrice * (1 - i * putDecrement);
             log.info("到期日期{}:{}, 预估看涨行权价:{},预估看跌行权价:{}", instrumentId, expireTime, callStrikePrice, putStrikePrice);
             HttpResult<List<OptionMarketData>> optionsMarketDatas = publicDataAPIService.getOptionMarketData(site, symbol + "-USD", expireTime);
 
@@ -724,7 +724,7 @@ public class OptionsService {
                     filledStatuses.add(2);
                     List<OptionsOrder> optionsOrders = optionsOrderMapper.selectByStatus(symbol,"optionNetGrid", filledStatuses);
                     boolean exists = false;
-                    if (optionsOrders != null && optionsOrders.size() > 0)  {
+                    if (optionsOrders != null && optionsOrders.size() > 0) {
                         for (OptionsOrder optionsOrder : optionsOrders) {
                             if (optionInstId.split("-")[0].equals(optionsOrder.getInstrumentId().split("-")[0])
                                     && optionInstId.split("-")[2].equals(optionsOrder.getInstrumentId().split("-")[2])
@@ -736,7 +736,6 @@ public class OptionsService {
                         }
 
                     }
-                    exists = true;
                     if (!exists) {
                         HttpResult<List<OrderBook>> optionOrderBookDatas = marketDataAPIService.getOrderBook(site, optionInstId, null);
                         log.info("期权深度数据{}:{}", optionInstId, JSON.toJSONString(optionOrderBookDatas));
