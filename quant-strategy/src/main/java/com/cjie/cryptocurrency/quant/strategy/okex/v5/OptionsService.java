@@ -608,6 +608,9 @@ public class OptionsService {
                     continue;
                 }
                 if (apiPositionVO.getPosSide().equals("net")) {
+                    if (Double.valueOf(apiPositionVO.getPos()) > 0) {
+                        continue;
+                    }
                     String optionInstId = apiPositionVO.getInstId();
                     String[] optionInstArr = optionInstId.split("-");
                     long strikeDate = Long.parseLong(optionInstArr[2]);
@@ -734,8 +737,8 @@ public class OptionsService {
 
         for (int i = 1; i <= 4; i++) {
             String expireTime = getNextNDay(i);
-            double callStrikePrice = currentPrice * (1 + 0.01 + i * callIncrement);
-            double putStrikePrice =  currentPrice * (1 - 0.01 - i * putDecrement);
+            double callStrikePrice = currentPrice * (1 + 0.005 + i * callIncrement);
+            double putStrikePrice =  currentPrice * (1 - 0.005 - i * putDecrement);
             log.info("到期日期{}:{}, 预估看涨行权价:{},预估看跌行权价:{}", instrumentId, expireTime, callStrikePrice, putStrikePrice);
             HttpResult<List<OptionMarketData>> optionsMarketDatas = publicDataAPIService.getOptionMarketData(site, symbol + "-USD", expireTime);
 
