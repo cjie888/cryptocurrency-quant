@@ -15,7 +15,7 @@ public class TransferTask {
     @Autowired
     private TransferService transferService;
 
-    @Scheduled(cron = "29 50 */1 * * ?")
+//    @Scheduled(cron = "29 50 */1 * * ?")
     public void transfer() {
 
 //        transferService.transfer("okexsub2", "MANA", "1", 3.0);
