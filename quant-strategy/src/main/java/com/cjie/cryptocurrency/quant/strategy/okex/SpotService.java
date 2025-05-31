@@ -370,7 +370,7 @@ public class SpotService {
             int buyCount = 0;
             int sellCount = 0;
             for (SpotOrder spotOrder : spotOrders) {
-                if (spotOrder.getStrategy().equals("swapAndSpotHedging")) {
+                if (!spotOrder.getStrategy().equals("netGrid")) {
                     continue;
                 }
                 if (!symbols.contains(spotOrder.getSymbol())) {
