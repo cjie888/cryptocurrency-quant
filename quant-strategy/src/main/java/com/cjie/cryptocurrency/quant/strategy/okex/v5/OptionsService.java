@@ -387,7 +387,7 @@ public class OptionsService {
                         log.info("期权持仓{}-看涨{}, result:{}", instrumentId, longPosition, JSON.toJSONString(upPosition));
                         if (upPosition != null && longPosition >= size) {
 
-                            optionOrderBookDatas = marketDataAPIService.getOrderBook(site, optionInstId, null);
+                            optionOrderBookDatas = marketDataAPIService.getOrderBook(site, upPosition.getInstId(), null);
                             log.info("期权深度数据{}:{}", optionInstId, JSON.toJSONString(optionOrderBookDatas));
                             if (!"0".equals(optionOrderBookDatas.getCode()) || optionOrderBookDatas.getData().size() <= 0
                                     || optionOrderBookDatas.getData().get(0).getBids().size() <= 0) {
