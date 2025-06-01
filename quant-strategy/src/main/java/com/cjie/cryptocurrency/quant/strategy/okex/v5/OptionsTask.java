@@ -29,7 +29,7 @@ public class OptionsTask {
     }
 
     @Scheduled(cron = "40 05 16 * * ?")  // 15:59:20 执行
-    @Scheduled(cron = "52 05 16 * * ?")
+    @Scheduled(cron = "52 06 16 * * ?")
 //    @Scheduled(cron = "3/15 * * * * ?")
     public void netGrid2() {
         optionsService.netGrid2("okex", "BTC-USDT-SWAP", "BTC", 1, 0.009, 0.008);
