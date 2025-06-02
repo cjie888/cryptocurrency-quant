@@ -675,57 +675,57 @@ public class OptionsService {
                         }
                     }
                     //卖出看涨期权到期时高于行权价，卖出相应标的
-                    if ("C".equals(optionInstArr[4]) && strikePrice < currentPrice) {
-
-                        List<Integer> filledStatuses = new ArrayList<>();
-                        filledStatuses.add(2);
-                        List<SpotOrder> spotOrders = spotOrderMapper.selectByStatus(symbol + "-USDT","optionNetGrid", filledStatuses);
-                        boolean exists = false;
-                        if (spotOrders != null && spotOrders.size() > 0)  {
-                            for (SpotOrder spotOrder : spotOrders) {
-                                if (spotOrder.getCreateTime().before(new Date(System.currentTimeMillis() - 3600L * 3000))) {
-                                    continue;
-                                }
-                                if (!optionInstId.equals(spotOrder.getReferSymbol())) {
-                                    continue;
-                                }
-                                exists = true;
-                                break;
-                            }
-
-                        }
-                        if (exists) {
-                            continue;
-                        }
-                        log.info("当前价格高于看涨期权行权价{}-当前价{}, 行权价:{}", optionInstId, currentPrice, optionInstArr[4]);
-                        BigDecimal sellSize = new BigDecimal((strikePrice-currentPrice) * Double.valueOf(apiPositionVO.getPos())/currentPrice).multiply(optionsCtVal.get(symbol+"-USD")).abs().setScale(5, RoundingMode.CEILING);
-                        PlaceOrder placeOrderParam = new PlaceOrder();
-                        placeOrderParam.setInstId(symbol + "-USDT");
-                        placeOrderParam.setTdMode("cross");
-                        placeOrderParam.setPx(apiTickerVO.getLast());
-                        placeOrderParam.setSz(sellSize.toPlainString());
-                        placeOrderParam.setSide("sell");
-                        placeOrderParam.setTgtCcy("base_ccy");
-                        placeOrderParam.setOrdType("market");
-                        JSONObject orderResult = tradeAPIService.placeOrder(site, placeOrderParam);
-                        log.info("卖出{}-{},result:{}", symbol, JSON.toJSONString(placeOrderParam), JSONObject.toJSONString(orderResult));
-                        messageService.sendStrategyMessage("optionNetGrid卖出现货", "optionNetGrid卖出现货-symbol:" + symbol + ",size:" + sellSize + ",price:" + currentPrice  + ",instId:" + optionInstId);
-                        if (orderResult.getString("code") != null && orderResult.getString("code").equals("0")) {
-
-                            SpotOrder spotOrder = new SpotOrder();
-                            spotOrder.setSymbol(symbol + "-USDT");
-                            spotOrder.setCreateTime(new Date());
-                            spotOrder.setStrategy("optionNetGrid");
-                            spotOrder.setIsMock(Byte.valueOf("0"));
-                            spotOrder.setType(Byte.valueOf("2"));
-                            spotOrder.setPrice(new BigDecimal(apiTickerVO.getLast()));
-                            spotOrder.setSize(sellSize);
-                            spotOrder.setOrderId(String.valueOf(((JSONObject) orderResult.getJSONArray("data").get(0)).getString("ordId")));
-                            spotOrder.setStatus(2);
-                            spotOrder.setReferSymbol(optionInstId);
-                            spotOrderMapper.insert(spotOrder);
-                        }
-                    }
+//                    if ("C".equals(optionInstArr[4]) && strikePrice < currentPrice) {
+//
+//                        List<Integer> filledStatuses = new ArrayList<>();
+//                        filledStatuses.add(2);
+//                        List<SpotOrder> spotOrders = spotOrderMapper.selectByStatus(symbol + "-USDT","optionNetGrid", filledStatuses);
+//                        boolean exists = false;
+//                        if (spotOrders != null && spotOrders.size() > 0)  {
+//                            for (SpotOrder spotOrder : spotOrders) {
+//                                if (spotOrder.getCreateTime().before(new Date(System.currentTimeMillis() - 3600L * 3000))) {
+//                                    continue;
+//                                }
+//                                if (!optionInstId.equals(spotOrder.getReferSymbol())) {
+//                                    continue;
+//                                }
+//                                exists = true;
+//                                break;
+//                            }
+//
+//                        }
+//                        if (exists) {
+//                            continue;
+//                        }
+//                        log.info("当前价格高于看涨期权行权价{}-当前价{}, 行权价:{}", optionInstId, currentPrice, optionInstArr[4]);
+//                        BigDecimal sellSize = new BigDecimal((strikePrice-currentPrice) * Double.valueOf(apiPositionVO.getPos())/currentPrice).multiply(optionsCtVal.get(symbol+"-USD")).abs().setScale(5, RoundingMode.CEILING);
+//                        PlaceOrder placeOrderParam = new PlaceOrder();
+//                        placeOrderParam.setInstId(symbol + "-USDT");
+//                        placeOrderParam.setTdMode("cross");
+//                        placeOrderParam.setPx(apiTickerVO.getLast());
+//                        placeOrderParam.setSz(sellSize.toPlainString());
+//                        placeOrderParam.setSide("sell");
+//                        placeOrderParam.setTgtCcy("base_ccy");
+//                        placeOrderParam.setOrdType("market");
+//                        JSONObject orderResult = tradeAPIService.placeOrder(site, placeOrderParam);
+//                        log.info("卖出{}-{},result:{}", symbol, JSON.toJSONString(placeOrderParam), JSONObject.toJSONString(orderResult));
+//                        messageService.sendStrategyMessage("optionNetGrid卖出现货", "optionNetGrid卖出现货-symbol:" + symbol + ",size:" + sellSize + ",price:" + currentPrice  + ",instId:" + optionInstId);
+//                        if (orderResult.getString("code") != null && orderResult.getString("code").equals("0")) {
+//
+//                            SpotOrder spotOrder = new SpotOrder();
+//                            spotOrder.setSymbol(symbol + "-USDT");
+//                            spotOrder.setCreateTime(new Date());
+//                            spotOrder.setStrategy("optionNetGrid");
+//                            spotOrder.setIsMock(Byte.valueOf("0"));
+//                            spotOrder.setType(Byte.valueOf("2"));
+//                            spotOrder.setPrice(new BigDecimal(apiTickerVO.getLast()));
+//                            spotOrder.setSize(sellSize);
+//                            spotOrder.setOrderId(String.valueOf(((JSONObject) orderResult.getJSONArray("data").get(0)).getString("ordId")));
+//                            spotOrder.setStatus(2);
+//                            spotOrder.setReferSymbol(optionInstId);
+//                            spotOrderMapper.insert(spotOrder);
+//                        }
+//                    }
                 }
             }
         }
