@@ -253,8 +253,8 @@ public class OptionsService {
                         continue;
                     }
                     Long strikePrice = Long.parseLong(optionInstArr[3]);
-                    if (strikePrice < currentPrice) {
-                        if (currentOptionMarketData == null || strikePrice > currentStrikePrice) {
+                    if (strikePrice > currentPrice) {
+                        if (currentOptionMarketData == null || strikePrice < currentStrikePrice) {
                             currentStrikePrice = strikePrice;
                             currentOptionMarketData = optionMarketData;
                         }
