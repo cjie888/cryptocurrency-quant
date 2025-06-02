@@ -745,8 +745,8 @@ public class OptionsService {
         for (int i = 1; i <= 3; i++) {
             String expireTime = getNextNDay(i);
             for (int j = i; j <= 4; j++) {
-                double callStrikePrice = currentPrice * (1 + 0.005 + j * callIncrement);
-                double putStrikePrice = currentPrice * (1 - 0.005 - j * putDecrement);
+                double callStrikePrice = currentPrice * (1 + 0.008 + j * callIncrement);
+                double putStrikePrice = currentPrice * (1 - 0.008 - j * putDecrement);
                 log.info("到期日期{}:{}, 预估看涨行权价:{},预估看跌行权价:{}", instrumentId, expireTime, callStrikePrice, putStrikePrice);
                 HttpResult<List<OptionMarketData>> optionsMarketDatas = publicDataAPIService.getOptionMarketData(site, symbol + "-USD", expireTime);
 
