@@ -173,7 +173,7 @@ public class SwapV5Service {
     }
 
 
-    public void swapAndSpotHedging(String site, String instrumentId, String symbol, Double increment, int size) {
+    public void swapAndSpotHedging(String site, String instrumentId, String symbol, Double increment, double size) {
         //获取等待提交订单
         List<Integer> unProcessedStatuses = new ArrayList<>();
         unProcessedStatuses.add(99);
