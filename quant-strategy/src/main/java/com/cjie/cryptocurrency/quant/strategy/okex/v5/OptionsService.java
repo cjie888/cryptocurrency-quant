@@ -1150,7 +1150,7 @@ public class OptionsService {
             if (currentCallOptionMarketData != null) {
                 messageService.sendStrategyMessage("dynamicDeltaHedging delta值", "dynamicDeltaHedging delta值-instId:" + callInstId +
                         ",price:" + currentPrice + ",delta:" + currentCallOptionMarketData.getDelta()  + ",gamma:" + currentCallOptionMarketData.getGamma()
-                        + ",vega:" + currentCallOptionMarketData.getVega()  + ",vol:" + currentCallOptionMarketData.getVolLv() );
+                        + ",vega:" + currentCallOptionMarketData.getVega()  + ",theta:" + currentCallOptionMarketData.getTheta() + ",vol:" + currentCallOptionMarketData.getVolLv() );
 
             }
         }
