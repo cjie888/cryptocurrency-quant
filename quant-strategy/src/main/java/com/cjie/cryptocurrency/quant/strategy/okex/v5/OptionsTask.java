@@ -36,7 +36,7 @@ public class OptionsTask {
         optionsService.netGrid2("okex", "ETH-USDT-SWAP", "ETH", 2, 0.014,0.013);
     }
 
-    @Scheduled(cron = "52 0 * * * ?")
+    @Scheduled(cron = "52 35 * * * ?")
 //    @Scheduled(cron = "3/15 * * * * ?")
     public void dynamicDeltaHedging() {
          optionsService.dynamicDeltaHedging("okexmock1", "ETH-USDT-SWAP", "ETH", 0.02, 1);
