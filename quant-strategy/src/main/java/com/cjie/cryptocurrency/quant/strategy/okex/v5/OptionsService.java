@@ -30,6 +30,7 @@ import javafx.scene.effect.Light;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.math.NumberUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpEntity;
@@ -109,7 +110,7 @@ public class OptionsService {
 
     }
 
-    private  String  getOptionExpireTime() {
+    private String getOptionExpireTime() {
         // 获取当前日期
         LocalDate today = LocalDate.now();
 
@@ -358,7 +359,7 @@ public class OptionsService {
 
                     //价格上涨
                     if (currentPrice > lastPrice && currentPrice - lastPrice > lastPrice * increment * 1.05) {
-                      //卖出看涨期权 合约做空
+                        //卖出看涨期权 合约做空
                         HttpResult<List<PositionInfo>> positionsResult = accountAPIV5Service.getPositions(site, "OPTION", null, null);
                         log.info("期权持仓{}-看涨总{}, result:{}", symbol, JSON.toJSONString(positionsResult));
                         if (positionsResult == null || !positionsResult.getCode().equals("0")) {
@@ -586,7 +587,7 @@ public class OptionsService {
     }
 
 
-    void  netGrid1(String site, String instrumentId, String symbol, int size, double callIncrement, double putDecrement) {
+    void netGrid1(String site, String instrumentId, String symbol, int size, double callIncrement, double putDecrement) {
 
         HttpResult<List<Ticker>> swapTicker = marketDataAPIService.getTicker(site, symbol + "-USDT");
         if (!"0".equals(swapTicker.getCode()) || swapTicker.getData().size() == 0) {
@@ -625,9 +626,9 @@ public class OptionsService {
 
                             List<Integer> filledStatuses = new ArrayList<>();
                             filledStatuses.add(2);
-                            List<SpotOrder> spotOrders = spotOrderMapper.selectByStatus(symbol + "-USDT","optionNetGrid", filledStatuses);
+                            List<SpotOrder> spotOrders = spotOrderMapper.selectByStatus(symbol + "-USDT", "optionNetGrid", filledStatuses);
                             boolean exists = false;
-                            if (spotOrders != null && spotOrders.size() > 0)  {
+                            if (spotOrders != null && spotOrders.size() > 0) {
                                 for (SpotOrder spotOrder : spotOrders) {
                                     if (spotOrder.getCreateTime().before(new Date(System.currentTimeMillis() - 3600L * 3000))) {
                                         continue;
@@ -644,7 +645,7 @@ public class OptionsService {
                                 continue;
                             }
                             log.info("当前价格低于看跌期权行权价{}-当前价{}, 行权价:{}", optionInstId, currentPrice, optionInstArr[4]);
-                            BigDecimal buySize = new BigDecimal((strikePrice-currentPrice) * Double.valueOf(apiPositionVO.getPos())/currentPrice).multiply(optionsCtVal.get(symbol+"-USD")).abs().setScale(5, RoundingMode.CEILING);
+                            BigDecimal buySize = new BigDecimal((strikePrice - currentPrice) * Double.valueOf(apiPositionVO.getPos()) / currentPrice).multiply(optionsCtVal.get(symbol + "-USD")).abs().setScale(5, RoundingMode.CEILING);
                             PlaceOrder placeOrderParam = new PlaceOrder();
                             placeOrderParam.setInstId(symbol + "-USDT");
                             placeOrderParam.setTdMode("cross");
@@ -785,7 +786,7 @@ public class OptionsService {
         }
     }
 
-    void  netGrid2(String site, String instrumentId, String symbol, int size, double callIncrement, double putDecrement) {
+    void netGrid2(String site, String instrumentId, String symbol, int size, double callIncrement, double putDecrement) {
 
         HttpResult<List<Ticker>> swapTicker = marketDataAPIService.getTicker(site, symbol + "-USDT");
         if (!"0".equals(swapTicker.getCode()) || swapTicker.getData().size() == 0) {
@@ -1094,6 +1095,63 @@ public class OptionsService {
 
                     }
                 }
+            }
+        }
+    }
+
+    public void dynamicDeltaHedging(String site, String instrumentId, String symbol, Double increment, int size) {
+
+        HttpResult<List<Ticker>> swapTicker = marketDataAPIService.getTicker(site, instrumentId);
+
+        if (!"0".equals(swapTicker.getCode()) || swapTicker.getData().size() == 0) {
+            return;
+        }
+        Ticker apiTickerVO = swapTicker.getData().get(0);
+        Double currentPrice = Double.valueOf(apiTickerVO.getLast());
+        HttpResult<List<PositionInfo>> positionsResult = accountAPIV5Service.getPositions(site, "OPTION", null, null);
+        log.info("期权持仓{}-总持仓{}, result:{}", symbol, JSON.toJSONString(positionsResult));
+
+        String strikeDate = getOptionExpireTime();
+        Map<String, String> optionInstIds = new HashMap<>();
+        optionInstIds.put("BTC", "BTC-USD-250725-108000-C");
+        optionInstIds.put("ETH", "ETH-USD-250725-2700-C");
+//        optionInstIds.put("BTC", "BTC-USD-250725-110000-C");
+
+        String callInstId = optionInstIds.get(symbol);
+        if (StringUtils.isBlank(callInstId)) {
+            return;
+        }
+
+        HttpResult<List<OptionMarketData>> optionsMarketDatas = publicDataAPIService.getOptionMarketData(site, symbol + "-USD", strikeDate);
+
+        if ("0".equals(optionsMarketDatas.getCode()) && optionsMarketDatas.getData().size() > 0) {
+            OptionMarketData currentCallOptionMarketData = null;
+            Long currentCallStrikePrice = null;
+            OptionMarketData currentPutOptionMarketData = null;
+            Long currentPutStrikePrice = null;
+            for (OptionMarketData optionMarketData : optionsMarketDatas.getData()) {
+                String optionInstId = optionMarketData.getInstId();
+                String[] optionInstArr = optionInstId.split("-");
+                if (optionInstArr.length != 5 || !NumberUtils.isNumber(optionInstArr[3])) {
+                    continue;
+                }
+                Long strikePrice = Long.parseLong(optionInstArr[3]);
+//                if ("C".equals(optionInstArr[4]) && strikePrice > callStrikePrice) {
+//                    if (currentCallOptionMarketData == null || strikePrice < currentCallStrikePrice) {
+//                        currentCallStrikePrice = strikePrice;
+//                        currentCallOptionMarketData = optionMarketData;
+//                    }
+//                }
+                if (optionInstId.equals(callInstId)) {
+                    currentCallOptionMarketData = optionMarketData;
+                    currentCallStrikePrice = strikePrice;
+                }
+            }
+            if (currentCallOptionMarketData != null) {
+                messageService.sendStrategyMessage("dynamicDeltaHedging delta值", "dynamicDeltaHedging delta值-instId:" + callInstId +
+                        ",price:" + currentPrice + ",delta:" + currentCallOptionMarketData.getDelta()  + ",gamma:" + currentCallOptionMarketData.getGamma()
+                        + ",vega:" + currentCallOptionMarketData.getVega()  + ",vol:" + currentCallOptionMarketData.getVolLv() );
+
             }
         }
     }
