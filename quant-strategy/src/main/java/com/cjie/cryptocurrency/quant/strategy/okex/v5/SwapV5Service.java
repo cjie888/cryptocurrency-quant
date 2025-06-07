@@ -101,6 +101,7 @@ public class SwapV5Service {
         swapCtVal.put("LINK-USDT-SWAP", new BigDecimal("1"));
         swapCtVal.put("AVAX-USDT-SWAP", new BigDecimal("1"));
         swapCtVal.put("XLM-USDT-SWAP", new BigDecimal("100"));
+        swapCtVal.put("BNB-USDT-SWAP", new BigDecimal("0.01"));
 
     }
 
