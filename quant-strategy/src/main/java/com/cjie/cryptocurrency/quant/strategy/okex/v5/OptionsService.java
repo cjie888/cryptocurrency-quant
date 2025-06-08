@@ -1313,14 +1313,14 @@ public class OptionsService {
                         if (apiPositionVO.getAvailPos().equals("")) {
                             continue;
                         }
-                        if (apiPositionVO.getPosSide().equals("short")&& Double.valueOf(apiPositionVO.getPos()) >= Double.valueOf(size) && Double.valueOf(apiPositionVO.getAvailPos()) >= Double.valueOf(size)) {
+                        if (apiPositionVO.getPosSide().equals("short")&& Double.valueOf(apiPositionVO.getAvailPos()) > 0) {
                             downPosition = apiPositionVO;
-                            shortPosition = Double.valueOf(apiPositionVO.getPos());
+                            shortPosition = Double.valueOf(apiPositionVO.getAvailPos());
                         }
 
                     }
                     log.info("持仓{}-空{}", instrumentId, shortPosition);
-                    BigDecimal swapSize = new BigDecimal(size).multiply(optionsOrder.getDelta()).setScale(0, RoundingMode.CEILING);
+                    BigDecimal swapSize = new BigDecimal(size).multiply(optionsOrder.getDelta()).setScale(1, RoundingMode.CEILING);
                     if (downPosition != null) {
                         if (shortPosition > swapSize.doubleValue()) {
                             PlaceOrder ppDownOrder = new PlaceOrder();
@@ -1551,9 +1551,9 @@ public class OptionsService {
                             if (apiPositionVO.getAvailPos().equals("")) {
                                 continue;
                             }
-                            if (apiPositionVO.getPosSide().equals("short")&& Double.valueOf(apiPositionVO.getPos()) >= Double.valueOf(size) && Double.valueOf(apiPositionVO.getAvailPos()) >= Double.valueOf(size)) {
+                            if (apiPositionVO.getPosSide().equals("short")&& Double.valueOf(apiPositionVO.getPos()) > 0 && Double.valueOf(apiPositionVO.getAvailPos()) > 0) {
                                 downPosition = apiPositionVO;
-                                shortPosition = Double.valueOf(apiPositionVO.getPos());
+                                shortPosition = Double.valueOf(apiPositionVO.getAvailPos());
                             }
 
                         }
