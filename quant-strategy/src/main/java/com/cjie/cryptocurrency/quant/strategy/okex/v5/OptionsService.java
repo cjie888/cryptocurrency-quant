@@ -1320,14 +1320,14 @@ public class OptionsService {
 
                     }
                     log.info("持仓{}-空{}", instrumentId, shortPosition);
-                    BigDecimal swapSize = new BigDecimal(size).multiply(optionsOrder.getDelta()).setScale(1, RoundingMode.CEILING);
+                    BigDecimal swapSize = new BigDecimal(size).multiply(optionsOrder.getDelta()).setScale(2, RoundingMode.CEILING);
                     if (downPosition != null) {
                         if (shortPosition > swapSize.doubleValue()) {
                             PlaceOrder ppDownOrder = new PlaceOrder();
                             ppDownOrder.setInstId(instrumentId);
                             ppDownOrder.setTdMode("cross");
                             ppDownOrder.setPx(new BigDecimal(apiTickerVO.getLast()).toPlainString());
-                            ppDownOrder.setSz(new BigDecimal(Double.valueOf(downPosition.getPos()) - swapSize.doubleValue()).setScale(1,  RoundingMode.CEILING).toPlainString());
+                            ppDownOrder.setSz(new BigDecimal(Double.valueOf(downPosition.getPos()) - swapSize.doubleValue()).setScale(2,  RoundingMode.CEILING).toPlainString());
                             ppDownOrder.setSide("buy");
                             ppDownOrder.setOrdType("market");
                             ppDownOrder.setPosSide("short");
@@ -1340,7 +1340,7 @@ public class OptionsService {
                             ppDownOrder.setInstId(instrumentId);
                             ppDownOrder.setTdMode("cross");
                             ppDownOrder.setPx(new BigDecimal(apiTickerVO.getLast()).toPlainString());
-                            ppDownOrder.setSz(new BigDecimal(Double.valueOf(downPosition.getPos()) - swapSize.doubleValue()).abs().setScale(1,  RoundingMode.CEILING).toPlainString());
+                            ppDownOrder.setSz(new BigDecimal(Double.valueOf(downPosition.getPos()) - swapSize.doubleValue()).abs().setScale(2,  RoundingMode.CEILING).toPlainString());
                             ppDownOrder.setSide("sell");
                             ppDownOrder.setOrdType("market");
                             ppDownOrder.setPosSide("short");
@@ -1503,7 +1503,7 @@ public class OptionsService {
 
                     if (currentDelta > lastDelta && currentDelta - lastDelta > increment) {
                         //合约开空
-                        BigDecimal swapSize = new BigDecimal(size).multiply(new BigDecimal(currentDelta - lastDelta)).abs().setScale(1,RoundingMode.CEILING);
+                        BigDecimal swapSize = new BigDecimal(size).multiply(new BigDecimal(currentDelta - lastDelta)).abs().setScale(2,RoundingMode.CEILING);
                         PlaceOrder ppDownOrder = new PlaceOrder();
                         ppDownOrder.setInstId(instrumentId);
                         ppDownOrder.setTdMode("cross");
@@ -1561,7 +1561,7 @@ public class OptionsService {
                             continue;
                         }
                         //合约平空
-                        BigDecimal swapSize = new BigDecimal(size).multiply(new BigDecimal(lastDelta - currentDelta)).abs().setScale(1,RoundingMode.CEILING);
+                        BigDecimal swapSize = new BigDecimal(size).multiply(new BigDecimal(lastDelta - currentDelta)).abs().setScale(2,RoundingMode.CEILING);
                         swapSize = swapSize.min(new BigDecimal(shortPosition));
                         PlaceOrder ppDownOrder = new PlaceOrder();
                         ppDownOrder.setInstId(instrumentId);
