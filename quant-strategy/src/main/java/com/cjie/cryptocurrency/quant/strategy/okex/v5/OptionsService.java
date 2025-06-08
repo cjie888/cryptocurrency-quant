@@ -1540,8 +1540,29 @@ public class OptionsService {
                     }
 
                     if (currentDelta < lastDelta && lastDelta - currentDelta > increment) {
+                        //查看合约持仓
+                        HttpResult<List<PositionInfo>> positionsResult = accountAPIV5Service.getPositions(site, null, instrumentId, null);
+                        if (positionsResult == null || !positionsResult.getCode().equals("0")) {
+                            continue;
+                        }
+                        PositionInfo downPosition = null;
+                        double shortPosition = 0;
+                        for (PositionInfo apiPositionVO : positionsResult.getData()) {
+                            if (apiPositionVO.getAvailPos().equals("")) {
+                                continue;
+                            }
+                            if (apiPositionVO.getPosSide().equals("short")&& Double.valueOf(apiPositionVO.getPos()) >= Double.valueOf(size) && Double.valueOf(apiPositionVO.getAvailPos()) >= Double.valueOf(size)) {
+                                downPosition = apiPositionVO;
+                                shortPosition = Double.valueOf(apiPositionVO.getPos());
+                            }
+
+                        }
+                        if (shortPosition <=0) {
+                            continue;
+                        }
                         //合约平空
                         BigDecimal swapSize = new BigDecimal(size).multiply(new BigDecimal(lastDelta - currentDelta)).abs().setScale(0,RoundingMode.CEILING);
+                        swapSize = swapSize.min(new BigDecimal(shortPosition));
                         PlaceOrder ppDownOrder = new PlaceOrder();
                         ppDownOrder.setInstId(instrumentId);
                         ppDownOrder.setTdMode("cross");
