@@ -33,13 +33,13 @@ public class OptionsTask {
 //    @Scheduled(cron = "3/15 * * * * ?")
     public void netGrid2() {
         optionsService.netGrid2("okex", "BTC-USDT-SWAP", "BTC", 2, 0.008, 0.007);
-        optionsService.netGrid2("okex", "ETH-USDT-SWAP", "ETH", 2, 0.014,0.013);
+        optionsService.netGrid2("okex", "ETH-USDT-SWAP", "ETH", 2, 0.016,0.015);
     }
 
-    @Scheduled(cron = "52 35 * * * ?")
-//    @Scheduled(cron = "3/15 * * * * ?")
+//    @Scheduled(cron = "52 35 * * * ?")
+    @Scheduled(cron = "3/15 * * * * ?")
     public void dynamicDeltaHedging() {
-         optionsService.dynamicDeltaHedging("okex", "ETH-USDT-SWAP", "ETH", 0.02, 1);
-         optionsService.dynamicDeltaHedging("okex", "BTC-USDT-SWAP", "BTC", 0.02, 1);
+         optionsService.dynamicDeltaHedging("okex", "ETH-USDT-SWAP", "ETH", 0.03, 10);
+         optionsService.dynamicDeltaHedging("okex", "BTC-USDT-SWAP", "BTC", 0.03, 10);
     }
 }
