@@ -25,10 +25,21 @@ public interface AccountAPI {
     //查看持仓信息 Get Positions
     @GET("/api/v5/account/positions")
     Call<HttpResult<List<PositionInfo>> > getPositions(@Query("instType") String instType, @Query("instId") String instId, @Query("posId") String posId);
-
+    @GET("/api/v5/account/positions-history")
+    Call<HttpResult<List<PositionInfo>>> getHistoryPostions(@Query("instType") String instType,
+                                          @Query("instId") String instId,
+                                          @Query("ccy") String ccy,
+                                          @Query("mgnMode") String mgnMode,
+                                          @Query("ctType") String ctType,
+                                          @Query("type") String type,
+                                          @Query("subType") String subType,
+                                          @Query("after") String after,
+                                          @Query("before") String before,
+                                          @Query("limit") String limit);
     //账单流水查询（近七天） Get Bills Details (last 7 days)
     @GET("/api/v5/account/bills")
     Call<JSONObject> getBillsDetails7Days(@Query("instType") String instType,
+                                          @Query("instId") String instId,
                                           @Query("ccy") String ccy,
                                           @Query("mgnMode") String mgnMode,
                                           @Query("ctType") String ctType,

@@ -25,8 +25,11 @@ public interface AccountAPIV5Service {
     //查看持仓信息 Get Positions
     HttpResult<List<PositionInfo>> getPositions(String site, String instType, String instId, String posId);
 
+    HttpResult<List<PositionInfo>> getHistoryPostions(String site, String instType, String instId, String ccy, String mgnMode, String ctType, String type, String subType, String after, String before, String limit);
+
+
     //账单流水查询（近七天） Get Bills Details (last 7 days)
-    JSONObject getBillsDetails7Days(String site, String instType, String ccy, String mgnMode, String ctType, String type, String subType, String after, String before, String limit);
+    JSONObject getBillsDetails7Days(String site, String instType, String instId, String ccy, String mgnMode, String ctType, String type, String subType, String after, String before, String limit);
 
     //账单流水查询（近七天） Get Bills Details (last 3 months)
     JSONObject getBillsDetails3Months(String site, String instType, String ccy, String mgnMode, String ctType, String type, String subType, String after, String before, String limit);

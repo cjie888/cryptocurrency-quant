@@ -62,12 +62,18 @@ public class AccountAPIV5ServiceImpl extends BaseServiceImpl implements AccountA
         return client.executeSync(api.getPositions(instType,instId,posId));
     }
 
-    //账单流水查询（近七天） Get Bills Details (last 7 days)
     @Override
-    public JSONObject getBillsDetails7Days(String site, String instType,String ccy,String mgnMode,String ctType,String type,String subType,String after,String before,String limit) {
+    public HttpResult<List<PositionInfo>> getHistoryPostions(String site, String instType, String instId, String ccy, String mgnMode, String ctType, String type, String subType, String after, String before, String limit) {
         APIClient client = getTradeAPIClient(site);
         AccountAPI api = getAccountApi(site, client);
-        return client.executeSync(api.getBillsDetails7Days(instType,ccy,mgnMode,ctType,type,subType,after,before,limit));
+        return client.executeSync(api.getHistoryPostions(instType,instId, ccy,mgnMode,ctType,type,subType,after,before,limit));    }
+
+    //账单流水查询（近七天） Get Bills Details (last 7 days)
+    @Override
+    public JSONObject getBillsDetails7Days(String site, String instType, String instId, String ccy,String mgnMode,String ctType,String type,String subType,String after,String before,String limit) {
+        APIClient client = getTradeAPIClient(site);
+        AccountAPI api = getAccountApi(site, client);
+        return client.executeSync(api.getBillsDetails7Days(instType,instId, ccy,mgnMode,ctType,type,subType,after,before,limit));
     }
 
     //账单流水查询（近七天） Get Bills Details (last 3 months)

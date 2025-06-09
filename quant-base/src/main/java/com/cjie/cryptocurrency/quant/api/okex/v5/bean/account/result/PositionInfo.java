@@ -1,5 +1,7 @@
 package com.cjie.cryptocurrency.quant.api.okex.v5.bean.account.result;
 
+import java.math.BigDecimal;
+
 public class PositionInfo {
 
     private String instType; //	String	产品类型
@@ -22,6 +24,10 @@ public class PositionInfo {
     private Long cTime;
 
     private String instId;
+
+    private BigDecimal realizedPnl;
+
+    private Long uTime;
 
     public String getInstType() {
         return instType;
@@ -109,5 +115,21 @@ public class PositionInfo {
 
     public void setInstId(String instId) {
         this.instId = instId;
+    }
+
+    public BigDecimal getRealizedPnl() {
+        return realizedPnl;
+    }
+
+    public void setRealizedPnl(BigDecimal realizedPnl) {
+        this.realizedPnl = realizedPnl;
+    }
+
+    public Long getuTime() {
+        return uTime;
+    }
+
+    public void setuTime(Long uTime) {
+        this.uTime = uTime;
     }
 }
