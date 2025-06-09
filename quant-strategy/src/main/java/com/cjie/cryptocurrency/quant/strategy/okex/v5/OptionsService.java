@@ -1625,7 +1625,7 @@ public class OptionsService {
                 continue;
             }
             log.info("position info: instId:{}, realizedPnl:{}, uTime:{}", positionInfo.getInstId(), positionInfo.getRealizedPnl(), new Date(positionInfo.getuTime()));
-            profitSymbol = profitSymbol.add(positionInfo.getRealizedPnl());
+            profitSymbol = profitSymbol.add(new BigDecimal(positionInfo.getRealizedPnl()));
         }
         BigDecimal profitUsdt = profitSymbol.multiply(new BigDecimal(apiTickerVO.getLast())).setScale(4, BigDecimal.ROUND_DOWN);
         log.info("option:{}, profit :{}, profitUsdt:{}", symbol, profitSymbol, profitUsdt);
