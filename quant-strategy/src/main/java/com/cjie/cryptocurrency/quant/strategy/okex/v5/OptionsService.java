@@ -1333,7 +1333,7 @@ public class OptionsService {
                             ppDownOrder.setPosSide("short");
                             ppDownOrder.setType("4");
                             JSONObject orderResult = tradeAPIService.placeSwapOrder(site, ppDownOrder, "dynamicDeltaHedging");
-                            messageService.sendStrategyMessage("dynamicDeltaHedging合约平空", "dynamicDeltaHedging合约平空-instId:" + instrumentId + ",price:" + currentPrice);
+                            messageService.sendStrategyMessage("dynamicDeltaHedging合约平空", "dynamicDeltaHedging合约平空-instId:" + instrumentId + ",price:" + currentPrice + ",size:" + ppDownOrder.getSz());
                             log.info("合约平空 {}-{},result:{}", instrumentId, JSON.toJSONString(ppDownOrder), JSONObject.toJSONString(orderResult));
                         } else if (shortPosition < swapSize.doubleValue()) {
                             PlaceOrder ppDownOrder = new PlaceOrder();
@@ -1346,7 +1346,7 @@ public class OptionsService {
                             ppDownOrder.setPosSide("short");
                             ppDownOrder.setType("2");
                             JSONObject orderResult = tradeAPIService.placeSwapOrder(site, ppDownOrder, "dynamicDeltaHedging");
-                            messageService.sendStrategyMessage("dynamicDeltaHedging合约开空", "dynamicDeltaHedging合约开空-instId:" + instrumentId + ",price:" + currentPrice);
+                            messageService.sendStrategyMessage("dynamicDeltaHedging合约开空", "dynamicDeltaHedging合约开空-instId:" + instrumentId + ",price:" + currentPrice  + ",size:" + ppDownOrder.getSz());
                             log.info("合约开空 {}-{},result:{}", instrumentId, JSON.toJSONString(ppDownOrder), JSONObject.toJSONString(orderResult));
                         }
                     } else {
@@ -1361,7 +1361,7 @@ public class OptionsService {
                         ppDownOrder.setPosSide("short");
                         ppDownOrder.setType("2");
                         JSONObject orderResult = tradeAPIService.placeSwapOrder(site, ppDownOrder, "dynamicDeltaHedging");
-                        messageService.sendStrategyMessage("dynamicDeltaHedging合约开空", "dynamicDeltaHedging合约开空-instId:" + instrumentId + ",price:" + currentPrice);
+                        messageService.sendStrategyMessage("dynamicDeltaHedging合约开空", "dynamicDeltaHedging合约开空-instId:" + instrumentId + ",price:" + currentPrice  + ",size:" + ppDownOrder.getSz());
                         log.info("合约开空 {}-{},result:{}", instrumentId, JSON.toJSONString(ppDownOrder), JSONObject.toJSONString(orderResult));
                     }
                 }
@@ -1535,7 +1535,7 @@ public class OptionsService {
 
                         optionsOrderLogMapper.insert(currentOptionsOrderLog);
 
-                        messageService.sendStrategyMessage("dynamicDeltaHedging合约开空", "dynamicDeltaHedging合约开空-instId:" + instrumentId + ",price:" + currentPrice);
+                        messageService.sendStrategyMessage("dynamicDeltaHedging合约开空", "dynamicDeltaHedging合约开空-instId:" + instrumentId + ",price:" + currentPrice  + ",size:" + ppDownOrder.getSz());
                         log.info("合约开空 {}-{},result:{}", instrumentId, JSON.toJSONString(ppDownOrder), JSONObject.toJSONString(orderResult));
                     }
 
@@ -1573,7 +1573,7 @@ public class OptionsService {
                         ppDownOrder.setPosSide("short");
                         ppDownOrder.setType("4");
                         JSONObject orderResult = tradeAPIService.placeSwapOrder(site, ppDownOrder, "dynamicDeltaHedging");
-                        messageService.sendStrategyMessage("dynamicDeltaHedging合约平空", "dynamicDeltaHedging合约平空-instId:" + instrumentId + ",price:" + currentPrice);
+                        messageService.sendStrategyMessage("dynamicDeltaHedging合约平空", "dynamicDeltaHedging合约平空-instId:" + instrumentId + ",price:" + currentPrice  + ",size:" + ppDownOrder.getSz());
                         log.info("合约平空 {}-{},result:{}", instrumentId, JSON.toJSONString(ppDownOrder), JSONObject.toJSONString(orderResult));
 
                         OptionsOrderLog currentOptionsOrderLog = new OptionsOrderLog();
