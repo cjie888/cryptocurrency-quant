@@ -1621,7 +1621,7 @@ public class OptionsService {
         log.info("account bill result size:{}", accountBillsResult.getData().size());
         BigDecimal profitSymbol = BigDecimal.ZERO;
         for (PositionInfo positionInfo: accountBillsResult.getData()) {
-            if (!positionInfo.getCcy().equals(symbol)) {
+            if (!positionInfo.getCcy().equals(symbol) || positionInfo.getType() != 2) {
                 continue;
             }
             log.info("position info: instId:{}, realizedPnl:{}, uTime:{}", positionInfo.getInstId(), positionInfo.getRealizedPnl(), new Date(positionInfo.getuTime()));

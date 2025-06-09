@@ -29,6 +29,8 @@ public class PositionInfo {
 
     private Long uTime;
 
+    private Integer type;
+
     public String getInstType() {
         return instType;
     }
@@ -131,5 +133,13 @@ public class PositionInfo {
 
     public void setuTime(Long uTime) {
         this.uTime = uTime;
+    }
+
+    public Integer getType() {
+        return type;
+    }
+
+    public void setType(Integer type) {
+        this.type = type;
     }
 }
