@@ -25,7 +25,7 @@ public class PositionInfo {
 
     private String instId;
 
-    private BigDecimal realizedPnl;
+    private String realizedPnl;
 
     private Long uTime;
 
@@ -119,11 +119,11 @@ public class PositionInfo {
         this.instId = instId;
     }
 
-    public BigDecimal getRealizedPnl() {
+    public String getRealizedPnl() {
         return realizedPnl;
     }
 
-    public void setRealizedPnl(BigDecimal realizedPnl) {
+    public void setRealizedPnl(String realizedPnl) {
         this.realizedPnl = realizedPnl;
     }
 
