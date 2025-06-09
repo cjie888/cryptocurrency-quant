@@ -40,7 +40,7 @@ public class OptionsTask {
     @Scheduled(cron = "3/15 * * * * ?")
     public void dynamicDeltaHedging() {
          optionsService.dynamicDeltaHedging("okex", "ETH-USDT-SWAP", "ETH", 0.03, 10);
-         optionsService.dynamicDeltaHedging("okex", "BTC-USDT-SWAP", "BTC", 0.02, 10);
+         optionsService.dynamicDeltaHedging("okex", "BTC-USDT-SWAP", "BTC", 0.025, 10);
     }
 
     @Scheduled(cron = "43 15 16 * * ?")
