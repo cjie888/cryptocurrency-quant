@@ -1601,4 +1601,41 @@ public class OptionsService {
         }
 
     }
+
+
+    public void computeOptionBenefit(String site, String instrumentId, String symbol, long startTime, String title) {
+
+        HttpResult<List<Ticker>> swapTicker = marketDataAPIService.getTicker(site, instrumentId);
+
+        if (!"0".equals(swapTicker.getCode()) || swapTicker.getData().size() == 0) {
+            return;
+        }
+
+        Ticker apiTickerVO = swapTicker.getData().get(0);
+        Double currentPrice = Double.valueOf(apiTickerVO.getLast());
+
+        HttpResult<List<PositionInfo>>  accountBillsResult = accountAPIV5Service.getHistoryPostions(site, "OPTION", null, symbol, null, null, null, null, null, String.valueOf(startTime), "10000");
+        if (accountBillsResult == null || !"0".equals(accountBillsResult.getCode()) || accountBillsResult.getData().size() <= 0) {
+            return;
+        }
+        log.info("account bill result size:{}", accountBillsResult.getData().size());
+        BigDecimal profitSymbol = BigDecimal.ZERO;
+        for (PositionInfo positionInfo: accountBillsResult.getData()) {
+            if (!positionInfo.getCcy().equals(symbol)) {
+                continue;
+            }
+            log.info("position info: instId:{}, realizedPnl:{}, uTime:{}", positionInfo.getInstId(), positionInfo.getRealizedPnl(), new Date(positionInfo.getuTime()));
+            profitSymbol = profitSymbol.add(positionInfo.getRealizedPnl());
+        }
+        BigDecimal profitUsdt = profitSymbol.multiply(new BigDecimal(apiTickerVO.getLast())).setScale(4, BigDecimal.ROUND_DOWN);
+        log.info("option:{}, profit :{}, profitUsdt:{}", symbol, profitSymbol, profitUsdt);
+
+        StringBuilder result = new StringBuilder();
+        result.append(title).append(":\n")
+                        .append(symbol).append(":").append(profitSymbol.setScale(6, BigDecimal.ROUND_DOWN).toPlainString())
+                        .append(",USDT:").append(profitUsdt.toPlainString());
+
+        messageService.sendMessage(title, result.toString());
+
+    }
 }
