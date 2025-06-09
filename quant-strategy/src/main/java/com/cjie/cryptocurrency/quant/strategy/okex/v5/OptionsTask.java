@@ -42,4 +42,15 @@ public class OptionsTask {
          optionsService.dynamicDeltaHedging("okex", "ETH-USDT-SWAP", "ETH", 0.03, 10);
          optionsService.dynamicDeltaHedging("okex", "BTC-USDT-SWAP", "BTC", 0.03, 10);
     }
+
+    @Scheduled(cron = "43 15 16 * * ?")
+    //@Scheduled(cron = "3/15 * * * * ?")
+    public void computeOptionBenefit(){
+        optionsService.computeOptionBenefit("okex", "BTC-USDT-SWAP", "BTC", System.currentTimeMillis() - 3600L * 1000 * 24, "每日期权BTC收益");
+        optionsService.computeOptionBenefit("okex", "ETH-USDT-SWAP", "ETH", System.currentTimeMillis() - 3600L * 1000 * 24, "每日期权ETH收益");
+        optionsService.computeOptionBenefit("okex", "BTC-USDT-SWAP","BTC", System.currentTimeMillis() - 3600L * 1000 * 24 * 7, "七日期权BTC收益");
+        optionsService.computeOptionBenefit("okex", "ETH-USDT-SWAP","ETH", System.currentTimeMillis() - 3600L * 1000 * 24 * 7, "七日期权ETH收益");
+        optionsService.computeOptionBenefit("okex", "BTC-USDT-SWAP","BTC", System.currentTimeMillis() - 3600L * 1000 * 24 * 30, "30日期权BTC收益");
+        optionsService.computeOptionBenefit("okex", "ETH-USDT-SWAP","ETH", System.currentTimeMillis() - 3600L * 1000 * 24 * 30, "30日期权ETH收益");
+    }
 }
