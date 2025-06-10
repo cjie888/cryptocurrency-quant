@@ -804,7 +804,7 @@ public class OptionsService {
 
         log.info("当前价格{}-{}-{}", site, currentPrice, symbol);
         for (int i = 1; i <= 3; i++) {
-            String expireTime = getNextNDay(i);
+            String expireTime = getNextNDay(i-1);
             for (int j = i; j <= 4; j++) {
                 double callStrikePrice = currentPrice * (1 + 0.008 + j * callIncrement);
                 double putStrikePrice = currentPrice * (1 - 0.008 - j * putDecrement);
