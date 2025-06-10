@@ -1650,7 +1650,7 @@ public class OptionsService {
             return;
         }
 
-        com.cjie.cryptocurrency.quant.api.okex.bean.spot.result.Ticker spotTicker = spotV5Service.getTicker(site, symbol + "-UDDT");
+        com.cjie.cryptocurrency.quant.api.okex.bean.spot.result.Ticker spotTicker = spotV5Service.getTicker(site, symbol + "-USDT");
         if (spotTicker == null) {
             return;
         }
