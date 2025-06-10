@@ -1617,7 +1617,6 @@ public class OptionsService {
             log.info("account bill result size:{}", accountBillsResult.getData().size());
             lastTime = null;
             int index = 0;
-            size += accountBillsResult.getData().size();
             for (PositionInfo positionInfo : accountBillsResult.getData()) {
                 index ++;
                 if (index == 100) {
@@ -1628,6 +1627,7 @@ public class OptionsService {
                 }
                 log.info("position info: instId:{}, realizedPnl:{}, uTime:{}", positionInfo.getInstId(), positionInfo.getRealizedPnl(), new Date(positionInfo.getuTime()));
                 profitSymbol = profitSymbol.add(new BigDecimal(positionInfo.getRealizedPnl()));
+                size++;
             }
         }
         BigDecimal profitUsdt = profitSymbol.multiply(new BigDecimal(apiTickerVO.getLast())).setScale(4, BigDecimal.ROUND_DOWN);
