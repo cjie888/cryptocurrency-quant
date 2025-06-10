@@ -804,7 +804,7 @@ public class OptionsService {
 
         log.info("当前价格{}-{}-{}", site, currentPrice, symbol);
         for (int i = 1; i <= 3; i++) {
-            String expireTime = getNextNDay(i-1);
+            String expireTime = getNextNDay(i - 1);
             for (int j = i; j <= 4; j++) {
                 double callStrikePrice = currentPrice * (1 + 0.008 + j * callIncrement);
                 double putStrikePrice = currentPrice * (1 - 0.008 - j * putDecrement);
@@ -1276,8 +1276,8 @@ public class OptionsService {
                     optionsOrderLogMapper.insert(optionsOrderLog);
 
                     messageService.sendStrategyMessage("dynamicDeltaHedging买入看涨期权", "dynamicDeltaHedging买入看涨期权:" + currentCallOptionMarketData.getInstId() +
-                            ",price:" + currentPrice + ",delta:" + currentCallOptionMarketData.getDelta()  + ",gamma:" + currentCallOptionMarketData.getGamma()
-                            + ",vega:" + currentCallOptionMarketData.getVega()  + ",theta:" + currentCallOptionMarketData.getTheta() + ",vol:" + currentCallOptionMarketData.getVolLv() );
+                            ",price:" + currentPrice + ",delta:" + currentCallOptionMarketData.getDelta() + ",gamma:" + currentCallOptionMarketData.getGamma()
+                            + ",vega:" + currentCallOptionMarketData.getVega() + ",theta:" + currentCallOptionMarketData.getTheta() + ",vol:" + currentCallOptionMarketData.getVolLv());
 
                     try {
                         Thread.sleep(2000);
@@ -1313,7 +1313,7 @@ public class OptionsService {
                         if (apiPositionVO.getAvailPos().equals("")) {
                             continue;
                         }
-                        if (apiPositionVO.getPosSide().equals("short")&& Double.valueOf(apiPositionVO.getAvailPos()) > 0) {
+                        if (apiPositionVO.getPosSide().equals("short") && Double.valueOf(apiPositionVO.getAvailPos()) > 0) {
                             downPosition = apiPositionVO;
                             shortPosition = Double.valueOf(apiPositionVO.getAvailPos());
                         }
@@ -1327,7 +1327,7 @@ public class OptionsService {
                             ppDownOrder.setInstId(instrumentId);
                             ppDownOrder.setTdMode("cross");
                             ppDownOrder.setPx(new BigDecimal(apiTickerVO.getLast()).toPlainString());
-                            ppDownOrder.setSz(new BigDecimal(Double.valueOf(downPosition.getPos()) - swapSize.doubleValue()).setScale(2,  RoundingMode.CEILING).toPlainString());
+                            ppDownOrder.setSz(new BigDecimal(Double.valueOf(downPosition.getPos()) - swapSize.doubleValue()).setScale(2, RoundingMode.CEILING).toPlainString());
                             ppDownOrder.setSide("buy");
                             ppDownOrder.setOrdType("market");
                             ppDownOrder.setPosSide("short");
@@ -1340,13 +1340,13 @@ public class OptionsService {
                             ppDownOrder.setInstId(instrumentId);
                             ppDownOrder.setTdMode("cross");
                             ppDownOrder.setPx(new BigDecimal(apiTickerVO.getLast()).toPlainString());
-                            ppDownOrder.setSz(new BigDecimal(Double.valueOf(downPosition.getPos()) - swapSize.doubleValue()).abs().setScale(2,  RoundingMode.CEILING).toPlainString());
+                            ppDownOrder.setSz(new BigDecimal(Double.valueOf(downPosition.getPos()) - swapSize.doubleValue()).abs().setScale(2, RoundingMode.CEILING).toPlainString());
                             ppDownOrder.setSide("sell");
                             ppDownOrder.setOrdType("market");
                             ppDownOrder.setPosSide("short");
                             ppDownOrder.setType("2");
                             JSONObject orderResult = tradeAPIService.placeSwapOrder(site, ppDownOrder, "dynamicDeltaHedging");
-                            messageService.sendStrategyMessage("dynamicDeltaHedging合约开空", "dynamicDeltaHedging合约开空-instId:" + instrumentId + ",price:" + currentPrice  + ",size:" + ppDownOrder.getSz());
+                            messageService.sendStrategyMessage("dynamicDeltaHedging合约开空", "dynamicDeltaHedging合约开空-instId:" + instrumentId + ",price:" + currentPrice + ",size:" + ppDownOrder.getSz());
                             log.info("合约开空 {}-{},result:{}", instrumentId, JSON.toJSONString(ppDownOrder), JSONObject.toJSONString(orderResult));
                         }
                     } else {
@@ -1361,7 +1361,7 @@ public class OptionsService {
                         ppDownOrder.setPosSide("short");
                         ppDownOrder.setType("2");
                         JSONObject orderResult = tradeAPIService.placeSwapOrder(site, ppDownOrder, "dynamicDeltaHedging");
-                        messageService.sendStrategyMessage("dynamicDeltaHedging合约开空", "dynamicDeltaHedging合约开空-instId:" + instrumentId + ",price:" + currentPrice  + ",size:" + ppDownOrder.getSz());
+                        messageService.sendStrategyMessage("dynamicDeltaHedging合约开空", "dynamicDeltaHedging合约开空-instId:" + instrumentId + ",price:" + currentPrice + ",size:" + ppDownOrder.getSz());
                         log.info("合约开空 {}-{},result:{}", instrumentId, JSON.toJSONString(ppDownOrder), JSONObject.toJSONString(orderResult));
                     }
                 }
@@ -1470,8 +1470,8 @@ public class OptionsService {
                         optionsOrderLogMapper.insert(optionsOrderLog);
 
                         messageService.sendStrategyMessage("dynamicDeltaHedging卖出看涨期权", "dynamicDeltaHedging卖出看涨期权:" + currentCallOptionMarketData.getInstId() +
-                                ",price:" + currentPrice + ",delta:" + currentCallOptionMarketData.getDelta()  + ",gamma:" + currentCallOptionMarketData.getGamma()
-                                + ",vega:" + currentCallOptionMarketData.getVega()  + ",theta:" + currentCallOptionMarketData.getTheta() + ",vol:" + currentCallOptionMarketData.getVolLv() );
+                                ",price:" + currentPrice + ",delta:" + currentCallOptionMarketData.getDelta() + ",gamma:" + currentCallOptionMarketData.getGamma()
+                                + ",vega:" + currentCallOptionMarketData.getVega() + ",theta:" + currentCallOptionMarketData.getTheta() + ",vol:" + currentCallOptionMarketData.getVolLv());
 
                         try {
                             Thread.sleep(2000);
@@ -1503,7 +1503,7 @@ public class OptionsService {
 
                     if (currentDelta > lastDelta && currentDelta - lastDelta > increment) {
                         //合约开空
-                        BigDecimal swapSize = new BigDecimal(size).multiply(new BigDecimal(currentDelta - lastDelta)).abs().setScale(2,RoundingMode.CEILING);
+                        BigDecimal swapSize = new BigDecimal(size).multiply(new BigDecimal(currentDelta - lastDelta)).abs().setScale(2, RoundingMode.CEILING);
                         PlaceOrder ppDownOrder = new PlaceOrder();
                         ppDownOrder.setInstId(instrumentId);
                         ppDownOrder.setTdMode("cross");
@@ -1535,7 +1535,7 @@ public class OptionsService {
 
                         optionsOrderLogMapper.insert(currentOptionsOrderLog);
 
-                        messageService.sendStrategyMessage("dynamicDeltaHedging合约开空", "dynamicDeltaHedging合约开空-instId:" + instrumentId + ",price:" + currentPrice  + ",size:" + ppDownOrder.getSz());
+                        messageService.sendStrategyMessage("dynamicDeltaHedging合约开空", "dynamicDeltaHedging合约开空-instId:" + instrumentId + ",price:" + currentPrice + ",size:" + ppDownOrder.getSz());
                         log.info("合约开空 {}-{},result:{}", instrumentId, JSON.toJSONString(ppDownOrder), JSONObject.toJSONString(orderResult));
                     }
 
@@ -1551,17 +1551,17 @@ public class OptionsService {
                             if (apiPositionVO.getAvailPos().equals("")) {
                                 continue;
                             }
-                            if (apiPositionVO.getPosSide().equals("short")&& Double.valueOf(apiPositionVO.getPos()) > 0 && Double.valueOf(apiPositionVO.getAvailPos()) > 0) {
+                            if (apiPositionVO.getPosSide().equals("short") && Double.valueOf(apiPositionVO.getPos()) > 0 && Double.valueOf(apiPositionVO.getAvailPos()) > 0) {
                                 downPosition = apiPositionVO;
                                 shortPosition = Double.valueOf(apiPositionVO.getAvailPos());
                             }
 
                         }
-                        if (shortPosition <=0) {
+                        if (shortPosition <= 0) {
                             continue;
                         }
                         //合约平空
-                        BigDecimal swapSize = new BigDecimal(size).multiply(new BigDecimal(lastDelta - currentDelta)).abs().setScale(2,RoundingMode.CEILING);
+                        BigDecimal swapSize = new BigDecimal(size).multiply(new BigDecimal(lastDelta - currentDelta)).abs().setScale(2, RoundingMode.CEILING);
                         swapSize = swapSize.min(new BigDecimal(shortPosition));
                         PlaceOrder ppDownOrder = new PlaceOrder();
                         ppDownOrder.setInstId(instrumentId);
@@ -1573,7 +1573,7 @@ public class OptionsService {
                         ppDownOrder.setPosSide("short");
                         ppDownOrder.setType("4");
                         JSONObject orderResult = tradeAPIService.placeSwapOrder(site, ppDownOrder, "dynamicDeltaHedging");
-                        messageService.sendStrategyMessage("dynamicDeltaHedging合约平空", "dynamicDeltaHedging合约平空-instId:" + instrumentId + ",price:" + currentPrice  + ",size:" + ppDownOrder.getSz());
+                        messageService.sendStrategyMessage("dynamicDeltaHedging合约平空", "dynamicDeltaHedging合约平空-instId:" + instrumentId + ",price:" + currentPrice + ",size:" + ppDownOrder.getSz());
                         log.info("合约平空 {}-{},result:{}", instrumentId, JSON.toJSONString(ppDownOrder), JSONObject.toJSONString(orderResult));
 
                         OptionsOrderLog currentOptionsOrderLog = new OptionsOrderLog();
@@ -1614,28 +1614,78 @@ public class OptionsService {
         Ticker apiTickerVO = swapTicker.getData().get(0);
         Double currentPrice = Double.valueOf(apiTickerVO.getLast());
 
-        HttpResult<List<PositionInfo>>  accountBillsResult = accountAPIV5Service.getHistoryPostions(site, "OPTION", null, symbol, null, null, null, null, null, String.valueOf(startTime), "10000");
-        if (accountBillsResult == null || !"0".equals(accountBillsResult.getCode()) || accountBillsResult.getData().size() <= 0) {
-            return;
-        }
-        log.info("account bill result size:{}", accountBillsResult.getData().size());
+        Long lastTime = startTime;
+
         BigDecimal profitSymbol = BigDecimal.ZERO;
-        for (PositionInfo positionInfo: accountBillsResult.getData()) {
-            if (!positionInfo.getCcy().equals(symbol) || positionInfo.getType() != 2) {
+        int size = 0;
+        while (lastTime != null) {
+            HttpResult<List<PositionInfo>> accountBillsResult = accountAPIV5Service.getHistoryPostions(site, "OPTION", null, symbol, null, null, null, null, null, String.valueOf(lastTime), "100");
+            if (accountBillsResult == null || !"0".equals(accountBillsResult.getCode()) || accountBillsResult.getData().size() <= 0) {
                 continue;
             }
-            log.info("position info: instId:{}, realizedPnl:{}, uTime:{}", positionInfo.getInstId(), positionInfo.getRealizedPnl(), new Date(positionInfo.getuTime()));
-            profitSymbol = profitSymbol.add(new BigDecimal(positionInfo.getRealizedPnl()));
+            log.info("account bill result size:{}", accountBillsResult.getData().size());
+            lastTime = null;
+            int index = 0;
+            size += accountBillsResult.getData().size();
+            for (PositionInfo positionInfo : accountBillsResult.getData()) {
+                index ++;
+                if (index == 100) {
+                    lastTime = positionInfo.getuTime();
+                }
+                if (!positionInfo.getCcy().equals(symbol) || positionInfo.getType() != 2) {
+                    continue;
+                }
+                log.info("position info: instId:{}, realizedPnl:{}, uTime:{}", positionInfo.getInstId(), positionInfo.getRealizedPnl(), new Date(positionInfo.getuTime()));
+                profitSymbol = profitSymbol.add(new BigDecimal(positionInfo.getRealizedPnl()));
+            }
         }
         BigDecimal profitUsdt = profitSymbol.multiply(new BigDecimal(apiTickerVO.getLast())).setScale(4, BigDecimal.ROUND_DOWN);
-        log.info("option:{}, profit :{}, profitUsdt:{}", symbol, profitSymbol, profitUsdt);
+        log.info("option:{}, profit :{}, profitUsdt:{}, size:{}", symbol, profitSymbol, profitUsdt, size);
 
         StringBuilder result = new StringBuilder();
         result.append(title).append(":\n")
-                        .append(symbol).append(":").append(profitSymbol.setScale(6, BigDecimal.ROUND_DOWN).toPlainString())
-                        .append(",USDT:").append(profitUsdt.toPlainString());
+                .append(symbol).append(":").append(profitSymbol.setScale(6, BigDecimal.ROUND_DOWN).toPlainString())
+                .append(",USDT:").append(profitUsdt.toPlainString())
+                .append(",size:").append(size);
 
         messageService.sendMessage(title, result.toString());
 
+    }
+
+    public void monitorIV(String site, String instrumentId, String symbol, String strikeDate) {
+        HttpResult<List<Ticker>> swapTicker = marketDataAPIService.getTicker(site, instrumentId);
+
+        if (!"0".equals(swapTicker.getCode()) || swapTicker.getData().size() == 0) {
+            return;
+        }
+
+        com.cjie.cryptocurrency.quant.api.okex.bean.spot.result.Ticker spotTicker = spotV5Service.getTicker(site, symbol + "-UDDT");
+        if (spotTicker == null) {
+            return;
+        }
+
+        Ticker apiTickerVO = swapTicker.getData().get(0);
+        Double currentPrice = Double.valueOf(apiTickerVO.getLast());
+        HttpResult<List<OptionMarketData>> optionsMarketDatas = publicDataAPIService.getOptionMarketData(site, symbol + "-USD", strikeDate);
+        if ("0".equals(optionsMarketDatas.getCode()) && optionsMarketDatas.getData().size() > 0) {
+            OptionMarketData currentCallOptionMarketData = null;
+            Long currentCallStrikePrice = null;
+            Double currentCallStrikeDelta = null;
+            for (OptionMarketData optionMarketData : optionsMarketDatas.getData()) {
+                String optionInstId = optionMarketData.getInstId();
+                String[] optionInstArr = optionInstId.split("-");
+                if (optionInstArr.length != 5 || !NumberUtils.isNumber(optionInstArr[3])) {
+                    continue;
+                }
+                if (optionInstId.equals(instrumentId)) {
+                    currentCallOptionMarketData = optionMarketData;
+                }
+            }
+            if (currentCallOptionMarketData != null) {
+                messageService.sendMonitorMessage("期权IV监控", "期权IV监控:" + currentCallOptionMarketData.getInstId() +
+                        ",price:" + currentPrice + ",spotPrice:" + spotTicker.getLast() + ",delta:" + currentCallOptionMarketData.getDelta()  + ",gamma:" + currentCallOptionMarketData.getGamma()
+                        + ",vega:" + currentCallOptionMarketData.getVega()  + ",theta:" + currentCallOptionMarketData.getTheta() + ",vol:" + currentCallOptionMarketData.getVolLv() );
+            }
+        }
     }
 }

@@ -43,4 +43,9 @@ public class WeiXinMessageServiceImpl implements MessageService {
     public void sendStrategyMessage(String title, String content) {
 
     }
+
+    @Override
+    public void sendMonitorMessage(String title, String content) {
+
+    }
 }

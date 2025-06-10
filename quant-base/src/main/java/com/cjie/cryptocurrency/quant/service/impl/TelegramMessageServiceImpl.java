@@ -26,7 +26,8 @@ public class TelegramMessageServiceImpl implements MessageService {
 
     @Value("${quant.message.telegram.strategyToken}")
     private String strategyToken;
-
+    @Value("${quant.message.telegram.monitorToken}")
+    private String monitorToken;
 
     @Value("${quant.message.telegram.chatId}")
     private String chatId;
@@ -69,6 +70,15 @@ public class TelegramMessageServiceImpl implements MessageService {
     public void sendStrategyMessage(String title, String content) {
         try {
             sendCommonMessage(strategyToken, title, content);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void sendMonitorMessage(String title, String content) {
+        try {
+            sendCommonMessage(monitorToken, title, content);
         } catch (Exception e) {
             e.printStackTrace();
         }

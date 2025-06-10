@@ -6,4 +6,6 @@ public interface MessageService {
 
 
     void sendStrategyMessage(String title, String content);
+
+    void sendMonitorMessage(String title, String content);
 }

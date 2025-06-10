@@ -1,0 +1,23 @@
+package com.cjie.cryptocurrency.quant.strategy.okex.v5;
+
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
+
+@Component
+@Slf4j
+public class MonitorTask {
+
+    @Autowired
+    private OptionsService optionsService;
+
+    @Scheduled(cron = "3 10 * * * ?")
+    public void monitorOptionsIV() {
+        optionsService.monitorIV("okex", "BTC-USD-250926-120000-C", "BTC", "250926");
+        optionsService.monitorIV("okex", "BTC-USD-250926-130000-C", "BTC", "250926");
+        optionsService.monitorIV("okex", "BTC-USD-250926-140000-C", "BTC", "250926");
+
+    }
+
+}
