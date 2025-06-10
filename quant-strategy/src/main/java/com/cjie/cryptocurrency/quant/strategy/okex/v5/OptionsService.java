@@ -1678,5 +1678,10 @@ public class OptionsService {
                         + ",vega:" + currentCallOptionMarketData.getVega()  + ",theta:" + currentCallOptionMarketData.getTheta() + ",vol:" + currentCallOptionMarketData.getVolLv() );
             }
         }
+        try {
+            Thread.sleep(500);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
