@@ -18,6 +18,10 @@ public class MonitorTask {
         optionsService.monitorIV("okex", "BTC-USD-250926-130000-C", "BTC", "250926");
         optionsService.monitorIV("okex", "BTC-USD-250926-140000-C", "BTC", "250926");
 
+        optionsService.monitorIV("okex", "ETH-USD-250926-3000-C", "BTC", "250926");
+        optionsService.monitorIV("okex", "ETH-USD-250926-3300-C", "BTC", "250926");
+        optionsService.monitorIV("okex", "ETH-USD-250926-3600-C", "BTC", "250926");
+
     }
 
 }
