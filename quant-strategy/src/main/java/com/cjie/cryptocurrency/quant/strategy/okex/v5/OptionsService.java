@@ -1199,7 +1199,7 @@ public class OptionsService {
                         continue;
                     }
                     double delta = Double.parseDouble(optionMarketData.getDelta());
-                    if ("C".equals(optionInstArr[4]) && delta > 0.2) {
+                    if ("C".equals(optionInstArr[4]) && delta > 0.3) {
                         if (currentCallOptionMarketData == null || delta < currentCallStrikeDelta) {
                             currentCallStrikeDelta = delta;
                             currentCallOptionMarketData = optionMarketData;
