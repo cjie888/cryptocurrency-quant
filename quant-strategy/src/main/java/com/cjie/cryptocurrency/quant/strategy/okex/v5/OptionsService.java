@@ -342,7 +342,7 @@ public class OptionsService {
                         ppDownOrder.setPosSide("short");
                         ppDownOrder.setType("2");
                         JSONObject orderResult = tradeAPIService.placeSwapOrder(site, ppDownOrder, "swapAndOptionHedging");
-                        messageService.sendStrategyMessage("swapAndOptionHedging合约开空", "swapAndOptionHedging合约开空-instId:" + instrumentId + ",price:" + currentPrice);
+                        messageService.sendStrategyMessage("swapAndOptionHedging合约开空", "swapAndOptionHedging合约开空-instId:" + instrumentId + ",price:" + currentPrice + ",size:" + ppDownOrder.getSz());
                         log.info("合约开空 {}-{},result:{}", instrumentId, JSON.toJSONString(ppDownOrder), JSONObject.toJSONString(orderResult));
                         return;
                     }
@@ -423,7 +423,7 @@ public class OptionsService {
                             //下单
                             String orderId = tradeAPIService.placeOptionsOrder(site, ppUpOrder, optionsOrder);
                             log.info("卖出看涨期权 {}-{},orderId:{}", upPosition.getInstId(), JSON.toJSONString(ppUpOrder), orderId);
-                            messageService.sendStrategyMessage("swapAndOptionHedging卖出看涨期权", "swapAndOptionHedging卖出看涨期权-instId:" + upPosition.getInstId() + ",price:" + optionBidPrice);
+                            messageService.sendStrategyMessage("swapAndOptionHedging卖出看涨期权", "swapAndOptionHedging卖出看涨期权-instId:" + upPosition.getInstId() + ",price:" + optionBidPrice  + ",size:" + optionsOrder.getSize());
 
                             if (orderId == null) {
                                 return;
@@ -469,7 +469,7 @@ public class OptionsService {
                         JSONObject orderResult = tradeAPIService.placeSwapOrder(site, ppDownOrder, "swapAndOptionHedging");
 
                         log.info("合约开空 {}-{},result:{}", instrumentId, JSON.toJSONString(ppDownOrder), JSONObject.toJSONString(orderResult));
-                        messageService.sendStrategyMessage("swapAndOptionHedging合约开空", "swapAndOptionHedging合约开空-instId:" + instrumentId + ",price:" + currentPrice);
+                        messageService.sendStrategyMessage("swapAndOptionHedging合约开空", "swapAndOptionHedging合约开空-instId:" + instrumentId + ",price:" + currentPrice  + ",size:" + ppDownOrder.getSz());
 
                         return;
 
@@ -506,7 +506,7 @@ public class OptionsService {
                         //下单
                         String orderId = tradeAPIService.placeOptionsOrder(site, ppUpOrder, optionsOrder);
                         log.info("买入看涨期权 {}-{},orderId:{}", optionInstId, JSON.toJSONString(ppUpOrder), orderId);
-                        messageService.sendStrategyMessage("swapAndOptionHedging买入看涨期权", "swapAndOptionHedging买入看张-instId:" + optionInstId + ",price:" + optionAskPrice);
+                        messageService.sendStrategyMessage("swapAndOptionHedging买入看涨期权", "swapAndOptionHedging买入看张-instId:" + optionInstId + ",price:" + optionAskPrice  + ",size:" + optionsOrder.getSize());
 
                         if (orderId == null) {
                             return;
@@ -570,7 +570,7 @@ public class OptionsService {
                             JSONObject orderResult = tradeAPIService.placeSwapOrder(site, placeOrderParam, "swapAndOptionHedging");
 
                             log.info("平空{}-{},result:{}", instrumentId, JSON.toJSONString(placeOrderParam), JSON.toJSONString(orderResult));
-                            messageService.sendStrategyMessage("swapAndOptionHedging合约平空", "swapAndOptionHedging合约平空-instId:" + instrumentId + ",price:" + currentPrice);
+                            messageService.sendStrategyMessage("swapAndOptionHedging合约平空", "swapAndOptionHedging合约平空-instId:" + instrumentId + ",price:" + currentPrice + ",size:" + placeOrderParam.getSz());
 
                         }
 
