@@ -338,7 +338,7 @@ public class SwapV5Service {
             ppDownOrder.setPosSide("short");
             ppDownOrder.setType("2");
             JSONObject orderResult = tradeAPIService.placeSwapOrder(site, ppDownOrder, "swapAndSpotHedging");
-            messageService.sendStrategyMessage("swapAndSpotHedging合约开空", "swapAndSpotHedging合约开空-instId:" + instrumentId+ ",price:" + currentPrice);
+            messageService.sendStrategyMessage("swapAndSpotHedging合约开空", "swapAndSpotHedging合约开空-instId:" + instrumentId+ ",price:" + currentPrice + ",size:" + ppDownOrder.getSz());
             log.info("合约开空 {}-{},result:{}", instrumentId, JSON.toJSONString(ppDownOrder), JSONObject.toJSONString(orderResult));
             BigDecimal spotSize = new BigDecimal("1.005").multiply(new BigDecimal(size)).multiply(new BigDecimal("2")).multiply(swapCtVal.get(instrumentId));
 
@@ -352,7 +352,7 @@ public class SwapV5Service {
             placeOrderParam.setOrdType("market");
             orderResult = tradeAPIService.placeOrder(site, placeOrderParam);
             log.info("买入{}-{},result:{}", symbol, JSON.toJSONString(placeOrderParam), JSONObject.toJSONString(orderResult));
-            messageService.sendStrategyMessage("swapAndSpotHedging现货买入", "swapAndSpotHedging现货买入-instId:" + symbol + ",price:" + currentPrice);
+            messageService.sendStrategyMessage("swapAndSpotHedging现货买入", "swapAndSpotHedging现货买入-instId:" + symbol + ",price:" + currentPrice  + ",size:" + placeOrderParam.getSz());
             if (orderResult.getString("code") != null && orderResult.getString("code").equals("0")) {
 
                 SpotOrder spotOrder = new SpotOrder();
@@ -399,7 +399,7 @@ public class SwapV5Service {
                     placeOrderParam.setTgtCcy("base_ccy");
                     JSONObject orderResult = tradeAPIService.placeOrder(site, placeOrderParam);
                     log.info("卖出{}-{},result:{}", symbol, JSON.toJSONString(placeOrderParam), JSON.toJSONString(orderResult));
-                    messageService.sendStrategyMessage("swapAndSpotHedging现货卖出", "swapAndSpotHedging现货卖出-instId:" + symbol+ ",price:" + currentPrice);
+                    messageService.sendStrategyMessage("swapAndSpotHedging现货卖出", "swapAndSpotHedging现货卖出-instId:" + symbol+ ",price:" + currentPrice  + ",size:" + placeOrderParam.getSz());
                     if (orderResult.getString("code") != null && orderResult.getString("code").equals("0")) {
 
                         SpotOrder spotOrder = new SpotOrder();
@@ -429,7 +429,7 @@ public class SwapV5Service {
             JSONObject orderResult = tradeAPIService.placeSwapOrder(site, ppDownOrder, "swapAndSpotHedging");
 
             log.info("合约开空 {}-{},result:{}", instrumentId, JSON.toJSONString(ppDownOrder), JSONObject.toJSONString(orderResult));
-            messageService.sendStrategyMessage("swapAndSpotHedging合约开空", "swapAndSpotHedging合约开空-instId:" + instrumentId+ ",price:" + currentPrice);
+            messageService.sendStrategyMessage("swapAndSpotHedging合约开空", "swapAndSpotHedging合约开空-instId:" + instrumentId+ ",price:" + currentPrice  + ",size:" + ppDownOrder.getSz());
 
             return;
 
@@ -469,7 +469,7 @@ public class SwapV5Service {
                 JSONObject orderResult = tradeAPIService.placeSwapOrder(site, placeOrderParam, "swapAndSpotHedging");
 
                 log.info("平空{}-{},result:{}", instrumentId, JSON.toJSONString(placeOrderParam), JSON.toJSONString(orderResult));
-                messageService.sendStrategyMessage("swapAndSpotHedging合约平空", "swapAndSpotHedging合约平空-instId:" + instrumentId+ ",price:" + currentPrice);
+                messageService.sendStrategyMessage("swapAndSpotHedging合约平空", "swapAndSpotHedging合约平空-instId:" + instrumentId+ ",price:" + currentPrice  + ",size:" + placeOrderParam.getSz());
 
             }
 
@@ -484,7 +484,7 @@ public class SwapV5Service {
             placeOrderParam.setOrdType("market");
             JSONObject orderResult = tradeAPIService.placeOrder(site, placeOrderParam);
             log.info("买入{}-{},result:{}", symbol, JSON.toJSONString(placeOrderParam), JSONObject.toJSONString(orderResult));
-            messageService.sendStrategyMessage("swapAndSpotHedging现货买入", "swapAndSpotHedging现货买入-instId:" + symbol+ ",price:" + currentPrice);
+            messageService.sendStrategyMessage("swapAndSpotHedging现货买入", "swapAndSpotHedging现货买入-instId:" + symbol+ ",price:" + currentPrice  + ",size:" + placeOrderParam.getSz());
             if (orderResult.getString("code") != null && orderResult.getString("code").equals("0")) {
 
                 SpotOrder spotOrder = new SpotOrder();
