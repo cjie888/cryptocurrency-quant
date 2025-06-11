@@ -794,7 +794,7 @@ public class OptionsService {
         Double currentPrice = Double.valueOf(apiTickerVO.getLast());
 
         log.info("当前价格{}-{}-{}", site, currentPrice, symbol);
-        for (int i = 1; i <= 3; i++) {
+        for (int i = 1; i <= 4; i++) {
             String expireTime = getNextNDay(i - 1);
             for (int j = i; j <= 4; j++) {
                 double callStrikePrice = currentPrice * (1 + 0.008 + j * callIncrement);
