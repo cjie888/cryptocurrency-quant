@@ -1595,51 +1595,56 @@ public class OptionsService {
 
 
     public void computeOptionBenefit(String site, String instrumentId, String symbol, long startTime, String title) {
+        try {
 
-        HttpResult<List<Ticker>> swapTicker = marketDataAPIService.getTicker(site, instrumentId);
+            HttpResult<List<Ticker>> swapTicker = marketDataAPIService.getTicker(site, instrumentId);
 
-        if (!"0".equals(swapTicker.getCode()) || swapTicker.getData().size() == 0) {
-            return;
-        }
-
-        Ticker apiTickerVO = swapTicker.getData().get(0);
-        Double currentPrice = Double.valueOf(apiTickerVO.getLast());
-
-        Long lastTime = startTime;
-
-        BigDecimal profitSymbol = BigDecimal.ZERO;
-        int size = 0;
-        while (lastTime != null) {
-            HttpResult<List<PositionInfo>> accountBillsResult = accountAPIV5Service.getHistoryPostions(site, "OPTION", null, symbol, null, null, null, null, null, String.valueOf(lastTime), "100");
-            if (accountBillsResult == null || !"0".equals(accountBillsResult.getCode()) || accountBillsResult.getData().size() <= 0) {
-                continue;
+            if (!"0".equals(swapTicker.getCode()) || swapTicker.getData().size() == 0) {
+                return;
             }
-            log.info("account bill result size:{}", accountBillsResult.getData().size());
-            lastTime = null;
-            int index = 0;
-            for (PositionInfo positionInfo : accountBillsResult.getData()) {
-                index ++;
-                if (index == 100) {
-                    lastTime = positionInfo.getuTime();
-                }
-                if (!positionInfo.getCcy().equals(symbol) || positionInfo.getType() != 2) {
+
+            Ticker apiTickerVO = swapTicker.getData().get(0);
+            Double currentPrice = Double.valueOf(apiTickerVO.getLast());
+
+            Long lastTime = startTime;
+
+            BigDecimal profitSymbol = BigDecimal.ZERO;
+            int size = 0;
+            while (lastTime != null) {
+                HttpResult<List<PositionInfo>> accountBillsResult = accountAPIV5Service.getHistoryPostions(site, "OPTION", null, symbol, null, null, null, null, null, String.valueOf(lastTime), "100");
+                if (accountBillsResult == null || !"0".equals(accountBillsResult.getCode()) || accountBillsResult.getData().size() <= 0) {
                     continue;
                 }
-                log.info("position info: instId:{}, realizedPnl:{}, uTime:{}", positionInfo.getInstId(), positionInfo.getRealizedPnl(), new Date(positionInfo.getuTime()));
-                profitSymbol = profitSymbol.add(new BigDecimal(positionInfo.getRealizedPnl()));
-                size++;
+                log.info("account bill result size:{}", accountBillsResult.getData().size());
+                lastTime = null;
+                int index = 0;
+                for (PositionInfo positionInfo : accountBillsResult.getData()) {
+                    index++;
+                    if (index == 100) {
+                        lastTime = positionInfo.getuTime();
+                    }
+                    if (!positionInfo.getCcy().equals(symbol) || positionInfo.getType() != 2) {
+                        continue;
+                    }
+                    log.info("position info: instId:{}, realizedPnl:{}, uTime:{}", positionInfo.getInstId(), positionInfo.getRealizedPnl(), new Date(positionInfo.getuTime()));
+                    profitSymbol = profitSymbol.add(new BigDecimal(positionInfo.getRealizedPnl()));
+                    size++;
+                }
             }
+            BigDecimal profitUsdt = profitSymbol.multiply(new BigDecimal(apiTickerVO.getLast())).setScale(4, BigDecimal.ROUND_DOWN);
+            log.info("option:{}, profit :{}, profitUsdt:{}, size:{}", symbol, profitSymbol, profitUsdt, size);
+
+            StringBuilder result = new StringBuilder();
+            result.append(title).append(":\n")
+                    .append(symbol).append(":").append(profitSymbol.setScale(6, BigDecimal.ROUND_DOWN).toPlainString())
+                    .append(",USDT:").append(profitUsdt.toPlainString())
+                    .append(",size:").append(size);
+
+            messageService.sendMessage(title, result.toString());
+            Thread.sleep(500);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        BigDecimal profitUsdt = profitSymbol.multiply(new BigDecimal(apiTickerVO.getLast())).setScale(4, BigDecimal.ROUND_DOWN);
-        log.info("option:{}, profit :{}, profitUsdt:{}, size:{}", symbol, profitSymbol, profitUsdt, size);
-
-        StringBuilder result = new StringBuilder();
-        result.append(title).append(":\n")
-                .append(symbol).append(":").append(profitSymbol.setScale(6, BigDecimal.ROUND_DOWN).toPlainString())
-                .append(",USDT:").append(profitUsdt.toPlainString())
-                .append(",size:").append(size);
-
-        messageService.sendMessage(title, result.toString());
 
     }
 
