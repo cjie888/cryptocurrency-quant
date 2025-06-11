@@ -1676,8 +1676,8 @@ public class OptionsService {
                 messageService.sendMonitorMessage("期权IV监控", "期权IV监控:" + currentCallOptionMarketData.getInstId() +
                         ",price:" + currentPrice + ",spotPrice:" + spotTicker.getLast() + ",delta:" + currentCallOptionMarketData.getDelta()  + ",gamma:" + currentCallOptionMarketData.getGamma()
                         + ",vega:" + currentCallOptionMarketData.getVega()  + ",theta:" + currentCallOptionMarketData.getTheta()
-                        + ",vol:" + currentCallOptionMarketData.getVolLv() +",markVol" + currentCallOptionMarketData.getMarkVol()
-                        +",bidVol" + currentCallOptionMarketData.getBidVol()   +",askVol" + currentCallOptionMarketData.getAskVol()   +",realVol" + currentCallOptionMarketData.getRealVol());
+                        + ",vol:" + currentCallOptionMarketData.getVolLv() +",markVol:" + currentCallOptionMarketData.getMarkVol()
+                        +",bidVol:" + currentCallOptionMarketData.getBidVol()   +",askVol:" + currentCallOptionMarketData.getAskVol()   +",realVol:" + currentCallOptionMarketData.getRealVol());
             }
         }
         try {
