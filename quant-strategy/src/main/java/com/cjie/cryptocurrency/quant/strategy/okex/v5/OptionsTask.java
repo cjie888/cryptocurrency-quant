@@ -5,6 +5,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.temporal.TemporalAdjusters;
+
 @Component
 @Slf4j
 public class OptionsTask {
@@ -46,11 +50,20 @@ public class OptionsTask {
     @Scheduled(cron = "43 15 * * * ?")
     //@Scheduled(cron = "3/15 * * * * ?")
     public void computeOptionBenefit(){
-        optionsService.computeOptionBenefit("okex", "BTC-USDT-SWAP", "BTC", System.currentTimeMillis() - 3600L * 1000 * 24, "每日期权BTC收益");
-        optionsService.computeOptionBenefit("okex", "ETH-USDT-SWAP", "ETH", System.currentTimeMillis() - 3600L * 1000 * 24, "每日期权ETH收益");
-        optionsService.computeOptionBenefit("okex", "BTC-USDT-SWAP","BTC", System.currentTimeMillis() - 3600L * 1000 * 24 * 7, "七日期权BTC收益");
-        optionsService.computeOptionBenefit("okex", "ETH-USDT-SWAP","ETH", System.currentTimeMillis() - 3600L * 1000 * 24 * 7, "七日期权ETH收益");
-        optionsService.computeOptionBenefit("okex", "BTC-USDT-SWAP","BTC", System.currentTimeMillis() - 3600L * 1000 * 24 * 30, "30日期权BTC收益");
-        optionsService.computeOptionBenefit("okex", "ETH-USDT-SWAP","ETH", System.currentTimeMillis() - 3600L * 1000 * 24 * 30, "30日期权ETH收益");
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime dayStartTime = now.withHour(0).withMinute(0).withSecond(0).withNano(0);
+        LocalDateTime weekStartTime = now.with(TemporalAdjusters.previousOrSame(java.time.DayOfWeek.MONDAY))
+                .withHour(0)
+                .withMinute(0)
+                .withSecond(0)
+                .withNano(0);
+        LocalDateTime monthStartTime = now.withDayOfMonth(1).withHour(0).withMinute(0).withSecond(0).withNano(0);
+        optionsService.computeOptionBenefit("okex", "BTC-USDT-SWAP", "BTC",
+                dayStartTime.atZone(ZoneId.of("Asia/Shanghai")).toInstant().toEpochMilli(), "每日期权BTC收益");
+        optionsService.computeOptionBenefit("okex", "ETH-USDT-SWAP", "ETH", dayStartTime.atZone(ZoneId.of("Asia/Shanghai")).toInstant().toEpochMilli(), "每日期权ETH收益");
+        optionsService.computeOptionBenefit("okex", "BTC-USDT-SWAP","BTC", weekStartTime.atZone(ZoneId.of("Asia/Shanghai")).toInstant().toEpochMilli(), "七日期权BTC收益");
+        optionsService.computeOptionBenefit("okex", "ETH-USDT-SWAP","ETH", weekStartTime.atZone(ZoneId.of("Asia/Shanghai")).toInstant().toEpochMilli(), "七日期权ETH收益");
+        optionsService.computeOptionBenefit("okex", "BTC-USDT-SWAP","BTC", monthStartTime.atZone(ZoneId.of("Asia/Shanghai")).toInstant().toEpochMilli(), "30日期权BTC收益");
+        optionsService.computeOptionBenefit("okex", "ETH-USDT-SWAP","ETH", monthStartTime.atZone(ZoneId.of("Asia/Shanghai")).toInstant().toEpochMilli(), "30日期权ETH收益");
     }
 }
