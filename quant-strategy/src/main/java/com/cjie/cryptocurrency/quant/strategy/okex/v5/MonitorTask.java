@@ -14,11 +14,14 @@ public class MonitorTask {
 
     @Scheduled(cron = "3 10 * * * ?")
     public void monitorOptionsIV() {
+        optionsService.monitorIV("okex", "BTC-USD-250926-100000-C", "BTC", "250926");
+        optionsService.monitorIV("okex", "BTC-USD-250926-110000-C", "BTC", "250926");
         optionsService.monitorIV("okex", "BTC-USD-250926-120000-C", "BTC", "250926");
         optionsService.monitorIV("okex", "BTC-USD-250926-130000-C", "BTC", "250926");
         optionsService.monitorIV("okex", "BTC-USD-250926-140000-C", "BTC", "250926");
         optionsService.monitorIV("okex", "BTC-USD-250926-150000-C", "BTC", "250926");
 
+        optionsService.monitorIV("okex", "ETH-USD-250926-2800-C", "ETH", "250926");
         optionsService.monitorIV("okex", "ETH-USD-250926-3000-C", "ETH", "250926");
         optionsService.monitorIV("okex", "ETH-USD-250926-3200-C", "ETH", "250926");
         optionsService.monitorIV("okex", "ETH-USD-250926-3500-C", "ETH", "250926");
