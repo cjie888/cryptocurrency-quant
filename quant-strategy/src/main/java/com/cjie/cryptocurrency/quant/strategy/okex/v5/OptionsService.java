@@ -1630,6 +1630,7 @@ public class OptionsService {
                     profitSymbol = profitSymbol.add(new BigDecimal(positionInfo.getRealizedPnl()));
                     size++;
                 }
+                Thread.sleep(300);
             }
             BigDecimal profitUsdt = profitSymbol.multiply(new BigDecimal(apiTickerVO.getLast())).setScale(4, BigDecimal.ROUND_DOWN);
             log.info("option:{}, profit :{}, profitUsdt:{}, size:{}", symbol, profitSymbol, profitUsdt, size);
@@ -1649,43 +1650,43 @@ public class OptionsService {
     }
 
     public void monitorIV(String site, String instrumentId, String symbol, String strikeDate) {
-        HttpResult<List<Ticker>> swapTicker = marketDataAPIService.getTicker(site, instrumentId);
-
-        if (!"0".equals(swapTicker.getCode()) || swapTicker.getData().size() == 0) {
-            return;
-        }
-
-        com.cjie.cryptocurrency.quant.api.okex.bean.spot.result.Ticker spotTicker = spotV5Service.getTicker(site, symbol + "-USDT");
-        if (spotTicker == null) {
-            return;
-        }
-
-        Ticker apiTickerVO = swapTicker.getData().get(0);
-        Double currentPrice = Double.valueOf(apiTickerVO.getLast());
-        HttpResult<List<OptionMarketData>> optionsMarketDatas = publicDataAPIService.getOptionMarketData(site, symbol + "-USD", strikeDate);
-        if ("0".equals(optionsMarketDatas.getCode()) && optionsMarketDatas.getData().size() > 0) {
-            OptionMarketData currentCallOptionMarketData = null;
-            Long currentCallStrikePrice = null;
-            Double currentCallStrikeDelta = null;
-            for (OptionMarketData optionMarketData : optionsMarketDatas.getData()) {
-                String optionInstId = optionMarketData.getInstId();
-                String[] optionInstArr = optionInstId.split("-");
-                if (optionInstArr.length != 5 || !NumberUtils.isNumber(optionInstArr[3])) {
-                    continue;
-                }
-                if (optionInstId.equals(instrumentId)) {
-                    currentCallOptionMarketData = optionMarketData;
-                }
-            }
-            if (currentCallOptionMarketData != null) {
-                messageService.sendMonitorMessage("期权IV监控", "期权IV监控:" + currentCallOptionMarketData.getInstId() +
-                        ",price:" + currentPrice + ",spotPrice:" + spotTicker.getLast() + ",delta:" + currentCallOptionMarketData.getDelta()  + ",gamma:" + currentCallOptionMarketData.getGamma()
-                        + ",vega:" + currentCallOptionMarketData.getVega()  + ",theta:" + currentCallOptionMarketData.getTheta()
-                        + ",vol:" + currentCallOptionMarketData.getVolLv() +",markVol:" + currentCallOptionMarketData.getMarkVol()
-                        +",bidVol:" + currentCallOptionMarketData.getBidVol()   +",askVol:" + currentCallOptionMarketData.getAskVol()   +",realVol:" + currentCallOptionMarketData.getRealVol());
-            }
-        }
         try {
+            HttpResult<List<Ticker>> swapTicker = marketDataAPIService.getTicker(site, instrumentId);
+
+            if (!"0".equals(swapTicker.getCode()) || swapTicker.getData().size() == 0) {
+                return;
+            }
+
+            com.cjie.cryptocurrency.quant.api.okex.bean.spot.result.Ticker spotTicker = spotV5Service.getTicker(site, symbol + "-USDT");
+            if (spotTicker == null) {
+                return;
+            }
+
+            Ticker apiTickerVO = swapTicker.getData().get(0);
+            Double currentPrice = Double.valueOf(apiTickerVO.getLast());
+            HttpResult<List<OptionMarketData>> optionsMarketDatas = publicDataAPIService.getOptionMarketData(site, symbol + "-USD", strikeDate);
+            if ("0".equals(optionsMarketDatas.getCode()) && optionsMarketDatas.getData().size() > 0) {
+                OptionMarketData currentCallOptionMarketData = null;
+                Long currentCallStrikePrice = null;
+                Double currentCallStrikeDelta = null;
+                for (OptionMarketData optionMarketData : optionsMarketDatas.getData()) {
+                    String optionInstId = optionMarketData.getInstId();
+                    String[] optionInstArr = optionInstId.split("-");
+                    if (optionInstArr.length != 5 || !NumberUtils.isNumber(optionInstArr[3])) {
+                        continue;
+                    }
+                    if (optionInstId.equals(instrumentId)) {
+                        currentCallOptionMarketData = optionMarketData;
+                    }
+                }
+                if (currentCallOptionMarketData != null) {
+                    messageService.sendMonitorMessage("期权IV监控", "期权IV监控:" + currentCallOptionMarketData.getInstId() +
+                            ",price:" + currentPrice + ",spotPrice:" + spotTicker.getLast() + ",delta:" + currentCallOptionMarketData.getDelta()  + ",gamma:" + currentCallOptionMarketData.getGamma()
+                            + ",vega:" + currentCallOptionMarketData.getVega()  + ",theta:" + currentCallOptionMarketData.getTheta()
+                            + ",vol:" + currentCallOptionMarketData.getVolLv() +",markVol:" + currentCallOptionMarketData.getMarkVol()
+                            +",bidVol:" + currentCallOptionMarketData.getBidVol()   +",askVol:" + currentCallOptionMarketData.getAskVol()   +",realVol:" + currentCallOptionMarketData.getRealVol());
+                }
+            }
             Thread.sleep(500);
         } catch (Exception e) {
             e.printStackTrace();
