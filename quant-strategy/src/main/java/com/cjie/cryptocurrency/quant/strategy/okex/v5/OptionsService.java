@@ -1612,10 +1612,14 @@ public class OptionsService {
             int size = 0;
             while (lastTime != null) {
                 HttpResult<List<PositionInfo>> accountBillsResult = accountAPIV5Service.getHistoryPostions(site, "OPTION", null, symbol, null, null, null, null, null, String.valueOf(lastTime), "100");
-                if (accountBillsResult == null || !"0".equals(accountBillsResult.getCode()) || accountBillsResult.getData().size() <= 0) {
+                if (accountBillsResult == null || !"0".equals(accountBillsResult.getCode())) {
                     continue;
                 }
                 log.info("account bill result size:{}", accountBillsResult.getData().size());
+                if (accountBillsResult.getData().size() <= 0) {
+                    lastTime = null;
+                    break;
+                }
                 lastTime = null;
                 int index = 0;
                 for (PositionInfo positionInfo : accountBillsResult.getData()) {
