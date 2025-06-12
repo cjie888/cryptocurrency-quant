@@ -1369,8 +1369,9 @@ public class OptionsService {
                 continue;
             }
             log.info("dynamicDeltaHedging 进行中订单, orderId:{}, order logId:{}, instId:{}", optionsOrder.getId(), optionsOrderLog.getId(), optionsOrder.getInstrumentId());
+            String currentStrikeDate = optionsOrder.getInstrumentId().split("-")[2];
             double lastDelta = optionsOrderLog.getDelta().doubleValue();
-            HttpResult<List<OptionMarketData>> optionsMarketDatas = publicDataAPIService.getOptionMarketData(site, symbol + "-USD", strikeDate);
+            HttpResult<List<OptionMarketData>> optionsMarketDatas = publicDataAPIService.getOptionMarketData(site, symbol + "-USD", currentStrikeDate);
             if ("0".equals(optionsMarketDatas.getCode()) && optionsMarketDatas.getData().size() > 0) {
                 OptionMarketData currentCallOptionMarketData = null;
                 Long currentCallStrikePrice = null;
