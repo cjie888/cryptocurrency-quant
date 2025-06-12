@@ -1630,7 +1630,7 @@ public class OptionsService {
                     profitSymbol = profitSymbol.add(new BigDecimal(positionInfo.getRealizedPnl()));
                     size++;
                 }
-                Thread.sleep(300);
+                Thread.sleep(500);
             }
             BigDecimal profitUsdt = profitSymbol.multiply(new BigDecimal(apiTickerVO.getLast())).setScale(4, BigDecimal.ROUND_DOWN);
             log.info("option:{}, profit :{}, profitUsdt:{}, size:{}", symbol, profitSymbol, profitUsdt, size);
