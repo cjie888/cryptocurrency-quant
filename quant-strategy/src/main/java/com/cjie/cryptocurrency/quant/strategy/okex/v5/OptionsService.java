@@ -107,7 +107,7 @@ public class OptionsService {
         optionsSwapCtVal.put("ETH-USD", new BigDecimal("1"));
     }
 
-    private String getOptionExpireTime() {
+    private String getOptionExpireTime(int days) {
         // 获取当前日期
         LocalDate today = LocalDate.now();
 
@@ -117,7 +117,7 @@ public class OptionsService {
 ////                .plusWeeks(2); // 加两周（下下周）
 //                .plusDays(2);
         // 获取两个月后的日期
-        LocalDate twoMonthsLater = today.plusDays(45);
+        LocalDate twoMonthsLater = today.plusDays(days);
 
         // 获取该月的最后一个星期五
         LocalDate lastFriday = twoMonthsLater.with(TemporalAdjusters.lastInMonth(DayOfWeek.FRIDAY));
@@ -207,7 +207,7 @@ public class OptionsService {
             Ticker apiTickerVO = swapTicker.getData().get(0);
             Double currentPrice = Double.valueOf(apiTickerVO.getLast());
 
-            String expireTime = getOptionExpireTime();
+            String expireTime = getOptionExpireTime(45);
             log.info("到期日期{}:{}", instrumentId, expireTime);
 
 
@@ -1165,7 +1165,7 @@ public class OptionsService {
         Ticker apiTickerVO = swapTicker.getData().get(0);
         Double currentPrice = Double.valueOf(apiTickerVO.getLast());
 
-        String strikeDate = getOptionExpireTime();
+        String strikeDate = getOptionExpireTime(75);
         List<Integer> processingStatuses = new ArrayList<>();
         processingStatuses.add(2);
 
@@ -1190,7 +1190,7 @@ public class OptionsService {
                         continue;
                     }
                     double delta = Double.parseDouble(optionMarketData.getDelta());
-                    if ("C".equals(optionInstArr[4]) && delta > 0.3) {
+                    if ("C".equals(optionInstArr[4]) && delta > 0.25) {
                         if (currentCallOptionMarketData == null || delta < currentCallStrikeDelta) {
                             currentCallStrikeDelta = delta;
                             currentCallOptionMarketData = optionMarketData;
@@ -1392,7 +1392,7 @@ public class OptionsService {
                     double currentDelta = Double.valueOf(currentCallStrikeDelta);
                     log.info("dynamicDeltaHedging 进行中订单, orderId:{}, order logId:{}, instId:{},当前delta:{}, 上次delta:{}",
                             optionsOrder.getId(), optionsOrderLog.getId(), optionsOrder.getInstrumentId(), currentDelta, lastDelta);
-                    if (currentDelta > 0.6) {
+                    if (currentDelta > 0.75) {
                         //获取期权的价格数据
                         HttpResult<List<OrderBook>> optionOrderBookDatas = marketDataAPIService.getOrderBook(site, currentCallOptionMarketData.getInstId(), null);
                         log.info("期权深度数据{}:{}", currentCallOptionMarketData.getInstId(), JSON.toJSONString(optionOrderBookDatas));

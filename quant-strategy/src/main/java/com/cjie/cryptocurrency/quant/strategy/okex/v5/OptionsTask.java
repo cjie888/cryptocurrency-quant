@@ -61,9 +61,9 @@ public class OptionsTask {
         optionsService.computeOptionBenefit("okex", "BTC-USDT-SWAP", "BTC",
                 dayStartTime.atZone(ZoneId.of("Asia/Shanghai")).toInstant().toEpochMilli(), "每日期权BTC收益");
         optionsService.computeOptionBenefit("okex", "ETH-USDT-SWAP", "ETH", dayStartTime.atZone(ZoneId.of("Asia/Shanghai")).toInstant().toEpochMilli(), "每日期权ETH收益");
-        optionsService.computeOptionBenefit("okex", "BTC-USDT-SWAP","BTC", weekStartTime.atZone(ZoneId.of("Asia/Shanghai")).toInstant().toEpochMilli(), "七日期权BTC收益");
-        optionsService.computeOptionBenefit("okex", "ETH-USDT-SWAP","ETH", weekStartTime.atZone(ZoneId.of("Asia/Shanghai")).toInstant().toEpochMilli(), "七日期权ETH收益");
-        optionsService.computeOptionBenefit("okex", "BTC-USDT-SWAP","BTC", monthStartTime.atZone(ZoneId.of("Asia/Shanghai")).toInstant().toEpochMilli(), "30日期权BTC收益");
-        optionsService.computeOptionBenefit("okex", "ETH-USDT-SWAP","ETH", monthStartTime.atZone(ZoneId.of("Asia/Shanghai")).toInstant().toEpochMilli(), "30日期权ETH收益");
+        optionsService.computeOptionBenefit("okex", "BTC-USDT-SWAP","BTC", weekStartTime.atZone(ZoneId.of("Asia/Shanghai")).toInstant().toEpochMilli(), "本周期权BTC收益");
+        optionsService.computeOptionBenefit("okex", "ETH-USDT-SWAP","ETH", weekStartTime.atZone(ZoneId.of("Asia/Shanghai")).toInstant().toEpochMilli(), "本周期权ETH收益");
+        optionsService.computeOptionBenefit("okex", "BTC-USDT-SWAP","BTC", monthStartTime.atZone(ZoneId.of("Asia/Shanghai")).toInstant().toEpochMilli(), "本月期权BTC收益");
+        optionsService.computeOptionBenefit("okex", "ETH-USDT-SWAP","ETH", monthStartTime.atZone(ZoneId.of("Asia/Shanghai")).toInstant().toEpochMilli(), "本月期权ETH收益");
     }
 }
