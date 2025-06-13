@@ -34,6 +34,15 @@ public class TransferService {
     public void transfer(String site, String ccy, String size, Double ratio) {
         try {
 
+            HttpResult<List<AccountInfo>> quotaAccountResult = accountAPIService.getBalance(site, "USDT");
+            log.info("Transfer spot quota account:{}", JSON.toJSONString(quotaAccountResult));
+            if (Objects.nonNull(quotaAccountResult) && "0".equals(quotaAccountResult.getCode())) {
+                if (quotaAccountResult.getData().get(0).getDetails().size() <= 0) {
+                    log.info("Transfer spot usdt, the balance is little than 0");
+                    return;
+                }
+            }
+
             HttpResult<List<AccountInfo>> baseAccountResult = accountAPIService.getBalance(site, ccy);
             log.info("Transfer spot base account:{}", JSON.toJSONString(baseAccountResult));
             if (Objects.nonNull(baseAccountResult) && "0".equals(baseAccountResult.getCode())) {
