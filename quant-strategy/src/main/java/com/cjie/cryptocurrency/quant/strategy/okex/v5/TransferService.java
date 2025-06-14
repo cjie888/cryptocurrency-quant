@@ -37,8 +37,9 @@ public class TransferService {
             HttpResult<List<AccountInfo>> quotaAccountResult = accountAPIService.getBalance(site, "USDT");
             log.info("Transfer spot quota account:{}", JSON.toJSONString(quotaAccountResult));
             if (Objects.nonNull(quotaAccountResult) && "0".equals(quotaAccountResult.getCode())) {
-                if (quotaAccountResult.getData().get(0).getDetails().size() == 0 ||
-                        Double.parseDouble(quotaAccountResult.getData().get(0).getDetails().get(0).getAvailEq()) < 0) {
+                if (quotaAccountResult.getData().size() == 0 || quotaAccountResult.getData().get(0).getDetails().size() == 0 ||
+                        Double.parseDouble(quotaAccountResult.getData().get(0).getDetails().get(0).getAvailBal()) <= 0
+                        || Double.parseDouble(quotaAccountResult.getData().get(0).getDetails().get(0).getCashBal()) <= 0) {
                     log.info("Transfer spot usdt, the balance is little than 0");
                     return;
                 }
