@@ -783,7 +783,7 @@ public class OptionsService {
         }
     }
 
-    void netGrid2(String site, String instrumentId, String symbol, int size, double callIncrement, double putDecrement) {
+    void netGrid2(String site, String instrumentId, String symbol, int size, double baseIncrement, double callIncrement, double putDecrement) {
 
         HttpResult<List<Ticker>> swapTicker = marketDataAPIService.getTicker(site, symbol + "-USDT");
         if (!"0".equals(swapTicker.getCode()) || swapTicker.getData().size() == 0) {
@@ -795,10 +795,10 @@ public class OptionsService {
 
         log.info("当前价格{}-{}-{}", site, currentPrice, symbol);
         for (int i = 1; i <= 4; i++) {
-            String expireTime = getNextNDay(i - 1);
+            String expireTime = getNextNDay(i);
             for (int j = i; j <= 4; j++) {
-                double callStrikePrice = currentPrice * (1 + 0.008 + j * callIncrement);
-                double putStrikePrice = currentPrice * (1 - 0.008 - j * putDecrement);
+                double callStrikePrice = currentPrice * (1 + baseIncrement + j * callIncrement);
+                double putStrikePrice = currentPrice * (1 - baseIncrement - j * putDecrement);
                 log.info("到期日期{}:{}, 预估看涨行权价:{},预估看跌行权价:{}", instrumentId, expireTime, callStrikePrice, putStrikePrice);
                 HttpResult<List<OptionMarketData>> optionsMarketDatas = publicDataAPIService.getOptionMarketData(site, symbol + "-USD", expireTime);
 
@@ -1190,7 +1190,7 @@ public class OptionsService {
                         continue;
                     }
                     double delta = Double.parseDouble(optionMarketData.getDelta());
-                    if ("C".equals(optionInstArr[4]) && delta > 0.25) {
+                    if ("C".equals(optionInstArr[4]) && delta > 0.3) {
                         if (currentCallOptionMarketData == null || delta < currentCallStrikeDelta) {
                             currentCallStrikeDelta = delta;
                             currentCallOptionMarketData = optionMarketData;
@@ -1393,7 +1393,7 @@ public class OptionsService {
                     double currentDelta = Double.valueOf(currentCallStrikeDelta);
                     log.info("dynamicDeltaHedging 进行中订单, orderId:{}, order logId:{}, instId:{},当前delta:{}, 上次delta:{}",
                             optionsOrder.getId(), optionsOrderLog.getId(), optionsOrder.getInstrumentId(), currentDelta, lastDelta);
-                    if (currentDelta > 0.75) {
+                    if (currentDelta > 0.85) {
                         //获取期权的价格数据
                         HttpResult<List<OrderBook>> optionOrderBookDatas = marketDataAPIService.getOrderBook(site, currentCallOptionMarketData.getInstId(), null);
                         log.info("期权深度数据{}:{}", currentCallOptionMarketData.getInstId(), JSON.toJSONString(optionOrderBookDatas));
