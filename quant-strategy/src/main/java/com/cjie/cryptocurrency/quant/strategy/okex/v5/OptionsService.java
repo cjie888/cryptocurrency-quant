@@ -1717,7 +1717,7 @@ public class OptionsService {
             String strikeDate = getOptionExpireTime(75);
             HttpResult<List<OptionMarketData>> optionsMarketDatas = publicDataAPIService.getOptionMarketData(site, symbol + "-USD", strikeDate);
             if ("0".equals(optionsMarketDatas.getCode()) && optionsMarketDatas.getData().size() > 0) {
-                String chartPath = "/Users/huchengjie/option/iv_skew.png";
+                String chartPath = "/data/option/iv_skew.png";
                 createVolatilitySmileChart(optionsMarketDatas.getData(), strikeDate, chartPath);
                 messageService.sendPhoto(chartPath, "Skew曲线");
 
