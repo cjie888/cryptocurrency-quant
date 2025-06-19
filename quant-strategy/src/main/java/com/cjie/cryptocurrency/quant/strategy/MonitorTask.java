@@ -33,7 +33,7 @@ public class MonitorTask {
 
     }
 
-   @Scheduled(cron = "3 * * * * ?")
+   @Scheduled(cron = "3 13 * * * ?")
     public void monitorOptionsIVSkew() {
         optionsService.monitorIvSkew("okex", "BTC");
         optionsService.monitorIvSkew("okex", "ETH");
