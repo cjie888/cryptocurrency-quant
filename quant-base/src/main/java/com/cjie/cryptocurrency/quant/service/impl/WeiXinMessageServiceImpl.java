@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
 @Slf4j
@@ -46,6 +47,16 @@ public class WeiXinMessageServiceImpl implements MessageService {
 
     @Override
     public void sendMonitorMessage(String title, String content) {
+
+    }
+
+    @Override
+    public void sendNoticeMessage(String title, String content) {
+
+    }
+
+    @Override
+    public void sendPhoto(String photoPath, String caption) throws IOException {
 
     }
 }

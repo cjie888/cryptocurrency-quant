@@ -1,5 +1,6 @@
-package com.cjie.cryptocurrency.quant.strategy.okex.v5;
+package com.cjie.cryptocurrency.quant.strategy;
 
+import com.cjie.cryptocurrency.quant.strategy.okex.v5.OptionsService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -11,6 +12,9 @@ public class MonitorTask {
 
     @Autowired
     private OptionsService optionsService;
+
+    @Autowired
+    private UpbbitService upbbitService;
 
     @Scheduled(cron = "3 10 * * * ?")
     public void monitorOptionsIV() {
@@ -27,6 +31,18 @@ public class MonitorTask {
         optionsService.monitorIV("okex", "ETH-USD-250926-3500-C", "ETH", "250926");
         optionsService.monitorIV("okex", "ETH-USD-250926-3800-C", "ETH", "250926");
 
+    }
+
+   @Scheduled(cron = "3 * * * * ?")
+    public void monitorOptionsIVSkew() {
+        optionsService.monitorIvSkew("okex", "BTC");
+        optionsService.monitorIvSkew("okex", "ETH");
+
+    }
+
+    @Scheduled(cron = "17 * * * * ?")
+    public void monitorUpbitNewCoin() {
+        upbbitService.monitorNewCoin();
     }
 
 }

@@ -26,10 +26,24 @@ import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.math.NumberUtils;
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartUtils;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.annotations.XYTextAnnotation;
+import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
+import org.jfree.chart.ui.TextAnchor;
+import org.jfree.data.xy.XYSeries;
+import org.jfree.data.xy.XYSeriesCollection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
+import java.awt.*;
+import java.awt.geom.Ellipse2D;
+import java.io.File;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.DayOfWeek;
@@ -1696,5 +1710,90 @@ public class OptionsService {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public void monitorIvSkew(String site, String symbol) {
+        try {
+            String strikeDate = getOptionExpireTime(75);
+            HttpResult<List<OptionMarketData>> optionsMarketDatas = publicDataAPIService.getOptionMarketData(site, symbol + "-USD", strikeDate);
+            if ("0".equals(optionsMarketDatas.getCode()) && optionsMarketDatas.getData().size() > 0) {
+                String chartPath = "/Users/huchengjie/option/iv_skew.png";
+                createVolatilitySmileChart(optionsMarketDatas.getData(), strikeDate, chartPath);
+                messageService.sendPhoto(chartPath, "Skew曲线");
+
+                new File(chartPath).delete();
+
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    public static void createVolatilitySmileChart(List<OptionMarketData> options, String expiry, String outputPath) throws IOException {
+        XYSeries callSeries = new XYSeries("Call IV");
+        XYSeries putSeries = new XYSeries("Put IV");
+
+        // Separate calls and puts
+        for (OptionMarketData option : options) {
+            String optionInstId = option.getInstId();
+            String[] optionInstArr = optionInstId.split("-");
+            System.out.println( optionInstId + ",strikePrice:" + optionInstArr[3] + ",vol:" + option.getMarkVol());
+            if (optionInstArr[4].equals("P")) {
+                callSeries.add(Long.parseLong(optionInstArr[3]), new BigDecimal(option.getVega()).setScale(6, BigDecimal.ROUND_DOWN));
+            } else {
+//                putSeries.add(Long.parseLong(optionInstArr[3]), 0.1);
+                putSeries.add(Long.parseLong(optionInstArr[3]), new BigDecimal(option.getVega()).setScale(6, BigDecimal.ROUND_DOWN));
+            }
+        }
+        System.out.println("Call points: " + callSeries.getItemCount());
+        System.out.println("Put points: " + putSeries.getItemCount());
+
+        XYSeriesCollection dataset = new XYSeriesCollection();
+        dataset.addSeries(callSeries);
+        dataset.addSeries(putSeries);
+
+        JFreeChart chart = ChartFactory.createXYLineChart(
+                "BTC Volatility Smile (" + expiry + ")", // Title
+                "Strike Price", // X-axis label
+                "Implied Volatility", // Y-axis label
+                dataset,
+                PlotOrientation.VERTICAL,
+                true, true, false
+        );
+        // Customize plot
+        XYPlot plot = chart.getXYPlot();
+        XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer();
+
+        // Set line and shape properties
+        renderer.setSeriesPaint(0, Color.RED);    // Call IV
+        renderer.setSeriesPaint(1, Color.BLUE);   // Put IV
+        renderer.setSeriesStroke(0, new BasicStroke(2.0f));           // Thicker Call line
+        renderer.setSeriesStroke(1, new BasicStroke(1.5f));           // Solid Put line
+        renderer.setSeriesShapesVisible(0, true);  // Show points for Call
+        renderer.setSeriesShapesVisible(1, true);  // Show points for Put
+        renderer.setSeriesShape(0, new Ellipse2D.Double(-3, -3, 6, 6)); // Circle for Call
+        renderer.setSeriesShape(1, new Ellipse2D.Double(-3, -3, 6, 6)); // Circle for Put
+        plot.setRenderer(renderer);
+
+        for (int series = 0; series < dataset.getSeriesCount(); series++) {
+            XYSeries xySeries = dataset.getSeries(series);
+            for (int item = 0; item < xySeries.getItemCount(); item++) {
+                double x = xySeries.getX(item).doubleValue(); // Strike Price
+                double y = xySeries.getY(item).doubleValue(); // Implied Volatility
+//                String label = String.format("(%d, %.2f)", (int) x, y);
+                String label = String.format("(%d, %.4f)", (int) x, y);
+                XYTextAnnotation annotation = new XYTextAnnotation(label, x, y);
+                annotation.setTextAnchor(TextAnchor.HALF_ASCENT_LEFT); // Position text to the right
+                annotation.setFont(new Font("SansSerif", Font.PLAIN, 10));
+                annotation.setPaint(series == 0 ? Color.RED : Color.BLUE); // Match series color
+                // Adjust position to avoid overlap
+                annotation.setX(x + 200); // Move right by 200 units (adjust as needed)
+                annotation.setY(y);
+                plot.addAnnotation(annotation);
+            }
+        }
+
+        // Save chart as PNG
+        File outputFile = new File(outputPath);
+        ChartUtils.saveChartAsPNG(outputFile, chart, 1920, 1080);
     }
 }
