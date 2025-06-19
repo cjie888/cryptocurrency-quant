@@ -37,7 +37,7 @@ public class UpbbitService {
     public void monitorNewCoin() {
         MultiValueMap<String, String> headers = new HttpHeaders();
         headers.add("Referer", "https://www.upbit.com");
-        headers.add("user-agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.84 Safari/537.36");
+//        headers.add("user-agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.84 Safari/537.36");
         HttpEntity requestEntity = new HttpEntity<>(headers);
 
         String url =  "https://api-manager.upbit.com/api/v1/announcements?os=moweb&page=1&per_page=20&category=trade";
