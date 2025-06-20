@@ -40,7 +40,7 @@ public class MonitorTask {
 
     }
 
-    @Scheduled(cron = "17 * * * * ?")
+//    @Scheduled(cron = "17 * * * * ?")
     public void monitorUpbitNewCoin() {
         upbbitService.monitorNewCoin();
     }
