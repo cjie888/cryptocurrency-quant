@@ -45,6 +45,7 @@ public class UpbbitService {
 
     public void monitorNewCoin() {
         try {
+            log.info("Start to monitor upbit coin");
             OkHttpClient client = new OkHttpClient.Builder()
                     .followRedirects(true) // 自动处理重定向
                     .build();
