@@ -77,9 +77,9 @@ public class UpbbitService {
             try (Response response = client.newCall(request).execute()) {
                 if (response.isSuccessful()) {
                     body = response.body().string();
-                    System.out.println("Response received: " + body);
+                    log.info("Response received: " + body);
                 } else {
-                    System.out.println("Request failed: " + response.code());
+                    log.info("Request failed: " + response.code());
                     return;
                 }
             } catch (IOException e) {
