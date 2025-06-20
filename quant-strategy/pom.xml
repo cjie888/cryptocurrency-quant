@@ -67,6 +67,14 @@
             <artifactId>jfreechart</artifactId>
             <version>1.5.4</version>
         </dependency>
+
+
+        <dependency>
+            <groupId>xyz.hexile</groupId>
+            <artifactId>cloudflarescraper</artifactId>
+            <version>1.0</version>
+        </dependency>
+
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
