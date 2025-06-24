@@ -9,8 +9,8 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.temporal.TemporalAdjusters;
 
-@Component
-@Slf4j
+//@Component
+//@Slf4j
 public class OptionsTask {
 
     @Autowired
@@ -28,15 +28,15 @@ public class OptionsTask {
     @Scheduled(cron = "55 59 15 * * ?")
 //    @Scheduled(cron = "3/11 * * * * ?")
     public void netGrid1() {
-        optionsService.netGrid1("okex", "BTC-USDT-SWAP", "BTC", 1, 0.009, 0.008);
-        optionsService.netGrid1("okex", "ETH-USDT-SWAP", "ETH", 2, 0.013,0.012);
+        optionsService.netGrid1("okex", "BTC-USDT-SWAP", "BTC", 1, 0.02, 0.005);
+//        optionsService.netGrid1("okex", "ETH-USDT-SWAP", "ETH", 2, 0.013,0.012);
     }
 
     @Scheduled(cron = "40 45 23 * * ?")  // 15:59:20 执行
 //    @Scheduled(cron = "52 06 16 * * ?")
 //    @Scheduled(cron = "3/15 * * * * ?")
     public void netGrid2() {
-//        optionsService.netGrid2("okex", "BTC-USDT-SWAP", "BTC", 2, 0.01, 0.008, 0.007);
+        optionsService.netGrid2("okex", "BTC-USDT-SWAP", "BTC", 2, 0.015, 0.008, 0.007);
 //        optionsService.netGrid2("okex", "ETH-USDT-SWAP", "ETH", 2, 0.2, 0.016,0.015);
     }
 
