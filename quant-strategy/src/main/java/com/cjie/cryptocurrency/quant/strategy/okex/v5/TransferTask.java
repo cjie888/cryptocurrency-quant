@@ -70,7 +70,7 @@ public class TransferTask {
 
     }
 
-    @Scheduled(cron = "29 52 */1 * * ?")
+    @Scheduled(cron = "29 55 */1 * * ?")
     public void transfer2() {
         transferService.transfer("okexsub2", "ETH", "0.01", 3.0);
         transferService.transfer("okexsub2", "SOL", "0.1", 3.0);
