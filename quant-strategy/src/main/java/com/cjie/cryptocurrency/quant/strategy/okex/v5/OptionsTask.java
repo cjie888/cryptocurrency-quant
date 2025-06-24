@@ -9,8 +9,8 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.temporal.TemporalAdjusters;
 
-//@Component
-//@Slf4j
+@Component
+@Slf4j
 public class OptionsTask {
 
     @Autowired
