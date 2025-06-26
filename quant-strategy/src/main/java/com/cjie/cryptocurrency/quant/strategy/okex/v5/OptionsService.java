@@ -1798,7 +1798,7 @@ public class OptionsService {
     }
 
 
-    public void coveredCall(String site, String symbol, double size) {
+    public void coveredCall(String site, String symbol, double size, double increment) {
         try {
             HttpResult<List<Ticker>> swapTicker = marketDataAPIService.getTicker(site, symbol + "-USDT");
             if (!"0".equals(swapTicker.getCode()) || swapTicker.getData().size() == 0) {
@@ -1825,7 +1825,7 @@ public class OptionsService {
                         continue;
                     }
                     Long strikePrice = Long.parseLong(optionInstArr[3]);
-                    if (strikePrice < currentPrice) {
+                    if (strikePrice < currentPrice * (1 + increment)) {
                         continue;
                     }
                     if ("C".equals(optionInstArr[4])) {

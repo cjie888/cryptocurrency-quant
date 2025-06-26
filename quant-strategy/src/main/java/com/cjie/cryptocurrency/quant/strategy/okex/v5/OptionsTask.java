@@ -49,8 +49,8 @@ public class OptionsTask {
 
     @Scheduled(cron = "40 15 6 * * ?")
     public void coveredCall() {
-        optionsService.coveredCall("okexsub3", "ETH", 1);
-        optionsService.coveredCall("okexsub3", "BTC", 1);
+        optionsService.coveredCall("okexsub3", "ETH", 1, 0.02);
+        optionsService.coveredCall("okexsub3", "BTC", 1, 0.01);
     }
 
     @Scheduled(cron = "43 15 * * * ?")
