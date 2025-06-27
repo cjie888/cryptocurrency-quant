@@ -75,7 +75,7 @@ public class OptionsTask {
     }
 
 
-    @Scheduled(cron = "43 35 * * * ?")
+    @Scheduled(cron = "43 45 * * * ?")
     //@Scheduled(cron = "3/15 * * * * ?")
     public void computeOptionBenefit2(){
         LocalDateTime now = LocalDateTime.now();
