@@ -881,8 +881,8 @@ public class SwapV5Service {
                         .append("\n");
                 totalProfit = totalProfit.add(entry.getValue());
             }
-            result.append("toltal profit:").append(totalProfit.setScale(6, BigDecimal.ROUND_DOWN).toPlainString()).append(":\n");
-            result.append(",size:").append(size).append(":\n");
+            result.append("toltal profit:").append(totalProfit.setScale(6, BigDecimal.ROUND_DOWN).toPlainString()).append("\n");
+            result.append("size:").append(size).append(":\n");
             if (size > 0) {
                 messageService.sendMessage(title, result.toString());
             }
