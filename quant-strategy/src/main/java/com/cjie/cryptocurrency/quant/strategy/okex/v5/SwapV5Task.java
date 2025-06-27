@@ -5,6 +5,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.temporal.TemporalAdjusters;
+
 @Component
 @Slf4j
 public class SwapV5Task {
@@ -47,6 +51,43 @@ public class SwapV5Task {
         swapService.swapAndSpotHedging("okexsub1", "LINK-USDT-SWAP", "LINK-USDT", 0.03, 10);
         swapService.swapAndSpotHedging("okexsub1", "DOGE-USDT-SWAP", "DOGE-USDT", 0.03, 1);
 
+    }
+
+
+    @Scheduled(cron = "43 45 * * * ?")
+    public void monitorSwapProfit() {
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime dayStartTime = now.withHour(0).withMinute(0).withSecond(0).withNano(0);
+        LocalDateTime weekStartTime = now.with(TemporalAdjusters.previousOrSame(java.time.DayOfWeek.MONDAY))
+                .withHour(0)
+                .withMinute(0)
+                .withSecond(0)
+                .withNano(0);
+        LocalDateTime monthStartTime = now.withDayOfMonth(1).withHour(0).withMinute(0).withSecond(0).withNano(0);
+        swapService.computeSwapBenefit("okexsub1",
+                dayStartTime.atZone(ZoneId.of("Asia/Shanghai")).toInstant().toEpochMilli(), "okexsub1本日永续合约收益");
+        swapService.computeSwapBenefit("okexsub1",
+                weekStartTime.atZone(ZoneId.of("Asia/Shanghai")).toInstant().toEpochMilli(), "okexsub1本周永续合约收益");
+        swapService.computeSwapBenefit("okexsub1",
+                monthStartTime.atZone(ZoneId.of("Asia/Shanghai")).toInstant().toEpochMilli(), "okexsub1本月永续合约收益");
+    }
+
+    @Scheduled(cron = "43 55 * * * ?")
+    public void monitorSwapProfit2() {
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime dayStartTime = now.withHour(0).withMinute(0).withSecond(0).withNano(0);
+        LocalDateTime weekStartTime = now.with(TemporalAdjusters.previousOrSame(java.time.DayOfWeek.MONDAY))
+                .withHour(0)
+                .withMinute(0)
+                .withSecond(0)
+                .withNano(0);
+        LocalDateTime monthStartTime = now.withDayOfMonth(1).withHour(0).withMinute(0).withSecond(0).withNano(0);
+        swapService.computeSwapBenefit("okexsub3",
+                dayStartTime.atZone(ZoneId.of("Asia/Shanghai")).toInstant().toEpochMilli(), "okexsub3本日永续合约收益");
+        swapService.computeSwapBenefit("okexsub3",
+                weekStartTime.atZone(ZoneId.of("Asia/Shanghai")).toInstant().toEpochMilli(), "okexsub3本周永续合约收益");
+        swapService.computeSwapBenefit("okexsub3",
+                monthStartTime.atZone(ZoneId.of("Asia/Shanghai")).toInstant().toEpochMilli(), "okexsub3本月永续合约收益");
     }
 
 }

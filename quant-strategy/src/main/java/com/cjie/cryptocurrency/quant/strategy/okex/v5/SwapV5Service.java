@@ -824,4 +824,70 @@ public class SwapV5Service {
         }
 
     }
+
+
+    public void computeSwapBenefit(String site, long startTime, String title) {
+        try {
+
+//            HttpResult<List<Ticker>> swapTicker = marketDataAPIService.getTicker(site, instrumentId);
+//
+//            if (!"0".equals(swapTicker.getCode()) || swapTicker.getData().size() == 0) {
+//                return;
+//            }
+//
+//            Ticker apiTickerVO = swapTicker.getData().get(0);
+//            Double currentPrice = Double.valueOf(apiTickerVO.getLast());
+
+            Long lastTime = startTime;
+
+            Map<String, BigDecimal> symbolProfits = new HashMap<>();
+            int size = 0;
+            while (lastTime != null) {
+                HttpResult<List<PositionInfo>> accountBillsResult = accountAPIV5Service.getHistoryPostions(site, "SWAP", null, null, null, null, null, null, null, String.valueOf(lastTime), "100");
+                System.out.println(JSONObject.toJSONString(accountBillsResult));
+                if (accountBillsResult == null || !"0".equals(accountBillsResult.getCode())) {
+                    continue;
+                }
+                log.info("account bill result size:{}", accountBillsResult.getData().size());
+                if (accountBillsResult.getData().size() <= 0) {
+                    lastTime = null;
+                    break;
+                }
+                lastTime = null;
+                int index = 0;
+                for (PositionInfo positionInfo : accountBillsResult.getData()) {
+                    index++;
+                    if (index == 100) {
+                        lastTime = positionInfo.getuTime();
+                    }
+                    log.info("position info: instId:{}, realizedPnl:{}, uTime:{}", positionInfo.getInstId(), positionInfo.getRealizedPnl(), new Date(positionInfo.getuTime()));
+                    BigDecimal profitSymbol = symbolProfits.get(positionInfo.getInstId());
+                    if (profitSymbol == null) {
+                        profitSymbol = BigDecimal.ZERO;
+                    }
+                    profitSymbol = profitSymbol.add(new BigDecimal(positionInfo.getRealizedPnl()));
+                    symbolProfits.put(positionInfo.getInstId(), profitSymbol);
+                    size++;
+                }
+                Thread.sleep(500);
+            }
+
+            StringBuilder result = new StringBuilder();
+
+            for (Map.Entry<String, BigDecimal> entry : symbolProfits.entrySet()) {
+                log.info("swap:{}, profit :{}, size:{}", entry.getKey(), entry.getValue().toPlainString(), size);
+
+                result.append(title).append(":\n")
+                        .append( entry.getKey()).append(":").append( entry.getValue().setScale(6, BigDecimal.ROUND_DOWN).toPlainString())
+                        .append(",size:").append(size).append("\n");
+            }
+            if (size > 0) {
+                messageService.sendMessage(title, result.toString());
+            }
+            Thread.sleep(500);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
 }
