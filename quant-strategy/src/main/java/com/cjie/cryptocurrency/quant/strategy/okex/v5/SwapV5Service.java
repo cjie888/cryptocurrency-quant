@@ -842,6 +842,7 @@ public class SwapV5Service {
 
             Map<String, BigDecimal> symbolProfits = new HashMap<>();
             int size = 0;
+            BigDecimal totalProfit = BigDecimal.ZERO;
             while (lastTime != null) {
                 HttpResult<List<PositionInfo>> accountBillsResult = accountAPIV5Service.getHistoryPostions(site, "SWAP", null, null, null, null, null, null, null, String.valueOf(lastTime), "100");
                 System.out.println(JSONObject.toJSONString(accountBillsResult));
@@ -873,14 +874,15 @@ public class SwapV5Service {
             }
 
             StringBuilder result = new StringBuilder();
-
+            result.append(title).append(":\n");
             for (Map.Entry<String, BigDecimal> entry : symbolProfits.entrySet()) {
                 log.info("swap:{}, profit :{}, size:{}", entry.getKey(), entry.getValue().toPlainString(), size);
-
-                result.append(title).append(":\n")
-                        .append( entry.getKey()).append(":").append( entry.getValue().setScale(6, BigDecimal.ROUND_DOWN).toPlainString())
-                        .append(",size:").append(size).append("\n");
+                result.append( entry.getKey()).append(":").append( entry.getValue().setScale(6, BigDecimal.ROUND_DOWN).toPlainString())
+                        .append("\n");
+                totalProfit = totalProfit.add(entry.getValue());
             }
+            result.append("toltal profit:").append(totalProfit.setScale(6, BigDecimal.ROUND_DOWN).toPlainString()).append(":\n");
+            result.append(",size:").append(size).append(":\n");
             if (size > 0) {
                 messageService.sendMessage(title, result.toString());
             }
