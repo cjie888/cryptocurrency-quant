@@ -1811,7 +1811,7 @@ public class OptionsService {
             log.info("当前价格{}-{}-{}", site, currentPrice, symbol);
 
 
-            String strikeDate = getNextNDay(3);
+            String strikeDate = getNextNDay(1);
 
             //卖出看涨期权
             HttpResult<List<OptionMarketData>> optionsMarketDatas = publicDataAPIService.getOptionMarketData(site, symbol + "-USD", strikeDate);
@@ -1825,7 +1825,7 @@ public class OptionsService {
                         continue;
                     }
                     Long strikePrice = Long.parseLong(optionInstArr[3]);
-                    if (strikePrice < currentPrice * (1 + increment)) {
+                    if (strikePrice < currentPrice) {
                         continue;
                     }
                     if ("C".equals(optionInstArr[4])) {
