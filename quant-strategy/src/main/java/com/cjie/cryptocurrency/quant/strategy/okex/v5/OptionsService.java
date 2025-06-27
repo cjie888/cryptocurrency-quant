@@ -290,7 +290,7 @@ public class OptionsService {
                         ppUpOrder.setInstId(optionInstId);
                         ppUpOrder.setTdMode("isolated");
                         ppUpOrder.setPx(new BigDecimal(optionAskPrice).toPlainString());
-                        ppUpOrder.setSz(String.valueOf(size));
+                        ppUpOrder.setSz(String.valueOf(size * 2));
                         ppUpOrder.setSide("buy");
                         ppUpOrder.setOrdType("fok");
                         ppUpOrder.setType("1");
@@ -382,7 +382,7 @@ public class OptionsService {
                             if (apiPositionVO.getAvailPos().equals("")) {
                                 continue;
                             }
-                            if (apiPositionVO.getPosSide().equals("net") && Double.valueOf(apiPositionVO.getPos()) >= Double.valueOf(size) && Double.valueOf(apiPositionVO.getAvailPos()) >= Double.valueOf(size)) {
+                            if (apiPositionVO.getPosSide().equals("net") && Double.valueOf(apiPositionVO.getPos()) >= Double.valueOf(size * 2) && Double.valueOf(apiPositionVO.getAvailPos()) >= Double.valueOf(size * 2)) {
                                 if (upPosition == null) {
                                     upPosition = apiPositionVO;
                                     longPosition = Double.valueOf(apiPositionVO.getPos());
@@ -412,7 +412,7 @@ public class OptionsService {
                             ppUpOrder.setInstId(upPosition.getInstId());
                             ppUpOrder.setTdMode("isolated");
                             ppUpOrder.setPx(new BigDecimal(optionBidPrice).toPlainString());
-                            ppUpOrder.setSz(String.valueOf(size));
+                            ppUpOrder.setSz(String.valueOf(size * 2));
                             ppUpOrder.setSide("sell");
                             ppUpOrder.setOrdType("fok");
 //                ppUpOrder.setPosSide("long");
@@ -495,7 +495,7 @@ public class OptionsService {
                         ppUpOrder.setInstId(optionInstId);
                         ppUpOrder.setTdMode("isolated");
                         ppUpOrder.setPx(new BigDecimal(optionAskPrice).toPlainString());
-                        ppUpOrder.setSz(String.valueOf(size));
+                        ppUpOrder.setSz(String.valueOf(size * 2));
                         ppUpOrder.setSide("buy");
                         ppUpOrder.setOrdType("fok");
 //                ppUpOrder.setPosSide("long");
