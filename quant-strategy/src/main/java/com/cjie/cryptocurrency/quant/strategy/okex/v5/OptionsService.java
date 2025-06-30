@@ -1645,7 +1645,7 @@ public class OptionsService {
                     if (!positionInfo.getCcy().equals(symbol) || positionInfo.getType() != 2) {
                         continue;
                     }
-                    log.info("position info: instId:{}, realizedPnl:{}, uTime:{}", positionInfo.getInstId(), positionInfo.getRealizedPnl(), new Date(positionInfo.getuTime()));
+                    log.info("position info: instId:{}, realizedPnl:{}, uTime:{}, pos:{}", positionInfo.getInstId(), positionInfo.getRealizedPnl(), new Date(positionInfo.getuTime()), JSON.toJSONString(positionInfo));
                     profitSymbol = profitSymbol.add(new BigDecimal(positionInfo.getRealizedPnl()));
                     size++;
                 }
