@@ -1624,6 +1624,7 @@ public class OptionsService {
             Long lastTime = startTime;
 
             BigDecimal profitSymbol = BigDecimal.ZERO;
+            BigDecimal isolatedProfit = BigDecimal.ZERO;
             int size = 0;
             while (lastTime != null) {
                 HttpResult<List<PositionInfo>> accountBillsResult = accountAPIV5Service.getHistoryPostions(site, "OPTION", null, symbol, null, null, null, null, null, String.valueOf(lastTime), "100");
@@ -1647,17 +1648,24 @@ public class OptionsService {
                     }
                     log.info("position info: instId:{}, realizedPnl:{}, uTime:{}, pos:{}", positionInfo.getInstId(), positionInfo.getRealizedPnl(), new Date(positionInfo.getuTime()), JSON.toJSONString(positionInfo));
                     profitSymbol = profitSymbol.add(new BigDecimal(positionInfo.getRealizedPnl()));
+                    if ("isolated".equals(positionInfo.getMgnMode())) {
+                        isolatedProfit = isolatedProfit.add(new BigDecimal(positionInfo.getRealizedPnl()));
+                    }
                     size++;
                 }
                 Thread.sleep(500);
             }
             BigDecimal profitUsdt = profitSymbol.multiply(new BigDecimal(apiTickerVO.getLast())).setScale(4, BigDecimal.ROUND_DOWN);
+            BigDecimal isolatedProfitUsdt = isolatedProfit.multiply(new BigDecimal(apiTickerVO.getLast())).setScale(4, BigDecimal.ROUND_DOWN);
+
             log.info("option:{}, profit :{}, profitUsdt:{}, size:{}", symbol, profitSymbol, profitUsdt, size);
 
             StringBuilder result = new StringBuilder();
             result.append(title).append(":\n")
                     .append(symbol).append(":").append(profitSymbol.setScale(6, BigDecimal.ROUND_DOWN).toPlainString())
-                    .append(",USDT:").append(profitUsdt.toPlainString())
+                    .append(",逐仓").append(symbol).append(":").append(isolatedProfit.setScale(6, BigDecimal.ROUND_DOWN).toPlainString())
+                    .append(",USDT:").append(isolatedProfitUsdt.toPlainString())
+                    .append(",逐仓USDT:").append(profitUsdt.toPlainString())
                     .append(",size:").append(size);
 
             messageService.sendMessage(title, result.toString());
