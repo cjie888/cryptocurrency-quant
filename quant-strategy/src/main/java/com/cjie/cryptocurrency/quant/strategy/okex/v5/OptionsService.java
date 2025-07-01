@@ -1663,10 +1663,10 @@ public class OptionsService {
             StringBuilder result = new StringBuilder();
             result.append(title).append(":\n")
                     .append(symbol).append(":").append(profitSymbol.setScale(6, BigDecimal.ROUND_DOWN).toPlainString()).append("\n")
-                    .append(",逐仓").append(symbol).append(":").append(isolatedProfit.setScale(6, BigDecimal.ROUND_DOWN).toPlainString()).append("\n")
-                    .append(",USDT:").append(profitUsdt.toPlainString()).append("\n")
-                    .append(",逐仓USDT:").append(isolatedProfitUsdt.toPlainString()).append("\n")
-                    .append(",size:").append(size);
+                    .append("逐仓").append(symbol).append(":").append(isolatedProfit.setScale(6, BigDecimal.ROUND_DOWN).toPlainString()).append("\n")
+                    .append("USDT:").append(profitUsdt.toPlainString()).append("\n")
+                    .append("逐仓USDT:").append(isolatedProfitUsdt.toPlainString()).append("\n")
+                    .append("size:").append(size);
 
             messageService.sendMessage(title, result.toString());
             Thread.sleep(500);
