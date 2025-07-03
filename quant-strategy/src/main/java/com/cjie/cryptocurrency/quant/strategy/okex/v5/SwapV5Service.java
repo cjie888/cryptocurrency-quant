@@ -80,6 +80,9 @@ public class SwapV5Service {
 
     private static Map<String, BigDecimal> swapCtVal = Maps.newHashMap();
 
+    private static Map<String, Double> swapUsdtToSymbolVal = Maps.newHashMap();
+
+
     static {
 //        canceled：撤单成功
 //        live：等待成交
@@ -103,6 +106,9 @@ public class SwapV5Service {
         swapCtVal.put("XLM-USDT-SWAP", new BigDecimal("100"));
         swapCtVal.put("BNB-USDT-SWAP", new BigDecimal("0.01"));
 
+        swapUsdtToSymbolVal.put("BTC", 10.0);
+        swapUsdtToSymbolVal.put("SOL", 15.0);
+        swapUsdtToSymbolVal.put("ETH", 25.0);
     }
 
 
@@ -668,7 +674,7 @@ public class SwapV5Service {
             ppDownOrder.setPosSide("short");
             ppDownOrder.setType("2");
             orders.add(ppDownOrder);
-            JSONObject orderResult = tradeAPIService.placeMultipleOrders(site, orders);
+            JSONObject orderResult = tradeAPIService.placeMultipleOrders(site, orders, "netGrid");
 
             log.info("开多-开空 {}-{},result:{}", instrumentId, JSON.toJSONString(orders), JSONObject.toJSONString(orderResult));
 
@@ -708,7 +714,7 @@ public class SwapV5Service {
 //                log.info("平空{}-{},result:{}", instrumentId, JSON.toJSONString(ppDownOrder), JSON.toJSONString(orderResult2));
                 orders.add(ppDownOrder);
 
-                JSONObject orderResult = tradeAPIService.placeMultipleOrders(site, orders);
+                JSONObject orderResult = tradeAPIService.placeMultipleOrders(site, orders, "netGrid");
                 log.info("平多-平空 {}-{},result:{}", instrumentId, JSON.toJSONString(orders), JSONObject.toJSONString(orderResult));
 
             } else {
@@ -740,7 +746,7 @@ public class SwapV5Service {
                 orders.add(ppUpOrder);
 //                JSONObject orderResult2 = tradeAPIService.placeSwapOrder(site, placeOrderParam, "netGrid");
 //                log.info("平多{}-{},result:{}", instrumentId, JSON.toJSONString(ppUpOrder), JSON.toJSONString(orderResult2));
-                JSONObject orderResult = tradeAPIService.placeMultipleOrders(site, orders);
+                JSONObject orderResult = tradeAPIService.placeMultipleOrders(site, orders, "netGrid");
                 log.info("平空-平多 {}-{},result:{}", instrumentId, JSON.toJSONString(orders), JSONObject.toJSONString(orderResult));
 
             }
@@ -820,6 +826,343 @@ public class SwapV5Service {
             log.info("开多{}-{},result:{}", instrumentId, JSON.toJSONString(placeOrderParam), JSON.toJSONString(orderResult));
 //            JSONObject orderResult = tradeAPIService.placeMultipleOrders(site, orders);
 //            log.info("平空-开多 {}-{},result:{}", instrumentId, JSON.toJSONString(orders), JSONObject.toJSONString(orderResult));
+
+        }
+
+    }
+
+
+    public void netGrid2(String site, String symbol, Double size, Double increment) {
+        String symbolInstrumentId = symbol + "-USD-SWAP";
+        String usdtInstrumentId = symbol + "-USDT-SWAP";
+
+
+        List<Integer> unProcessedStatuses = new ArrayList<>();
+        unProcessedStatuses.add(99);
+        unProcessedStatuses.add(0);
+        unProcessedStatuses.add(1);
+        try {
+            List<SwapOrder> swapOrders = swapOrderMapper.selectByStatus(symbolInstrumentId, "netGrid2", unProcessedStatuses);
+            if (CollectionUtils.isNotEmpty(swapOrders)) {
+                log.info("unprocessed orders {}", JSON.toJSONString(swapOrders));
+                for (SwapOrder swapOrder : swapOrders) {
+                    JSONObject result = tradeAPIService.getOrderDetails(site, symbolInstrumentId, swapOrder.getOrderId(), null);
+
+                    log.info("spot order status {}", JSON.toJSONString(result));
+                    if (result == null) {
+                        return;
+                    }
+                    String state = ((JSONObject)result.getJSONArray("data").get(0)).getString("state");
+                    if ( state == null || STATES.get(state) == null) {
+                        return;
+                    }
+                    Integer status = STATES.get(state);
+                    if (!swapOrder.getStatus().equals(status)) {
+                        swapOrderMapper.updateStatus(swapOrder.getOrderId(), status);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            log.info("update status error, instrumentId:{}", symbolInstrumentId, e);
+            return;
+        }
+
+
+        try {
+            List<SwapOrder> swapOrders = swapOrderMapper.selectByStatus(usdtInstrumentId, "netGrid2", unProcessedStatuses);
+            if (CollectionUtils.isNotEmpty(swapOrders)) {
+                log.info("unprocessed orders {}", JSON.toJSONString(swapOrders));
+                for (SwapOrder swapOrder : swapOrders) {
+                    JSONObject result = tradeAPIService.getOrderDetails(site, usdtInstrumentId, swapOrder.getOrderId(), null);
+
+                    log.info("spot order status {}", JSON.toJSONString(result));
+                    if (result == null) {
+                        return;
+                    }
+                    String state = ((JSONObject)result.getJSONArray("data").get(0)).getString("state");
+                    if ( state == null || STATES.get(state) == null) {
+                        return;
+                    }
+                    Integer status = STATES.get(state);
+                    if (!swapOrder.getStatus().equals(status)) {
+                        swapOrderMapper.updateStatus(swapOrder.getOrderId(), status);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            log.info("update status error, instrumentId:{}", symbolInstrumentId, e);
+            return;
+        }
+
+
+        HttpResult<List<Ticker>> swapTicker = marketDataAPIService.getTicker(site, usdtInstrumentId);
+
+        if (!"0".equals(swapTicker.getCode()) || swapTicker.getData().size() == 0) {
+            return;
+        }
+
+        SwapOrder lastOrder = null;
+        SwapOrder lastUpOrder = null;
+        SwapOrder lastDownOrder = null;
+        List<Integer> selledStatuses = new ArrayList<>();
+        selledStatuses.add(2);
+        List<SwapOrder> selledSymbolOrders = swapOrderMapper.selectByStatus(symbolInstrumentId, "netGrid2", selledStatuses);
+        if (CollectionUtils.isNotEmpty(selledSymbolOrders)) {
+            for (SwapOrder swapOrder : selledSymbolOrders) {
+                if (swapOrder.getType() == 1) {
+                    if (lastUpOrder == null || swapOrder.getCreateTime().getTime() < lastUpOrder.getCreateTime().getTime())
+                        lastUpOrder = swapOrder;
+                }
+            }
+        }
+        List<SwapOrder> selledUsdtOrders = swapOrderMapper.selectByStatus(usdtInstrumentId, "netGrid2", selledStatuses);
+        if (CollectionUtils.isNotEmpty(selledUsdtOrders)) {
+            for (SwapOrder swapOrder : selledUsdtOrders) {
+                if (swapOrder.getType() == 2) {
+                    if (lastDownOrder == null || swapOrder.getCreateTime().getTime() < lastDownOrder.getCreateTime().getTime())
+                        lastDownOrder = swapOrder;
+                }
+            }
+        }
+        lastOrder = lastUpOrder;
+        if (lastOrder == null) {
+            lastOrder = lastDownOrder;
+        } else if (lastDownOrder != null && lastDownOrder.getCreateTime().getTime() > lastOrder.getCreateTime().getTime()) {
+            lastOrder = lastDownOrder;
+        }
+
+        Ticker apiTickerVO = swapTicker.getData().get(0);
+        log.info("当前价格{}-{},size:{}", symbol, apiTickerVO.getLast(), size);
+
+        HttpResult<List<PositionInfo>> symbolPositionsResult = accountAPIV5Service.getPositions(site, null, symbolInstrumentId, null);
+
+        if (symbolPositionsResult == null || !symbolPositionsResult.getCode().equals("0")
+            // || positionsResult.getData().size() > 0 && !positionsResult.getData().get(0).getMgnMode().equals("cross")
+        ) {//不是全仓
+            return;
+        }
+        HttpResult<List<PositionInfo>> usdtPositionsResult = accountAPIV5Service.getPositions(site, null, usdtInstrumentId, null);
+
+        if (usdtPositionsResult == null || !usdtPositionsResult.getCode().equals("0")
+            // || positionsResult.getData().size() > 0 && !positionsResult.getData().get(0).getMgnMode().equals("cross")
+        ) {//不是全仓
+            return;
+        }
+        PositionInfo upPosition = null;
+        PositionInfo downPosition = null;
+        double longPosition = 0;
+        double shortPosition = 0;
+        for (PositionInfo apiPositionVO : symbolPositionsResult.getData()) {
+            if (apiPositionVO.getAvailPos().equals("")) {
+                continue;
+            }
+            if (apiPositionVO.getPosSide().equals("long") && Double.valueOf(apiPositionVO.getPos()) >= Double.valueOf(size) && Double.valueOf(apiPositionVO.getAvailPos()) >= Double.valueOf(size)) {
+                upPosition = apiPositionVO;
+                longPosition = Double.valueOf(apiPositionVO.getPos());
+                continue;
+            }
+
+        }
+        for (PositionInfo apiPositionVO : usdtPositionsResult.getData()) {
+            if (apiPositionVO.getAvailPos().equals("")) {
+                continue;
+            }
+            if (apiPositionVO.getPosSide().equals("short") && Double.valueOf(apiPositionVO.getPos()) >= Double.valueOf(size) && Double.valueOf(apiPositionVO.getAvailPos()) >= Double.valueOf(size)) {
+                downPosition = apiPositionVO;
+                shortPosition = Double.valueOf(apiPositionVO.getPos());
+                continue;
+            }
+
+        }
+        log.info("持仓{}多{}-空{}", symbolPositionsResult, longPosition, shortPosition);
+        Double currentPrice = Double.valueOf(apiTickerVO.getLast());
+
+        if (upPosition == null && downPosition == null || lastOrder == null) {
+            //同时开多和空
+            List<PlaceOrder> orders = new ArrayList<>();
+            PlaceOrder placeOrderParam = new PlaceOrder();
+            placeOrderParam.setInstId(symbolInstrumentId);
+            placeOrderParam.setTdMode("cross");
+            placeOrderParam.setPx(String.valueOf(Double.parseDouble(apiTickerVO.getLast())));
+            placeOrderParam.setSz(String.valueOf(Math.ceil(size * swapUsdtToSymbolVal.get(symbol))));
+            placeOrderParam.setSide("buy");
+            placeOrderParam.setOrdType("market");
+            placeOrderParam.setPosSide("long");
+            placeOrderParam.setType("1");
+            placeOrderParam.setCcy(symbol);
+//            JSONObject orderResult = tradeAPIService.placeSwapOrder(site, placeOrderParam, "netGrid");
+            orders.add(placeOrderParam);
+//            log.info("开多{}-{},result:{}", instrumentId, JSON.toJSONString(placeOrderParam), JSONObject.toJSONString(orderResult));
+
+            PlaceOrder ppDownOrder = new PlaceOrder();
+            ppDownOrder.setInstId(usdtInstrumentId);
+            ppDownOrder.setTdMode("cross");
+            ppDownOrder.setPx(String.valueOf(Double.parseDouble(apiTickerVO.getLast())));
+            ppDownOrder.setSz(String.valueOf(size));
+            ppDownOrder.setSide("sell");
+            ppDownOrder.setOrdType("market");
+            ppDownOrder.setPosSide("short");
+            ppDownOrder.setType("2");
+            orders.add(ppDownOrder);
+            JSONObject orderResult = tradeAPIService.placeMultipleOrders(site, orders, "netGrid2");
+
+            log.info("开多-开空 {}-{},result:{}", symbolPositionsResult, JSON.toJSONString(orders), JSONObject.toJSONString(orderResult));
+            messageService.sendStrategyMessage("netGrid2合约开多", "netGrid2合约开多-instId:" + symbolInstrumentId + ",price:" + currentPrice  + ",size:" + placeOrderParam.getSz());
+            messageService.sendStrategyMessage("netGrid2合约开空", "netGrid2合约开空-instId:" + usdtInstrumentId + ",price:" + currentPrice  + ",size:" + placeOrderParam.getSz());
+//            JSONObject orderResult2 = tradeAPIService.placeSwapOrder(site, ppDownOrder, "netGrid");
+//            log.info("开空{}-{},result:{}", instrumentId, JSON.toJSONString(ppDownOrder), JSON.toJSONString(orderResult2));
+            return;
+
+        }
+//        if (longPosition + shortPosition >= 50 && Math.abs(longPosition-shortPosition) <=1) {
+//            if (longPosition > shortPosition) {
+//                //平多
+//                List<PlaceOrder> orders = new ArrayList<>();
+//                PlaceOrder placeOrderParam = new PlaceOrder();
+//                placeOrderParam.setInstId(symbolInstrumentId);
+//                placeOrderParam.setTdMode("cross");
+//                placeOrderParam.setPx(String.valueOf(Double.parseDouble(apiTickerVO.getLast())));
+//                placeOrderParam.setSz(String.valueOf(2* Long.parseLong(size)));
+//                placeOrderParam.setSide("sell");
+//                placeOrderParam.setOrdType("market");
+//                placeOrderParam.setPosSide("long");
+//                placeOrderParam.setType("3");
+//                orders.add(placeOrderParam);
+////                JSONObject orderResult = tradeAPIService.placeSwapOrder(site, placeOrderParam, "netGrid");
+//
+////                log.info("平多{}-{},result:{}", instrumentId, JSON.toJSONString(placeOrderParam), JSON.toJSONString(orderResult));
+//                //平空
+//                PlaceOrder ppDownOrder = new PlaceOrder();
+//                ppDownOrder.setInstId(instrumentId);
+//                ppDownOrder.setTdMode("cross");
+//                ppDownOrder.setPx(String.valueOf(Double.parseDouble(apiTickerVO.getLast())));
+//                ppDownOrder.setSz(String.valueOf(2* Long.parseLong(size)));
+//                ppDownOrder.setSide("buy");
+//                ppDownOrder.setOrdType("limit");
+//                ppDownOrder.setPosSide("short");
+//                ppDownOrder.setType("4");
+////                JSONObject orderResult2 = tradeAPIService.placeSwapOrder(site, placeOrderParam, "netGrid");
+////                log.info("平空{}-{},result:{}", instrumentId, JSON.toJSONString(ppDownOrder), JSON.toJSONString(orderResult2));
+//                orders.add(ppDownOrder);
+//
+//                JSONObject orderResult = tradeAPIService.placeMultipleOrders(site, orders);
+//                log.info("平多-平空 {}-{},result:{}", instrumentId, JSON.toJSONString(orders), JSONObject.toJSONString(orderResult));
+//
+//            } else {
+//                //平空
+//                List<PlaceOrder> orders = new ArrayList<>();
+//                PlaceOrder placeOrderParam = new PlaceOrder();
+//                placeOrderParam.setInstId(instrumentId);
+//                placeOrderParam.setTdMode("cross");
+//                placeOrderParam.setPx(String.valueOf(Double.parseDouble(apiTickerVO.getLast())));
+//                placeOrderParam.setSz(String.valueOf(2* Long.parseLong(size)));
+//                placeOrderParam.setSide("buy");
+//                placeOrderParam.setOrdType("limit");
+//                placeOrderParam.setPosSide("short");
+//                placeOrderParam.setType("4");
+//                orders.add(placeOrderParam);
+////                JSONObject orderResult = tradeAPIService.placeSwapOrder(site, placeOrderParam, "netGrid");
+////                log.info("平空{}-{},result:{}", instrumentId, JSON.toJSONString(placeOrderParam), JSON.toJSONString(orderResult));
+//
+//                //平多
+//                PlaceOrder ppUpOrder = new PlaceOrder();
+//                ppUpOrder.setInstId(instrumentId);
+//                ppUpOrder.setTdMode("cross");
+//                ppUpOrder.setPx(String.valueOf(Double.parseDouble(apiTickerVO.getLast())));
+//                ppUpOrder.setSz(String.valueOf(2* Long.parseLong(size)));
+//                ppUpOrder.setSide("sell");
+//                ppUpOrder.setOrdType("limit");
+//                ppUpOrder.setPosSide("long");
+//                ppUpOrder.setType("3");
+//                orders.add(ppUpOrder);
+////                JSONObject orderResult2 = tradeAPIService.placeSwapOrder(site, placeOrderParam, "netGrid");
+////                log.info("平多{}-{},result:{}", instrumentId, JSON.toJSONString(ppUpOrder), JSON.toJSONString(orderResult2));
+//                JSONObject orderResult = tradeAPIService.placeMultipleOrders(site, orders);
+//                log.info("平空-平多 {}-{},result:{}", instrumentId, JSON.toJSONString(orders), JSONObject.toJSONString(orderResult));
+//
+//            }
+//        }
+        Double lastPrice = lastOrder.getPrice().doubleValue();
+        log.info("当前价格：{}, 上次价格:{}", currentPrice, lastPrice);
+        if (currentPrice > lastPrice && currentPrice - lastPrice > lastPrice * increment * 1.05 ) {
+            //价格上涨
+            //获取最新成交多单
+            //平多，开空
+//            List<PlaceOrder> orders = new ArrayList<>();
+            if (upPosition != null && lastUpOrder != null) {
+                PlaceOrder placeOrderParam = new PlaceOrder();
+                placeOrderParam.setInstId(symbolInstrumentId);
+                placeOrderParam.setTdMode("cross");
+                placeOrderParam.setPx(String.valueOf(Double.parseDouble(apiTickerVO.getLast())));
+                placeOrderParam.setSz(String.valueOf(Math.ceil(size * swapUsdtToSymbolVal.get(symbol))));
+                placeOrderParam.setSide("sell");
+                placeOrderParam.setOrdType("market");
+                placeOrderParam.setPosSide("long");
+                placeOrderParam.setType("3");
+                placeOrderParam.setCcy(symbol);
+//                orders.add(placeOrderParam);
+                JSONObject orderResult = tradeAPIService.placeSwapOrder(site, placeOrderParam, "netGrid2");
+                log.info("平多{}-{},result:{}", symbolInstrumentId, JSON.toJSONString(placeOrderParam), JSON.toJSONString(orderResult));
+                messageService.sendStrategyMessage("netGrid2合约平多", "netGrid2合约平多-instId:" + symbolInstrumentId + ",price:" + currentPrice  + ",size:" + placeOrderParam.getSz());
+
+            }
+            PlaceOrder placeOrderParam = new PlaceOrder();
+            placeOrderParam.setInstId(usdtInstrumentId);
+            placeOrderParam.setTdMode("cross");
+            placeOrderParam.setPx(String.valueOf(Double.parseDouble(apiTickerVO.getLast())));
+            placeOrderParam.setSz(String.valueOf(size));
+            placeOrderParam.setSide("sell");
+            placeOrderParam.setOrdType("market");
+            placeOrderParam.setPosSide("short");
+            placeOrderParam.setType("2");
+//            orders.add(placeOrderParam);
+            JSONObject orderResult = tradeAPIService.placeSwapOrder(site, placeOrderParam, "netGrid2");
+            log.info("开空{}-{},result:{}", usdtInstrumentId, JSON.toJSONString(placeOrderParam), JSON.toJSONString(orderResult));
+            messageService.sendStrategyMessage("netGrid2合约开空", "netGrid2合约开空-instId:" + usdtInstrumentId + ",price:" + currentPrice  + ",size:" + placeOrderParam.getSz());
+
+            //            JSONObject orderResult = tradeAPIService.placeMultipleOrders(site, orders);
+//            log.info("平多-开空 {}-{},result:{}", instrumentId, JSON.toJSONString(orders), JSONObject.toJSONString(orderResult));
+
+            return;
+
+        }
+        if (currentPrice < lastPrice && lastPrice - currentPrice > lastPrice * increment ) {
+            //价格下跌
+            //获取最新成交空单
+            //平空，开多
+//            List<PlaceOrder> orders = new ArrayList<>();
+            if (downPosition != null && lastDownOrder != null) {
+                PlaceOrder placeOrderParam = new PlaceOrder();
+                placeOrderParam.setInstId(usdtInstrumentId);
+                placeOrderParam.setTdMode("cross");
+                placeOrderParam.setPx(String.valueOf(Double.parseDouble(apiTickerVO.getLast())));
+                placeOrderParam.setSz(String.valueOf(size));
+                placeOrderParam.setSide("buy");
+                placeOrderParam.setOrdType("market");
+                placeOrderParam.setPosSide("short");
+                placeOrderParam.setType("4");
+//                orders.add(placeOrderParam);
+                JSONObject orderResult = tradeAPIService.placeSwapOrder(site, placeOrderParam, "netGrid2");
+                messageService.sendStrategyMessage("netGrid2合约平空", "netGrid2合约平空-instId:" + usdtInstrumentId + ",price:" + currentPrice  + ",size:" + placeOrderParam.getSz());
+                log.info("平空{}-{},result:{}", usdtInstrumentId, JSON.toJSONString(placeOrderParam), JSON.toJSONString(orderResult));
+            }
+
+            PlaceOrder placeOrderParam = new PlaceOrder();
+            placeOrderParam.setInstId(symbolInstrumentId);
+            placeOrderParam.setTdMode("cross");
+            placeOrderParam.setPx(String.valueOf(Double.parseDouble(apiTickerVO.getLast())));
+            placeOrderParam.setSz(String.valueOf(Math.ceil(size* swapUsdtToSymbolVal.get(symbol))));
+            placeOrderParam.setSide("buy");
+            placeOrderParam.setOrdType("market");
+            placeOrderParam.setPosSide("long");
+            placeOrderParam.setType("1");
+            placeOrderParam.setCcy(symbol);
+//            orders.add(placeOrderParam);
+            JSONObject orderResult = tradeAPIService.placeSwapOrder(site, placeOrderParam, "netGrid2");
+            log.info("开多{}-{},result:{}", symbolInstrumentId, JSON.toJSONString(placeOrderParam), JSON.toJSONString(orderResult));
+//            JSONObject orderResult = tradeAPIService.placeMultipleOrders(site, orders);
+//            log.info("平空-开多 {}-{},result:{}", instrumentId, JSON.toJSONString(orders), JSONObject.toJSONString(orderResult));
+            messageService.sendStrategyMessage("netGrid2合约开多", "netGrid2合约开多-instId:" + symbolInstrumentId + ",price:" + currentPrice  + ",size:" + placeOrderParam.getSz());
 
         }
 

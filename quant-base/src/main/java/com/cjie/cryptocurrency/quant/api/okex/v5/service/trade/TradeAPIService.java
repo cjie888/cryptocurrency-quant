@@ -17,7 +17,7 @@ public interface TradeAPIService {
     String placeOptionsOrder(String site, PlaceOrder placeOrder, OptionsOrder optionsOrder);
 
     //批量下单 Place Multiple Orders
-    JSONObject placeMultipleOrders(String site, List<PlaceOrder> placeOrders);
+    JSONObject placeMultipleOrders(String site, List<PlaceOrder> placeOrders, String strategy);
 
     //撤单 Cancel Order
     JSONObject cancelOrder(String site, CancelOrder cancelOrder);

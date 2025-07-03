@@ -1826,6 +1826,8 @@ public class OptionsService {
             if ("0".equals(optionsMarketDatas.getCode()) && optionsMarketDatas.getData().size() > 0) {
                 OptionMarketData currentCallOptionMarketData = null;
                 Long currentCallStrikePrice = null;
+                OptionMarketData currentPutOptionMarketData = null;
+                Long currentPutStrikePrice = null;
                 for (OptionMarketData optionMarketData : optionsMarketDatas.getData()) {
                     String optionInstId = optionMarketData.getInstId();
                     String[] optionInstArr = optionInstId.split("-");
@@ -1833,15 +1835,23 @@ public class OptionsService {
                         continue;
                     }
                     Long strikePrice = Long.parseLong(optionInstArr[3]);
-                    if (strikePrice < currentPrice) {
-                        continue;
-                    }
-                    if ("C".equals(optionInstArr[4])) {
-                        if (currentCallOptionMarketData == null || strikePrice < currentCallStrikePrice) {
-                            currentCallStrikePrice = strikePrice;
-                            currentCallOptionMarketData = optionMarketData;
+                    if (strikePrice > currentPrice) {
+                        if ("C".equals(optionInstArr[4])) {
+                            if (currentCallOptionMarketData == null || strikePrice < currentCallStrikePrice) {
+                                currentCallStrikePrice = strikePrice;
+                                currentCallOptionMarketData = optionMarketData;
+                            }
                         }
                     }
+                    if (strikePrice < currentPrice) {
+                        if ("P".equals(optionInstArr[4])) {
+                            if (currentPutOptionMarketData == null || strikePrice > currentPutStrikePrice) {
+                                currentPutStrikePrice = strikePrice;
+                                currentPutOptionMarketData = optionMarketData;
+                            }
+                        }
+                    }
+
                 }
 
 
@@ -1898,6 +1908,86 @@ public class OptionsService {
                     messageService.sendStrategyMessage("coveredCall卖出看涨期权", "coveredCall卖出看涨期权:" + currentCallOptionMarketData.getInstId() +
                             ",price:" + optionBidPrice + ",delta:" + currentCallOptionMarketData.getDelta() + ",gamma:" + currentCallOptionMarketData.getGamma()
                             + ",vega:" + currentCallOptionMarketData.getVega() + ",theta:" + currentCallOptionMarketData.getTheta() + ",vol:" + currentCallOptionMarketData.getVolLv());
+
+                    try {
+                        Thread.sleep(2000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    JSONObject result = tradeAPIService.getOrderDetails(site, optionInstId, orderId, null);
+
+                    log.info("options order status {}", JSON.toJSONString(result));
+                    if (result == null) {
+                        return;
+                    }
+                    String state = ((JSONObject) result.getJSONArray("data").get(0)).getString("state");
+                    if (state == null || STATES.get(state) == null) {
+                        return;
+                    }
+                    Integer status = STATES.get(state);
+                    if (!optionsOrder.getStatus().equals(status)) {
+                        optionsOrderMapper.updateStatus(orderId, status);
+                    }
+                    if (status != 2) {
+                        return;
+                    }
+                    optionsOrderMapper.updateStatus(orderId, 100);
+                    optionsOrderMapper.updateStatus(optionsOrder.getOrderId(), 100);
+                }
+
+                if (currentPutOptionMarketData != null) {
+                    log.info("期权市场数据{}:{}", currentPutOptionMarketData.getInstId(), JSON.toJSONString(currentPutOptionMarketData));
+                    //获取期权的价格数据
+                    HttpResult<List<OrderBook>> optionOrderBookDatas = marketDataAPIService.getOrderBook(site, currentPutOptionMarketData.getInstId(), null);
+                    log.info("期权深度数据{}:{}", currentPutOptionMarketData.getInstId(), JSON.toJSONString(optionOrderBookDatas));
+                    if (!"0".equals(optionOrderBookDatas.getCode()) || optionOrderBookDatas.getData().size() <= 0
+                            || optionOrderBookDatas.getData().get(0).getBids().size() <= 0) {
+                        return;
+                    }
+                    String optionBidPrice = optionOrderBookDatas.getData().get(0).getBids().get(0)[0];
+                    log.info("期权买一价{}:{}", currentPutOptionMarketData.getInstId(), JSON.toJSONString(optionBidPrice));
+
+                    String optionInstId = currentPutOptionMarketData.getInstId();
+                    PlaceOrder ppUpOrder = new PlaceOrder();
+                    ppUpOrder.setInstId(optionInstId);
+                    ppUpOrder.setTdMode("cross");
+                    ppUpOrder.setPx(new BigDecimal(optionBidPrice).toPlainString());
+                    ppUpOrder.setSz(String.valueOf(size));
+                    ppUpOrder.setSide("sell");
+                    ppUpOrder.setOrdType("fok");
+                    ppUpOrder.setType("4");
+                    OptionsOrder optionsOrder = new OptionsOrder();
+                    optionsOrder.setInstrumentId(optionInstId);
+                    optionsOrder.setCreateTime(new Date());
+                    optionsOrder.setStrategy("coveredCall");
+                    optionsOrder.setIsMock(Byte.valueOf("0"));
+                    optionsOrder.setType(Byte.valueOf(ppUpOrder.getType()));
+                    optionsOrder.setPrice(new BigDecimal(ppUpOrder.getPx()));
+                    optionsOrder.setSize(new BigDecimal(ppUpOrder.getSz()));
+
+                    optionsOrder.setSymbol(symbol);
+                    optionsOrder.setSwapPrice(new BigDecimal(apiTickerVO.getLast()));
+                    optionsOrder.setDelta(new BigDecimal(currentPutOptionMarketData.getDelta()));
+                    optionsOrder.setGamma(new BigDecimal(currentPutOptionMarketData.getGamma()));
+                    optionsOrder.setVega(new BigDecimal(currentPutOptionMarketData.getVega()));
+                    optionsOrder.setTheta(new BigDecimal(currentPutOptionMarketData.getTheta()));
+                    optionsOrder.setVolLv(new BigDecimal(currentPutOptionMarketData.getVolLv()));
+
+                    //下单
+                    String orderId = tradeAPIService.placeOptionsOrder(site, ppUpOrder, optionsOrder);
+                    log.info("卖出看涨期权 {}-{},orderId:{}", optionInstId, JSON.toJSONString(ppUpOrder), orderId);
+                    if (orderId == null) {
+                        return;
+                    }
+                    optionsOrder = optionsOrderMapper.selectByOrderId(orderId);
+                    if (optionsOrder == null) {
+                        return;
+                    }
+
+
+                    messageService.sendStrategyMessage("coveredCall卖出看跌期权", "coveredCall卖出看跌期权:" + currentPutOptionMarketData.getInstId() +
+                            ",price:" + optionBidPrice + ",delta:" + currentPutOptionMarketData.getDelta() + ",gamma:" + currentPutOptionMarketData.getGamma()
+                            + ",vega:" + currentPutOptionMarketData.getVega() + ",theta:" + currentPutOptionMarketData.getTheta() + ",vol:" + currentPutOptionMarketData.getVolLv());
 
                     try {
                         Thread.sleep(2000);

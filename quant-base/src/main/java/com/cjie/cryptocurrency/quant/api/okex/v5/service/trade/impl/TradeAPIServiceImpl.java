@@ -102,7 +102,7 @@ public class TradeAPIServiceImpl extends BaseServiceImpl implements TradeAPIServ
 
     //批量下单 Place Multiple Orders
     @Override
-    public JSONObject placeMultipleOrders(String site, List<PlaceOrder> placeOrders) {
+    public JSONObject placeMultipleOrders(String site, List<PlaceOrder> placeOrders, String strategy) {
         APIClient client = getTradeAPIClient(site);
         TradeAPI tradeAPI = getTradeApi(site, client);
         JSONObject orderResult =   client.executeSync(tradeAPI.placeMultipleOrders(placeOrders));
@@ -113,7 +113,7 @@ public class TradeAPIServiceImpl extends BaseServiceImpl implements TradeAPIServ
                 SwapOrder swapOrder = new SwapOrder();
                 swapOrder.setInstrumentId(placeOrder.getInstId());
                 swapOrder.setCreateTime(new Date());
-                swapOrder.setStrategy("netGrid");
+                swapOrder.setStrategy(strategy);
                 swapOrder.setIsMock(Byte.valueOf("0"));
                 swapOrder.setType(Byte.valueOf(placeOrder.getType()));
                 swapOrder.setPrice(new BigDecimal(placeOrder.getPx()));

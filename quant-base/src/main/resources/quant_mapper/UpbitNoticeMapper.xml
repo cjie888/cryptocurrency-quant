@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cjie.cryptocurrency.quant.mapper.UpbitNoticeMapper">
+    <resultMap id="NoticeResultMap" type="com.cjie.cryptocurrency.quant.model.UpbitNotice">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="created_at" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="listed_at" property="listedAt" jdbcType="TIMESTAMP"/>
+        <result column="first_listed_at" property="firstListedAt" jdbcType="TIMESTAMP"/>
+        <result column="upbit_id" property="upbitId" jdbcType="BIGINT"/>
+        <result column="title" property="title" jdbcType="VARCHAR"/>
+        <result column="need_new_badge" property="needNewBadge"/>
+        <result column="need_update_badge" property="needUpdateBadge"/>
+    </resultMap>
+
+    <insert id="insert" parameterType="com.cjie.cryptocurrency.quant.model.UpbitNotice">
+        INSERT INTO upbit_notices (
+            id,
+            created_at,
+            listed_at,
+            first_listed_at,
+            upbit_id,
+            title,
+            need_new_badge,
+            need_update_badge
+        ) VALUES (
+            #{id},
+            #{createTime},
+            #{listedAt},
+            #{firstListedAt},
+            #{upbitId},
+            #{title},
+            #{needNewBadge},
+            #{needUpdateBadge}
+        )
+    </insert>
+
+    <update id="updateById" parameterType="com.cjie.cryptocurrency.quant.model.UpbitNotice">
+        UPDATE upbit_notices
+        SET
+            created_at = #{createTime},
+            listed_at = #{listedAt},
+            first_listed_at = #{firstListedAt},
+            upbit_id = #{upbitId},
+            title = #{title},
+            need_new_badge = #{needNewBadge},
+            need_update_badge = #{needUpdateBadge}
+        WHERE id = #{id}
+    </update>
+
+    <select id="selectById" parameterType="long" resultMap="NoticeResultMap">
+        SELECT
+            id,
+            created_at,
+            listed_at,
+            first_listed_at,
+            upbit_id,
+            title,
+            need_new_badge,
+            need_update_badge
+        FROM upbit_notices
+        WHERE id = #{id}
+    </select>
+
+    <select id="selectByUpbitId" parameterType="long" resultMap="NoticeResultMap">
+        SELECT
+        id,
+        created_at,
+        listed_at,
+        first_listed_at,
+        upbit_id,
+        title,
+        need_new_badge,
+        need_update_badge
+        FROM upbit_notices
+        WHERE upbit_id = #{upbitId}
+    </select>
+
+    <select id="selectAll" resultMap="NoticeResultMap">
+        SELECT
+            id,
+            created_at,
+            listed_at,
+            first_listed_at,
+            upbit_id,
+            title,
+            need_new_badge,
+            need_update_badge
+        FROM notices
+    </select>
+
+    <delete id="deleteById" parameterType="long">
+        DELETE FROM notices
+        WHERE id = #{id}
+    </delete>
+
+</mapper>
