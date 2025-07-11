@@ -32,24 +32,24 @@ public class SwapV5Task {
         //swapService.netGrid("okexsub1","LTC-USDT-SWAP", "1", 0.03, 200.0, 0, 0);
 //        swapService.netGrid("okex","BTC-USDT-SWAP", "0.2", 0.01, 100.0, 0, 0);
         //swapService.netGrid("okexsub1","ETH-USDT-SWAP", "1", 0.03, 200.0, 0, 0);
-        //swapService.netGrid("okexsub1","XRP-USDT-SWAP", "1", 0.03, 200.0, 0, 0);
+        swapService.netGrid("okexsub1","XRP-USDT-SWAP", "1", 0.03, 200.0, 0, 0);
 
 
     }
 
     @Scheduled(cron = "1/13 * * * * ?")
     public  void swapAndSpotHedging() {
-        swapService.swapAndSpotHedging("okexsub1", "BTC-USDT-SWAP", "BTC-USDT", 0.02, 0.5);
-        swapService.swapAndSpotHedging("okexsub1", "ETH-USDT-SWAP", "ETH-USDT", 0.03, 1);
+//        swapService.swapAndSpotHedging("okexsub1", "BTC-USDT-SWAP", "BTC-USDT", 0.02, 0.5);
+//        swapService.swapAndSpotHedging("okexsub1", "ETH-USDT-SWAP", "ETH-USDT", 0.03, 1);
 //        swapService.swapAndSpotHedging("okexmock1", "XRP-USDT-SWAP", "XRP-USDT", 0.01, 1);
 //        swapService.swapAndSpotHedging("okexmock1", "SUI-USDT-SWAP", "SUI-USDT", 0.01, 10);
         swapService.swapAndSpotHedging("okexsub1", "SOL-USDT-SWAP", "SOL-USDT", 0.03, 1);
         swapService.swapAndSpotHedging("okexsub1", "SUI-USDT-SWAP", "SUI-USDT", 0.03, 30);
         swapService.swapAndSpotHedging("okexsub1", "ADA-USDT-SWAP", "ADA-USDT", 0.03, 1);
         swapService.swapAndSpotHedging("okexsub1", "BNB-USDT-SWAP", "BNB-USDT", 0.02, 20);
-        swapService.swapAndSpotHedging("okexsub1", "XRP-USDT-SWAP", "XRP-USDT", 0.03, 1);
+//        swapService.swapAndSpotHedging("okexsub1", "XRP-USDT-SWAP", "XRP-USDT", 0.03, 1);
         swapService.swapAndSpotHedging("okexsub1", "LINK-USDT-SWAP", "LINK-USDT", 0.03, 10);
-        swapService.swapAndSpotHedging("okexsub1", "DOGE-USDT-SWAP", "DOGE-USDT", 0.03, 1);
+//        swapService.swapAndSpotHedging("okexsub1", "DOGE-USDT-SWAP", "DOGE-USDT", 0.03, 1);
 
     }
 
