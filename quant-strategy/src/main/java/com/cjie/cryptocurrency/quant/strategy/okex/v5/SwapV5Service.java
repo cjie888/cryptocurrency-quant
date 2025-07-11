@@ -309,10 +309,9 @@ public class SwapV5Service {
         List<SwapOrder> selledOrders = swapOrderMapper.selectByStatus(instrumentId, "swapAndSpotHedging", selledStatuses);
         if (CollectionUtils.isNotEmpty(selledOrders)) {
             for (SwapOrder swapOrder : selledOrders) {
-                if (swapOrder.getType() == 2) {
-                    if (lastOrder == null) {
-                        lastOrder = swapOrder;
-                    }
+                if (lastOrder == null) {
+                    lastOrder = swapOrder;
+                    break;
                 }
             }
         }
