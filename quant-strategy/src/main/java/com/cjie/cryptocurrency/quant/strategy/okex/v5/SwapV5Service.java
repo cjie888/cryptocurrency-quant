@@ -346,7 +346,7 @@ public class SwapV5Service {
             JSONObject orderResult = tradeAPIService.placeSwapOrder(site, ppDownOrder, "swapAndSpotHedging");
             messageService.sendStrategyMessage("swapAndSpotHedging合约开空", "swapAndSpotHedging合约开空-instId:" + instrumentId+ ",price:" + currentPrice + ",size:" + ppDownOrder.getSz());
             log.info("合约开空 {}-{},result:{}", instrumentId, JSON.toJSONString(ppDownOrder), JSONObject.toJSONString(orderResult));
-            BigDecimal spotSize = new BigDecimal("1.005").multiply(new BigDecimal(size)).multiply(new BigDecimal("2")).multiply(swapCtVal.get(instrumentId));
+            BigDecimal spotSize = new BigDecimal("1.005").multiply(new BigDecimal(size)).multiply(new BigDecimal("2")).multiply(swapCtVal.get(instrumentId)).setScale(6, RoundingMode.CEILING);
 
             PlaceOrder placeOrderParam = new PlaceOrder();
             placeOrderParam.setInstId(symbol);
@@ -386,7 +386,7 @@ public class SwapV5Service {
         //价格上涨
         if (currentPrice > lastPrice && currentPrice - lastPrice > lastPrice * increment * 1.05 ) {
             //合约做空，现货卖出
-            BigDecimal spotSize = new BigDecimal(size).multiply(swapCtVal.get(instrumentId));
+            BigDecimal spotSize = new BigDecimal(size).multiply(swapCtVal.get(instrumentId)).setScale(6, RoundingMode.CEILING);
 
             HttpResult<List<AccountInfo>> baseAccountResult = accountAPIService.getBalance(site, baseCurrency);
             log.info("base account:{}", JSON.toJSONString(baseAccountResult));
