@@ -37,6 +37,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -478,7 +479,7 @@ public class SwapV5Service {
 
             }
 
-            BigDecimal spotSize = new BigDecimal("1.005").multiply(new BigDecimal(size)).multiply(swapCtVal.get(instrumentId));
+            BigDecimal spotSize = new BigDecimal("1.005").multiply(new BigDecimal(size)).multiply(swapCtVal.get(instrumentId)).setScale(6, RoundingMode.CEILING);
             PlaceOrder placeOrderParam = new PlaceOrder();
             placeOrderParam.setInstId(symbol);
             placeOrderParam.setTdMode("cross");
