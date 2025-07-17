@@ -1448,11 +1448,11 @@ public class OptionsService {
                         String orderId = tradeAPIService.placeOptionsOrder(site, ppUpOrder, optionsOrder);
                         log.info("卖出看涨期权 {}-{},orderId:{}", optionInstId, JSON.toJSONString(ppUpOrder), orderId);
                         if (orderId == null) {
-                            return;
+                            continue;
                         }
                         optionsOrder = optionsOrderMapper.selectByOrderId(orderId);
                         if (optionsOrder == null) {
-                            return;
+                            continue;
                         }
                         //插入操作log
                         OptionsOrderLog sellOptionsOrderLog = new OptionsOrderLog();
@@ -1488,18 +1488,18 @@ public class OptionsService {
 
                         log.info("options order status {}", JSON.toJSONString(result));
                         if (result == null) {
-                            return;
+                            continue;
                         }
                         String state = ((JSONObject) result.getJSONArray("data").get(0)).getString("state");
                         if (state == null || STATES.get(state) == null) {
-                            return;
+                            continue;
                         }
                         Integer status = STATES.get(state);
                         if (!optionsOrder.getStatus().equals(status)) {
                             optionsOrderMapper.updateStatus(orderId, status);
                         }
                         if (status != 2) {
-                            return;
+                            continue;
                         }
                         optionsOrderMapper.updateStatus(orderId, 100);
                         optionsOrderMapper.updateStatus(optionsOrder.getOrderId(), 100);
