@@ -1407,7 +1407,7 @@ public class OptionsService {
                     double currentDelta = Double.valueOf(currentCallStrikeDelta);
                     log.info("dynamicDeltaHedging 进行中订单, orderId:{}, order logId:{}, instId:{},当前delta:{}, 上次delta:{}",
                             optionsOrder.getId(), optionsOrderLog.getId(), optionsOrder.getInstrumentId(), currentDelta, lastDelta);
-                    if (currentDelta > 0.7) {
+                    if (currentDelta > 0.6) {
                         //获取期权的价格数据
                         HttpResult<List<OrderBook>> optionOrderBookDatas = marketDataAPIService.getOrderBook(site, currentCallOptionMarketData.getInstId(), null);
                         log.info("期权深度数据{}:{}", currentCallOptionMarketData.getInstId(), JSON.toJSONString(optionOrderBookDatas));
