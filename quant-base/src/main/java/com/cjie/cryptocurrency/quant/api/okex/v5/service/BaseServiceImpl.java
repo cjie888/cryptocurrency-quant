@@ -37,6 +37,7 @@ public abstract class BaseServiceImpl {
             }
             if (site.contains("mock")) {
                 config.setMock(true);
+                config.setPrint(true);
             }
             config.setI18n(I18nEnum.SIMPLIFIED_CHINESE);
             apiClient = new APIClient(config);
