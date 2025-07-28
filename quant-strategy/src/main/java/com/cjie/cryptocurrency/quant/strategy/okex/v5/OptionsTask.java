@@ -95,4 +95,12 @@ public class OptionsTask {
         optionsService.computeOptionBenefit("okexsub3", "ETH-USDT-SWAP","ETH", monthStartTime.atZone(ZoneId.of("Asia/Shanghai")).toInstant().toEpochMilli(), "okexsub3本月期权ETH收益");
 
     }
+
+
+    @Scheduled(cron = "37 03 16 * * ?")
+    public void butterfly() {
+        optionsService.butterfly("okex", "BTC", 1, 3, 0.03);
+        optionsService.butterfly("okex", "ETH", 1, 3, 0.05);
+
+    }
 }

@@ -2020,4 +2020,254 @@ public class OptionsService {
         }
     }
 
+    String placeOrderAndUpdateStatus(String site, PlaceOrder placeOrder, OptionsOrder optionsOrder) {
+        //下单
+        String orderId = tradeAPIService.placeOptionsOrder(site, placeOrder, optionsOrder);
+        if (orderId == null) {
+            return null;
+        }
+        optionsOrder = optionsOrderMapper.selectByOrderId(orderId);
+        if (optionsOrder == null) {
+            return null;
+        }
+
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        JSONObject result = tradeAPIService.getOrderDetails(site, placeOrder.getInstId(), orderId, null);
+
+        log.info("options order status {}", JSON.toJSONString(result));
+        if (result == null) {
+            return null;
+        }
+        String state = ((JSONObject) result.getJSONArray("data").get(0)).getString("state");
+        if (state == null || STATES.get(state) == null) {
+            return null;
+        }
+        Integer status = STATES.get(state);
+        if (!optionsOrder.getStatus().equals(status)) {
+            optionsOrderMapper.updateStatus(orderId, status);
+        }
+        if (status != 2) {
+            return null;
+        }
+        return orderId;
+    }
+    public void butterfly(String site, String symbol, double size, int days, double increment) {
+        try {
+            HttpResult<List<Ticker>> swapTicker = marketDataAPIService.getTicker(site, symbol + "-USDT");
+            if (!"0".equals(swapTicker.getCode()) || swapTicker.getData().size() == 0) {
+                messageService.sendStrategyMessage("netGrid获取不到价格", "netGrid获取不到价格,请手动检查");
+                return;
+            }
+            Ticker apiTickerVO = swapTicker.getData().get(0);
+            Double currentPrice = Double.valueOf(apiTickerVO.getLast());
+
+            Double lowPrice = currentPrice * (1-increment);
+            Double highPrice = currentPrice * (1+increment);
+
+            log.info("当前价格{}-{}-{}", site, currentPrice, symbol);
+
+
+            String strikeDate = getNextNDay(days);
+
+            //卖出看涨期权 2份
+            HttpResult<List<OptionMarketData>> optionsMarketDatas = publicDataAPIService.getOptionMarketData(site, symbol + "-USD", strikeDate);
+            if ("0".equals(optionsMarketDatas.getCode()) && optionsMarketDatas.getData().size() > 0) {
+                OptionMarketData currentSellCallOptionMarketData = null;
+                Long currentSellCallStrikePrice = null;
+                OptionMarketData currentLowOptionMarketData = null;
+                Long currentLowStrikePrice = null;
+                OptionMarketData currentHighOptionMarketData = null;
+                Long currentHighStrikePrice = null;
+                for (OptionMarketData optionMarketData : optionsMarketDatas.getData()) {
+                    String optionInstId = optionMarketData.getInstId();
+                    String[] optionInstArr = optionInstId.split("-");
+                    if (optionInstArr.length != 5 || !NumberUtils.isNumber(optionInstArr[3])) {
+                        continue;
+                    }
+                    Long strikePrice = Long.parseLong(optionInstArr[3]);
+                    if (strikePrice > currentPrice) {
+                        if ("C".equals(optionInstArr[4])) {
+                            if (currentSellCallOptionMarketData == null || strikePrice < currentSellCallStrikePrice) {
+                                currentSellCallStrikePrice = strikePrice;
+                                currentSellCallOptionMarketData = optionMarketData;
+                            }
+                        }
+                    }
+                    if (strikePrice < lowPrice) {
+                        if ("C".equals(optionInstArr[4])) {
+                            if (currentLowOptionMarketData == null || strikePrice > currentLowStrikePrice) {
+                                currentLowStrikePrice = strikePrice;
+                                currentLowOptionMarketData = optionMarketData;
+                            }
+                        }
+                    }
+                    if (strikePrice > highPrice) {
+                        if ("C".equals(optionInstArr[4])) {
+                            if (currentHighOptionMarketData == null || strikePrice < currentHighStrikePrice) {
+                                currentHighStrikePrice = strikePrice;
+                                currentHighOptionMarketData = optionMarketData;
+                            }
+                        }
+                    }
+
+                }
+
+
+                if (currentSellCallOptionMarketData != null && currentLowOptionMarketData != null && currentHighOptionMarketData != null) {
+                    log.info("期权市场数据2倍卖{}:{}", currentSellCallOptionMarketData.getInstId(), JSON.toJSONString(currentSellCallOptionMarketData));
+                    log.info("期权市场数据低买{}:{}", currentLowOptionMarketData.getInstId(), JSON.toJSONString(currentLowOptionMarketData));
+                    log.info("期权市场数据高买{}:{}", currentHighOptionMarketData.getInstId(), JSON.toJSONString(currentHighOptionMarketData));
+
+                    //获取期权的价格数据
+                    HttpResult<List<OrderBook>> sellOptionOrderBookDatas = marketDataAPIService.getOrderBook(site, currentSellCallOptionMarketData.getInstId(), null);
+                    log.info("期权深度数据2倍卖{}:{}", currentSellCallOptionMarketData.getInstId(), JSON.toJSONString(sellOptionOrderBookDatas));
+                    if (!"0".equals(sellOptionOrderBookDatas.getCode()) || sellOptionOrderBookDatas.getData().size() <= 0
+                            || sellOptionOrderBookDatas.getData().get(0).getBids().size() <= 0) {
+                        return;
+                    }
+                    String sellOptionBidPrice = sellOptionOrderBookDatas.getData().get(0).getBids().get(0)[0];
+                    log.info("2倍卖期权买一价{}:{}", currentSellCallOptionMarketData.getInstId(), sellOptionBidPrice);
+
+                    HttpResult<List<OrderBook>> lowOptionOrderBookDatas = marketDataAPIService.getOrderBook(site, currentLowOptionMarketData.getInstId(), null);
+                    log.info("期权深度数据低买{}:{}", currentLowOptionMarketData.getInstId(), JSON.toJSONString(lowOptionOrderBookDatas));
+                    if (!"0".equals(lowOptionOrderBookDatas.getCode()) || lowOptionOrderBookDatas.getData().size() <= 0
+                            || lowOptionOrderBookDatas.getData().get(0).getAsks().size() <= 0) {
+                        return;
+                    }
+                    String lowOptionAskPrice = lowOptionOrderBookDatas.getData().get(0).getAsks().get(0)[0];
+                    log.info("低买期权卖一价{}:{}", currentLowOptionMarketData.getInstId(), lowOptionAskPrice);
+
+
+                    HttpResult<List<OrderBook>> highOptionOrderBookDatas = marketDataAPIService.getOrderBook(site, currentHighOptionMarketData.getInstId(), null);
+                    log.info("期权深度数据高买{}:{}", currentHighOptionMarketData.getInstId(), JSON.toJSONString(highOptionOrderBookDatas));
+                    if (!"0".equals(highOptionOrderBookDatas.getCode()) || highOptionOrderBookDatas.getData().size() <= 0
+                            || highOptionOrderBookDatas.getData().get(0).getAsks().size() <= 0) {
+                        return;
+                    }
+                    String highOptionAskPrice = highOptionOrderBookDatas.getData().get(0).getAsks().get(0)[0];
+                    log.info("低买期权卖一价{}:{}", currentHighOptionMarketData.getInstId(), highOptionAskPrice);
+
+
+                    String lowOptionInstId = currentLowOptionMarketData.getInstId();
+                    PlaceOrder lowPlaceOrder = new PlaceOrder();
+                    lowPlaceOrder.setInstId(lowOptionInstId);
+                    lowPlaceOrder.setTdMode("isolated");
+                    lowPlaceOrder.setPx(new BigDecimal(lowOptionAskPrice).toPlainString());
+                    lowPlaceOrder.setSz(String.valueOf(size));
+                    lowPlaceOrder.setSide("buy");
+                    lowPlaceOrder.setOrdType("fok");
+                    lowPlaceOrder.setType("1");
+                    OptionsOrder lowOptionsOrder = new OptionsOrder();
+                    lowOptionsOrder.setInstrumentId(lowOptionInstId);
+                    lowOptionsOrder.setCreateTime(new Date());
+                    lowOptionsOrder.setStrategy("butterfly");
+                    lowOptionsOrder.setIsMock(Byte.valueOf("0"));
+                    lowOptionsOrder.setType(Byte.valueOf(lowPlaceOrder.getType()));
+                    lowOptionsOrder.setPrice(new BigDecimal(lowPlaceOrder.getPx()));
+                    lowOptionsOrder.setSize(new BigDecimal(lowPlaceOrder.getSz()));
+
+                    lowOptionsOrder.setSymbol(symbol);
+                    lowOptionsOrder.setSwapPrice(new BigDecimal(apiTickerVO.getLast()));
+                    lowOptionsOrder.setDelta(new BigDecimal(currentLowOptionMarketData.getDelta()));
+                    lowOptionsOrder.setGamma(new BigDecimal(currentLowOptionMarketData.getGamma()));
+                    lowOptionsOrder.setVega(new BigDecimal(currentLowOptionMarketData.getVega()));
+                    lowOptionsOrder.setTheta(new BigDecimal(currentLowOptionMarketData.getTheta()));
+                    lowOptionsOrder.setVolLv(new BigDecimal(currentLowOptionMarketData.getVolLv()));
+
+                    String lowOrderId = placeOrderAndUpdateStatus(site, lowPlaceOrder, lowOptionsOrder);
+                    if (lowOrderId == null) {
+                        return;
+                    }
+                    log.info("买入看涨期权低 {}-{},orderId:{}", lowOptionInstId, JSON.toJSONString(lowPlaceOrder), lowOrderId);
+
+                    messageService.sendStrategyMessage("butterfly买入看涨期权", "butterfly买入看涨期权:" + currentLowOptionMarketData.getInstId() +
+                            ",price:" + lowOptionAskPrice + ",delta:" + currentLowOptionMarketData.getDelta() + ",gamma:" + currentLowOptionMarketData.getGamma()
+                            + ",vega:" + currentLowOptionMarketData.getVega() + ",theta:" + currentLowOptionMarketData.getTheta() + ",vol:" + currentLowOptionMarketData.getVolLv());
+
+
+                    String sellOptionInstId = currentSellCallOptionMarketData.getInstId();
+                    PlaceOrder sellPlaceOrder = new PlaceOrder();
+                    sellPlaceOrder.setInstId(sellOptionInstId);
+                    sellPlaceOrder.setTdMode("cross");
+                    sellPlaceOrder.setPx(new BigDecimal(sellOptionBidPrice).toPlainString());
+                    sellPlaceOrder.setSz(String.valueOf(size * 2));
+                    sellPlaceOrder.setSide("sell");
+                    sellPlaceOrder.setOrdType("fok");
+                    sellPlaceOrder.setType("2");
+                    OptionsOrder optionsOrder = new OptionsOrder();
+                    optionsOrder.setInstrumentId(sellOptionInstId);
+                    optionsOrder.setCreateTime(new Date());
+                    optionsOrder.setStrategy("butterfly");
+                    optionsOrder.setIsMock(Byte.valueOf("0"));
+                    optionsOrder.setType(Byte.valueOf(sellPlaceOrder.getType()));
+                    optionsOrder.setPrice(new BigDecimal(sellPlaceOrder.getPx()));
+                    optionsOrder.setSize(new BigDecimal(sellPlaceOrder.getSz()));
+
+                    optionsOrder.setSymbol(symbol);
+                    optionsOrder.setSwapPrice(new BigDecimal(apiTickerVO.getLast()));
+                    optionsOrder.setDelta(new BigDecimal(currentSellCallOptionMarketData.getDelta()));
+                    optionsOrder.setGamma(new BigDecimal(currentSellCallOptionMarketData.getGamma()));
+                    optionsOrder.setVega(new BigDecimal(currentSellCallOptionMarketData.getVega()));
+                    optionsOrder.setTheta(new BigDecimal(currentSellCallOptionMarketData.getTheta()));
+                    optionsOrder.setVolLv(new BigDecimal(currentSellCallOptionMarketData.getVolLv()));
+
+                    String sellOrderId = placeOrderAndUpdateStatus(site, sellPlaceOrder, optionsOrder);
+                    if (sellOrderId == null) {
+                        return;
+                    }
+                    log.info("卖出看涨期权 {}-{},orderId:{}", sellOptionInstId, JSON.toJSONString(sellPlaceOrder), sellOrderId);
+
+                    messageService.sendStrategyMessage("butterfly卖出看涨期权", "butterfly卖出看涨期权:" + currentSellCallOptionMarketData.getInstId() +
+                            ",price:" + sellOptionBidPrice + ",delta:" + currentSellCallOptionMarketData.getDelta() + ",gamma:" + currentSellCallOptionMarketData.getGamma()
+                            + ",vega:" + currentSellCallOptionMarketData.getVega() + ",theta:" + currentSellCallOptionMarketData.getTheta() + ",vol:" + currentSellCallOptionMarketData.getVolLv());
+
+                    String highOptionInstId = currentHighOptionMarketData.getInstId();
+                    PlaceOrder highPlaceOrder = new PlaceOrder();
+                    highPlaceOrder.setInstId(highOptionInstId);
+                    highPlaceOrder.setTdMode("isolated");
+                    highPlaceOrder.setPx(new BigDecimal(highOptionAskPrice).toPlainString());
+                    highPlaceOrder.setSz(String.valueOf(size));
+                    highPlaceOrder.setSide("buy");
+                    highPlaceOrder.setOrdType("fok");
+                    highPlaceOrder.setType("1");
+                    OptionsOrder highOptionsOrder = new OptionsOrder();
+                    highOptionsOrder.setInstrumentId(highOptionInstId);
+                    highOptionsOrder.setCreateTime(new Date());
+                    highOptionsOrder.setStrategy("butterfly");
+                    highOptionsOrder.setIsMock(Byte.valueOf("0"));
+                    highOptionsOrder.setType(Byte.valueOf(highPlaceOrder.getType()));
+                    highOptionsOrder.setPrice(new BigDecimal(highPlaceOrder.getPx()));
+                    highOptionsOrder.setSize(new BigDecimal(highPlaceOrder.getSz()));
+
+                    highOptionsOrder.setSymbol(symbol);
+                    highOptionsOrder.setSwapPrice(new BigDecimal(apiTickerVO.getLast()));
+                    highOptionsOrder.setDelta(new BigDecimal(currentHighOptionMarketData.getDelta()));
+                    highOptionsOrder.setGamma(new BigDecimal(currentHighOptionMarketData.getGamma()));
+                    highOptionsOrder.setVega(new BigDecimal(currentHighOptionMarketData.getVega()));
+                    highOptionsOrder.setTheta(new BigDecimal(currentHighOptionMarketData.getTheta()));
+                    highOptionsOrder.setVolLv(new BigDecimal(currentHighOptionMarketData.getVolLv()));
+
+                    String highOrderId = placeOrderAndUpdateStatus(site, highPlaceOrder, highOptionsOrder);
+                    if (highOrderId == null) {
+                        return;
+                    }
+                    log.info("买入看涨期权高 {}-{},orderId:{}", highOptionInstId, JSON.toJSONString(highPlaceOrder), highOrderId);
+
+                    messageService.sendStrategyMessage("butterfly买入看涨期权", "butterfly买入看涨期权:" + currentHighOptionMarketData.getInstId() +
+                            ",price:" + highOptionAskPrice + ",delta:" + currentHighOptionMarketData.getDelta() + ",gamma:" + currentHighOptionMarketData.getGamma()
+                            + ",vega:" + currentHighOptionMarketData.getVega() + ",theta:" + currentHighOptionMarketData.getTheta() + ",vol:" + currentHighOptionMarketData.getVolLv());
+
+
+                }
+
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 }
