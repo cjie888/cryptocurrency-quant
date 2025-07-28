@@ -99,8 +99,8 @@ public class OptionsTask {
 
     @Scheduled(cron = "37 03 18 * * ?")
     public void butterfly() {
-        optionsService.butterfly("okex", "BTC", 1, 2, 0.02);
-        optionsService.butterfly("okex", "ETH", 1, 2, 0.05);
+//        optionsService.butterfly("okex", "BTC", 1, 2, 0.02);
+//        optionsService.butterfly("okex", "ETH", 1, 2, 0.05);
 
     }
 }
