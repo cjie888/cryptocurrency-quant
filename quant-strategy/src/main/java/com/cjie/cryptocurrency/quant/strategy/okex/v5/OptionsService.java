@@ -1408,6 +1408,14 @@ public class OptionsService {
                     log.info("dynamicDeltaHedging 进行中订单, orderId:{}, order logId:{}, instId:{},当前delta:{}, 上次delta:{}",
                             optionsOrder.getId(), optionsOrderLog.getId(), optionsOrder.getInstrumentId(), currentDelta, lastDelta);
                     if (currentDelta > 0.6) {
+
+                        HttpResult<List<PositionInfo>> positionsResult = accountAPIV5Service.getPositions(site, "OPTION", optionsOrder.getInstrumentId(), null);
+                        log.info("期权持仓{}-看涨{}, result:{}", symbol, JSON.toJSONString(positionsResult));
+                        if (positionsResult == null || !positionsResult.getCode().equals("0")) {
+                            messageService.sendStrategyMessage("dynamicDeltaHedging无持仓", "dynamicDeltaHedging无持仓:" + optionsOrder.getInstrumentId());
+                            continue;
+                        }
+
                         //获取期权的价格数据
                         HttpResult<List<OrderBook>> optionOrderBookDatas = marketDataAPIService.getOrderBook(site, currentCallOptionMarketData.getInstId(), null);
                         log.info("期权深度数据{}:{}", currentCallOptionMarketData.getInstId(), JSON.toJSONString(optionOrderBookDatas));
