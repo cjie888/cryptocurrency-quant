@@ -1827,7 +1827,7 @@ public class OptionsService {
             log.info("当前价格{}-{}-{}", site, currentPrice, symbol);
 
 
-            String strikeDate = getNextNDay(3);
+            String strikeDate = getNextNDay(1);
 
             //卖出看涨期权
             HttpResult<List<OptionMarketData>> optionsMarketDatas = publicDataAPIService.getOptionMarketData(site, symbol + "-USD", strikeDate);
