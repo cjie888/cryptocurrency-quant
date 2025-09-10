@@ -62,10 +62,11 @@ public class BinanceFundingRateChecker {
                 JSONObject jsonObject = jsonArray.getJSONObject(i);
                 String symbol = jsonObject.getString("symbol");
                 double fundingRate = jsonObject.getDouble("lastFundingRate") * 100; // 转为百分比
+                double markPrice = jsonObject.getDouble("markPrice");
 
                 if (Math.abs(fundingRate) >= HIGH_FUNDING_RATE_THRESHOLD) {
                     highFundingRatePairs.add(
-                            String.format("交易对: %s, 资金费率: %.4f%%", symbol, fundingRate)
+                            String.format("交易对: %s, 资金费率: %.4f%%, 价格:%.8f%", symbol, fundingRate, markPrice)
                     );
                 }
             }
