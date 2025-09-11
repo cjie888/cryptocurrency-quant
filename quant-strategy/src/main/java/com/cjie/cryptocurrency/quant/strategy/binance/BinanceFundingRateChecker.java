@@ -21,7 +21,7 @@ import java.util.List;
 @Slf4j
 public class BinanceFundingRateChecker {
     private static final String API_URL = "https://fapi.binance.com/fapi/v1/premiumIndex";
-    private static final double HIGH_FUNDING_RATE_THRESHOLD = 1; // 资金费率阈值（百分比）
+    private static final double HIGH_FUNDING_RATE_THRESHOLD = 0.5; // 资金费率阈值（百分比）
 
 
     @Autowired
