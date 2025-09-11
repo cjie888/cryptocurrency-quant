@@ -55,8 +55,8 @@ public class BinanceFundingRateChecker {
             if (!response.isSuccessful()) {
                 throw new IOException("Unexpected code " + response);
             }
-
             String jsonData = response.body().string();
+            log.info("binance 资金费率：", jsonData);
             JSONArray jsonArray = JSON.parseArray(jsonData);
 
             for (int i = 0; i < jsonArray.size(); i++) {
