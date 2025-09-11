@@ -31,14 +31,15 @@ public class BinanceFundingRateChecker {
     public void monitorHighFundingRatePairs() {
         try {
             List<String> highFundingRatePairs = getHighFundingRatePairs();
-            System.out.println("资金费率较高的交易对：");
+            log.info("资金费率较高的交易对：");
             StringBuilder sb = new StringBuilder();
+            sb.append("binance资金费率较高的交易对:\n");
             for (String pair : highFundingRatePairs) {
                 sb.append(pair).append("\n");
             }
             messageService.sendMonitorMessage("binance资金费率较高的交易对", sb.toString());
         } catch (IOException e) {
-            System.err.println("请求失败: " + e.getMessage());
+            log.error("请求失败: " + e.getMessage(), e);
         }
     }
 
@@ -66,7 +67,7 @@ public class BinanceFundingRateChecker {
 
                 if (Math.abs(fundingRate) >= HIGH_FUNDING_RATE_THRESHOLD) {
                     highFundingRatePairs.add(
-                            String.format("交易对: %s, 资金费率: %.4f%%, 价格:%.8f%", symbol, fundingRate, markPrice)
+                            String.format("交易对: %s, 资金费率: %.4f%, 价格: %.8f", symbol, fundingRate, markPrice)
                     );
                 }
             }
