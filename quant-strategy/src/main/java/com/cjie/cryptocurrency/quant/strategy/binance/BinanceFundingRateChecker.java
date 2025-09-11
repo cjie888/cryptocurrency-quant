@@ -67,7 +67,7 @@ public class BinanceFundingRateChecker {
 
                 if (Math.abs(fundingRate) >= HIGH_FUNDING_RATE_THRESHOLD) {
                     highFundingRatePairs.add(
-                            String.format("交易对: %s, 资金费率: %.4f%, 价格: %.8f", symbol, fundingRate, markPrice)
+                            String.format("交易对: %s, 资金费率: %.4f% , 价格: %.8f", symbol, fundingRate, markPrice)
                     );
                 }
             }
