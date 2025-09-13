@@ -383,6 +383,9 @@ public class OptionsService {
                                 continue;
                             }
                             if (apiPositionVO.getPosSide().equals("net") && Double.valueOf(apiPositionVO.getPos()) >= Double.valueOf(size * 2) && Double.valueOf(apiPositionVO.getAvailPos()) >= Double.valueOf(size * 2)) {
+                                if (!apiPositionVO.getInstId().contains(symbol)) {
+                                    continue;
+                                }
                                 if (upPosition == null) {
                                     upPosition = apiPositionVO;
                                     longPosition = Double.valueOf(apiPositionVO.getPos());
