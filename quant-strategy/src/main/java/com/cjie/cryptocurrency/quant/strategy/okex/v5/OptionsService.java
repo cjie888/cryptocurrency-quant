@@ -342,7 +342,7 @@ public class OptionsService {
                         if (!optionsOrder.getStatus().equals(status)) {
                             optionsOrderMapper.updateStatus(orderId, status);
                         }
-                        if (status != 2) {
+                        if (status == null || !status.equals(2)) {
                             return;
                         }
 
@@ -468,7 +468,7 @@ public class OptionsService {
                             if (!optionsOrder.getStatus().equals(status)) {
                                 optionsOrderMapper.updateStatus(orderId, status);
                             }
-                            if (status != 2) {
+                            if (status == null || !status.equals(2)) {
                                 return;
                             }
 
@@ -551,7 +551,7 @@ public class OptionsService {
                         if (!optionsOrder.getStatus().equals(status)) {
                             optionsOrderMapper.updateStatus(orderId, status);
                         }
-                        if (status != 2) {
+                        if (!status.equals(2)) {
                             return;
                         }
 
@@ -1306,7 +1306,7 @@ public class OptionsService {
                     if (!optionsOrder.getStatus().equals(status)) {
                         optionsOrderMapper.updateStatus(orderId, status);
                     }
-                    if (status != 2) {
+                    if (!status.equals(2)) {
                         return;
                     }
 
@@ -1509,7 +1509,7 @@ public class OptionsService {
                         if (!optionsOrder.getStatus().equals(status)) {
                             optionsOrderMapper.updateStatus(orderId, status);
                         }
-                        if (status != 2) {
+                        if (!status.equals(2)) {
                             continue;
                         }
                         optionsOrderMapper.updateStatus(orderId, 100);
@@ -1939,7 +1939,7 @@ public class OptionsService {
                     if (!optionsOrder.getStatus().equals(status)) {
                         optionsOrderMapper.updateStatus(orderId, status);
                     }
-                    if (status != 2) {
+                    if (status == null || !status.equals(2)) {
                         return;
                     }
                     optionsOrderMapper.updateStatus(orderId, 100);
@@ -2019,7 +2019,7 @@ public class OptionsService {
                     if (!optionsOrder.getStatus().equals(status)) {
                         optionsOrderMapper.updateStatus(orderId, status);
                     }
-                    if (status != 2) {
+                    if (status == null || !status.equals(2)) {
                         return;
                     }
                     optionsOrderMapper.updateStatus(orderId, 100);
@@ -2061,7 +2061,7 @@ public class OptionsService {
         if (!optionsOrder.getStatus().equals(status)) {
             optionsOrderMapper.updateStatus(orderId, status);
         }
-        if (status != 2) {
+        if (status == null || !status.equals(2)) {
             return null;
         }
         return orderId;
