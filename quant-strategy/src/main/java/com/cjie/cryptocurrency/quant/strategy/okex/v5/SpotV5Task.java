@@ -53,7 +53,7 @@ public class SpotV5Task {
 
         try {
             String mainSite = "okexsub1";
-            String mainBaseCurrency = "XRP,DOGE,BNB,sui";
+            String mainBaseCurrency = "XRP,DOGE,BNB,SUI";
             HttpResult<List<AccountInfo>> baseAccountResult = accountAPIService.getBalance(mainSite, mainBaseCurrency);
             if (baseAccountResult.getData().get(0).getDetails().size() > 0) {
                 for (AccountDetail accountDetail : baseAccountResult.getData().get(0).getDetails()) {
