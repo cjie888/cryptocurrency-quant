@@ -20,7 +20,7 @@ public class OptionsTask {
     public  void swapAndOptionHedging() {
 //        optionsService.swapAndOptionHedging("okexmock1", "ETH-USDT-SWAP", "ETH", 0.01, 1);
 //        optionsService.swapAndOptionHedging("okexmock1", "BTC-USDT-SWAP", "BTC", 0.01, 1);
-        optionsService.swapAndOptionHedging("okexsub3", "ETH-USDT-SWAP", "ETH", 0.03, 1);
+//        optionsService.swapAndOptionHedging("okexsub3", "ETH-USDT-SWAP", "ETH", 0.03, 1);
 
     }
 
@@ -28,8 +28,8 @@ public class OptionsTask {
 //    @Scheduled(cron = "55 59 15 * * ?")
 //    @Scheduled(cron = "3/11 * * * * ?")
     public void netGrid1() {
-        optionsService.netGrid1("okex", "BTC-USDT-SWAP", "BTC", 1, 0.02, 0.005);
-        optionsService.netGrid1("okex", "ETH-USDT-SWAP", "ETH", 1, 0.013,0.012);
+//        optionsService.netGrid1("okex", "BTC-USDT-SWAP", "BTC", 1, 0.02, 0.005);
+//        optionsService.netGrid1("okex", "ETH-USDT-SWAP", "ETH", 1, 0.013,0.012);
     }
 
     @Scheduled(cron = "40 45 23 * * ?")  // 15:59:20 执行
@@ -43,8 +43,8 @@ public class OptionsTask {
 //    @Scheduled(cron = "52 35 * * * ?")
     @Scheduled(cron = "3/15 * * * * ?")
     public void dynamicDeltaHedging() {
-         optionsService.dynamicDeltaHedging("okex", "ETH-USDT-SWAP", "ETH", 0.03, 10);
-         optionsService.dynamicDeltaHedging("okex", "BTC-USDT-SWAP", "BTC", 0.025, 10);
+//         optionsService.dynamicDeltaHedging("okex", "ETH-USDT-SWAP", "ETH", 0.03, 10);
+//         optionsService.dynamicDeltaHedging("okex", "BTC-USDT-SWAP", "BTC", 0.025, 10);
     }
 
     @Scheduled(cron = "40 15 6 * * ?")
