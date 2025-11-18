@@ -37,7 +37,7 @@ public class SwapV5Task {
 
     }
 
-    @Scheduled(cron = "1/13 * * * * ?")
+//    @Scheduled(cron = "1/13 * * * * ?")
     public  void swapAndSpotHedging() {
 //        swapService.swapAndSpotHedging("okexsub3", "BTC-USDT-SWAP", "BTC-USDT", 0.02, 0.1);
         swapService.swapAndSpotHedging("okexsub3", "ETH-USDT-SWAP", "ETH-USDT", 0.03, 0.2);
