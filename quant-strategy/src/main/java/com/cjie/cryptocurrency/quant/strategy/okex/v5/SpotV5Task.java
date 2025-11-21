@@ -24,7 +24,7 @@ public class SpotV5Task {
     @Autowired
     private AccountAPIV5Service accountAPIService;
 
-    @Scheduled(cron = "3/17 * * * * ?")
+//    @Scheduled(cron = "3/17 * * * * ?")
     public  void netGrid() {
 
         //获取账户余额
@@ -78,7 +78,7 @@ public class SpotV5Task {
     }
 
 
-    @Scheduled(cron = "11/13 * * * * ?")
+//    @Scheduled(cron = "11/13 * * * * ?")
     public  void netGrid2() {
         String site = "okex";
         String baseCurrency = "DOT,BCH,LTC,OKB,XLM,AVAX,AAVE,NEAR,ONDO,UNI,TON,APT,PEPE";
