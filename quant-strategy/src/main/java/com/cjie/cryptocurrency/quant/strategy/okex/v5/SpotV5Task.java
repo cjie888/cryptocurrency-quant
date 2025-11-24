@@ -46,10 +46,10 @@ public class SpotV5Task {
 
 //        spotService.netGrid("okexsub2", "MANA-USDT", "1", 0.03);
 //        spotService.netGrid("okexsub2", "ETH-USDT", "0.01000000", 0.03, balances.get("ETH"));
-//        spotService.netGrid("okexsub2", "TRX-USDT", "40", 0.03, balances.get("TRX"));
+        spotService.netGrid("okexsub2", "TRX-USDT", "40", 0.03, balances.get("TRX"));
 //        spotService.netGrid("okexsub2", "SHIB-USDT", "400000", 0.03, balances.get("SHIB"));
 //        spotService.netGrid("okexsub2", "SOL-USDT", "0.1", 0.03, balances.get("SOL"));
-//        spotService.netGrid("okexsub2", "HBAR-USDT", "50", 0.03, balances.get("HBAR"));
+        spotService.netGrid("okexsub2", "HBAR-USDT", "50", 0.03, balances.get("HBAR"));
 
         try {
             String mainSite = "okexsub1";
