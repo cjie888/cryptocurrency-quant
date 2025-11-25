@@ -45,10 +45,10 @@ public class SpotV5Task {
         log.info("base account balance map :{}", JSON.toJSONString(balances));
 
 //        spotService.netGrid("okexsub2", "MANA-USDT", "1", 0.03);
-//        spotService.netGrid("okexsub2", "ETH-USDT", "0.01000000", 0.03, balances.get("ETH"));
+        spotService.netGrid("okexsub2", "ETH-USDT", "0.01000000", 0.03, balances.get("ETH"));
         spotService.netGrid("okexsub2", "TRX-USDT", "40", 0.03, balances.get("TRX"));
-//        spotService.netGrid("okexsub2", "SHIB-USDT", "400000", 0.03, balances.get("SHIB"));
-//        spotService.netGrid("okexsub2", "SOL-USDT", "0.1", 0.03, balances.get("SOL"));
+        spotService.netGrid("okexsub2", "SHIB-USDT", "400000", 0.03, balances.get("SHIB"));
+        spotService.netGrid("okexsub2", "SOL-USDT", "0.1", 0.03, balances.get("SOL"));
         spotService.netGrid("okexsub2", "HBAR-USDT", "50", 0.03, balances.get("HBAR"));
 
         try {
@@ -66,7 +66,7 @@ public class SpotV5Task {
 //        log.info("base account balance map :{}", JSON.toJSONString(balances));
 
 
-//        spotService.netGrid("okexsub1", "XRP-USDT", "20", 0.03, balances.get("XRP"));
+        spotService.netGrid("okexsub1", "XRP-USDT", "20", 0.03, balances.get("XRP"));
 //        spotService.netGrid("okexsub1", "DOGE-USDT", "100", 0.03, balances.get("DOGE"));
 //        spotService.netGrid("okexsub1", "BNB-USDT", "0.05", 0.03, balances.get("BNB"));
 //        spotService.netGrid("okexsub1", "SUI-USDT", "10", 0.03, balances.get("SUI"));
