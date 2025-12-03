@@ -69,10 +69,10 @@ public class SpotV5Task {
         spotService.netGrid("okexsub1", "XRP-USDT", "20", 0.03, balances.get("XRP"));
 //        spotService.netGrid("okexsub1", "DOGE-USDT", "100", 0.03, balances.get("DOGE"));
 //        spotService.netGrid("okexsub1", "BNB-USDT", "0.05", 0.03, balances.get("BNB"));
-//        spotService.netGrid("okexsub1", "SUI-USDT", "10", 0.03, balances.get("SUI"));
+        spotService.netGrid("okexsub1", "SUI-USDT", "10", 0.03, balances.get("SUI"));
         spotService.netGrid("okexsub1", "LINK-USDT", "1", 0.03, balances.get("LINK"));
 //        spotService.netGrid("okexsub1", "BTC-USDT", "0.00050000", 0.02, balances.get("BTC"));
-//        spotService.netGrid("okexsub1", "ADA-USDT", "20", 0.03, balances.get("ADA"));
+        spotService.netGrid("okexsub1", "ADA-USDT", "20", 0.03, balances.get("ADA"));
 
 //ltc 6  xrp 3 etc 5
     }
