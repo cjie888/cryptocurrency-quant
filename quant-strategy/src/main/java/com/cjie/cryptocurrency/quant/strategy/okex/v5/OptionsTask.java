@@ -53,7 +53,7 @@ public class OptionsTask {
 //        optionsService.coveredCall("okexsub3", "BTC", 2, 0.01);
     }
 
-    @Scheduled(cron = "43 15 * * * ?")
+//    @Scheduled(cron = "43 15 * * * ?")
     //@Scheduled(cron = "3/15 * * * * ?")
     public void computeOptionBenefit(){
         LocalDateTime now = LocalDateTime.now();
@@ -75,7 +75,7 @@ public class OptionsTask {
     }
 
 
-    @Scheduled(cron = "43 45 * * * ?")
+//    @Scheduled(cron = "43 45 * * * ?")
     //@Scheduled(cron = "3/15 * * * * ?")
     public void computeOptionBenefit2(){
         LocalDateTime now = LocalDateTime.now();
