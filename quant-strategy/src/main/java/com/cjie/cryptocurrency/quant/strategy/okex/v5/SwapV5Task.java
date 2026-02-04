@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.temporal.TemporalAdjusters;
 
-@Component
+//@Component
 @Slf4j
 public class SwapV5Task {
 

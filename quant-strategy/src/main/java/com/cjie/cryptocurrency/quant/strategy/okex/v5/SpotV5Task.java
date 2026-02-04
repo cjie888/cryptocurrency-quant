@@ -46,8 +46,8 @@ public class SpotV5Task {
 
 //        spotService.netGrid("okexsub2", "MANA-USDT", "1", 0.03);
         spotService.netGrid("okexsub2", "ETH-USDT", "0.01000000", 0.03, balances.get("ETH"));
-        spotService.netGrid("okexsub2", "TRX-USDT", "40", 0.03, balances.get("TRX"));
-        spotService.netGrid("okexsub2", "SHIB-USDT", "400000", 0.03, balances.get("SHIB"));
+//        spotService.netGrid("okexsub2", "TRX-USDT", "40", 0.03, balances.get("TRX"));
+//        spotService.netGrid("okexsub2", "SHIB-USDT", "400000", 0.03, balances.get("SHIB"));
         spotService.netGrid("okexsub2", "SOL-USDT", "0.1", 0.03, balances.get("SOL"));
         spotService.netGrid("okexsub2", "HBAR-USDT", "50", 0.03, balances.get("HBAR"));
 
@@ -66,13 +66,13 @@ public class SpotV5Task {
 //        log.info("base account balance map :{}", JSON.toJSONString(balances));
 
 
-        spotService.netGrid("okexsub1", "XRP-USDT", "20", 0.03, balances.get("XRP"));
-        spotService.netGrid("okexsub1", "DOGE-USDT", "100", 0.03, balances.get("DOGE"));
-        spotService.netGrid("okexsub1", "BNB-USDT", "0.05", 0.03, balances.get("BNB"));
-        spotService.netGrid("okexsub1", "SUI-USDT", "10", 0.03, balances.get("SUI"));
-        spotService.netGrid("okexsub1", "LINK-USDT", "1", 0.03, balances.get("LINK"));
+//        spotService.netGrid("okexsub1", "XRP-USDT", "20", 0.03, balances.get("XRP"));
+//        spotService.netGrid("okexsub1", "DOGE-USDT", "100", 0.03, balances.get("DOGE"));
+//        spotService.netGrid("okexsub1", "BNB-USDT", "0.05", 0.03, balances.get("BNB"));
+//        spotService.netGrid("okexsub1", "SUI-USDT", "10", 0.03, balances.get("SUI"));
+//        spotService.netGrid("okexsub1", "LINK-USDT", "1", 0.03, balances.get("LINK"));
         spotService.netGrid("okexsub1", "BTC-USDT", "0.00050000", 0.02, balances.get("BTC"));
-        spotService.netGrid("okexsub1", "ADA-USDT", "20", 0.03, balances.get("ADA"));
+//        spotService.netGrid("okexsub1", "ADA-USDT", "20", 0.03, balances.get("ADA"));
 
 //ltc 6  xrp 3 etc 5
     }
@@ -95,19 +95,19 @@ public class SpotV5Task {
             e.printStackTrace();
         }
         log.info("base account balance map :{}", JSON.toJSONString(balances));
-        spotService.netGrid("okex", "DOT-USDT", "2", 0.03, balances.get("DOT"));
-        spotService.netGrid("okex", "BCH-USDT", "0.05", 0.03, balances.get("BCH"));
-        spotService.netGrid("okex", "LTC-USDT", "0.2", 0.03, balances.get("LTC"));
+//        spotService.netGrid("okex", "DOT-USDT", "2", 0.03, balances.get("DOT"));
+//        spotService.netGrid("okex", "BCH-USDT", "0.05", 0.03, balances.get("BCH"));
+//        spotService.netGrid("okex", "LTC-USDT", "0.2", 0.03, balances.get("LTC"));
         spotService.netGrid("okex", "OKB-USDT", "0.5", 0.03, balances.get("OKB"));
         spotService.netGrid("okex", "XLM-USDT", "30", 0.03, balances.get("XLM"));
-        spotService.netGrid("okex", "AAVE-USDT", "0.1", 0.03, balances.get("AAVE"));
-        spotService.netGrid("okex", "AVAX-USDT", "0.5", 0.03, balances.get("AVAX"));
-        spotService.netGrid("okex", "NEAR-USDT", "5", 0.03, balances.get("NEAR"));
+//        spotService.netGrid("okex", "AAVE-USDT", "0.1", 0.03, balances.get("AAVE"));
+//        spotService.netGrid("okex", "AVAX-USDT", "0.5", 0.03, balances.get("AVAX"));
+//        spotService.netGrid("okex", "NEAR-USDT", "5", 0.03, balances.get("NEAR"));
         spotService.netGrid("okex", "ONDO-USDT", "10", 0.03, balances.get("ONDO"));
-        spotService.netGrid("okex", "UNI-USDT", "2", 0.03, balances.get("UNI"));
-        spotService.netGrid("okex", "TON-USDT", "2", 0.03, balances.get("TON"));
-        spotService.netGrid("okex", "APT-USDT", "3", 0.03, balances.get("APT"));
-        spotService.netGrid("okex", "PEPE-USDT", "1000000", 0.03, balances.get("PEPE"));
+//        spotService.netGrid("okex", "UNI-USDT", "2", 0.03, balances.get("UNI"));
+//        spotService.netGrid("okex", "TON-USDT", "2", 0.03, balances.get("TON"));
+//        spotService.netGrid("okex", "APT-USDT", "3", 0.03, balances.get("APT"));
+//        spotService.netGrid("okex", "PEPE-USDT", "1000000", 0.03, balances.get("PEPE"));
 
     }
 }
