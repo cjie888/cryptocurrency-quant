@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.temporal.TemporalAdjusters;
 
-//@Component
+@Component
 @Slf4j
 public class SwapV5Task {
 
@@ -40,16 +40,16 @@ public class SwapV5Task {
     @Scheduled(cron = "1/13 * * * * ?")
     public  void swapAndSpotHedging() {
         swapService.swapAndSpotHedging("okexsub3", "BTC-USDT-SWAP", "BTC-USDT", 0.02, 0.1);
-        swapService.swapAndSpotHedging("okexsub3", "ETH-USDT-SWAP", "ETH-USDT", 0.03, 0.2);
+//        swapService.swapAndSpotHedging("okexsub3", "ETH-USDT-SWAP", "ETH-USDT", 0.03, 0.2);
 //        swapService.swapAndSpotHedging("okexmock1", "XRP-USDT-SWAP", "XRP-USDT", 0.01, 1);
 //        swapService.swapAndSpotHedging("okexmock1", "SUI-USDT-SWAP", "SUI-USDT", 0.01, 10);
-        swapService.swapAndSpotHedging("okexsub3", "SOL-USDT-SWAP", "SOL-USDT", 0.03, 0.3);
-        swapService.swapAndSpotHedging("okexsub3", "SUI-USDT-SWAP", "SUI-USDT", 0.03, 20);
-        swapService.swapAndSpotHedging("okexsub3", "ADA-USDT-SWAP", "ADA-USDT", 0.03, 0.5);
-        swapService.swapAndSpotHedging("okexsub3", "BNB-USDT-SWAP", "BNB-USDT", 0.03, 5);
-        swapService.swapAndSpotHedging("okexsub3", "XRP-USDT-SWAP", "XRP-USDT", 0.03, 0.2);
-        swapService.swapAndSpotHedging("okexsub3", "LINK-USDT-SWAP", "LINK-USDT", 0.03, 5);
-        swapService.swapAndSpotHedging("okexsub3", "DOGE-USDT-SWAP", "DOGE-USDT", 0.03, 0.3);
+//        swapService.swapAndSpotHedging("okexsub3", "SOL-USDT-SWAP", "SOL-USDT", 0.03, 0.3);
+//        swapService.swapAndSpotHedging("okexsub3", "SUI-USDT-SWAP", "SUI-USDT", 0.03, 20);
+//        swapService.swapAndSpotHedging("okexsub3", "ADA-USDT-SWAP", "ADA-USDT", 0.03, 0.5);
+//        swapService.swapAndSpotHedging("okexsub3", "BNB-USDT-SWAP", "BNB-USDT", 0.03, 5);
+//        swapService.swapAndSpotHedging("okexsub3", "XRP-USDT-SWAP", "XRP-USDT", 0.03, 0.2);
+//        swapService.swapAndSpotHedging("okexsub3", "LINK-USDT-SWAP", "LINK-USDT", 0.03, 5);
+//        swapService.swapAndSpotHedging("okexsub3", "DOGE-USDT-SWAP", "DOGE-USDT", 0.03, 0.3);
 
 
 //        swapService.swapAndSpotHedging("okexsub3", "XAU-USDT-SWAP", "XAU-USDT", 0.02, 20);
