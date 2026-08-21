@@ -108,6 +108,8 @@ public class SwapV5Service {
         swapCtVal.put("BNB-USDT-SWAP", new BigDecimal("0.01"));
         swapCtVal.put("XAUT-USDT-SWAP", new BigDecimal("0.001"));
         swapCtVal.put("XAU-USDT-SWAP", new BigDecimal("0.001"));
+        swapCtVal.put("SOXL-USDT-SWAP", new BigDecimal("1"));
+        swapCtVal.put("SOXS-USDT-SWAP", new BigDecimal("1"));
 
         swapUsdtToSymbolVal.put("BTC", 10.0);
         swapUsdtToSymbolVal.put("SOL", 15.0);
