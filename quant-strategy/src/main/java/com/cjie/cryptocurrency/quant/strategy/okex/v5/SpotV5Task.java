@@ -81,7 +81,7 @@ public class SpotV5Task {
     @Scheduled(cron = "11/13 * * * * ?")
     public  void netGrid2() {
         String site = "okex";
-        String baseCurrency = "DOT,BCH,LTC,OKB,XLM,AVAX,AAVE,NEAR,ONDO,UNI,GRAM,APT,PEPE,HYPE,XMU";
+        String baseCurrency = "DOT,BCH,LTC,OKB,XLM,AVAX,AAVE,NEAR,ONDO,UNI,GRAM,APT,PEPE,HYPE,XMU,XSPY,XQQQ";
         HttpResult<List<AccountInfo>> baseAccountResult = accountAPIService.getBalance(site, baseCurrency);
         log.info("base account:{}", JSON.toJSONString(baseAccountResult));
         Map<String, AccountDetail> balances = new HashMap<>();
@@ -110,6 +110,8 @@ public class SpotV5Task {
 //        spotService.netGrid("okex", "APT-USDT", "3", 0.03, balances.get("APT"));
         spotService.netGrid("okex", "PEPE-USDT", "1000000", 0.03, balances.get("PEPE"));
         spotService.netGrid("okex", "XMU-USDT", "0.02", 0.03, balances.get("XMU"));
+        spotService.netGrid("okex", "XSPY-USDT", "0.03", 0.02, balances.get("XSPY"));
+        spotService.netGrid("okex", "XQQQ-USDT", "0.03", 0.02, balances.get("XQQQ"));
 
     }
 }
