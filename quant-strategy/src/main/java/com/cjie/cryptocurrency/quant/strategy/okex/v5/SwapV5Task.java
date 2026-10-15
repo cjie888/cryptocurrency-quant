@@ -52,7 +52,8 @@ public class SwapV5Task {
         swapService.swapAndSpotHedging("okexsub3", "DOGE-USDT-SWAP", "DOGE-USDT", 0.03, 0.3);
         swapService.swapAndSpotHedging("okexsub3", "SOXL-USDT-SWAP", "XSOXL-USDT", 0.03, 0.3);
         swapService.swapAndSpotHedging("okexsub3", "SOXS-USDT-SWAP", "XSOXS-USDT", 0.03, 0.5);
-
+        swapService.swapAndSpotHedging("okexsub3", "TQQQ-USDT-SWAP", "XTQQQ-USDT", 0.03, 0.3);
+        swapService.swapAndSpotHedging("okexsub3", "SQQQ-USDT-SWAP", "XSQQQ-USDT", 0.03, 0.5);
 //        swapService.swapAndSpotHedging("okexsub3", "XAU-USDT-SWAP", "XAU-USDT", 0.02, 20);
 
     }
