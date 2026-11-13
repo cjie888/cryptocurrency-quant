@@ -129,6 +129,10 @@ public class SpotTask {
         symbols.add("PEPE-USDT");
         symbols.add("NEAR-USDT");
         symbols.add("ONDO-USDT");
+        symbols.add("HYPE-USDT");
+        symbols.add("XMU-USDT");
+        symbols.add("XSPY-USDT");
+        symbols.add("QQQ-USDT");
 
         spotService.computeBenefit("每日买卖main", startTime, now, symbols);
 
@@ -190,6 +194,12 @@ public class SpotTask {
         symbols.add("PEPE-USDT");
         symbols.add("NEAR-USDT");
         symbols.add("ONDO-USDT");
+
+        symbols.add("HYPE-USDT");
+        symbols.add("XMU-USDT");
+        symbols.add("XSPY-USDT");
+        symbols.add("QQQ-USDT");
+
         spotService.computeBenefit("每月买卖main", startTime, now, symbols);
 
 
@@ -252,6 +262,11 @@ public class SpotTask {
         symbols.add("PEPE-USDT");
         symbols.add("NEAR-USDT");
         symbols.add("ONDO-USDT");
+
+        symbols.add("HYPE-USDT");
+        symbols.add("XMU-USDT");
+        symbols.add("XSPY-USDT");
+        symbols.add("QQQ-USDT");
         spotService.computeBenefit("每季买卖main", startTime, now, symbols);
 
 
@@ -313,6 +328,11 @@ public class SpotTask {
         symbols.add("PEPE-USDT");
         symbols.add("NEAR-USDT");
         symbols.add("ONDO-USDT");
+
+        symbols.add("HYPE-USDT");
+        symbols.add("XMU-USDT");
+        symbols.add("XSPY-USDT");
+        symbols.add("QQQ-USDT");
         spotService.computeBenefit("每年买卖main", startTime, now, symbols);
 
     }
