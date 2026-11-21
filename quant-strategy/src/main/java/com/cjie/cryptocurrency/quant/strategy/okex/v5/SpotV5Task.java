@@ -96,22 +96,22 @@ public class SpotV5Task {
         }
         log.info("base account balance map :{}", JSON.toJSONString(balances));
 //        spotService.netGrid("okex", "DOT-USDT", "2", 0.03, balances.get("DOT"));
-        spotService.netGrid("okex", "BCH-USDT", "0.05", 0.03, balances.get("BCH"));
-        spotService.netGrid("okex", "LTC-USDT", "0.2", 0.03, balances.get("LTC"));
-        spotService.netGrid("okex", "OKB-USDT", "0.5", 0.03, balances.get("OKB"));
-        spotService.netGrid("okex", "XLM-USDT", "30", 0.03, balances.get("XLM"));
-        spotService.netGrid("okex", "AAVE-USDT", "0.1", 0.03, balances.get("AAVE"));
-        spotService.netGrid("okex", "AVAX-USDT", "0.5", 0.03, balances.get("AVAX"));
-        spotService.netGrid("okex", "NEAR-USDT", "5", 0.03, balances.get("NEAR"));
-        spotService.netGrid("okex", "ONDO-USDT", "10", 0.03, balances.get("ONDO"));
-        spotService.netGrid("okex", "UNI-USDT", "2", 0.03, balances.get("UNI"));
-        spotService.netGrid("okex", "GRAM-USDT", "2", 0.03, balances.get("GRAM"));
-        spotService.netGrid("okex", "HYPE-USDT", "0.2", 0.03, balances.get("HYPE"));
-//        spotService.netGrid("okex", "APT-USDT", "3", 0.03, balances.get("APT"));
-        spotService.netGrid("okex", "PEPE-USDT", "1000000", 0.03, balances.get("PEPE"));
-        spotService.netGrid("okex", "XMU-USDT", "0.02", 0.03, balances.get("XMU"));
-        spotService.netGrid("okex", "XSPY-USDT", "0.03", 0.02, balances.get("XSPY"));
-        spotService.netGrid("okex", "XQQQ-USDT", "0.03", 0.02, balances.get("XQQQ"));
+//        spotService.netGrid("okex", "BCH-USDT", "0.05", 0.03, balances.get("BCH"));
+//        spotService.netGrid("okex", "LTC-USDT", "0.2", 0.03, balances.get("LTC"));
+//        spotService.netGrid("okex", "OKB-USDT", "0.5", 0.03, balances.get("OKB"));
+//        spotService.netGrid("okex", "XLM-USDT", "30", 0.03, balances.get("XLM"));
+//        spotService.netGrid("okex", "AAVE-USDT", "0.1", 0.03, balances.get("AAVE"));
+//        spotService.netGrid("okex", "AVAX-USDT", "0.5", 0.03, balances.get("AVAX"));
+//        spotService.netGrid("okex", "NEAR-USDT", "5", 0.03, balances.get("NEAR"));
+//        spotService.netGrid("okex", "ONDO-USDT", "10", 0.03, balances.get("ONDO"));
+//        spotService.netGrid("okex", "UNI-USDT", "2", 0.03, balances.get("UNI"));
+//        spotService.netGrid("okex", "GRAM-USDT", "2", 0.03, balances.get("GRAM"));
+//        spotService.netGrid("okex", "HYPE-USDT", "0.2", 0.03, balances.get("HYPE"));
+////        spotService.netGrid("okex", "APT-USDT", "3", 0.03, balances.get("APT"));
+//        spotService.netGrid("okex", "PEPE-USDT", "1000000", 0.03, balances.get("PEPE"));
+//        spotService.netGrid("okex", "XMU-USDT", "0.02", 0.03, balances.get("XMU"));
+//        spotService.netGrid("okex", "XSPY-USDT", "0.03", 0.02, balances.get("XSPY"));
+//        spotService.netGrid("okex", "XQQQ-USDT", "0.03", 0.02, balances.get("XQQQ"));
 
     }
 }
